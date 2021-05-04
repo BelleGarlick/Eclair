@@ -4,6 +4,8 @@ let labelFont = new JSDObject()
     .font("arial")
     .fontColor("#aaaa00")
     .fontWeight(700)
+    .fontWeight(300, "hover")
+    
     
 let firstNameLabel = JText("First Name").setStyle(labelFont)
 let secondNameLabel = JText("Second Name").setStyle(labelFont)
@@ -15,14 +17,14 @@ let form = JForm([
         
         firstNameLabel,
         JTextbox("Type here...")
-            .onChange((self) => {
+            .onKeyDown((self) => {
                 firstNameLabel.text(`First Name: ${self.value()}`)
             }),
         
         secondNameLabel,
         JTextbox("Type here...")
-            .onChange((self) => {
-                secondNameLabel.text(`Second Name: ${self.value()}`)
+            .onBlur((self) => {
+                secondNameLabel.text("Lost focus")
             }),
     
         JButton("Submit")

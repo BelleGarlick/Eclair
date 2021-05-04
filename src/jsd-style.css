@@ -1,0 +1,15 @@
+.jsd-button {
+    border: 0px solid black;
+    border-radius: 2px;
+    padding: 8px 16px;
+    background: #eeeeee;
+    font-family: arial;
+}
+
+.jsd-button:hover {
+    background: #dddddd;
+}
+
+.jsd-button:active {
+    background: #cccccc;
+}
