@@ -1,0 +1,36 @@
+<script src="src/jsd.js"></script>
+<script>
+let labelFont = new JSDObject()
+    .font("arial")
+    .fontColor("#aaaa00")
+    .fontWeight(700)
+    
+let firstNameLabel = JText("First Name").setStyle(labelFont)
+let secondNameLabel = JText("Second Name").setStyle(labelFont)
+
+let form = JForm([
+    JVBox([
+        firstNameLabel,
+        JTextbox("Type here...")
+            .onChange((self) => {
+                firstNameLabel.text(`First Name: ${self.value()}`)
+            }),
+        
+        secondNameLabel,
+        JTextbox("Type here...")
+            .onChange((self) => {
+                secondNameLabel.text(`Second Name: ${self.value()}`)
+            }),
+    
+        JButton("Submit")
+            .press(() => {
+                form.submit()
+            })
+
+    ]).spacing(10)
+])
+    .action("/submit/")
+    .method("POST")
+
+form.write()
+</script>
