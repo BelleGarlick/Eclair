@@ -1,13 +1,13 @@
 let jIDs = 0
-let jElements = {}
+let jsdElements = {}
 
 
 function jPress(jID) {
-    jElements[jID].performPress()
+    jsdElements[jID].performPress()
 }
 
 function jsdOnchange(jID) {
-    jElements[jID].performOnChange()
+    jsdElements[jID].performOnChange()
 }
 
 
@@ -15,21 +15,23 @@ class JSDObject {
     constructor() {
         this._id = jIDs;
         jIDs += 1
+         
+        jsdElements[this.id()] = this;
         
-        jElements[this.id()] = this;
-        
-        this.styleCustom = ""
-        this.styleBackground = ""
-        this.styleBorderSize = ""
-        this.styleBorderColor = ""
-        this.styleBorderStyle = ""
-        this.styleBorderRadius = ""
-        this.styleMargin = ""
-        this.stylePadding = ""
-        this.styleFontFamily = ""
-        this.styleFontSize = ""
-        this.styleFontColor = ""
-        this.styleFontWeight = ""
+        this.styles = {
+            "css": null,
+            "background": null,
+            "border-size": null,
+            "border-color": null,
+            "border-style": null,
+            "border-radius": null,
+            "margin": null,
+            "padding": null,
+            "font-family": null,
+            "font-size": null,
+            "color": null,
+            "font-weight": null
+        }
     }
     
     id() {
@@ -49,85 +51,93 @@ class JSDObject {
     }
     
     style() {
-        return `style='${this.styleCustom};background:${this.styleBackground};border-size:${this.styleBorderSize};border-style: ${this.styleBorderStyle};border-width: ${this.styleBorderSize};border-color:${this.styleBorderColor};border-radius:${this.styleBorderRadius};padding:${this.stylePadding};margin:${this.styleMargin};font-family:${this.styleFontFamily};font-size:${this.styleFontSize};color:${this.styleFontColor};font-weight:${this.styleFontWeight};'`
+        let styleCode = '';
+        let self = this;
+        Object.keys(self.styles).forEach(function(key) {
+            let value = self.styles[key];
+            if (value != null) {
+                if (key == "css") {
+                    styleCode += value + ";";
+                } else {
+                    styleCode += `${key}:${value};` 
+                }
+            }
+        });
+    
+        return "style='" + styleCode + "'"
     }
     
     setStyle(referenceObject) {
-        this.styleCustom = referenceObject.styleCustom
-        this.styleBackground = referenceObject.styleBackground
-        this.styleBorderSize = referenceObject.styleBorderSize
-        this.styleBorderColor = referenceObject.styleBorderColor
-        this.styleBorderStyle = referenceObject.styleBorderStyle
-        this.styleBorderRadius = referenceObject.styleBorderRadius
-        this.styleMargin = referenceObject.styleMargin
-        this.stylePadding = referenceObject.stylePadding
-        this.styleFontFamily = referenceObject.styleFontFamily
-        this.styleFontSize = referenceObject.styleFontSize
-        this.styleFontColor = referenceObject.styleFontColor
-        this.styleFontWeight = referenceObject.styleFontWeight
+        let self = this;
+        Object.keys(referenceObject.styles).forEach(function(key) {
+            let value = referenceObject.styles[key];
+            if (value != null) {
+                self.styles[key] = value;
+            }
+        });
         
         return this
     }
     
     css(_style) {
-        this.styleCustom = _style;
+        this.styles["css"] = _style;
         return this
     }
     
     background(color) {
-        this.styleBackground = color;
+        this.styles["background"] = color;
         let elem = this.getElement()
         if (elem != null) {elem.style.background = color}
         return this
     }
     
     borderSize(size) {
-        this.styleBorderSize = size;
+        this.styles["border-size"] = size;
         return this
     }
     
     borderColor(color) {
-        this.styleBorderColor = color;
+        this.styles["border-color"] = color;
         return this
     }
     
     borderStyle(style) {
-        this.styleBorderStyle = typstylee;
+        this.styles["border-style"] = style;
         return this
     }
     
     borderRadius(radius) {
-        this.styleBorderRadius = radius;
+        this.styles["border-radius"] = radius;
         return this
     }
     
     padding(size) {
-        this.stylePadding = size;
+        this.styles["padding"] = size;
         return this
     }
     
     margin(size) {
-        this.styleMargin = size;
+        this.styles["margin"] = size;
         return this
     }
     
     font(family) {
-        this.styleFontFamily = family;
+        this.styles["font-family"] = family;
         return this
     }
     
     fontSize(size) {
-        this.styleFontSize = size;
+        this.styles["font-size"] = size;
         return this
     }
     
     fontColor(color) {
-        this.styleFontColor = color;
+        this.styles["color"] = color;
         return this
     }
     
     fontWeight(weight) {
-        this.styleFontWeight = weight;
+        this.styles["font-weight"] = weight;
         return this
     }
 }
@@ -325,6 +335,17 @@ class JTextClass extends JSDObject {
         }
     }
     
+    type(newType) {
+        if (newType == "title") {
+            this.fontSize("40px")
+            this.font("arial")
+            this.fontWeight(700)
+            this.margin("10px 50px 10px 10px")
+        }
+        
+        return this
+    }
+    
     text(value) {
         if (value == null) {
             return this._text
@@ -336,7 +357,7 @@ class JTextClass extends JSDObject {
                 elem.innerHTML = this._text
             }
             
-            return self
+            return this
         }
     }
     
@@ -361,14 +382,6 @@ class JTextboxClass extends JSDObject {
         
         this._placeholder = placeholder;
         this._value = ""
-    }
-    
-    type(newTtype) {
-        if (newType == "title") {
-            this.fontSize("20px")
-            this.fontWeight(700)
-            this.margin("30px 10px 10px 10px")
-        }
     }
     
     value(text) {

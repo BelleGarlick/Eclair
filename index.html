@@ -10,6 +10,9 @@ let secondNameLabel = JText("Second Name").setStyle(labelFont)
 
 let form = JForm([
     JVBox([
+        JText("Who are you?")
+            .type("title"),
+        
         firstNameLabel,
         JTextbox("Type here...")
             .onChange((self) => {
