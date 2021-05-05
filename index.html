@@ -27,12 +27,30 @@ let select = Select()
     .addOptions(["test", "BMW", "testing a reall long one"])
     .selectedIndex(2)
     
-    
+let text = Textbox()
+
 VBox([
-    select,
+    text,
     
-    Text("Sidebar Demo")
-        .type("title"),
+    Button("placeholder").onClick(() => {
+        text.placeholder("New placeholder")
+    }),
+    
+    Button("value").onClick(() => {
+        text.value("New value")
+    }),
+    
+    Button("pass").onClick(() => {
+        text.password(true)
+    }),
+    
+    Button("normal").onClick(() => {
+        text.password(false)
+    }),
+    
+    Button("maxlen 5").onClick(() => {
+        text.maxLength(5)
+    }),
     
     labelWrapper(
         vWidthLabel,
