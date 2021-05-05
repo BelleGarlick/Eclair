@@ -5,7 +5,8 @@ let Button = eclair.Button,
     VBox = eclair.VBox,
     Text = eclair.Text,
     Form = eclair.Form,
-    Select = eclair.Select;
+    Select = eclair.Select,
+    Slider = eclair.Slider;
     
 let labelFont = new EclairObject()
     .font("arial")
@@ -83,6 +84,15 @@ VBox([
                 vWidthLabel.text(`First Name: ${self.value()}`)
             })
     ),
+    
+    Slider()
+        .min(20)
+        .max(40)
+        .value(30)
+        .onInput(e => {
+            console.log(e.value())
+            vWidthLabel.text(e.value())
+        })
 ])
     .spacing(25)
     .write()

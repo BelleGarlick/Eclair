@@ -18,6 +18,7 @@ let eclair = {
     
     Select: function() {return new EclairSelect();},
     Link: function(text) {return new EclairLink(text);},
+    Slider: function() {return new EclairSlider();},
     
     // Event methods
     // Input Events
@@ -30,6 +31,7 @@ let eclair = {
     onKeyDownCallback: function(eID) {this._elements[eID].performOnKeyDown();},
     onKeyPressCallback: function(eID) {this._elements[eID].performOnKeyPress();},
     onKeyUpCallback: function(eID) {this._elements[eID].performOnKeyUp();},
+    onInputCallback: function(eID) {this._elements[eID].performOnInput();},
     // Mouse Events
     onMouseDownCallback: function(eID) {this._elements[eID].performOnMouseDown();},
     onMouseUpCallback: function(eID) {this._elements[eID].performOnMouseUp();},
@@ -104,6 +106,7 @@ class EclairObject {
         this._onKeyPress = null;
         this._onKeyUp = null;
         this._onKeyUp = null;
+        this._onInput = null;
         // Mouse Events
         this._onMouseDown = null;
         this._onMouseUp = null;
@@ -313,6 +316,7 @@ class EclairObject {
     onKeyDown(callback) {this._updateCallback("onKeyDown", callback); this._onKeyDown = callback; return this;}
     onKeyPress(callback) {this._updateCallback("onKeyPress", callback); this._onKeyPress = callback; return this;}
     onKeyUp(callback) {this._updateCallback("onKeyUp", callback); this._onKeyUp = callback; return this;}
+    onInput(callback) {this._updateCallback("onInput", callback); this._onInput = callback; return this;}
     onMouseDown(callback) {this._updateCallback("onMouseDown", callback); this._onMouseDown = callback; return this;}
     onMouseUp(callback) {this._updateCallback("onMouseUp", callback); this._onMouseUp = callback; return this;}
     onMouseOver(callback) {this._updateCallback("onMouseOver", callback); this._onMouseOver = callback; return this;}
@@ -325,7 +329,6 @@ class EclairObject {
     onUnload(callback) {this._updateCallback("onUnload", callback); this._onUnload = callback; return this;}
     onResize(callback) {this._updateCallback("onResize", callback); this._onResize = callback; return this;}
     
-    // TODO have check for if can run
     performOnBlur() {this._onBlur(this)}
     performOnChange() {this._onChange(this)}
     performOnFocus() {this._onFocus(this)}
@@ -335,6 +338,7 @@ class EclairObject {
     performOnKeyDown() {this._onKeyDown(this)}
     performOnKeyPress() {this._onKeyPress(this)}
     performOnKeyUp() {this._onKeyUp(this)}
+    performOnInput() {this._onInput(this)}
     performOnMouseDown() {this._onMouseDown(this)}
     performOnMouseUp() {this._onMouseUp(this)}
     performOnMouseOver() {this._onMouseOver(this)}
@@ -582,7 +586,6 @@ class EclairTextbox extends EclairObject {
 
 
 
-
 /***
     Form Elements
 ***/
@@ -623,7 +626,6 @@ class EclairSelect extends EclairObject {
                 this.options[n].selected = index == n;
             }
             this.getElement(elem => {elem.selectedIndex = `${index}`})
-            
             
             return this;
         }
@@ -740,6 +742,47 @@ class EclairButton extends EclairObject {
     }
 }
 
+class EclairSlider extends EclairObject {
+    constructor() {
+        super()
+        this.setAttr("type", "range")
+    }
+    
+    min(_min) {
+        if (_min == null) {
+            return this.getAttr("min");
+        } else {
+            this.setAttr("min", _min);
+        }
+        return this;
+    }
+    
+    max(_max) {
+        if (_max == null) {
+            return this.getAttr("max");
+        } else {
+            this.setAttr("max", _max);
+        }
+        return this;
+    }
+    
+    value(_val) {
+        if (_val == null) {
+            let elem = this.getElement();
+            if (elem != null) {
+                return elem.value;
+            }
+            return this.getAttr("value")
+        } else {
+            this.setAttr("value", _val)
+            return this
+        }
+    }
+    
+    build() {
+        return `${this.style()}<input id='${this.id()}' ${this.buildAttributeHTML()}/>`
+    }
+}
 
 
 /*
