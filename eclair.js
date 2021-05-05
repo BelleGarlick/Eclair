@@ -171,25 +171,15 @@ class EclairObject {
         return this._styles[selector];
     }
     
-    style() {
-        let id = this.id()
-        let self = this;
-        
-        let cssCode = ""
-        
-        Object.keys(this._styles).forEach(function(key) {
-            cssCode += self._styles[key].build(id);
-            console.log(cssCode)
-        });
-        
-        return `<style>${cssCode}</style>`
-    }
-    
     setStyle(referenceObject) {
-        console.log("Need to reimplement")
         let self = this;
+        
         Object.keys(referenceObject._styles).forEach(function(key) {
-            let styleObject = referenceObject._styles[key];
+            let styleObject = referenceObject._styles[key]
+            let selfStyleSheet = self.getStyleSheet(key)
+            Object.keys(styleObject.rules).forEach(function(key) {
+                selfStyleSheet.rules[key] = styleObject.rules[key]
+            });
         });
         
         return this
@@ -322,6 +312,19 @@ class EclairObject {
         
         return attrHTML;
     }
+    
+    buildStyleCode() {
+        let id = this.id()
+        let self = this;
+        
+        let cssCode = ""
+        
+        Object.keys(this._styles).forEach(function(key) {
+            cssCode += self._styles[key].build(id);
+        });
+        
+        return `<style>${cssCode}</style>`
+    }
 }
 
 
@@ -355,7 +358,7 @@ class EclairVBox extends EclairObject {
     }
     
     build () {
-        let code = this.style() + "<table border=0 cellpadding=0 cellspacing=0>"
+        let code = this.buildStyleCode() + "<table id='"+this.id()+"' border=0 cellpadding=0 cellspacing=0>"
         for (let e = 0; e < this.elements.length; e++) {
             if (e > 0) {
                 code += "<tr><td height='"+ this._spacing +"px'></td></tr>"
@@ -381,7 +384,7 @@ class EclairHBox extends EclairObject {
     }
     
     build () {
-        let code = this.style() + "<table id='"+this.id()+"' border=0 cellpadding=0 cellspacing=0>"
+        let code = this.buildStyleCode() + "<table id='"+this.id()+"' border=0 cellpadding=0 cellspacing=0>"
         for (let e = 0; e < this.elements.length; e++) {
             if (e > 0) {
                 code += "<td width='"+ this._spacing +"px'></td>"
@@ -430,38 +433,6 @@ class EclairForm extends EclairObject {
 
 
 
-class EclairText extends EclairObject {
-    constructor(text) {
-        super()
-        this._text = text;
-    }
-    
-    type(newType) {
-        if (newType == "title") {
-            this.fontSize("40px")
-            this.font("arial")
-            this.fontWeight(700)
-            this.margin("50px 10px 10px 10px")
-        }
-        
-        return this
-    }
-    
-    text(value) {
-        if (value == null) {
-            return this._text
-        } else {
-            this._text = value;
-            this.getElement(elem => {elem.innerHTML = value});
-            return this
-        }
-    }
-    
-    build() {
-        return `${this.style()}<span id='${this.id()}' ${this.buildAttributeHTML()}>${this._text}</span>`
-    }
-}
-
 
 class EclairTextbox extends EclairObject {
     constructor() {
@@ -488,13 +459,14 @@ class EclairTextbox extends EclairObject {
     }
     
     value(text) {
+        let elem = this.getElement();
         if (text == null) {
-            let elem = this.getElement();
             if (elem != null) {
                 return elem.value;
             }
             return this.getAttr("value")
         } else {
+            if (elem != null) {elem.value = text;}
             this.setAttr("value", text)
             return this
         }
@@ -528,7 +500,7 @@ class EclairTextbox extends EclairObject {
     } 
     
     build() {
-        return `${this.style()}<input id='${this.id()}' ${this.buildAttributeHTML()}/>`
+        return `${this.buildStyleCode()}<input id='${this.id()}' ${this.buildAttributeHTML()}/>`
     }
     
 //autocomplete	Sets or returns the value of the autocomplete attribute of a text field
@@ -662,7 +634,7 @@ class EclairSelect extends EclairObject {
             options += this.buildOptionHTML(this.options[n]);
         }
         
-        return `${this.style()}<select id='${this.id()}' name='${this.name}' ${this.buildAttributeHTML()}>${options}</select>`
+        return `${this.buildStyleCode()}<select id='${this.id()}' name='${this.name}' ${this.buildAttributeHTML()}>${options}</select>`
     }
 }
 
@@ -699,14 +671,29 @@ class EclairButton extends EclairObject {
         if (typeof(text) != "string") {
             text = this.text.build()
         }
-        return `${this.style()}<button type='button' id='${this.id()}'  ${this.buildAttributeHTML()}>${this.text}</button>`
+        return `${this.buildStyleCode()}<button type='button' id='${this.id()}'  ${this.buildAttributeHTML()}>${this.text}</button>`
     }
 }
 
 class EclairSlider extends EclairObject {
     constructor() {
         super()
+        this.css("-webkit-appearance: none; box-sizing: border-box; width: 100%; height: 15px; border-radius: 5px; background: #d3d3d3; outline: none; opacity: 0.7; -webkit-transition: .2s; transition: opacity .2s;")
+        this.css("opacity: 1;", "hover")
+        this.css("-webkit-appearance: none; appearance: none; width: 25px; height: 25px; border-radius: 50%; background: #04AA6D; cursor: pointer;", ":-webkit-slider-thumb")
+        this.css("-webkit-appearance: none; appearance: none; width: 25px; height: 25px; border-radius: 50%; background: #04AA6D; cursor: pointer;", ":-moz-slider-thumb")
+
+        
         this.setAttr("type", "range")
+    }
+    
+    name(newName) {
+        if (newName == null) {
+            return this.getAttr("name");
+        } else {
+            this.setAttr("name", newName);
+            return this;
+        }
     }
     
     min(_min) {
@@ -728,7 +715,7 @@ class EclairSlider extends EclairObject {
     }
     
     step(_step) {
-        if (_max == null) {
+        if (_step == null) {
             return this.getAttr("step");
         } else {
             this.setAttr("step", _step);
@@ -750,7 +737,7 @@ class EclairSlider extends EclairObject {
     }
     
     build() {
-        return `${this.style()}<input id='${this.id()}' ${this.buildAttributeHTML()}/>`
+        return `${this.buildStyleCode()}<input id='${this.id()}' ${this.buildAttributeHTML()}/>`
     }
 }
 
@@ -818,6 +805,72 @@ class EclairLink extends EclairObject {
     }
     
     build() {
-        return `${this.style()}<a id='${this.id()}' ${this.buildAttributeHTML()}>${this._text}</a>`
+        return `${this.buildStyleCode()}<a id='${this.id()}' ${this.buildAttributeHTML()}>${this._text}</a>`
+    }
+}
+
+class EclairText extends EclairObject {
+    constructor(text) {
+        super()
+        this._text = text;
+    }
+    
+    type(newType) {
+        if (newType == "title") {
+            this.fontSize("40px")
+            this.font("arial")
+            this.fontWeight(700)
+            this.margin("50px 10px 10px 10px")
+        }
+        
+        if (newType == "subtitle") {
+            this.fontSize("25px")
+            this.font("arial")
+            this.margin("50px 10px 10px 10px")
+        }
+        
+        if (newType == "heading1") {
+            this.fontSize("30px")
+            this.font("arial")
+            this.fontWeight(700)
+            this.margin("50px 10px 10px 10px")
+        }
+        
+        if (newType == "heading2") {
+            this.fontSize("25px")
+            this.font("arial")
+            this.fontWeight(700)
+            this.margin("50px 10px 10px 10px")
+        }
+        
+        if (newType == "heading3") {
+            this.fontSize("20px")
+            this.font("arial")
+            this.fontWeight(700)
+            this.margin("50px 10px 10px 10px")
+        }
+        
+        if (newType == "heading4") {
+            this.fontSize("15px")
+            this.font("arial")
+            this.fontWeight(700)
+            this.margin("50px 10px 10px 10px")
+        }
+        
+        return this
+    }
+    
+    text(value) {
+        if (value == null) {
+            return this._text
+        } else {
+            this._text = value;
+            this.getElement(elem => {elem.innerHTML = value});
+            return this
+        }
+    }
+    
+    build() {
+        return `${this.buildStyleCode()}<span id='${this.id()}' ${this.buildAttributeHTML()}>${this._text}</span>`
     }
 }

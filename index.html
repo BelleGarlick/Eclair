@@ -14,86 +14,37 @@ let labelFont = new EclairObject()
     .fontWeight(700)
     .fontWeight(300, "hover")
 
-function labelWrapper(label, object) {
+
+let labelVehicleWidth = Text("Width"),
+    labelVehicleMass = Text("Mass");
+
+    
+function labelWrapper(label, slider) {
     return VBox([
         label.setStyle(labelFont),
-        object
-    ]).spacing(5)
+        slider
+    ]).spacing(5).css("width: 100%;")
 }
+
     
-let vWidthLabel = Text("Vehicle Width")
-
-
-let select = Select()
-    .addOptions(["test", "BMW", "testing a reall long one"])
-    .selectedIndex(2)
-    
-let text = Textbox()
-
 VBox([
-    eclair.Link("DuckDuckGo")
-        .target('_blank')
-        .href("http://www.duckduckgo.com")
-        .font("arial")
-        .onMouseOver(elem => {
-            elem.text("You got me")
-        }),
-    
-    text,
-    
-    Button("placeholder").onClick(() => {
-        text.placeholder("New placeholder")
-    }),
-    
-    Button("value").onClick(() => {
-        text.value("New value")
-    }),
-    
-    Button("pass").onClick(() => {
-        text.password(true)
-    }),
-    
-    Button("normal").onClick(() => {
-        text.password(false)
-    }),
-    
-    Button("maxlen 5").onClick(() => {
-        text.maxLength(5)
-    }),
+    Text("Params").type("title"),
     
     labelWrapper(
-        vWidthLabel,
-        Textbox("Type here...")
-            .onKeyUp((self) => {
-                vWidthLabel.text(`First Name: ${self.value()}`)
-            })
+        labelVehicleWidth,
+        Slider()
+            .min(20).max(40).value(30).step(0.1)
+            .onInput(e => {labelVehicleWidth.text(`Width: ${e.value()}`)})
     ),
     
     labelWrapper(
-        vWidthLabel,
-        Textbox("Type here...")
-            .onKeyUp((self) => {
-                vWidthLabel.text(`First Name: ${self.value()}`)
-            })
-    ),
-    
-    labelWrapper(
-        vWidthLabel,
-        Textbox("Type here...")
-            .onKeyUp((self) => {
-                vWidthLabel.text(`First Name: ${self.value()}`)
-            })
-    ),
-    
-    Slider()
-        .min(20)
-        .max(40)
-        .value(30)
-        .onInput(e => {
-            console.log(e.value())
-            vWidthLabel.text(e.value())
-        })
+        labelVehicleMass,
+        Slider()
+            .min(20).max(40).value(30).step(0.1)
+            .onInput(e => {labelVehicleMass.text(`Mass: ${e.value()}`)})
+    )
 ])
+    .css("width: 200px;")
     .spacing(25)
     .write()
 </script>
