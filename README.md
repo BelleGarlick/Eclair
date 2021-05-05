@@ -38,6 +38,7 @@ eclair.Button("Hello There!")
 ### Writing to html
 ### styling
 ### event handling
+### Subclasses
 ...
 
 # More documentation coming one day...

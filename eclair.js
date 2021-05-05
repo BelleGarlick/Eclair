@@ -10,7 +10,7 @@ let eclair = {
     Form: function(elements) {return new EclairForm(elements);},
     Image: function() {return new EclairImage();},
     Text: function(text) {return new EclairText(text);},
-    Textbox: function() {return new EclairTextbox();},
+    Textbox: function(placeholder) {return new EclairTextbox(placeholder);},
     
     // TODO Add events to callbacks
     // Event methods
@@ -590,6 +590,6 @@ class EclairTextbox extends EclairObject {
     }
     
     build() {
-        return `${this.style()}<input id='${this.id()}' type="text" placeholder="${this._placeholder}" value="${this._value}" ${this.eventHandlerHTML()}/>`
+        return `${this.style()}<input id='${this.id()}' type="text" placeholder="${this._placeholder}"  value="${this._value}" ${this.eventHandlerHTML()}/>`
     }
 }
