@@ -55,7 +55,7 @@ eclair.Select()
     .addOptions(["Welcome to the Jungle", "It's so Easy", "Nightrain",
                  "Out Ta Get Me", "Mr. Brownstone", "Sweet Child O' Mine"])
     .selectedIndex(5)
-    .onChange((self) => {
+    .onChange(self => {
         self.removeOption(self.value())
     })
     .write()

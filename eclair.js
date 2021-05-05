@@ -1,5 +1,4 @@
 // TODO Add events to callbacks
-// TODO Add update event handlers on change
 // TODO Prevent layered on click events
 // TODO Hide show elements
 
@@ -18,6 +17,7 @@ let eclair = {
     Textbox: function() {return new EclairTextbox();},
     
     Select: function() {return new EclairSelect();},
+    Link: function(text) {return new EclairLink(text);},
     
     // Event methods
     // Input Events
@@ -140,10 +140,9 @@ class EclairObject {
         return elem;
     }
     
-    update() {}
-    
     getAttr(key) {
-        this.getElement(elem => {return elem.getAttribute(key)})
+        let elem = this.getElement();
+        if (elem != null) {return elem.getAttribute(key);}
         return this.attributes[key];
     }
     
@@ -217,7 +216,7 @@ class EclairObject {
         let stylesheet = this.getStyleSheet(selector)
         stylesheet.styles["display"] = _display;
         
-        this.getElement((elem) => {elem.style.display = _display})
+        this.getElement(elem => {elem.style.display = _display})
         return this
     }
     
@@ -225,7 +224,7 @@ class EclairObject {
         let stylesheet = this.getStyleSheet(selector)
         stylesheet.styles["background"] = color;
         
-        this.getElement((elem) => {elem.style.background = color})
+        this.getElement(elem => {elem.style.background = color})
         return this
     }
     
@@ -327,33 +326,35 @@ class EclairObject {
     onResize(callback) {this._updateCallback("onResize", callback); this._onResize = callback; return this;}
     
     // TODO have check for if can run
-    performOnBlur() {this.update(); this._onBlur(this)}
-    performOnChange() {this.update(); this._onChange(this)}
-    performOnFocus() {this.update(); this._onFocus(this)}
-    performOnSelect() {this.update(); this._onSelect(this)}
-    performOnSubmit() {this.update(); this._onSubmit(this)}
-    performOnReset() {this.update(); this._onReset(this)}
-    performOnKeyDown() {this.update(); this._onKeyDown(this)}
-    performOnKeyPress() {this.update(); this._onKeyPress(this)}
-    performOnKeyUp() {this.update(); this._onKeyUp(this)}
-    performOnMouseDown() {this.update(); this._onMouseDown(this)}
-    performOnMouseUp() {this.update(); this._onMouseUp(this)}
-    performOnMouseOver() {this.update(); this._onMouseOver(this)}
-    performOnMouseOut() {this.update(); this._onMouseOut(this)}
-    performOnMouseMove() {this.update(); this._onMouseMove(this)}
-    performOnClick() {this.update(); this._onClick(this)}
-    performOnDblClick() {this.update(); this._onDblClick(this)}
-    performOnLoad() {this.update(); this._onLoad(this)}
-    performOnError() {this.update(); this._onError(this)}
-    performOnUnload() {this.update(); this._onUnload(this)}
-    performOnResize() {this.update(); this._onResize(this)}
+    performOnBlur() {this._onBlur(this)}
+    performOnChange() {this._onChange(this)}
+    performOnFocus() {this._onFocus(this)}
+    performOnSelect() {this._onSelect(this)}
+    performOnSubmit() {this._onSubmit(this)}
+    performOnReset() {this._onReset(this)}
+    performOnKeyDown() {this._onKeyDown(this)}
+    performOnKeyPress() {this._onKeyPress(this)}
+    performOnKeyUp() {this._onKeyUp(this)}
+    performOnMouseDown() {this._onMouseDown(this)}
+    performOnMouseUp() {this._onMouseUp(this)}
+    performOnMouseOver() {this._onMouseOver(this)}
+    performOnMouseOut() {this._onMouseOut(this)}
+    performOnMouseMove() {this._onMouseMove(this)}
+    performOnClick() {this._onClick(this)}
+    performOnDblClick() {this._onDblClick(this)}
+    performOnLoad() {this._onLoad(this)}
+    performOnError() {this._onError(this)}
+    performOnUnload() {this._onUnload(this)}
+    performOnResize() {this._onResize(this)}
     
     buildAttributeHTML() {
-        let self = this
-        let attrHTML = ""
+        let self = this;
+        let attrHTML = "";
+        
         Object.keys(this.attributes).forEach(function(key) {
-            attrHTML += ` ${key}='${self.attributes[key]}'`
+            attrHTML += ` ${key}='${self.attributes[key]}'`;
         });
+        
         return attrHTML;
     }
 }
@@ -486,7 +487,7 @@ class EclairText extends EclairObject {
             return this._text
         } else {
             this._text = value;
-            this.getElement((elem) => {elem.innerHTML = value});
+            this.getElement(elem => {elem.innerHTML = value});
             return this
         }
     }
@@ -495,9 +496,6 @@ class EclairText extends EclairObject {
         return `${this.style()}<span id='${this.id()}' ${this.buildAttributeHTML()}>${this._text}</span>`
     }
 }
-
-
-
 
 
 class EclairTextbox extends EclairObject {
@@ -526,6 +524,10 @@ class EclairTextbox extends EclairObject {
     
     value(text) {
         if (text == null) {
+            let elem = this.getElement();
+            if (elem != null) {
+                return elem.value;
+            }
             return this.getAttr("value")
         } else {
             this.setAttr("value", text)
@@ -719,7 +721,7 @@ class EclairButton extends EclairObject {
     
     value(newText) {
         this.text = newText;
-        this.getElement((elem) => {
+        this.getElement(elem => {
             let html = newText;
             if (typeof(html) != "string") {
                 html = html.build()
@@ -765,5 +767,44 @@ class EclairImage extends EclairObject {
     
     build() {
         return `<img${this.buildAttributeHTML()}/>`
+    }
+}
+
+class EclairLink extends EclairObject {
+    constructor(text) {
+        super()
+        this._text = text;
+    }
+    
+    text(_text) {
+        if (_text == null) {
+            return this._text;
+        } else {
+            this._text = _text;
+            this.getElement(elem => {elem.innerHTML = _text})
+            return this;
+        }
+    }
+    
+    target(_target) {
+        if (_target == null) {
+            return this.getAttr("target")
+        } else {
+            this.setAttr("target", _target)
+        }
+        return this
+    }
+    
+    href(_href) {
+        if (_href == null) {
+            return this.getAttr("href")
+        } else {
+            this.setAttr("href", _href)
+        }
+        return this
+    }
+    
+    build() {
+        return `${this.style()}<a id='${this.id()}' ${this.buildAttributeHTML()}>${this._text}</a>`
     }
 }

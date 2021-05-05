@@ -30,6 +30,14 @@ let select = Select()
 let text = Textbox()
 
 VBox([
+    eclair.Link("DuckDuckGo")
+        .target('_blank')
+        .href("http://www.duckduckgo.com")
+        .font("arial")
+        .onMouseOver(elem => {
+            elem.text("You got me")
+        }),
+    
     text,
     
     Button("placeholder").onClick(() => {
