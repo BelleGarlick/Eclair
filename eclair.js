@@ -57,14 +57,14 @@ class EclairStyleClass {
         
         this.selector = selector
         
-        this.styles = {}
+        this.rules = {}
     }
     
     build(objectID) {
         let styleCode = '';
         let self = this;
-        Object.keys(self.styles).forEach(function(key) {
-            let value = self.styles[key];
+        Object.keys(self.rules).forEach(function(key) {
+            let value = self.rules[key];
             if (value != null) {
                 if (key == "css") {
                     styleCode += value + ";";
@@ -90,10 +90,9 @@ class EclairObject {
         this._id = eclair.newID();
         eclair._elements[this.id()] = this;
         
-        this.styles = new EclairStyleClass();
-        this.hoverStyles = new EclairStyleClass(":hover");
-        this.activeStyles = new EclairStyleClass(":active");
-        this.focusedStyles = new EclairStyleClass(":focused");
+        this._styles = {
+            "": new EclairStyleClass()
+        }
         
         // TODO Maybe store in a map
         this._onBlur = null;
@@ -161,142 +160,104 @@ class EclairObject {
     }
     
     getStyleSheet(selector) {
-        if (selector == "hover") {
-            return this.hoverStyles;
-        }
-        if (selector == "active") {
-            return this.activeStyles;
-        }
-        if (selector == "focused") {
-            return this.focusedStyles;
+        if (selector == null) {
+            selector = ""
         }
         
-        return this.styles;
+        if (!this._styles.hasOwnProperty(selector)) {
+            this._styles[selector] = new EclairStyleClass(":" + selector)
+        }
+        
+        return this._styles[selector];
     }
     
     style() {
         let id = this.id()
-        return `<style>${this.styles.build(id)}${this.hoverStyles.build(id)}${this.activeStyles.build(id)}${this.focusedStyles.build(id)}</style>`
+        let self = this;
+        
+        let cssCode = ""
+        
+        Object.keys(this._styles).forEach(function(key) {
+            cssCode += self._styles[key].build(id);
+            console.log(cssCode)
+        });
+        
+        return `<style>${cssCode}</style>`
     }
     
     setStyle(referenceObject) {
+        console.log("Need to reimplement")
         let self = this;
-        Object.keys(referenceObject.styles.styles).forEach(function(key) {
-            let value = referenceObject.styles.styles[key];
-            if (value != null) {
-                self.styles.styles[key] = value;
-            }
-        });
-        Object.keys(referenceObject.hoverStyles.styles).forEach(function(key) {
-            let value = referenceObject.hoverStyles.styles[key];
-            if (value != null) {
-                self.hoverStyles.styles[key] = value;
-            }
-        });
-        Object.keys(referenceObject.activeStyles.styles).forEach(function(key) {
-            let value = referenceObject.activeStyles.styles[key];
-            if (value != null) {
-                self.activeStyles.styles[key] = value;
-            }
-        });
-        Object.keys(referenceObject.focusedStyles.styles).forEach(function(key) {
-            let value = referenceObject.focusedStyles.styles[key];
-            if (value != null) {
-                self.focusedStyles.styles[key] = value;
-            }
+        Object.keys(referenceObject._styles).forEach(function(key) {
+            let styleObject = referenceObject._styles[key];
         });
         
         return this
     }
     
     css(_style, selector) {
-        let stylesheet = this.getStyleSheet(selector)
-        stylesheet.styles["css"] = _style;
+        this.getStyleSheet(selector).rules["css"] = _style;
         return this
     }
     
     display(_display, selector) {
-        let stylesheet = this.getStyleSheet(selector)
-        stylesheet.styles["display"] = _display;
-        
+        this.getStyleSheet(selector).rules["display"] = _display;
         this.getElement(elem => {elem.style.display = _display})
         return this
     }
     
-    background(color, selector) {        
-        let stylesheet = this.getStyleSheet(selector)
-        stylesheet.styles["background"] = color;
-        
+    background(color, selector) {    
+        this.getStyleSheet(selector).rules["background"] = color;
         this.getElement(elem => {elem.style.background = color})
         return this
     }
     
     borderSize(size, selector) {
-        let stylesheet = this.getStyleSheet(selector)
-        stylesheet.styles["border-width"] = size;
-        
-        return this
+        this.getStyleSheet(selector).rules["border-width"] = size;        return this
     }
     
     borderColor(color, selector) {
-        let stylesheet = this.getStyleSheet(selector)
-        stylesheet.tyles["border-color"] = color;
-        
+        this.getStyleSheet(selector).rules["border-color"] = color;
         return this
     }
     
     borderStyle(style, selector) {
-        let stylesheet = this.getStyleSheet(selector)
-        stylesheet.styles["border-style"] = style;
-        
+        this.getStyleSheet(selector).rules["border-style"] = style;
         return this
     }
     
     borderRadius(radius, selector) {
-        let stylesheet = this.getStyleSheet(selector)
-        stylesheet.styles["border-radius"] = radius;
-        
+        this.getStyleSheet(selector).rules["padborder-radiusding"] = radius;
         return this
     }
     
     padding(size, selector) {
-        let stylesheet = this.getStyleSheet(selector)
-        stylesheet.styles["padding"] = size;
-        
+        this.getStyleSheet(selector).rules["padding"] = size;
         return this
     }
     
     margin(size, selector) {
-        let stylesheet = this.getStyleSheet(selector)
-        stylesheet.styles["margin"] = size;
-        
+        this.getStyleSheet(selector).rules["margin"] = size;
         return this
     }
     
     font(family, selector) {
-        let stylesheet = this.getStyleSheet(selector)
-        stylesheet.styles["font-family"] = family;
+        this.getStyleSheet(selector).rules["font-family"] = family;
         return this
     }
     
     fontSize(size, selector) {
-        let stylesheet = this.getStyleSheet(selector)
-        stylesheet.styles["font-size"] = size;
-        
+        this.getStyleSheet(selector).rules["font-size"] = size;
         return this
     }
     
     fontColor(color, selector) {
-        let stylesheet = this.getStyleSheet(selector)
-        stylesheet.styles["color"] = color;
-        
+        this.getStyleSheet(selector).rules["color"] = color;
         return this
     }
     
     fontWeight(weight, selector) {
-        let stylesheet = this.getStyleSheet(selector)
-        stylesheet.styles["font-weight"] = weight;
-        
+        this.getStyleSheet(selector).rules["font-weight"] = weight;
         return this
     }
     
@@ -762,6 +723,15 @@ class EclairSlider extends EclairObject {
             return this.getAttr("max");
         } else {
             this.setAttr("max", _max);
+        }
+        return this;
+    }
+    
+    step(_step) {
+        if (_max == null) {
+            return this.getAttr("step");
+        } else {
+            this.setAttr("step", _step);
         }
         return this;
     }
