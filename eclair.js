@@ -12,6 +12,8 @@ let eclair = {
     Text: function(text) {return new EclairText(text);},
     Textbox: function(placeholder) {return new EclairTextbox(placeholder);},
     
+    Select: function() {return new EclairSelect();},
+    
     // TODO Add events to callbacks
     // Event methods
     // Input Events
@@ -126,7 +128,7 @@ class EclairObject {
     }
     
     id() {
-        return "eclairElements" + this._id;
+        return "eclairElement" + this._id;
     }
     
     write() {
@@ -330,8 +332,7 @@ class EclairObject {
         if (this._onReset != null) {code += ` onreset='eclair.onResetCallback("${id}")'`}
         if (this._onKeyDown != null) {code += ` onkeydown='eclair.onKeyDownCallback("${id}")'`}
         if (this._onKeyPress != null) {code += ` onkeypress='eclair.onKeyPressCallback("${id}")'`}
-        if (this._onKeyUp != null) {code += ` onkeyup='eclair.onKeyUpCallbackCallback("${id}")'`}
-        if (this._onKeyUp != null) {code += ` onkeyup='eclair.onKeyUpCallbackCallback("${id}")'`}
+        if (this._onKeyUp != null) {code += ` onkeyup='eclair.onKeyUpCallback("${id}")'`}
         if (this._onMouseDown != null) {code += ` onmousedown='eclair.onMouseDownCallback("${id}")'`}
         if (this._onMouseUp != null) {code += ` onmouseup='eclair.onMouseUpCallback("${id}")'`}
         if (this._onMouseOver != null) {code += ` onmouseover='eclair.onMouseOverCallback("${id}")'`}
@@ -438,7 +439,7 @@ class EclairButton extends EclairObject {
         if (typeof(text) != "string") {
             text = this.text.build()
         }
-        return `${this.style()}<button class='jsd-button' type='button' id='${this.id()}'  ${this.eventHandlerHTML()}>${this.text}</button>`
+        return `${this.style()}<button type='button' id='${this.id()}'  ${this.eventHandlerHTML()}>${this.text}</button>`
     }
 }
 
@@ -505,20 +506,12 @@ class EclairText extends EclairObject {
         this._text = text;
     }
     
-    type(newTtype) {
-        if (newType == "title") {
-            this.fontSize("20px")
-            this.fontWeight(700)
-            this.margin("30px 10px 10px 10px")
-        }
-    }
-    
     type(newType) {
         if (newType == "title") {
             this.fontSize("40px")
             this.font("arial")
             this.fontWeight(700)
-            this.margin("10px 50px 10px 10px")
+            this.margin("50px 10px 10px 10px")
         }
         
         return this
@@ -552,8 +545,6 @@ class EclairTextbox extends EclairObject {
     constructor(placeholder) {
         super()
         
-        this._onChange = null
-        
         this._placeholder = placeholder;
         this._value = ""
         
@@ -564,7 +555,7 @@ class EclairTextbox extends EclairObject {
         this.font("arial")
         this.background("#dddddd", "hover")
         this.background("#cccccc", "active")
-        this.background("#bbbbbb", "focus")
+        this.background("#bbbbbb", "focused")
     }
     
     value(text) {
@@ -593,3 +584,140 @@ class EclairTextbox extends EclairObject {
         return `${this.style()}<input id='${this.id()}' type="text" placeholder="${this._placeholder}"  value="${this._value}" ${this.eventHandlerHTML()}/>`
     }
 }
+
+
+
+
+
+
+
+/***
+    Form Elements
+***/
+class EclairSelect extends EclairObject {
+    constructor() {
+        super()
+        
+        this.name = ""
+        this.options = []
+    }
+    
+    name(newName) {
+        if (newName == null) {
+            return this.name;
+        } else {
+            this.name = newName;
+
+            let elem = this.getElement();
+            if (elem != null) {
+                elem.setAttribute("name", newName);
+            }
+
+            return this;
+        }
+    }
+    
+    value(newValue) {
+        if (newValue == null) {
+            return this.getElement().value;
+        } else {
+            for (let n = 0; n < this.options.length; n++) {
+                this.options[n].selected = newValue == this.options[n].value;
+            }
+
+            let elem = this.getElement();
+            if (elem != null) {
+                this.getElement().value = newValue;
+            }
+
+            return this;
+        }
+    }
+    
+    selectedIndex(index) {
+        if (index == null) {
+            return this.getElement().selectedIndex;
+        } else {
+            for (let n = 0; n < this.options.length; n++) {
+                console.log(index == n)
+                this.options[n].selected = index == n;
+            }
+            
+            let elem = this.getElement();
+            if (elem != null) {
+                this.getElement().selectedIndex = `${index}`;
+            }
+            
+            return this;
+        }
+    }
+    
+    addOption(value, text, selected) {
+        if (typeof(text) == "boolean" && selected == null) {
+            selected = text;
+            text = null;
+        }
+        if (text == null) {text = value}
+        if (selected == null) {selected = false}
+        
+        let newOption = {
+            "value": value,
+            "text": text,
+            "selected": selected
+        }
+        
+        this.options.push(newOption)
+        
+        let elem = this.getElement();
+        if (elem != null) {
+            elem.appendChild(this.buildOptionHTML(newOption))
+        }
+        
+        return this;
+    }
+    
+    removeOption(value) {
+        let nonRemovedOptions = []
+        for (let n = 0; n < this.options.length; n++) {
+            if (this.options[n].value != value) {
+                nonRemovedOptions.push(this.options[n]);
+            }
+        }
+        this.options = nonRemovedOptions;
+        
+        // Remove HTML elements
+        let elem = this.getElement()
+        if (elem != null) {
+            let ops = elem.children;
+            let removes = [];
+            
+            for (let o = 0; o < ops.length; o++) {
+                if (ops[o].value == value) {
+                    removes.push(ops[o]);
+                }
+            }
+            
+            for (let r = 0; r < removes.length; r++) {
+                elem.removeChild(removes[r]);
+            }
+        }
+        
+        return this;
+    }
+    
+    buildOptionHTML(newOption) {
+        return `<option value='${newOption.value}'${newOption.selected ? " selected": ""}>${newOption.text}</option>`
+    }
+    
+    build() {
+        let options = ""
+        for (let n = 0; n < this.options.length; n++) {
+            options += this.buildOptionHTML(this.options[n]);
+        }
+        
+        return `${this.style()}<select id='${this.id()}' name='${this.name}' ${this.eventHandlerHTML()}>${options}</select>`
+    }
+}
+
+
+

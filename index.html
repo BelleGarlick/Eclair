@@ -4,7 +4,8 @@ let Button = eclair.Button,
     Textbox = eclair.Textbox,
     VBox = eclair.VBox,
     Text = eclair.Text,
-    Form = eclair.Form;
+    Form = eclair.Form,
+    Select = eclair.Select;
     
 let labelFont = new EclairObject()
     .font("arial")
@@ -12,42 +13,55 @@ let labelFont = new EclairObject()
     .fontWeight(700)
     .fontWeight(300, "hover")
 
+function labelWrapper(label, object) {
+    return VBox([
+        label.setStyle(labelFont),
+        object
+    ]).spacing(5)
+}
     
-let firstNameLabel = Text("First Name").setStyle(labelFont)
-let secondNameLabel = Text("Second Name").setStyle(labelFont)
+let vWidthLabel = Text("Vehicle Width")
 
-let form = eclair.Form([
-    VBox([
-        Text("Who are you?")
-            .type("title"),
-        
-        firstNameLabel,
+
+let select = Select()
+    .addOption("test")
+    .addOption("BMW", "G")
+    .addOption("testing a reall long one")
+    .onChange((self) => {
+        self.value("Not that one mate")
+    })
+    
+    
+VBox([
+    select,
+    
+    Text("Sidebar Demo")
+        .type("title"),
+    
+    labelWrapper(
+        vWidthLabel,
         Textbox("Type here...")
             .onKeyUp((self) => {
-                firstNameLabel.text(`First Name: ${self.value()}`)
-            }),
-        
-        secondNameLabel,
+                vWidthLabel.text(`First Name: ${self.value()}`)
+            })
+    ),
+    
+    labelWrapper(
+        vWidthLabel,
         Textbox("Type here...")
             .onKeyUp((self) => {
-                firstNameLabel.text(`First Name: ${self.value()}`)
+                vWidthLabel.text(`First Name: ${self.value()}`)
             })
-            .onMouseDown((self) => {
-                firstNameLabel.text(`down`)
-            })
-            .onMouseUp((self) => {
-                firstNameLabel.text(`up`)
-            }),
+    ),
     
-        Button("Submit")
-            .onClick(() => {
-                form.submit()
+    labelWrapper(
+        vWidthLabel,
+        Textbox("Type here...")
+            .onKeyUp((self) => {
+                vWidthLabel.text(`First Name: ${self.value()}`)
             })
-
-    ]).spacing(10)
+    ),
 ])
-    .action("/submit/")
-    .method("POST")
-
-form.write()
+    .spacing(25)
+    .write()
 </script>
