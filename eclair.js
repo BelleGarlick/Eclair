@@ -652,6 +652,13 @@ class EclairSelect extends EclairObject {
         }
     }
     
+    addOptions(items) {
+        for (let i = 0; i < items.length; i++) {
+            this.addOption(items[i]);
+        }
+        return this;
+    }
+    
     addOption(value, text, selected) {
         if (typeof(text) == "boolean" && selected == null) {
             selected = text;

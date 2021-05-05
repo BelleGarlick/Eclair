@@ -54,12 +54,10 @@ Eclair
 ``` html
 <script>
 eclair.Select()
-    .addOption("Welcome to the Jungle")
-    .addOption("It's so Easy")
-    .addOption("Nightrain")
-    .addOption("Out Ta Get Me")
-    .addOption("Mr. Brownstone")
-    .addOption("Sweet Child O' Mine", true)
+    .addOptions([
+        "Welcome to the Jungle", "It's so Easy", "Nightrain",
+        "Out Ta Get Me", "Mr. Brownstone", "Sweet Child O' Mine"])
+    .selectedIndex(5)
     .onChange((self) => {
         self.removeOption(self.value())
     })

@@ -24,12 +24,8 @@ let vWidthLabel = Text("Vehicle Width")
 
 
 let select = Select()
-    .addOption("test")
-    .addOption("BMW", "G")
-    .addOption("testing a reall long one")
-    .onChange((self) => {
-        self.value("Not that one mate")
-    })
+    .addOptions(["test", "BMW", "testing a reall long one"])
+    .selectedIndex(2)
     
     
 VBox([
