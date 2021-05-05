@@ -28,6 +28,7 @@ eclair.Button("Hello There!")
     .onClick(() => {
         alert("General Kenobi")
     })
+    .write()
 </script>
 ```
 

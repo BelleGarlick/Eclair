@@ -4,13 +4,13 @@ let eclair = {
     
     newID: function() {this._ids += 1; return this._ids - 1;},
     
-    VBox: function(elements) {return new JVBoxClass(elements);},
-    HBox: function(elements) {return new JHBoxClass(elements);},
-    Button: function(text) {return new JButtonClass(text);},
-    Form: function(elements) {return new JFormClass(elements);},
-    Image: function() {return new JImageClass();},
-    Text: function(text) {return new JTextClass(text);},
-    Textbox: function() {return new JTextboxClass();},
+    VBox: function(elements) {return new EclairVBox(elements);},
+    HBox: function(elements) {return new EclairHBox(elements);},
+    Button: function(text) {return new EclairButton(text);},
+    Form: function(elements) {return new EclairForm(elements);},
+    Image: function() {return new EclairImage();},
+    Text: function(text) {return new EclairText(text);},
+    Textbox: function() {return new EclairTextbox();},
     
     // TODO Add events to callbacks
     // Event methods
@@ -348,7 +348,7 @@ class EclairObject {
 }
 
 
-class JView extends EclairObject {
+class EclairView extends EclairObject {
     constructor(elements) {
         super()
         this.elements = elements;
@@ -364,7 +364,7 @@ class JView extends EclairObject {
 }
 
 
-class JVBoxClass extends EclairObject {
+class EclairVBox extends EclairObject {
     constructor(elements) {
         super()
         
@@ -390,7 +390,7 @@ class JVBoxClass extends EclairObject {
 }
 
 
-class JHBoxClass extends EclairObject {
+class EclairHBox extends EclairObject {
     constructor(elements) {
         super()
         
@@ -416,7 +416,7 @@ class JHBoxClass extends EclairObject {
 }
 
 
-class JButtonClass extends EclairObject {
+class EclairButton extends EclairObject {
     constructor(text) {
         super()
         
@@ -443,7 +443,7 @@ class JButtonClass extends EclairObject {
 }
 
 
-class JFormClass extends EclairObject {
+class EclairForm extends EclairObject {
     constructor(elements) {
         super()
         
@@ -479,7 +479,7 @@ class JFormClass extends EclairObject {
 
 
 
-class JImageClass extends EclairObject {
+class EclairImage extends EclairObject {
     constructor() {
         super()
         
@@ -499,7 +499,7 @@ class JImageClass extends EclairObject {
 
 
 
-class JTextClass extends EclairObject {
+class EclairText extends EclairObject {
     constructor(text) {
         super()
         this._text = text;
@@ -548,7 +548,7 @@ class JTextClass extends EclairObject {
 
 
 
-class JTextboxClass extends EclairObject {
+class EclairTextbox extends EclairObject {
     constructor(placeholder) {
         super()
         
