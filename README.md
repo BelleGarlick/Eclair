@@ -1,4 +1,4 @@
-# JS-Declarative UI
+# js-dECLAIRative UI
 
 
 Don't ask why, ask why not. This library is a declarative UI maker for websites. Angular, React, Vue, etc. are all designed to help make coding web UIs easier (they do a good job of it). But often you'll find yourself still having to use HTML and CSS to do things. And the code isn't much easier to do anyways. This library takes inspiration for SwiftUI's superiour way of coding a UI...but for websites. It's easy, simple and you need to write a lot less code.
@@ -20,12 +20,12 @@ HTML + CSS + JS
 <button class="myButton" onclick="myButtonClick()">Hello There!</button>
 ```
 
-JSDUI
+Eclair
 ```
 <script>
-JButton("Hello There!")
+eclair.Button("Hello There!")
     .fontSize("10px")
-    .press(() => {
+    .onClick(() => {
         alert("General Kenobi")
     })
 </script>
@@ -33,6 +33,10 @@ JButton("Hello There!")
 
 
 # How does it work?
+### Base Eclair Object
+### Writing to html
+### styling
+### event handling
 ...
 
 # More documentation coming one day...

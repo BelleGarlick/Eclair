@@ -1,34 +1,46 @@
-<script src="src/jsd.js"></script>
+<script src="src/eclair.js"></script>
 <script>
-let labelFont = new JSDObject()
+let Button = eclair.Button,
+    Textbox = eclair.Textbox,
+    VBox = eclair.VBox,
+    Text = eclair.Text,
+    Form = eclair.Form;
+    
+let labelFont = new EclairObject()
     .font("arial")
     .fontColor("#aaaa00")
     .fontWeight(700)
     .fontWeight(300, "hover")
-    
-    
-let firstNameLabel = JText("First Name").setStyle(labelFont)
-let secondNameLabel = JText("Second Name").setStyle(labelFont)
 
-let form = JForm([
-    JVBox([
-        JText("Who are you?")
+    
+let firstNameLabel = Text("First Name").setStyle(labelFont)
+let secondNameLabel = Text("Second Name").setStyle(labelFont)
+
+let form = eclair.Form([
+    VBox([
+        Text("Who are you?")
             .type("title"),
         
         firstNameLabel,
-        JTextbox("Type here...")
-            .onKeyDown((self) => {
+        Textbox("Type here...")
+            .onKeyUp((self) => {
                 firstNameLabel.text(`First Name: ${self.value()}`)
             }),
         
         secondNameLabel,
-        JTextbox("Type here...")
-            .onBlur((self) => {
-                secondNameLabel.text("Lost focus")
+        Textbox("Type here...")
+            .onKeyUp((self) => {
+                firstNameLabel.text(`First Name: ${self.value()}`)
+            })
+            .onMouseDown((self) => {
+                firstNameLabel.text(`down`)
+            })
+            .onMouseUp((self) => {
+                firstNameLabel.text(`up`)
             }),
     
-        JButton("Submit")
-            .press(() => {
+        Button("Submit")
+            .onClick(() => {
                 form.submit()
             })
 

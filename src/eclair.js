@@ -1,29 +1,47 @@
-let jIDs = 0
-let jsdElements = {}
+let eclair = {
+    _ids: 0,
+    _elements: {},
+    
+    newID: function() {this._ids += 1; return this._ids - 1;},
+    
+    VBox: function(elements) {return new JVBoxClass(elements);},
+    HBox: function(elements) {return new JHBoxClass(elements);},
+    Button: function(text) {return new JButtonClass(text);},
+    Form: function(elements) {return new JFormClass(elements);},
+    Image: function() {return new JImageClass();},
+    Text: function(text) {return new JTextClass(text);},
+    Textbox: function() {return new JTextboxClass();},
+    
+    // TODO Add events to callbacks
+    // Event methods
+    // Input Events
+    onBlurCallback: function(eID) {this._elements[eID].performOnBlur();},
+    onChangeCallback: function(eID) {this._elements[eID].performOnChange();},
+    onFocusCallback: function(eID) {this._elements[eID].performOnFocus();},
+    onSelectCallback: function(eID) {this._elements[eID].performOnSelect();},
+    onSubmitCallback: function(eID) {this._elements[eID].performOnSubmit();},
+    onResetCallback: function(eID) {this._elements[eID].performOnReset();},
+    onKeyDownCallback: function(eID) {this._elements[eID].performOnKeyDown();},
+    onKeyPressCallback: function(eID) {this._elements[eID].performOnKeyPress();},
+    onKeyUpCallback: function(eID) {this._elements[eID].performOnKeyUp();},
+    // Mouse Events
+    onMouseDownCallback: function(eID) {this._elements[eID].performOnMouseDown();},
+    onMouseUpCallback: function(eID) {this._elements[eID].performOnMouseUp();},
+    onMouseOverCallback: function(eID) {this._elements[eID].performOnMouseOver();},
+    onMouseOutCallback: function(eID) {this._elements[eID].performOnMouseOut();},
+    onMouseMoveCallback: function(eID) {this._elements[eID].performOnMouseMove();},
+    // Click Events
+    onClickCallback: function(eID) {this._elements[eID].performOnClick();},
+    onDblClickCallback: function(eID) {this._elements[eID].performOnDblClick();},
+    // Load Events
+    onLoadCallback: function(eID) {this._elements[eID].performOnLoad();},
+    onErrorCallback: function(eID) {this._elements[eID].performOnError();},
+    onUnloadCallback: function(eID) {this._elements[eID].performOnUnload();},
+    onResizeCallback: function(eID) {this._elements[eID].performOnResize();},
+}
 
-// Factory methods
-function JVBox(text) {return new JVBoxClass(text);}
-function JHBox(text) {return new JHBoxClass(text);}
-function JButton(text) {return new JButtonClass(text);}
-function JForm(text) {return new JFormClass(text);}
-function JImage(text) {return new JImageClass(text);}
-function JText(text) {return new JTextClass(text);}
-function JTextbox(text) {return new JTextboxClass(text);}
 
-// Event methods
-// Input Events
-function jsdOnBlur(jID) {jsdElements[jID].performOnBlur();}
-function jsdOnChange(jID) {jsdElements[jID].performOnChange();}
-function jsdOnFocus(jID) {jsdElements[jID].performOnFocus();}
-function jsdOnSelect(jID) {jsdElements[jID].performOnSelect();}
-function jsdOnSubmit(jID) {jsdElements[jID].performOnSubmit();}
-function jsdOnReset(jID) {jsdElements[jID].performOnReset();}
-function jsdOnKeyDown(jID) {jsdElements[jID].performOnKeyDown();}
-function jsdOnKeyPress(jID) {jsdElements[jID].performOnKeyPress();}
-function jsdOnKeyUp(jID) {jsdElements[jID].performOnKeyUp();}
-function jsdOnKeyUp(jID) {jsdElements[jID].performOnKeyUp();}
-
-class JSDStyleClass {
+class EclairStyleClass {
     constructor(selector) {
         if (selector == null) {
             selector = ""
@@ -64,37 +82,51 @@ class JSDStyleClass {
         if (styleCode.length == 0) {
             return ""
         }
+        
         return `#${objectID}${this.selector}{${styleCode}}`
     }
 }
 
 
-class JSDObject {
+class EclairObject {
     constructor() {
-        this._id = jIDs;
-        jIDs += 1
-         
-        jsdElements[this.id()] = this;
+        this._id = eclair.newID();
+        eclair._elements[this.id()] = this;
         
-        this.styles = new JSDStyleClass();
-        this.hoverStyles = new JSDStyleClass(":hover");
-        this.activeStyles = new JSDStyleClass(":active");
-        this.focusedStyles = new JSDStyleClass(":focused");
+        this.styles = new EclairStyleClass();
+        this.hoverStyles = new EclairStyleClass(":hover");
+        this.activeStyles = new EclairStyleClass(":active");
+        this.focusedStyles = new EclairStyleClass(":focused");
         
-        this._onBlur = null
-        this._onChange = null
-        this._onFocus = null
-        this._onSelect = null
-        this._onSubmit = null
-        this._onReset = null
-        this._onKeyDown = null
-        this._onKeyPress = null
-        this._onKeyUp = null
-        this._onKeyUp = null
+        // TODO Maybe store in a map
+        this._onBlur = null;
+        this._onChange = null;
+        this._onFocus = null;
+        this._onSelect = null;
+        this._onSubmit = null;
+        this._onReset = null;
+        this._onKeyDown = null;
+        this._onKeyPress = null;
+        this._onKeyUp = null;
+        this._onKeyUp = null;
+        // Mouse Events
+        this._onMouseDown = null;
+        this._onMouseUp = null;
+        this._onMouseOver = null;
+        this._onMouseOut = null;
+        this._onMouseMove = null;
+        // Click Events
+        this._onClick = null;
+        this._onDblClick = null;
+        // Load Events
+        this._onLoad = null;
+        this._onError = null;
+        this._onUnload = null;
+        this._onResize = null;
     }
     
     id() {
-        return "jsdObject" + this._id;
+        return "eclairElements" + this._id;
     }
     
     write() {
@@ -108,6 +140,8 @@ class JSDObject {
     getElement() {
         return document.getElementById(this.id())
     }
+    
+    update() {}
     
     getStyleSheet(selector) {
         if (selector == "hover") {
@@ -251,39 +285,70 @@ class JSDObject {
     onKeyDown(callback) {this._onKeyDown = callback; return this;}
     onKeyPress(callback) {this._onKeyPress = callback; return this;}
     onKeyUp(callback) {this._onKeyUp = callback; return this;}
-    onKeyUp(callback) {this._onKeyUp = callback; return this;}
+    onMouseDown(callback) {this._onMouseDown = callback; return this;}
+    onMouseUp(callback) {this._onMouseUp = callback; return this;}
+    onMouseOver(callback) {this._onMouseOver = callback; return this;}
+    onMouseOut(callback) {this._onMouseOut = callback; return this;}
+    onMouseMove(callback) {this._onMouseMove = callback; return this;}
+    onClick(callback) {this._onClick = callback; return this;}
+    onDblClick(callback) {this._onDblClick = callback; return this;}
+    onLoad(callback) {this._onLoad = callback; return this;}
+    onError(callback) {this._onError = callback; return this;}
+    onUnload(callback) {this._onUnload = callback; return this;}
+    onResize(callback) {this._onResize = callback; return this;}
     
     // TODO have check for if can run
-    performOnBlur() {this._onBlur(this)}
-    performOnChange() {this._onChange(this)}
-    performOnFocus() {this._onFocus(this)}
-    performOnSelect() {this._onSelect(this)}
-    performOnSubmit() {this._onSubmit(this)}
-    performOnReset() {this._onReset(this)}
-    performOnKeyDown() {this._onKeyDown(this)}
-    performOnKeyPress() {this._onKeyPress(this)}
-    performOnKeyUp() {this._onKeyUp(this)}
-    performOnKeyUp() {this._onKeyUp(this)}
+    performOnBlur() {this.update(); this._onBlur(this)}
+    performOnChange() {this.update(); this._onChange(this)}
+    performOnFocus() {this.update(); this._onFocus(this)}
+    performOnSelect() {this.update(); this._onSelect(this)}
+    performOnSubmit() {this.update(); this._onSubmit(this)}
+    performOnReset() {this.update(); this._onReset(this)}
+    performOnKeyDown() {this.update(); this._onKeyDown(this)}
+    performOnKeyPress() {this.update(); this._onKeyPress(this)}
+    performOnKeyUp() {this.update(); this._onKeyUp(this)}
+    performOnMouseDown() {this.update(); this._onMouseDown(this)}
+    performOnMouseUp() {this.update(); this._onMouseUp(this)}
+    performOnMouseOver() {this.update(); this._onMouseOver(this)}
+    performOnMouseOut() {this.update(); this._onMouseOut(this)}
+    performOnMouseMove() {this.update(); this._onMouseMove(this)}
+    performOnClick() {this.update(); this._onClick(this)}
+    performOnDblClick() {this.update(); this._onDblClick(this)}
+    performOnLoad() {this.update(); this._onLoad(this)}
+    performOnError() {this.update(); this._onError(this)}
+    performOnUnload() {this.update(); this._onUnload(this)}
+    performOnResize() {this.update(); this._onResize(this)}
     
     eventHandlerHTML() {
         let id = this.id()
         let code = "";
-        if (this._onBlur != null) {code += `onblur='jsdOnBlur("${id}")'`}
-        if (this._onChange != null) {code += `onchange='jsdOnChange("${id}")'`}
-        if (this._onFocus != null) {code += `onfocus='jsdOnFocus("${id}")'`}
-        if (this._onSelect != null) {code += `onselect='jsdOnSelect("${id}")'`}
-        if (this._onSubmit != null) {code += `onsubmit='jsdOnSubmit("${id}")'`}
-        if (this._onReset != null) {code += `onreset='jsdOnReset("${id}")'`}
-        if (this._onKeyDown != null) {code += `onkeydown='jsdOnKeyDown("${id}")'`}
-        if (this._onKeyPress != null) {code += `onkeypress='jsdOnKeyPress("${id}")'`}
-        if (this._onKeyUp != null) {code += `onkeyup='jsdOnKeyUp("${id}")'`}
-        if (this._onKeyUp != null) {code += `onkeyup='jsdOnKeyUp("${id}")'`}
+        if (this._onBlur != null) {code += ` onblur='eclair.onBlurCallback("${id}")'`}
+        if (this._onChange != null) {code += ` onchange='eclair.onChangeCallback("${id}")'`}
+        if (this._onFocus != null) {code +=  `onfocus='eclair.onFocusCallback("${id}")'`}
+        if (this._onSelect != null) {code += ` onselect='eclair.onSelectCallback("${id}")'`}
+        if (this._onSubmit != null) {code += ` onsubmit='eclair.onSubmitCallback("${id}")'`}
+        if (this._onReset != null) {code += ` onreset='eclair.onResetCallback("${id}")'`}
+        if (this._onKeyDown != null) {code += ` onkeydown='eclair.onKeyDownCallback("${id}")'`}
+        if (this._onKeyPress != null) {code += ` onkeypress='eclair.onKeyPressCallback("${id}")'`}
+        if (this._onKeyUp != null) {code += ` onkeyup='eclair.onKeyUpCallbackCallback("${id}")'`}
+        if (this._onKeyUp != null) {code += ` onkeyup='eclair.onKeyUpCallbackCallback("${id}")'`}
+        if (this._onMouseDown != null) {code += ` onmousedown='eclair.onMouseDownCallback("${id}")'`}
+        if (this._onMouseUp != null) {code += ` onmouseup='eclair.onMouseUpCallback("${id}")'`}
+        if (this._onMouseOver != null) {code += ` onmouseover='eclair.onMouseOverCallback("${id}")'`}
+        if (this._onMouseOut != null) {code += ` onmouseout='eclair.onMouseOutCallback("${id}")'`}
+        if (this._onMouseMove != null) {code += ` onmousemove='eclair.onMouseMoveCallback("${id}")'`}
+        if (this._onClick != null) {code += ` onclick='eclair.onClickCallback("${id}")'`}
+        if (this._onDblClick != null) {code += ` ondblclick='eclair.onDblClickCallback("${id}")'`}
+        if (this._onLoad != null) {code += ` onload='eclair.onLoadCallback("${id}")'`}
+        if (this._onError != null) {code += ` onerror='eclair.onErrorCallback("${id}")'`}
+        if (this._onUnload != null) {code += ` onunload='eclair.onUnloadCallback("${id}")'`}
+        if (this._onResize != null) {code += ` onresize='eclair.onResizeCallback("${id}")'`}
         return code;
     }
 }
 
 
-class JView extends JSDObject {
+class JView extends EclairObject {
     constructor(elements) {
         super()
         this.elements = elements;
@@ -299,7 +364,7 @@ class JView extends JSDObject {
 }
 
 
-class JVBoxClass extends JSDObject {
+class JVBoxClass extends EclairObject {
     constructor(elements) {
         super()
         
@@ -325,7 +390,7 @@ class JVBoxClass extends JSDObject {
 }
 
 
-class JHBoxClass extends JSDObject {
+class JHBoxClass extends EclairObject {
     constructor(elements) {
         super()
         
@@ -351,7 +416,7 @@ class JHBoxClass extends JSDObject {
 }
 
 
-class JButtonClass extends JSDObject {
+class JButtonClass extends EclairObject {
     constructor(text) {
         super()
         
@@ -368,26 +433,17 @@ class JButtonClass extends JSDObject {
         this.background("#cccccc", "active")
     }
     
-    press(action) {
-        this._press = action;
-        return this;
-    }
-    
-    performPress() {
-        this._press(this)
-    }
-    
     build() {
         let text = this.text;
         if (typeof(text) != "string") {
             text = this.text.build()
         }
-        return `${this.style()}<button class='jsd-button' type='button' id='${this.id()}' onclick="jPress('${this.id()}')" ontap="dPress('${this.id()}')">${this.text}</button>`
+        return `${this.style()}<button class='jsd-button' type='button' id='${this.id()}'  ${this.eventHandlerHTML()}>${this.text}</button>`
     }
 }
 
 
-class JFormClass extends JSDObject {
+class JFormClass extends EclairObject {
     constructor(elements) {
         super()
         
@@ -423,7 +479,7 @@ class JFormClass extends JSDObject {
 
 
 
-class JImageClass extends JSDObject {
+class JImageClass extends EclairObject {
     constructor() {
         super()
         
@@ -436,14 +492,14 @@ class JImageClass extends JSDObject {
     }
     
     build() {
-        return "<img src='" + this._src + "'/>"
+        return "<img src='" + this._src + "' ${this.eventHandlerHTML()}/>"
     }
 }
 
 
 
 
-class JTextClass extends JSDObject {
+class JTextClass extends EclairObject {
     constructor(text) {
         super()
         this._text = text;
@@ -484,7 +540,7 @@ class JTextClass extends JSDObject {
     }
     
     build() {
-        return `${this.style()}<span id='${this.id()}'>${this._text}</span>`
+        return `${this.style()}<span id='${this.id()}' ${this.eventHandlerHTML()}>${this._text}</span>`
     }
 }
 
@@ -492,7 +548,7 @@ class JTextClass extends JSDObject {
 
 
 
-class JTextboxClass extends JSDObject {
+class JTextboxClass extends EclairObject {
     constructor(placeholder) {
         super()
         
@@ -516,39 +572,24 @@ class JTextboxClass extends JSDObject {
             return this._value
         } else {
             this._value = text;
+            
+            let elem = this.getElement();
+            if (elem != null) {
+                this.elem = text;
+            }
+            
             return this
         }
     }
     
-    onChange(func) {
-        this._onChange = func;
-        return this;
-    }
-    
-    performOnChange() {
+    update(func) {
         let elem = this.getElement();
         if (elem != null) {
             this._value = elem.value;
         }
-        
-        if (this._onChange != null) {
-            this._onChange(this)
-        }
     }
     
-    // TODO Override to update value
-    performOnBlur() {this._onBlur(this)}
-    performOnChange() {this._onChange(this)}
-    performOnFocus() {this._onFocus(this)}
-    performOnSelect() {this._onSelect(this)}
-    performOnSubmit() {this._onSubmit(this)}
-    performOnReset() {this._onReset(this)}
-    performOnKeyDown() {this._onKeyDown(this)}
-    performOnKeyPress() {this._onKeyPress(this)}
-    performOnKeyUp() {this._onKeyUp(this)}
-    performOnKeyUp() {this._onKeyUp(this)}
-    
     build() {
-        return `${this.style()}<input id='${this.id()}' class='jsd-textbox' type="text" placeholder="${this._placeholder}" value="${this._value}" ${this.eventHandlerHTML()}/>`
+        return `${this.style()}<input id='${this.id()}' type="text" placeholder="${this._placeholder}" value="${this._value}" ${this.eventHandlerHTML()}/>`
     }
 }
