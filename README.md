@@ -6,7 +6,7 @@ Don't ask why, ask why not. This library is a declarative UI builder for website
 ## Examples
 
 HTML + CSS + JS
-```
+```html
 <style>
     .myButton {
         font-size: 10px;
@@ -21,7 +21,7 @@ HTML + CSS + JS
 ```
 
 Eclair
-```
+```html
 <script>
 eclair.Button("Hello There!")
     .fontSize("10px")
