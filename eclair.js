@@ -1,6 +1,10 @@
 // TODO Add events to callbacks
 // TODO Prevent layered on click events
 // TODO Hide show elements
+// TODO Superscript/Subscript text
+// TODO Height, width, display
+// TODO Theme 
+// TODO Overflow hidden, opacity
 
 let eclair = {
     _ids: 0,
@@ -19,6 +23,7 @@ let eclair = {
     Select: function() {return new EclairSelect();},
     Link: function(text) {return new EclairLink(text);},
     Slider: function() {return new EclairSlider();},
+    ProgressBar: function() {return new EclairProgressBar();},
     
     // Event methods
     // Input Events
@@ -51,26 +56,18 @@ let eclair = {
 
 class EclairStyleClass {
     constructor(selector) {
-        if (selector == null) {
-            selector = ""
-        }
-        
-        this.selector = selector
-        
+        this.selector = selector == null? "" : selector
         this.rules = {}
     }
     
     build(objectID) {
         let styleCode = '';
         let self = this;
+        
         Object.keys(self.rules).forEach(function(key) {
             let value = self.rules[key];
             if (value != null) {
-                if (key == "css") {
-                    styleCode += value + ";";
-                } else {
-                    styleCode += `${key}:${value};` 
-                }
+                styleCode += (key == "css")? value + ";" : `${key}:${value};` 
             }
         });
     
@@ -203,7 +200,8 @@ class EclairObject {
     }
     
     borderSize(size, selector) {
-        this.getStyleSheet(selector).rules["border-width"] = size;        return this
+        this.getStyleSheet(selector).rules["border-width"] = size;        
+        return this
     }
     
     borderColor(color, selector) {
@@ -217,7 +215,7 @@ class EclairObject {
     }
     
     borderRadius(radius, selector) {
-        this.getStyleSheet(selector).rules["padborder-radiusding"] = radius;
+        this.getStyleSheet(selector).rules["border-radius"] = radius;
         return this
     }
     
@@ -248,6 +246,16 @@ class EclairObject {
     
     fontWeight(weight, selector) {
         this.getStyleSheet(selector).rules["font-weight"] = weight;
+        return this
+    }
+    
+    textAlign(_align, selector) {
+        this.getStyleSheet(selector).rules["text-align"] = _align;
+        return this
+    }
+    
+    verticalAlign(_align, selector) {
+        this.getStyleSheet(selector).rules["vertical-align"] = _align;
         return this
     }
     
@@ -343,13 +351,17 @@ class EclairView extends EclairObject {
     }
 }
 
-
 class EclairVBox extends EclairObject {
     constructor(elements) {
         super()
         
         this._spacing = 0
         this.elements = elements;
+        this.getStyleSheet().rules["table-layout"] = "fixed"
+        this.setAttr("border", 0)
+        this.setAttr("cellspacing", 0)
+        this.setAttr("cellpadding", 0)
+        this.textAlign("center")
     }
     
     spacing(space) {
@@ -358,7 +370,7 @@ class EclairVBox extends EclairObject {
     }
     
     build () {
-        let code = this.buildStyleCode() + "<table id='"+this.id()+"' border=0 cellpadding=0 cellspacing=0>"
+        let code = this.buildStyleCode() + "<table id='"+this.id()+"' "+this.buildAttributeHTML()+">"
         for (let e = 0; e < this.elements.length; e++) {
             if (e > 0) {
                 code += "<tr><td height='"+ this._spacing +"px'></td></tr>"
@@ -369,13 +381,17 @@ class EclairVBox extends EclairObject {
     }
 }
 
-
 class EclairHBox extends EclairObject {
     constructor(elements) {
         super()
         
         this._spacing = 0
         this.elements = elements;
+        this.getStyleSheet().rules["table-layout"] = "fixed"
+        this.setAttr("border", 0)
+        this.setAttr("cellspacing", 0)
+        this.setAttr("cellpadding", 0)
+        this.textAlign("center")
     }
     
     spacing(space) {
@@ -384,7 +400,7 @@ class EclairHBox extends EclairObject {
     }
     
     build () {
-        let code = this.buildStyleCode() + "<table id='"+this.id()+"' border=0 cellpadding=0 cellspacing=0>"
+        let code = this.buildStyleCode() + "<table id='"+this.id()+"' "+this.buildAttributeHTML()+">"
         for (let e = 0; e < this.elements.length; e++) {
             if (e > 0) {
                 code += "<td width='"+ this._spacing +"px'></td>"
@@ -394,7 +410,6 @@ class EclairHBox extends EclairObject {
         return code + "</table>";
     }
 }
-
 
 class EclairForm extends EclairObject {
     constructor(elements) {
@@ -741,6 +756,77 @@ class EclairSlider extends EclairObject {
     }
 }
 
+class EclairProgressBar extends EclairObject {
+    constructor() {
+        super()
+        
+        this._progress = 0
+        this._striped = false
+        
+        this.label = eclair.Text("0%")
+            .font("arial")
+            .fontColor("white")
+            .fontWeight(700)
+            .fontSize("11px")    
+        
+        this.indicator = eclair.HBox([this.label])
+            .background("red")
+            .borderRadius("3px")
+            .css("height: 100%; transition: 0.3s all")
+        
+        this.progress(0)
+        this.displayLabel(false)
+        this.background("#eeeeee")
+        this.borderRadius("3px")
+        this.css("height: 16px; overflow: hidden;")
+    }
+    
+    striped(_on) {
+        if (_on == null) {
+            return this._striped;
+        } else {
+            if (_on) {
+                this.indicator.getStyleSheet().rules["background-image"] = "linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent)";
+                this.indicator.getStyleSheet().rules["background-size"] = "1rem 1rem;";
+            } else {
+                this.indicator.getStyleSheet().rules["background-image"] = "";
+                this.indicator.getStyleSheet().rules["background-size"] = "1rem 1rem;";
+            }
+        }
+        
+        return this;
+    }
+    
+    progress(_progress) {
+        if (_progress == null) {
+            return this._progress;
+        } else {
+            _progress = Math.max(Math.min(_progress, 1), 0)
+            this._progress = _progress;
+            this.label.text(Math.round(_progress * 100) + "%")
+            this.indicator.setAttr("width", (_progress * 100 + 0.0001) + "%")
+            return this
+        }
+    }
+    
+    displayLabel(_show) {
+        if (_show == null) {
+            return this.label.getStyleSheet().rules["opacity"] != "0";
+        } else {
+            if (_show) {
+                this.label.getStyleSheet().rules["opacity"] = "1";
+            } else {
+                this.label.getStyleSheet().rules["opacity"] = "0";
+            }
+            return this;
+        }
+    }
+    
+    build() {
+        return `${this.buildStyleCode()}<div id='${this.id()}' ${this.buildAttributeHTML()}>${this.indicator.build()}</div>`
+    }
+}
+
 
 /*
     Standard Elements
@@ -813,6 +899,8 @@ class EclairText extends EclairObject {
     constructor(text) {
         super()
         this._text = text;
+        this._subscript = false;
+        this._superscript = false;
     }
     
     type(newType) {
@@ -870,7 +958,20 @@ class EclairText extends EclairObject {
         }
     }
     
+//    subscript() {
+//        this._subscript = true; return this;
+//    }
+    
+//    superscript() {
+//        .css("vertical-align: sub;font-size: smaller;")
+//        this._superscript = true; return this;
+//    }
+    
     build() {
-        return `${this.buildStyleCode()}<span id='${this.id()}' ${this.buildAttributeHTML()}>${this._text}</span>`
+        let tagName = "span";
+        if (this._superscript) {tagName = "sup"}
+        if (this._subscript) {tagName = "sub"}
+        
+        return `${this.buildStyleCode()}<${tagName} id='${this.id()}' ${this.buildAttributeHTML()}>${this._text}</${tagName}>`
     }
 }

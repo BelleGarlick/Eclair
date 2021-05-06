@@ -23,12 +23,20 @@ function labelWrapper(label, slider) {
     return VBox([
         label.setStyle(labelFont),
         slider
-    ]).spacing(5).css("width: 100%;")
+    ]).spacing(5).css("width: 100%;").textAlign("left")
 }
-
+    
+let progress = eclair.ProgressBar()
+    .striped(true)
+    .progress(0.4)
+    .displayLabel(true)
     
 VBox([
-    Text("Params").type("title"),
+    new EclairView([
+        Text("Params"),
+        Text("Params")
+    ]),
+    Text("Params").type("heading1"),
     
     labelWrapper(
         labelVehicleWidth,
@@ -40,11 +48,25 @@ VBox([
     labelWrapper(
         labelVehicleMass,
         Slider()
-            .min(20).max(40).value(30).step(0.1)
-            .onInput(e => {labelVehicleMass.text(`Mass: ${e.value()}`)})
-    )
+            .min(0).max(1).value(0.5).step(0.01)
+            .onInput(e => {
+                progress.progress(e.value())
+            })
+    ),
+    progress,
+    
+    Button("+").onClick(() => {
+        progress.progress(progress.progress() + 0.1)
+    }),
+    
+    Button("-").onClick(() => {
+        progress.progress(progress.progress() - 0.1)
+    })
+    
+    
 ])
-    .css("width: 200px;")
+    .css("width: 280px;")
     .spacing(25)
+    .textAlign("left")
     .write()
 </script>
