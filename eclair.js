@@ -8,12 +8,10 @@
 
 let eclair = {
     _ids: 0,
-    _elements: {},
-    
     _styleIDs: 0,
-    
     newID: function() {this._ids += 1; return this._ids - 1;},
     newStyleID: function() {this._ids += 1; return this._ids - 1;},
+    _elements: {},
     
     Style: function() {return new EclairSharedStyleObject();},
     
@@ -33,30 +31,7 @@ let eclair = {
     
     // Event methods
     // Input Events
-    onBlurCallback: function(eID) {this._elements[eID].performOnBlur();},
-    onChangeCallback: function(eID) {this._elements[eID].performOnChange();},
-    onFocusCallback: function(eID) {this._elements[eID].performOnFocus();},
-    onSelectCallback: function(eID) {this._elements[eID].performOnSelect();},
-    onSubmitCallback: function(eID) {this._elements[eID].performOnSubmit();},
-    onResetCallback: function(eID) {this._elements[eID].performOnReset();},
-    onKeyDownCallback: function(eID) {this._elements[eID].performOnKeyDown();},
-    onKeyPressCallback: function(eID) {this._elements[eID].performOnKeyPress();},
-    onKeyUpCallback: function(eID) {this._elements[eID].performOnKeyUp();},
-    onInputCallback: function(eID) {this._elements[eID].performOnInput();},
-    // Mouse Events
-    onMouseDownCallback: function(eID) {this._elements[eID].performOnMouseDown();},
-    onMouseUpCallback: function(eID) {this._elements[eID].performOnMouseUp();},
-    onMouseOverCallback: function(eID) {this._elements[eID].performOnMouseOver();},
-    onMouseOutCallback: function(eID) {this._elements[eID].performOnMouseOut();},
-    onMouseMoveCallback: function(eID) {this._elements[eID].performOnMouseMove();},
-    // Click Events
-    onClickCallback: function(eID) {this._elements[eID].performOnClick();},
-    onDblClickCallback: function(eID) {this._elements[eID].performOnDblClick();},
-    // Load Events
-    onLoadCallback: function(eID) {this._elements[eID].performOnLoad();},
-    onErrorCallback: function(eID) {this._elements[eID].performOnError();},
-    onUnloadCallback: function(eID) {this._elements[eID].performOnUnload();},
-    onResizeCallback: function(eID) {this._elements[eID].performOnResize();},
+    performCallback: function(eID, event) {this._elements[eID].performCallback(event);},
     
     theme: {
         "accent": "#dd6600"
@@ -171,38 +146,12 @@ class EclairObject extends EclairStylableObject {
     constructor() {
         super()
         
+        this._callbacks = {}
         this.sharedStyles = []
         this.attributes = {}
         
         this._id = eclair.newID();
         eclair._elements[this.id()] = this;
-        
-        // TODO Maybe store in a map
-        this._onBlur = null;
-        this._onChange = null;
-        this._onFocus = null;
-        this._onSelect = null;
-        this._onSubmit = null;
-        this._onReset = null;
-        this._onKeyDown = null;
-        this._onKeyPress = null;
-        this._onKeyUp = null;
-        this._onKeyUp = null;
-        this._onInput = null;
-        // Mouse Events
-        this._onMouseDown = null;
-        this._onMouseUp = null;
-        this._onMouseOver = null;
-        this._onMouseOut = null;
-        this._onMouseMove = null;
-        // Click Events
-        this._onClick = null;
-        this._onDblClick = null;
-        // Load Events
-        this._onLoad = null;
-        this._onError = null;
-        this._onUnload = null;
-        this._onResize = null;
     }
     
     id() {
@@ -286,55 +235,36 @@ class EclairObject extends EclairStylableObject {
     }
     
     _updateCallback(callbackKey, callback) {
+        this._callbacks[callbackKey] = callback;
         if (callback == null) {
             this.setAttr(callbackKey.toLowerCase(), null)
         } else {
-            this.setAttr(callbackKey.toLowerCase(), `eclair.${callbackKey}Callback("${this.id()}")`)
+            this.setAttr(callbackKey.toLowerCase(), `eclair.performCallback("${this.id()}", "${callbackKey}")`)
         }
+        return this;
     }
-    onBlur(callback) {this._updateCallback("onBlur", callback); this._onBlur = callback;  return this;}
-    onChange(callback) {this._updateCallback("onChange", callback); this._onChange = callback; return this;}
-    onFocus(callback) {this._updateCallback("onFocus", callback); this._onFocus = callback; return this;}
-    onSelect(callback) {this._updateCallback("onSelect", callback); this._onSelect = callback; return this;}
-    onSubmit(callback) {this._updateCallback("onSubmit", callback); this._onSubmit = callback; return this;}
-    onReset(callback) {this._updateCallback("onReset", callback); this._onReset = callback; return this;}
-    onKeyDown(callback) {this._updateCallback("onKeyDown", callback); this._onKeyDown = callback; return this;}
-    onKeyPress(callback) {this._updateCallback("onKeyPress", callback); this._onKeyPress = callback; return this;}
-    onKeyUp(callback) {this._updateCallback("onKeyUp", callback); this._onKeyUp = callback; return this;}
-    onInput(callback) {this._updateCallback("onInput", callback); this._onInput = callback; return this;}
-    onMouseDown(callback) {this._updateCallback("onMouseDown", callback); this._onMouseDown = callback; return this;}
-    onMouseUp(callback) {this._updateCallback("onMouseUp", callback); this._onMouseUp = callback; return this;}
-    onMouseOver(callback) {this._updateCallback("onMouseOver", callback); this._onMouseOver = callback; return this;}
-    onMouseOut(callback) {this._updateCallback("onMouseOut", callback); this._onMouseOut = callback; return this;}
-    onMouseMove(callback) {this._updateCallback("onMouseMove", callback); this._onMouseMove = callback; return this;}
-    onClick(callback) {this._updateCallback("onClick", callback); this._onClick = callback; return this;}
-    onDblClick(callback) {this._updateCallback("onDblClick", callback); this._onDblClick = callback; return this;}
-    onLoad(callback) {this._updateCallback("onLoad", callback); this._onLoad = callback; return this;}
-    onError(callback) {this._updateCallback("onError", callback); this._onError = callback; return this;}
-    onUnload(callback) {this._updateCallback("onUnload", callback); this._onUnload = callback; return this;}
-    onResize(callback) {this._updateCallback("onResize", callback); this._onResize = callback; return this;}
-    
-    performOnBlur() {this._onBlur(this)}
-    performOnChange() {this._onChange(this)}
-    performOnFocus() {this._onFocus(this)}
-    performOnSelect() {this._onSelect(this)}
-    performOnSubmit() {this._onSubmit(this)}
-    performOnReset() {this._onReset(this)}
-    performOnKeyDown() {this._onKeyDown(this)}
-    performOnKeyPress() {this._onKeyPress(this)}
-    performOnKeyUp() {this._onKeyUp(this)}
-    performOnInput() {this._onInput(this)}
-    performOnMouseDown() {this._onMouseDown(this)}
-    performOnMouseUp() {this._onMouseUp(this)}
-    performOnMouseOver() {this._onMouseOver(this)}
-    performOnMouseOut() {this._onMouseOut(this)}
-    performOnMouseMove() {this._onMouseMove(this)}
-    performOnClick() {this._onClick(this)}
-    performOnDblClick() {this._onDblClick(this)}
-    performOnLoad() {this._onLoad(this)}
-    performOnError() {this._onError(this)}
-    performOnUnload() {this._onUnload(this)}
-    performOnResize() {this._onResize(this)}
+    onBlur(callback) {return this._updateCallback("onBlur", callback);}
+    onChange(callback) {return this._updateCallback("onChange", callback);}
+    onFocus(callback) {return this._updateCallback("onFocus", callback);}
+    onSelect(callback) {return this._updateCallback("onSelect", callback);}
+    onSubmit(callback) {return this._updateCallback("onSubmit", callback);}
+    onReset(callback) {return this._updateCallback("onReset", callback);}
+    onKeyDown(callback) {return this._updateCallback("onKeyDown", callback);}
+    onKeyPress(callback) {return this._updateCallback("onKeyPress", callback);}
+    onKeyUp(callback) {return this._updateCallback("onKeyUp", callback);}
+    onInput(callback) {return this._updateCallback("onInput", callback);}
+    onMouseDown(callback) {return this._updateCallback("onMouseDown", callback);}
+    onMouseUp(callback) {return this._updateCallback("onMouseUp", callback);}
+    onMouseOver(callback) {return this._updateCallback("onMouseOver", callback);}
+    onMouseOut(callback) {return this._updateCallback("onMouseOut", callback);}
+    onMouseMove(callback) {return this._updateCallback("onMouseMove", callback);}
+    onClick(callback) {return this._updateCallback("onClick", callback);}
+    onDblClick(callback) {return this._updateCallback("onDblClick", callback);}
+    onLoad(callback) {return this._updateCallback("onLoad", callback);}
+    onError(callback) {return this._updateCallback("onError", callback);}
+    onUnload(callback) {return this._updateCallback("onUnload", callback);}
+    onResize(callback) {return this._updateCallback("onResize", callback);}
+    performCallback(event) {this._callbacks[event](this);}
     
     buildAttributeHTML() {
         let self = this;
@@ -360,7 +290,7 @@ class EclairView extends EclairObject {
         for (let e = 0; e < this.elements.length; e++) {
              code += this.elements[e].build();
         }
-        return code;
+        return "<div>" + code + "</div>";
     }
 }
 
@@ -799,11 +729,11 @@ class EclairProgressBar extends EclairObject {
             .css("transition: 0.3s all")
         
         this.progress(0)
-        this.background("#d3d3d3")
-        this.displayLabel(false)
-        this.borderRadius("3px")
-        this.height("16px")
-        this.overflow("hidden")
+            .background("#d3d3d3")
+            .displayLabel(false)
+            .borderRadius("3px")
+            .height("16px")
+            .overflow("hidden")
     }
     
     striped(_on) {
@@ -930,16 +860,11 @@ class EclairText extends EclairObject {
     
     type(newType) {
         if (newType == "title") {
-            this.fontSize("40px")
-            this.font("arial")
-            this.fontWeight(700)
-            this.margin("50px 10px 10px 10px")
+            this.fontSize("40px").font("arial").fontWeight(700).margin("50px 10px 10px 10px")
         }
         
         if (newType == "subtitle") {
-            this.fontSize("25px")
-            this.font("arial")
-            this.margin("50px 10px 10px 10px")
+            this.fontSize("25px").font("arial").margin("50px 10px 10px 10px")
         }
         
         if (newType == "heading1") {
