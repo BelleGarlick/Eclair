@@ -2,16 +2,22 @@
 // TODO Prevent layered on click events
 // TODO Hide show elements
 // TODO Superscript/Subscript text
-// TODO Height, width, display
 // TODO Theme 
-// TODO Overflow hidden, opacity
+// TODO Implement these: https://getbootstrap.com/docs/4.0/components/progress/
+
 
 let eclair = {
     _ids: 0,
     _elements: {},
     
-    newID: function() {this._ids += 1; return this._ids - 1;},
+    _styleIDs: 0,
     
+    newID: function() {this._ids += 1; return this._ids - 1;},
+    newStyleID: function() {this._ids += 1; return this._ids - 1;},
+    
+    Style: function() {return new EclairSharedStyleObject();},
+    
+    View: function(elements) {return new EclairView(elements);},
     VBox: function(elements) {return new EclairVBox(elements);},
     HBox: function(elements) {return new EclairHBox(elements);},
     Button: function(text) {return new EclairButton(text);},
@@ -51,45 +57,125 @@ let eclair = {
     onErrorCallback: function(eID) {this._elements[eID].performOnError();},
     onUnloadCallback: function(eID) {this._elements[eID].performOnUnload();},
     onResizeCallback: function(eID) {this._elements[eID].performOnResize();},
+    
+    theme: {
+        "accent": "#dd6600"
+    }
 }
 
 
-class EclairStyleClass {
-    constructor(selector) {
-        this.selector = selector == null? "" : selector
-        this.rules = {}
+// Class for storing specific styles and containing all selectors.
+class EclairStylableObject {
+    constructor() {
+        this._styles = {}
+        this._stylePrefix = "#"
     }
     
-    build(objectID) {
-        let styleCode = '';
-        let self = this;
-        
-        Object.keys(self.rules).forEach(function(key) {
-            let value = self.rules[key];
-            if (value != null) {
-                styleCode += (key == "css")? value + ";" : `${key}:${value};` 
-            }
-        });
-    
-        if (styleCode.length == 0) {
-            return ""
+    getStyleSheet(selector) {
+        if (selector == null) {
+            selector = ""
         }
         
-        return `#${objectID}${this.selector}{${styleCode}}`
+        if (!this._styles.hasOwnProperty(selector)) {
+            this._styles[selector] = {}
+        }
+        
+        return this._styles[selector];
+    }
+    
+    buildStyleCode(cssOnly) {
+        if (cssOnly == null) {cssOnly = false}
+        let self = this;
+        let objectID = this.id()
+        
+        let styleCode = ""
+        
+        
+        Object.keys(self._styles).forEach(function(selector) {
+            let styleSheet = self._styles[selector];
+            let styleSheetCode = '';
+            
+            Object.keys(self._styles[selector]).forEach(function(key) {
+                let value = self._styles[selector][key]
+                if (value != null) {
+                    styleSheetCode += (key == "css")? value + ";" : `${key}:${value};` 
+                }
+            });
+            
+            if (selector.length > 0) {selector = ":" + selector}
+            styleCode += `${self._stylePrefix}${objectID}${selector}{${styleSheetCode}}`;
+        });
+        
+        if (styleCode.length == 0) {return "";}
+        
+        if (cssOnly) {
+            return styleCode
+        }
+        
+        return `<style id='${objectID}-css'>${styleCode}</style>`;
+    }
+    
+    updateCSSStyle() {
+        let objectID = this.id() + "-css"
+        let cssElement = document.getElementById(objectID);
+        if (cssElement != null) {
+            cssElement.innerHTML = this.buildStyleCode(true)
+        }
+        
+        return this;
+    }
+    
+    css(_style, selector) {this.getStyleSheet(selector)["css"] = _style; return this.updateCSSStyle()}
+    display(_display, selector) {this.getStyleSheet(selector)["display"] = _display;return this.updateCSSStyle();}
+    background(color, selector) {this.getStyleSheet(selector)["background"] = color;return this.updateCSSStyle();}
+    borderSize(size, selector) {this.getStyleSheet(selector)["border-width"] = size; return this.updateCSSStyle()}
+    borderColor(color, selector) {this.getStyleSheet(selector)["border-color"] = color; return this.updateCSSStyle()}
+    borderStyle(style, selector) {this.getStyleSheet(selector)["border-style"] = style; return this.updateCSSStyle()}
+    borderRadius(radius, selector) {this.getStyleSheet(selector)["border-radius"] = radius; return this.updateCSSStyle()}
+    padding(size, selector) {this.getStyleSheet(selector)["padding"] = size; return this.updateCSSStyle()}
+    margin(size, selector) {this.getStyleSheet(selector)["margin"] = size; return this.updateCSSStyle()}
+    font(family, selector) {this.getStyleSheet(selector)["font-family"] = family; return this.updateCSSStyle()}
+    fontSize(size, selector) {this.getStyleSheet(selector)["font-size"] = size; return this.updateCSSStyle()}
+    fontColor(color, selector) {this.getStyleSheet(selector)["color"] = color; return this.updateCSSStyle()}
+    fontWeight(weight, selector) {this.getStyleSheet(selector)["font-weight"] = weight; return this.updateCSSStyle()}
+    width(_width, selector) {this.getStyleSheet(selector)["width"] = _width; return this.updateCSSStyle();}
+    height(_height, selector) {this.getStyleSheet(selector)["height"] = _height; return this.updateCSSStyle();}
+    display(_display, selector) {this.getStyleSheet(selector)["display"] = _display; return this.updateCSSStyle();}
+    overflow(_overflow, selector) {this.getStyleSheet(selector)["overflow"] = _overflow; return this.updateCSSStyle();}
+    opacity(_opacity, selector) {this.getStyleSheet(selector)["opacity"] = _opacity; return this.updateCSSStyle();}
+    textAlign(_align, selector) {this.getStyleSheet(selector)["text-align"] = _align; return this.updateCSSStyle()}
+    verticalAlign(_align, selector) {this.getStyleSheet(selector)["vertical-align"] = _align;return this.updateCSSStyle()}
+}
+
+
+class EclairSharedStyleObject extends EclairStylableObject {
+    constructor() {
+        super()
+        this._id = eclair.newStyleID()
+        
+        this._stylePrefix = "."
+        
+        let node = document.createElement("style")
+        node.innerHTML = this.buildStyleCode(true)
+        node.setAttribute("id", this.id() + "-css")
+        document.head.appendChild(node)
+    }
+    
+    id() {
+        return "eclairStyle" + this._id;
     }
 }
 
 
-class EclairObject {
+class EclairObject extends EclairStylableObject {
     constructor() {
+        super()
+        
+        this.sharedStyles = []
         this.attributes = {}
         
         this._id = eclair.newID();
         eclair._elements[this.id()] = this;
-        
-        this._styles = {
-            "": new EclairStyleClass()
-        }
         
         // TODO Maybe store in a map
         this._onBlur = null;
@@ -156,107 +242,47 @@ class EclairObject {
         return this;
     }
     
-    getStyleSheet(selector) {
-        if (selector == null) {
-            selector = ""
+    addStyle(sharedStyleObject) {
+        let sharedID = sharedStyleObject.id()
+        let found = false;
+        for (let n = 0; n < this.sharedStyles.length; n++) {
+            found = found || this.sharedStyles[n] == sharedID;
         }
         
-        if (!this._styles.hasOwnProperty(selector)) {
-            this._styles[selector] = new EclairStyleClass(":" + selector)
+        if (!found) {
+            this.sharedStyles.push(sharedID);
         }
         
-        return this._styles[selector];
-    }
-    
-    setStyle(referenceObject) {
-        let self = this;
+        let classesString = "";
+        for (let n = 0; n < this.sharedStyles.length; n++) {
+            if (n > 0) {classesString += " ";}
+            classesString += this.sharedStyles[n];
+        }
+        this.setAttr("class", classesString)
         
-        Object.keys(referenceObject._styles).forEach(function(key) {
-            let styleObject = referenceObject._styles[key]
-            let selfStyleSheet = self.getStyleSheet(key)
-            Object.keys(styleObject.rules).forEach(function(key) {
-                selfStyleSheet.rules[key] = styleObject.rules[key]
-            });
-        });
+        return this;
+    }
+    
+    removeStyle(sharedStyleObject) {
+        let sharedID = sharedStyleObject.id()
         
-        return this
-    }
-    
-    css(_style, selector) {
-        this.getStyleSheet(selector).rules["css"] = _style;
-        return this
-    }
-    
-    display(_display, selector) {
-        this.getStyleSheet(selector).rules["display"] = _display;
-        this.getElement(elem => {elem.style.display = _display})
-        return this
-    }
-    
-    background(color, selector) {    
-        this.getStyleSheet(selector).rules["background"] = color;
-        this.getElement(elem => {elem.style.background = color})
-        return this
-    }
-    
-    borderSize(size, selector) {
-        this.getStyleSheet(selector).rules["border-width"] = size;        
-        return this
-    }
-    
-    borderColor(color, selector) {
-        this.getStyleSheet(selector).rules["border-color"] = color;
-        return this
-    }
-    
-    borderStyle(style, selector) {
-        this.getStyleSheet(selector).rules["border-style"] = style;
-        return this
-    }
-    
-    borderRadius(radius, selector) {
-        this.getStyleSheet(selector).rules["border-radius"] = radius;
-        return this
-    }
-    
-    padding(size, selector) {
-        this.getStyleSheet(selector).rules["padding"] = size;
-        return this
-    }
-    
-    margin(size, selector) {
-        this.getStyleSheet(selector).rules["margin"] = size;
-        return this
-    }
-    
-    font(family, selector) {
-        this.getStyleSheet(selector).rules["font-family"] = family;
-        return this
-    }
-    
-    fontSize(size, selector) {
-        this.getStyleSheet(selector).rules["font-size"] = size;
-        return this
-    }
-    
-    fontColor(color, selector) {
-        this.getStyleSheet(selector).rules["color"] = color;
-        return this
-    }
-    
-    fontWeight(weight, selector) {
-        this.getStyleSheet(selector).rules["font-weight"] = weight;
-        return this
-    }
-    
-    textAlign(_align, selector) {
-        this.getStyleSheet(selector).rules["text-align"] = _align;
-        return this
-    }
-    
-    verticalAlign(_align, selector) {
-        this.getStyleSheet(selector).rules["vertical-align"] = _align;
-        return this
+        let newStyles = []
+        for (let n = 0; n < this.sharedStyles.length; n++) {
+            if (this.sharedStyles[n] != sharedID) {
+                newStyles.push(sharedID)
+            }
+        }
+        
+        this.sharedStyles = newStyles;
+        
+        let classesString = "";
+        for (let n = 0; n < this.sharedStyles.length; n++) {
+            if (n > 0) {classesString += " ";}
+            classesString += this.sharedStyles[n];
+        }
+        this.setAttr("class", classesString)
+        
+        return this;
     }
     
     _updateCallback(callbackKey, callback) {
@@ -320,19 +346,6 @@ class EclairObject {
         
         return attrHTML;
     }
-    
-    buildStyleCode() {
-        let id = this.id()
-        let self = this;
-        
-        let cssCode = ""
-        
-        Object.keys(this._styles).forEach(function(key) {
-            cssCode += self._styles[key].build(id);
-        });
-        
-        return `<style>${cssCode}</style>`
-    }
 }
 
 
@@ -357,7 +370,7 @@ class EclairVBox extends EclairObject {
         
         this._spacing = 0
         this.elements = elements;
-        this.getStyleSheet().rules["table-layout"] = "fixed"
+        this.getStyleSheet()["table-layout"] = "fixed"
         this.setAttr("border", 0)
         this.setAttr("cellspacing", 0)
         this.setAttr("cellpadding", 0)
@@ -387,7 +400,7 @@ class EclairHBox extends EclairObject {
         
         this._spacing = 0
         this.elements = elements;
-        this.getStyleSheet().rules["table-layout"] = "fixed"
+        this.getStyleSheet()["table-layout"] = "fixed"
         this.setAttr("border", 0)
         this.setAttr("cellspacing", 0)
         this.setAttr("cellpadding", 0)
@@ -693,13 +706,23 @@ class EclairButton extends EclairObject {
 class EclairSlider extends EclairObject {
     constructor() {
         super()
-        this.css("-webkit-appearance: none; box-sizing: border-box; width: 100%; height: 15px; border-radius: 5px; background: #d3d3d3; outline: none; opacity: 0.7; -webkit-transition: .2s; transition: opacity .2s;")
-        this.css("opacity: 1;", "hover")
-        this.css("-webkit-appearance: none; appearance: none; width: 25px; height: 25px; border-radius: 50%; background: #04AA6D; cursor: pointer;", ":-webkit-slider-thumb")
-        this.css("-webkit-appearance: none; appearance: none; width: 25px; height: 25px; border-radius: 50%; background: #04AA6D; cursor: pointer;", ":-moz-slider-thumb")
+    
+        this.css("-webkit-appearance: none; box-sizing: border-box; outline: none; -webkit-transition: .2s; transition: opacity .2s;")
+        this.css("-webkit-appearance: none; appearance: none; width: 25px; height: 25px; border-radius: 50%; cursor: pointer;", ":-webkit-slider-thumb")
+        this.css("-webkit-appearance: none; appearance: none; width: 25px; height: 25px; border-radius: 50%; cursor: pointer;", ":-moz-slider-thumb")
 
         
         this.setAttr("type", "range")
+        this.background("#d3d3d3")
+        this.background(eclair.theme.accent, ":-webkit-slider-thumb")
+        this.background(eclair.theme.accent, ":-moz-slider-thumb")
+        
+        this.width("100%")
+        this.height("15px")
+        this.borderRadius("5px")
+        this.opacity(0.7)
+        this.opacity(1, "hover")
+        
     }
     
     name(newName) {
@@ -770,15 +793,17 @@ class EclairProgressBar extends EclairObject {
             .fontSize("11px")    
         
         this.indicator = eclair.HBox([this.label])
-            .background("red")
+            .background(eclair.theme.accent)
             .borderRadius("3px")
-            .css("height: 100%; transition: 0.3s all")
+            .height("100%")
+            .css("transition: 0.3s all")
         
         this.progress(0)
+        this.background("#d3d3d3")
         this.displayLabel(false)
-        this.background("#eeeeee")
         this.borderRadius("3px")
-        this.css("height: 16px; overflow: hidden;")
+        this.height("16px")
+        this.overflow("hidden")
     }
     
     striped(_on) {
@@ -786,11 +811,11 @@ class EclairProgressBar extends EclairObject {
             return this._striped;
         } else {
             if (_on) {
-                this.indicator.getStyleSheet().rules["background-image"] = "linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent)";
-                this.indicator.getStyleSheet().rules["background-size"] = "1rem 1rem;";
+                this.indicator.getStyleSheet()["background-image"] = "linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent)";
+                this.indicator.getStyleSheet()["background-size"] = "1rem 1rem;";
             } else {
-                this.indicator.getStyleSheet().rules["background-image"] = "";
-                this.indicator.getStyleSheet().rules["background-size"] = "1rem 1rem;";
+                this.indicator.getStyleSheet()["background-image"] = "";
+                this.indicator.getStyleSheet()["background-size"] = "1rem 1rem;";
             }
         }
         
@@ -811,12 +836,12 @@ class EclairProgressBar extends EclairObject {
     
     displayLabel(_show) {
         if (_show == null) {
-            return this.label.getStyleSheet().rules["opacity"] != "0";
+            return this.label.getStyleSheet()["opacity"] != "0";
         } else {
             if (_show) {
-                this.label.getStyleSheet().rules["opacity"] = "1";
+                this.label.getStyleSheet()["opacity"] = "1";
             } else {
-                this.label.getStyleSheet().rules["opacity"] = "0";
+                this.label.getStyleSheet()["opacity"] = "0";
             }
             return this;
         }

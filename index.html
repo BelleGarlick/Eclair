@@ -8,11 +8,16 @@ let Button = eclair.Button,
     Select = eclair.Select,
     Slider = eclair.Slider;
     
-let labelFont = new EclairObject()
+    
+let labelFont = eclair.Style()
     .font("arial")
     .fontColor("#aaaa00")
     .fontWeight(700)
     .fontWeight(300, "hover")
+
+    
+let labelFont2 = eclair.Style()
+    .fontColor("#a00a00")
 
 
 let labelVehicleWidth = Text("Width"),
@@ -21,7 +26,7 @@ let labelVehicleWidth = Text("Width"),
     
 function labelWrapper(label, slider) {
     return VBox([
-        label.setStyle(labelFont),
+        label.addStyle(labelFont),
         slider
     ]).spacing(5).css("width: 100%;").textAlign("left")
 }
@@ -36,6 +41,9 @@ VBox([
         Text("Params"),
         Text("Params")
     ]),
+    
+    Textbox(),
+    
     Text("Params").type("heading1"),
     
     labelWrapper(
@@ -57,13 +65,19 @@ VBox([
     
     Button("+").onClick(() => {
         progress.progress(progress.progress() + 0.1)
+        labelVehicleWidth.removeStyle(labelFont)
+        labelVehicleWidth.addStyle(labelFont2)
     }),
     
     Button("-").onClick(() => {
         progress.progress(progress.progress() - 0.1)
+        labelVehicleWidth.addStyle(labelFont2)
+        labelVehicleWidth.removeStyle(labelFont)
+    }),
+    
+    Button("dsadas").onClick(() => {
+        progress.indicator.background("red")
     })
-    
-    
 ])
     .css("width: 280px;")
     .spacing(25)

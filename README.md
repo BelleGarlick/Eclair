@@ -19,15 +19,13 @@ _HTML + CSS + JS_
 ```
 
 _Eclair_
-``` html
-<script>
+``` javascript
 eclair.Button("Hello There!")
     .fontSize("10px")
     .onClick(() => {
         alert("General Kenobi")
     })
     .write()
-</script>
 ```
 
 ### Destructive Select
@@ -49,8 +47,7 @@ _HTML + CSS + JS_
 ```
 
 _Eclair_
-``` html
-<script>
+``` javascript
 eclair.Select()
     .addOptions(["Welcome to the Jungle", "It's so Easy", "Nightrain",
                  "Out Ta Get Me", "Mr. Brownstone", "Sweet Child O' Mine"])
@@ -59,7 +56,39 @@ eclair.Select()
         self.removeOption(self.value())
     })
     .write()
-</script>
+```
+
+### Sharing Styles
+_HTML + CSS + JS_
+``` html
+<style>
+    .label {
+        color: #0000ff;
+        font-weight: 700;
+    }
+    
+    .label:hover {
+        font-weight: 300;
+    }
+</style>
+<div>
+    <span class="label">Label 1</span>
+    <span class="label">Label 2</span>
+</div>
+```
+
+_Eclair_
+``` javascript
+let labelFont = eclair.Style()
+    .fontColor("#0000ff")
+    .fontWeight(700)
+    .fontWeight(300, "hover")
+
+eclair.View([
+    eclair.Text("Label 1").addStyle(labelFont),
+    eclair.Text("Label 2").addStyle(labelFont)
+])
+    .write()
 ```
 
 # How does it work?
