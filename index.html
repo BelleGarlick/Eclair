@@ -2,6 +2,7 @@
 <script>
 let Button = eclair.Button,
     Textbox = eclair.Textbox,
+    ScrollView = eclair.ScrollView,
     VBox = eclair.VBox,
     HBox = eclair.HBox,
     Text = eclair.Text,
@@ -39,7 +40,6 @@ let progress = eclair.ProgressBar()
     .displayLabel(true)
 
 
-
 VBox([
     HBox([
         Text("Eclair")  
@@ -49,58 +49,68 @@ VBox([
         .background(eclair.theme.accent)
         .padding(8),
     
-    VBox([
-        eclair.Alert()
-            .info()
-            .text("This is developmental and things may change!")
-            .title("Warning"),
+    ScrollView([
+        VBox([
+            eclair.Alert()
+                .info()
+                .text("This is developmental and things may change!")
+                .title("Warning"),
 
-        Text("Params").type("heading2"),
+            Text("Params").type("heading2"),
 
-        Link("Test link").href("http://www.google.com"),
+            Link("Test link").href("http://www.google.com"),
 
-        labelWrapper(
-            labelVehicleWidth,
-            Slider()
-                .min(20).max(40).value(30).step(0.1)
-                .onInput(e => {labelVehicleWidth.text(`Width: ${e.value()}`)})
-        ),
+            Textbox("Type here...")
+                .maxLength(11)
+                .onKeyUp(tb => {
+                    if (tb.text() == "Hello There") {
+                        alert("General Kenobi")
+                    }
+                }),
 
-        labelWrapper(
-            labelVehicleMass,
-            Slider()
-                .min(0).max(1).value(0.5).step(0.01)
-                .onInput(e => {
-                    progress.progress(e.value())
-                })
-        ),
+            labelWrapper(
+                labelVehicleWidth,
+                Slider()
+                    .min(20).max(40).value(30).step(0.1)
+                    .onInput(e => {labelVehicleWidth.text(`Width: ${e.value()}`)})
+            ),
 
-        progress,
+            labelWrapper(
+                labelVehicleMass,
+                Slider()
+                    .min(0).max(1).value(0.5).step(0.01)
+                    .onInput(e => {
+                        progress.progress(e.value())
+                    })
+            ),
 
-        Button("+").onClick(() => {
-            progress.progress(progress.progress() + 0.1)
-            labelVehicleWidth.removeStyle(labelFont)
-            labelVehicleWidth.addStyle(labelFont2)
-        }),
+            progress,
 
-        Button("-").onClick(() => {
-            progress.progress(progress.progress() - 0.1)
-            labelVehicleWidth.addStyle(labelFont2)
-            labelVehicleWidth.removeStyle(labelFont)
-        }),
+            Button("+").onClick(() => {
+                progress.progress(progress.progress() + 0.1)
+                labelVehicleWidth.removeStyle(labelFont)
+                labelVehicleWidth.addStyle(labelFont2)
+            }),
 
-        Button("dsadas").onClick(() => {
-            progress.indicator.background("red")
-        }),
+            Button("-").onClick(() => {
+                progress.progress(progress.progress() - 0.1)
+                labelVehicleWidth.addStyle(labelFont2)
+                labelVehicleWidth.removeStyle(labelFont)
+            }),
 
-        Button("testStyle Change").onClick(() => {
-            eclair.styles.button.background(eclair.theme.accent)
-        })
+            Button("dsadas").onClick(() => {
+                progress.indicator.background("red")
+            }),
+
+            Button("testStyle Change").onClick(() => {
+                eclair.styles.button.background(eclair.theme.accent)
+            })
+        ])
+            .width("400px")
+            .align("left")
+            .spacing(25)
+            .padding(10)
     ])
-        .width("400px")
-        .align("left")
-        .spacing(25)
-        .padding(10)
 ])
     .position("absolute")
     .top("0px").left("0px").width("100%")

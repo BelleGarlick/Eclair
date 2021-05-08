@@ -14,13 +14,15 @@ let eclair = {
     Style: function() {return new EclairStyleComponent();},
     
     View: function(elements) {return new EclairView(elements);},
+    ScrollView: function(elements) {return new EclairScrollView(elements);},
     VBox: function(elements) {return new EclairVBox(elements);},
     HBox: function(elements) {return new EclairHBox(elements);},
+    
     Button: function(text) {return new EclairButton(text);},
     Form: function(elements) {return new EclairForm(elements);},
     Image: function() {return new EclairImage();},
     Text: function(text) {return new EclairText(text);},
-    Textbox: function() {return new EclairTextbox();},
+    Textbox: function(placeholder) {return new EclairTextbox(placeholder);},
     Select: function() {return new EclairSelect();},
     Link: function(text) {return new EclairLink(text);},
     Slider: function() {return new EclairSlider();},
@@ -280,7 +282,7 @@ class EclairComponent extends EclairStylableObject {
     
     buildAttributeHTML() {
         let self = this;
-        let attrHTML = "";
+        let attrHTML = `id='${this.id()}'`;
         
         Object.keys(this.attributes).forEach(function(key) {
             attrHTML += ` ${key}='${self.attributes[key]}'`;
@@ -292,7 +294,7 @@ class EclairComponent extends EclairStylableObject {
 
 
 eclair.styles = {
-    button: new EclairStyleComponent()
+    Button: new EclairStyleComponent()
         .borderSize("0px")
         .borderRadius("2px")
         .padding("8px 16px")
@@ -301,11 +303,10 @@ eclair.styles = {
         .background("#dddddd", "hover")
         .background("#cccccc", "active"),
     
-    slider: new EclairStyleComponent()
+    Slider: new EclairStyleComponent()
         .css("-webkit-appearance: none; box-sizing: border-box; outline: none; -webkit-transition: .2s; transition: opacity .2s;")
         .css("-webkit-appearance: none; appearance: none; cursor: pointer;", ":-webkit-slider-thumb")
         .css("-webkit-appearance: none; appearance: none; cursor: pointer;", ":-moz-slider-thumb")
-
         .background("#d3d3d3")
         .background(eclair.theme.accent, ":-webkit-slider-thumb")
         .background(eclair.theme.accent, ":-moz-slider-thumb")
@@ -321,12 +322,24 @@ eclair.styles = {
         .opacity(0.7)
         .opacity(1, "hover"),
     
-    link: new EclairStyleComponent()
-            .font(eclair.theme.font)   
-            .fontColor(eclair.theme.accent)
-            .css("text-decoration: none")
-            .css("text-decoration: underline", "hover")
+    Link: new EclairStyleComponent()
+        .font(eclair.theme.font)   
+        .fontColor(eclair.theme.accent)
+        .css("text-decoration: none")
+        .css("text-decoration: underline", "hover"),
+    
+    Textbox: new EclairStyleComponent()
+        .width("100%")
+        .borderSize("0px")
+        .borderRadius("3px")
+        .padding("8px 16px")
+        .background("#eeeeee")
+        .font(eclair.theme.font)
+        .background("#dddddd", "hover")
+        .background("#cccccc", "active")
+        .background("#bbbbbb", "focused")
 }
+
 
 class EclairView extends EclairComponent {
     constructor(elements) {
@@ -340,6 +353,24 @@ class EclairView extends EclairComponent {
              code += this.elements[e].build();
         }
         return "<div>" + code + "</div>";
+    }
+}
+
+class EclairScrollView extends EclairComponent {
+    constructor(elements) {
+        super()
+        this.elements = elements;
+        this.overflow("auto")
+        this.width("100%")
+        this.height("100%")
+    }
+    
+    build () {
+        let code = ""
+        for (let e = 0; e < this.elements.length; e++) {
+             code += this.elements[e].build();
+        }
+        return "<div "+this.buildAttributeHTML()+">" + code + "</div>";
     }
 }
 
@@ -369,7 +400,7 @@ class EclairVBox extends EclairComponent {
     }
     
     build () {
-        let code = this.buildStyleCode() + "<table id='"+this.id()+"' "+this.buildAttributeHTML()+">"
+        let code = this.buildStyleCode() + "<table "+this.buildAttributeHTML()+">"
         for (let e = 0; e < this.elements.length; e++) {
             if (e > 0) {
                 code += "<tr><td height='"+ this._spacing +"px'></td></tr>"
@@ -401,7 +432,7 @@ class EclairHBox extends EclairComponent {
     }
     
     build () {
-        let code = this.buildStyleCode() + "<table id='"+this.id()+"' "+this.buildAttributeHTML()+">"
+        let code = this.buildStyleCode() + "<table "+this.buildAttributeHTML()+">"
         for (let e = 0; e < this.elements.length; e++) {
             if (e > 0) {
                 code += "<td width='"+ this._spacing +"px'></td>"
@@ -451,18 +482,11 @@ class EclairForm extends EclairComponent {
 
 
 class EclairTextbox extends EclairComponent {
-    constructor() {
+    constructor(_placeholder) {
         super()
         this.setAttr("type", "text")
-        
-        this.borderSize("0px")
-            .borderRadius("2px")
-            .padding("8px 16px")
-            .background("#eeeeee")
-            .font(eclair.theme.font)
-            .background("#dddddd", "hover")
-            .background("#cccccc", "active")
-            .background("#bbbbbb", "focused")
+            .addStyle(eclair.styles.Textbox)
+            .placeholder(_placeholder)
     }
     
     name(_name) {
@@ -474,22 +498,22 @@ class EclairTextbox extends EclairComponent {
         }
     }
     
-    value(text) {
+    text(_text) {
         let elem = this.getElement();
-        if (text == null) {
+        if (_text == null) {
             if (elem != null) {
                 return elem.value;
             }
             return this.getAttr("value")
         } else {
-            if (elem != null) {elem.value = text;}
-            this.setAttr("value", text)
+            if (elem != null) {elem.value = _text;}
+            this.setAttr("value", _text)
             return this
         }
     }
     
     placeholder(_placeholder) {
-        if (text == null) {
+        if (_placeholder == null) {
             return this.getAttr("placeholder")
         } else {
             this.setAttr("placeholder", _placeholder)
@@ -516,7 +540,7 @@ class EclairTextbox extends EclairComponent {
     } 
     
     build() {
-        return `${this.buildStyleCode()}<input id='${this.id()}' ${this.buildAttributeHTML()}/>`
+        return `${this.buildStyleCode()}<input ${this.buildAttributeHTML()}/>`
     }
     
 //autocomplete	Sets or returns the value of the autocomplete attribute of a text field
@@ -559,7 +583,7 @@ class EclairImage extends EclairComponent {
     }
     
     build() {
-        return `<img${this.buildAttributeHTML()}/>`
+        return `<img ${this.buildAttributeHTML()}/>`
     }
 }
 
@@ -568,7 +592,7 @@ class EclairLink extends EclairComponent {
         super()
         this._text = text;
         
-        this.addStyle(eclair.styles.link)
+        this.addStyle(eclair.styles.Link)
     }
     
     text(_text) {
@@ -600,7 +624,7 @@ class EclairLink extends EclairComponent {
     }
     
     build() {
-        return `${this.buildStyleCode()}<a id='${this.id()}' ${this.buildAttributeHTML()}>${this._text}</a>`
+        return `${this.buildStyleCode()}<a ${this.buildAttributeHTML()}>${this._text}</a>`
     }
 }
 
@@ -674,7 +698,7 @@ class EclairText extends EclairComponent {
         if (this._superscript) {tagName = "sup"}
         if (this._subscript) {tagName = "sub"}
         
-        return `${this.buildStyleCode()}<${tagName} id='${this.id()}' ${this.buildAttributeHTML()}>${this._text}</${tagName}>`
+        return `${this.buildStyleCode()}<${tagName} ${this.buildAttributeHTML()}>${this._text}</${tagName}>`
     }
 }
 
@@ -796,7 +820,7 @@ class EclairSelect extends EclairComponent {
             options += this.buildOptionHTML(this.options[n]);
         }
         
-        return `${this.buildStyleCode()}<select id='${this.id()}' name='${this.name}' ${this.buildAttributeHTML()}>${options}</select>`
+        return `${this.buildStyleCode()}<select ${this.buildAttributeHTML()}>${options}</select>`
     }
 }
 
@@ -805,7 +829,8 @@ class EclairButton extends EclairComponent {
         super()
         
         this.text = text;
-        this.addStyle(eclair.styles.button)
+        this.setAttr("type", "button")
+        this.addStyle(eclair.styles.Button)
     }
     
     value(newText) {
@@ -825,7 +850,7 @@ class EclairButton extends EclairComponent {
         if (typeof(text) != "string") {
             text = this.text.build()
         }
-        return `${this.buildStyleCode()}<button type='button' id='${this.id()}'  ${this.buildAttributeHTML()}>${this.text}</button>`
+        return `${this.buildStyleCode()}<button ${this.buildAttributeHTML()}>${this.text}</button>`
     }
 }
 
@@ -833,7 +858,7 @@ class EclairSlider extends EclairComponent {
     constructor() {
         super()
         this.setAttr("type", "range")
-        this.addStyle(eclair.styles.slider)
+        this.addStyle(eclair.styles.Slider)
     }
     
     name(newName) {
@@ -886,7 +911,7 @@ class EclairSlider extends EclairComponent {
     }
     
     build() {
-        return `${this.buildStyleCode()}<input id='${this.id()}' ${this.buildAttributeHTML()}/>`
+        return `${this.buildStyleCode()}<input ${this.buildAttributeHTML()}/>`
     }
 }
 
@@ -964,7 +989,7 @@ class EclairProgressBar extends EclairComponent {
     }
     
     build() {
-        return `${this.buildStyleCode()}<div id='${this.id()}' ${this.buildAttributeHTML()}>${this.indicator.build()}</div>`
+        return `${this.buildStyleCode()}<div ${this.buildAttributeHTML()}>${this.indicator.build()}</div>`
     }
 }
 
@@ -1019,7 +1044,7 @@ class EclairAlertBox extends EclairComponent {
     }
     
     build() {
-        return `${this.buildStyleCode()}<div id='${this.id()}' ${this.buildAttributeHTML()}>${this._title.build()}${this._text.build()}</div>`
+        return `${this.buildStyleCode()}<div ${this.buildAttributeHTML()}>${this._title.build()}${this._text.build()}</div>`
     }
 }
 
