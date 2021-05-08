@@ -2,9 +2,8 @@
 // TODO Prevent layered on click events
 // TODO Hide show elements
 // TODO Superscript/Subscript text
+// TOD o AUTO update css rules
 // TODO Implement these: https://getbootstrap.com/docs/4.0/components/progress/
-
-
 let eclair = {
     _ids: 0,
     _styleIDs: 0,
@@ -12,7 +11,7 @@ let eclair = {
     newStyleID: function() {this._ids += 1; return this._ids - 1;},
     _elements: {},
     
-    Style: function() {return new EclairSharedStyleObject();},
+    Style: function() {return new EclairStyleComponent();},
     
     View: function(elements) {return new EclairView(elements);},
     VBox: function(elements) {return new EclairVBox(elements);},
@@ -38,6 +37,7 @@ let eclair = {
         "font": '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"'
     }
 }
+
 
 
 // Class for storing specific styles and containing all selectors.
@@ -125,10 +125,15 @@ class EclairStylableObject {
     opacity(_opacity, selector) {this.getStyleSheet(selector)["opacity"] = _opacity; return this.updateCSSStyle();}
     textAlign(_align, selector) {this.getStyleSheet(selector)["text-align"] = _align; return this.updateCSSStyle()}
     verticalAlign(_align, selector) {this.getStyleSheet(selector)["vertical-align"] = _align;return this.updateCSSStyle()}
+    position(_pos, selector) {this.getStyleSheet(selector)["position"] = _pos;return this.updateCSSStyle()}
+    top(_top, selector) {this.getStyleSheet(selector)["top"] = _top;return this.updateCSSStyle()}
+    bottom(_bottom, selector) {this.getStyleSheet(selector)["bottom"] = _bottom;return this.updateCSSStyle()}
+    left(_left, selector) {this.getStyleSheet(selector)["left"] = _left;return this.updateCSSStyle()}
+    right(_right, selector) {this.getStyleSheet(selector)["right"] = _right;return this.updateCSSStyle()}
 }
 
 
-class EclairSharedStyleObject extends EclairStylableObject {
+class EclairStyleComponent extends EclairStylableObject {
     constructor() {
         super()
         this._id = eclair.newStyleID()
@@ -147,7 +152,7 @@ class EclairSharedStyleObject extends EclairStylableObject {
 }
 
 
-class EclairObject extends EclairStylableObject {
+class EclairComponent extends EclairStylableObject {
     constructor() {
         super()
         
@@ -157,6 +162,8 @@ class EclairObject extends EclairStylableObject {
         
         this._id = eclair.newID();
         eclair._elements[this.id()] = this;
+        
+        this.position("relative")
     }
     
     id() {
@@ -284,7 +291,44 @@ class EclairObject extends EclairStylableObject {
 }
 
 
-class EclairView extends EclairObject {
+eclair.styles = {
+    button: new EclairStyleComponent()
+        .borderSize("0px")
+        .borderRadius("2px")
+        .padding("8px 16px")
+        .background("#eeeeee")
+        .font(eclair.theme.font)
+        .background("#dddddd", "hover")
+        .background("#cccccc", "active"),
+    
+    slider: new EclairStyleComponent()
+        .css("-webkit-appearance: none; box-sizing: border-box; outline: none; -webkit-transition: .2s; transition: opacity .2s;")
+        .css("-webkit-appearance: none; appearance: none; cursor: pointer;", ":-webkit-slider-thumb")
+        .css("-webkit-appearance: none; appearance: none; cursor: pointer;", ":-moz-slider-thumb")
+
+        .background("#d3d3d3")
+        .background(eclair.theme.accent, ":-webkit-slider-thumb")
+        .background(eclair.theme.accent, ":-moz-slider-thumb")
+        .borderRadius("50%", ":-webkit-slider-thumb")
+        .borderRadius("50%", ":-moz-slider-thumb")
+        .height("25px", ":-webkit-slider-thumb")
+        .height("25px", ":-moz-slider-thumb")
+        .width("25px", ":-webkit-slider-thumb")
+        .width("25px", ":-moz-slider-thumb")
+        .width("100%")
+        .height("15px")
+        .borderRadius("5px")
+        .opacity(0.7)
+        .opacity(1, "hover"),
+    
+    link: new EclairStyleComponent()
+            .font(eclair.theme.font)   
+            .fontColor(eclair.theme.accent)
+            .css("text-decoration: none")
+            .css("text-decoration: underline", "hover")
+}
+
+class EclairView extends EclairComponent {
     constructor(elements) {
         super()
         this.elements = elements;
@@ -299,22 +343,29 @@ class EclairView extends EclairObject {
     }
 }
 
-class EclairVBox extends EclairObject {
+class EclairVBox extends EclairComponent {
     constructor(elements) {
         super()
         
         this._spacing = 0
         this.elements = elements;
         this.getStyleSheet()["table-layout"] = "fixed"
+        this.getStyleSheet()["max-width"] = "100%"
         this.setAttr("border", 0)
-        this.setAttr("cellspacing", 0)
-        this.setAttr("cellpadding", 0)
-        this.textAlign("center")
+            .setAttr("cellspacing", 0)
+            .setAttr("cellpadding", 0)
+            .textAlign("center")
+            .margin("0px auto")
     }
     
     spacing(space) {
         this._spacing = space;
         return this;
+    }
+    
+    align(_align) {
+        this.textAlign(_align)
+        return this
     }
     
     build () {
@@ -329,7 +380,7 @@ class EclairVBox extends EclairObject {
     }
 }
 
-class EclairHBox extends EclairObject {
+class EclairHBox extends EclairComponent {
     constructor(elements) {
         super()
         
@@ -340,6 +391,8 @@ class EclairHBox extends EclairObject {
         this.setAttr("cellspacing", 0)
         this.setAttr("cellpadding", 0)
         this.textAlign("center")
+        this.width("100%")
+            .margin("0px auto")
     }
     
     spacing(space) {
@@ -359,7 +412,7 @@ class EclairHBox extends EclairObject {
     }
 }
 
-class EclairForm extends EclairObject {
+class EclairForm extends EclairComponent {
     constructor(elements) {
         super()
         
@@ -397,7 +450,7 @@ class EclairForm extends EclairObject {
 
 
 
-class EclairTextbox extends EclairObject {
+class EclairTextbox extends EclairComponent {
     constructor() {
         super()
         this.setAttr("type", "text")
@@ -485,7 +538,7 @@ class EclairTextbox extends EclairObject {
 /*
     Standard Elements
 */
-class EclairImage extends EclairObject {
+class EclairImage extends EclairComponent {
     constructor() {
         super()
         this.display("block")
@@ -510,12 +563,12 @@ class EclairImage extends EclairObject {
     }
 }
 
-class EclairLink extends EclairObject {
+class EclairLink extends EclairComponent {
     constructor(text) {
         super()
         this._text = text;
         
-        this.font(eclair.theme.font)
+        this.addStyle(eclair.styles.link)
     }
     
     text(_text) {
@@ -551,7 +604,7 @@ class EclairLink extends EclairObject {
     }
 }
 
-class EclairText extends EclairObject {
+class EclairText extends EclairComponent {
     constructor(text) {
         super()
         this._text = text;
@@ -629,7 +682,7 @@ class EclairText extends EclairObject {
 /***
     Form Elements
 ***/
-class EclairSelect extends EclairObject {
+class EclairSelect extends EclairComponent {
     constructor() {
         super()
         this.options = []
@@ -747,20 +800,12 @@ class EclairSelect extends EclairObject {
     }
 }
 
-class EclairButton extends EclairObject {
+class EclairButton extends EclairComponent {
     constructor(text) {
         super()
         
         this.text = text;
-        
-        this.borderSize("0px")
-            .borderRadius("2px")
-            .padding("8px 16px")
-            .background("#eeeeee")
-            .font(eclair.theme.font)
-        
-            .background("#dddddd", "hover")
-            .background("#cccccc", "active")
+        this.addStyle(eclair.styles.button)
     }
     
     value(newText) {
@@ -784,26 +829,11 @@ class EclairButton extends EclairObject {
     }
 }
 
-class EclairSlider extends EclairObject {
+class EclairSlider extends EclairComponent {
     constructor() {
         super()
-    
-        this.css("-webkit-appearance: none; box-sizing: border-box; outline: none; -webkit-transition: .2s; transition: opacity .2s;")
-        this.css("-webkit-appearance: none; appearance: none; width: 25px; height: 25px; border-radius: 50%; cursor: pointer;", ":-webkit-slider-thumb")
-        this.css("-webkit-appearance: none; appearance: none; width: 25px; height: 25px; border-radius: 50%; cursor: pointer;", ":-moz-slider-thumb")
-
-        
         this.setAttr("type", "range")
-        this.background("#d3d3d3")
-        this.background(eclair.theme.accent, ":-webkit-slider-thumb")
-        this.background(eclair.theme.accent, ":-moz-slider-thumb")
-        
-        this.width("100%")
-        this.height("15px")
-        this.borderRadius("5px")
-        this.opacity(0.7)
-        this.opacity(1, "hover")
-        
+        this.addStyle(eclair.styles.slider)
     }
     
     name(newName) {
@@ -865,7 +895,7 @@ class EclairSlider extends EclairObject {
 /* 
     Eclair Custom Elements
 */
-class EclairProgressBar extends EclairObject {
+class EclairProgressBar extends EclairComponent {
     constructor() {
         super()
         
@@ -882,6 +912,7 @@ class EclairProgressBar extends EclairObject {
             .background(eclair.theme.accent)
             .height("100%")
             .css("transition: 0.3s all")
+            .margin("none")
         
         this.progress(0)
             .background("#d3d3d3")
@@ -914,7 +945,7 @@ class EclairProgressBar extends EclairObject {
             _progress = Math.max(Math.min(_progress, 1), 0)
             this._progress = _progress;
             this.label.text(Math.round(_progress * 100) + "%")
-            this.indicator.setAttr("width", (_progress * 100 + 0.0001) + "%")
+            this.indicator.width((_progress * 100 + 0.0001) + "%")
             return this
         }
     }
@@ -937,7 +968,7 @@ class EclairProgressBar extends EclairObject {
     }
 }
 
-class EclairAlertBox extends EclairObject {
+class EclairAlertBox extends EclairComponent {
     constructor(alert) {
         super()
         this._title = eclair.Text(null)
@@ -991,3 +1022,5 @@ class EclairAlertBox extends EclairObject {
         return `${this.buildStyleCode()}<div id='${this.id()}' ${this.buildAttributeHTML()}>${this._title.build()}${this._text.build()}</div>`
     }
 }
+
+

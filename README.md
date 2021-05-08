@@ -95,6 +95,7 @@ eclair.View([
 ### Base Eclair Object
 ### Writing to html
 ### styling
+Simple Styles, Style classes, Default classes
 ### event handling
 ### Subclasses
 ### Other things, 'versioning', 'imports', 'getElement', etc
