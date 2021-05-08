@@ -2,7 +2,6 @@
 // TODO Prevent layered on click events
 // TODO Hide show elements
 // TODO Superscript/Subscript text
-// TODO Theme 
 // TODO Implement these: https://getbootstrap.com/docs/4.0/components/progress/
 
 
@@ -23,18 +22,20 @@ let eclair = {
     Image: function() {return new EclairImage();},
     Text: function(text) {return new EclairText(text);},
     Textbox: function() {return new EclairTextbox();},
-    
     Select: function() {return new EclairSelect();},
     Link: function(text) {return new EclairLink(text);},
     Slider: function() {return new EclairSlider();},
+    
     ProgressBar: function() {return new EclairProgressBar();},
+    Alert: function() {return new EclairAlertBox();},
     
     // Event methods
     // Input Events
     performCallback: function(eID, event) {this._elements[eID].performCallback(event);},
     
     theme: {
-        "accent": "#dd6600"
+        "accent": "#dd6600",
+        "font": '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"'
     }
 }
 
@@ -77,7 +78,11 @@ class EclairStylableObject {
                 }
             });
             
-            if (selector.length > 0) {selector = ":" + selector}
+            if (selector.length > 0) {
+                if (selector[0] != " ") {
+                    selector = ":" + selector;
+                }
+            }
             styleCode += `${self._stylePrefix}${objectID}${selector}{${styleSheetCode}}`;
         });
         
@@ -398,13 +403,13 @@ class EclairTextbox extends EclairObject {
         this.setAttr("type", "text")
         
         this.borderSize("0px")
-        this.borderRadius("2px")
-        this.padding("8px 16px")
-        this.background("#eeeeee")
-        this.font("arial")
-        this.background("#dddddd", "hover")
-        this.background("#cccccc", "active")
-        this.background("#bbbbbb", "focused")
+            .borderRadius("2px")
+            .padding("8px 16px")
+            .background("#eeeeee")
+            .font(eclair.theme.font)
+            .background("#dddddd", "hover")
+            .background("#cccccc", "active")
+            .background("#bbbbbb", "focused")
     }
     
     name(_name) {
@@ -477,6 +482,150 @@ class EclairTextbox extends EclairObject {
 
 
 
+/*
+    Standard Elements
+*/
+class EclairImage extends EclairObject {
+    constructor() {
+        super()
+        this.display("block")
+    }
+    
+    src(_src) {
+        this.setAttr("src", _src)
+        return this;
+    }
+    
+    altText(_alt) {
+        if (_alt == null) {
+            return this.getAttr("alt");
+        } else {
+            this.setAttr("alt", _alt)
+            return this
+        }
+    }
+    
+    build() {
+        return `<img${this.buildAttributeHTML()}/>`
+    }
+}
+
+class EclairLink extends EclairObject {
+    constructor(text) {
+        super()
+        this._text = text;
+        
+        this.font(eclair.theme.font)
+    }
+    
+    text(_text) {
+        if (_text == null) {
+            return this._text;
+        } else {
+            this._text = _text;
+            this.getElement(elem => {elem.innerHTML = _text})
+            return this;
+        }
+    }
+    
+    target(_target) {
+        if (_target == null) {
+            return this.getAttr("target")
+        } else {
+            this.setAttr("target", _target)
+        }
+        return this
+    }
+    
+    href(_href) {
+        if (_href == null) {
+            return this.getAttr("href")
+        } else {
+            this.setAttr("href", _href)
+        }
+        return this
+    }
+    
+    build() {
+        return `${this.buildStyleCode()}<a id='${this.id()}' ${this.buildAttributeHTML()}>${this._text}</a>`
+    }
+}
+
+class EclairText extends EclairObject {
+    constructor(text) {
+        super()
+        this._text = text;
+        this._subscript = false;
+        this._superscript = false;
+        
+        this.font(eclair.theme.font)
+    }
+    
+    type(newType) {
+        if (newType == "title") {
+            this.fontSize("40px").fontWeight(700).margin("50px 10px 10px 10px")
+        }
+        
+        if (newType == "subtitle") {
+            this.fontSize("25px").margin("50px 10px 10px 10px")
+        }
+        
+        if (newType == "heading1") {
+            this.fontSize("30px")
+            this.fontWeight(700)
+            this.margin("50px 10px 10px 10px")
+        }
+        
+        if (newType == "heading2") {
+            this.fontSize("25px")
+            this.fontWeight(700)
+            this.margin("50px 10px 10px 10px")
+        }
+        
+        if (newType == "heading3") {
+            this.fontSize("20px")
+            this.fontWeight(700)
+            this.margin("50px 10px 10px 10px")
+        }
+        
+        if (newType == "heading4") {
+            this.fontSize("15px")
+            this.fontWeight(700)
+            this.margin("50px 10px 10px 10px")
+        }
+        
+        return this
+    }
+    
+    text(value) {
+        if (value == null) {
+            return this._text
+        } else {
+            this._text = value;
+            this.getElement(elem => {elem.innerHTML = value});
+            return this
+        }
+    }
+    
+//    subscript() {
+//        this._subscript = true; return this;
+//    }
+    
+//    superscript() {
+//        .css("vertical-align: sub;font-size: smaller;")
+//        this._superscript = true; return this;
+//    }
+    
+    build() {
+        let tagName = "span";
+        if (this._superscript) {tagName = "sup"}
+        if (this._subscript) {tagName = "sub"}
+        
+        return `${this.buildStyleCode()}<${tagName} id='${this.id()}' ${this.buildAttributeHTML()}>${this._text}</${tagName}>`
+    }
+}
+
+
 /***
     Form Elements
 ***/
@@ -484,6 +633,8 @@ class EclairSelect extends EclairObject {
     constructor() {
         super()
         this.options = []
+        
+        this.font(eclair.theme.font)
     }
     
     name(newName) {
@@ -603,13 +754,13 @@ class EclairButton extends EclairObject {
         this.text = text;
         
         this.borderSize("0px")
-        this.borderRadius("2px")
-        this.padding("8px 16px")
-        this.background("#eeeeee")
-        this.font("arial")
+            .borderRadius("2px")
+            .padding("8px 16px")
+            .background("#eeeeee")
+            .font(eclair.theme.font)
         
-        this.background("#dddddd", "hover")
-        this.background("#cccccc", "active")
+            .background("#dddddd", "hover")
+            .background("#cccccc", "active")
     }
     
     value(newText) {
@@ -709,6 +860,11 @@ class EclairSlider extends EclairObject {
     }
 }
 
+
+
+/* 
+    Eclair Custom Elements
+*/
 class EclairProgressBar extends EclairObject {
     constructor() {
         super()
@@ -717,14 +873,13 @@ class EclairProgressBar extends EclairObject {
         this._striped = false
         
         this.label = eclair.Text("0%")
-            .font("arial")
+            .font(eclair.theme.font)
             .fontColor("white")
             .fontWeight(700)
             .fontSize("11px")    
         
         this.indicator = eclair.HBox([this.label])
             .background(eclair.theme.accent)
-            .borderRadius("3px")
             .height("100%")
             .css("transition: 0.3s all")
         
@@ -782,146 +937,57 @@ class EclairProgressBar extends EclairObject {
     }
 }
 
-
-/*
-    Standard Elements
-*/
-class EclairImage extends EclairObject {
-    constructor() {
+class EclairAlertBox extends EclairObject {
+    constructor(alert) {
         super()
-        this.display("block")
+        this._title = eclair.Text(null)
+            .fontWeight(500)
+            .fontSize("1.5rem")
+            .display("none")
+            .fontColor("rgba(0, 0, 0, 0.6)")
+            .width("100%")
+        
+        this._title.getStyleSheet()["margin-bottom"] = ".5rem"
+        
+        this._text = eclair.Text(alert)
+            .fontColor("rgba(0, 0, 0, 0.6)")
+        
+        this
+            .background(eclair.theme.accent)
+            .borderRadius(".25rem")
+            .padding(".75rem 1.25rem")
+            .font(eclair.theme.font)
+        
+        this.getStyleSheet(" hr")["border"] = "0px"
+        this.getStyleSheet(" hr")["margin-top"] = ".75rem"
+        this.getStyleSheet(" hr")["margin-bottom"] = ".75rem"
+        this.getStyleSheet(" hr")["border-top"] = "1px solid rgba(0, 0, 0, 0.2)"
+        this.getStyleSheet()["box-shadow"] = "0px 0px 0px 2px rgba(0, 0, 0, 0.2) inset"
     }
     
-    src(_src) {
-        this.setAttr("src", _src)
-        return this;
-    }
+    success() {return this.background("#d4edd9")}
+    danger() {return this.background("#f8d7d9")}
+    warning() {return this.background("#fff3cd")}
+    info() {return this.background("#d1ecf1")}
+    light() {return this.background("white")}
+    dark() {return this.backgorund("#d5d8d9")}
     
-    altText(_alt) {
-        if (_alt == null) {
-            return this.getAttr("alt");
-        } else {
-            this.setAttr("alt", _alt)
-            return this
-        }
-    }
-    
-    build() {
-        return `<img${this.buildAttributeHTML()}/>`
-    }
-}
-
-class EclairLink extends EclairObject {
-    constructor(text) {
-        super()
-        this._text = text;
-    }
-    
-    text(_text) {
+    title(_text) {
         if (_text == null) {
-            return this._text;
+            this._title.display("none")
         } else {
-            this._text = _text;
-            this.getElement(elem => {elem.innerHTML = _text})
+            this._title.display("block")
+            this._title.text(_text)
             return this;
         }
     }
     
-    target(_target) {
-        if (_target == null) {
-            return this.getAttr("target")
-        } else {
-            this.setAttr("target", _target)
-        }
-        return this
-    }
-    
-    href(_href) {
-        if (_href == null) {
-            return this.getAttr("href")
-        } else {
-            this.setAttr("href", _href)
-        }
-        return this
+    text(_text) {
+        this._text.text(_text);
+        return this;
     }
     
     build() {
-        return `${this.buildStyleCode()}<a id='${this.id()}' ${this.buildAttributeHTML()}>${this._text}</a>`
-    }
-}
-
-class EclairText extends EclairObject {
-    constructor(text) {
-        super()
-        this._text = text;
-        this._subscript = false;
-        this._superscript = false;
-    }
-    
-    type(newType) {
-        if (newType == "title") {
-            this.fontSize("40px").font("arial").fontWeight(700).margin("50px 10px 10px 10px")
-        }
-        
-        if (newType == "subtitle") {
-            this.fontSize("25px").font("arial").margin("50px 10px 10px 10px")
-        }
-        
-        if (newType == "heading1") {
-            this.fontSize("30px")
-            this.font("arial")
-            this.fontWeight(700)
-            this.margin("50px 10px 10px 10px")
-        }
-        
-        if (newType == "heading2") {
-            this.fontSize("25px")
-            this.font("arial")
-            this.fontWeight(700)
-            this.margin("50px 10px 10px 10px")
-        }
-        
-        if (newType == "heading3") {
-            this.fontSize("20px")
-            this.font("arial")
-            this.fontWeight(700)
-            this.margin("50px 10px 10px 10px")
-        }
-        
-        if (newType == "heading4") {
-            this.fontSize("15px")
-            this.font("arial")
-            this.fontWeight(700)
-            this.margin("50px 10px 10px 10px")
-        }
-        
-        return this
-    }
-    
-    text(value) {
-        if (value == null) {
-            return this._text
-        } else {
-            this._text = value;
-            this.getElement(elem => {elem.innerHTML = value});
-            return this
-        }
-    }
-    
-//    subscript() {
-//        this._subscript = true; return this;
-//    }
-    
-//    superscript() {
-//        .css("vertical-align: sub;font-size: smaller;")
-//        this._superscript = true; return this;
-//    }
-    
-    build() {
-        let tagName = "span";
-        if (this._superscript) {tagName = "sup"}
-        if (this._subscript) {tagName = "sub"}
-        
-        return `${this.buildStyleCode()}<${tagName} id='${this.id()}' ${this.buildAttributeHTML()}>${this._text}</${tagName}>`
+        return `${this.buildStyleCode()}<div id='${this.id()}' ${this.buildAttributeHTML()}>${this._title.build()}${this._text.build()}</div>`
     }
 }
