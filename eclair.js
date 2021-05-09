@@ -26,6 +26,9 @@ let eclair = {
     Select: function() {return new EclairSelect();},
     Link: function(text) {return new EclairLink(text);},
     Slider: function() {return new EclairSlider();},
+    HiddenInput: function() {return new EclairHiddenInput();},
+    Toggle: function() {return new EclairToggle();},
+    HorizontalLine: function() {return new EclairHorizontalLine();},
     
     ProgressBar: function() {return new EclairProgressBar();},
     Alert: function() {return new EclairAlertBox();},
@@ -35,7 +38,7 @@ let eclair = {
     performCallback: function(eID, event) {this._elements[eID].performCallback(event);},
     
     theme: {
-        "accent": "#dd6600",
+        "accent": "#ee8800",
         "font": '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"'
     }
 }
@@ -103,6 +106,7 @@ class EclairStylableObject {
         if (cssElement != null) {
             cssElement.innerHTML = this.buildStyleCode(true)
         }
+        console.log(objectID)
         
         return this;
     }
@@ -337,7 +341,11 @@ eclair.styles = {
         .font(eclair.theme.font)
         .background("#dddddd", "hover")
         .background("#cccccc", "active")
-        .background("#bbbbbb", "focused")
+        .background("#bbbbbb", "focused"),
+    
+    HorizontalLine: new EclairStyleComponent()
+        .borderSize("0px")
+        .css("border-top: 1px solid #999999")
 }
 
 
@@ -352,7 +360,7 @@ class EclairView extends EclairComponent {
         for (let e = 0; e < this.elements.length; e++) {
              code += this.elements[e].build();
         }
-        return "<div>" + code + "</div>";
+        return `${this.buildStyleCode()}<div ${this.buildAttributeHTML()}>` + code + "</div>";
     }
 }
 
@@ -387,6 +395,7 @@ class EclairVBox extends EclairComponent {
             .setAttr("cellpadding", 0)
             .textAlign("center")
             .margin("0px auto")
+            .width("100%")
     }
     
     spacing(space) {
@@ -490,12 +499,7 @@ class EclairTextbox extends EclairComponent {
     }
     
     name(_name) {
-        if (_name == null) {
-            return this.getAttr("name")
-        } else {
-            this.setAttr("name", _name)
-            return this
-        }
+        return _name == null? this.getAttr("name") : this.setAttr("name", _name)
     }
     
     text(_text) {
@@ -553,7 +557,6 @@ class EclairTextbox extends EclairComponent {
 //size	Sets or returns the value of the size attribute of a text field
 
 }
-
 
 
 
@@ -702,6 +705,17 @@ class EclairText extends EclairComponent {
     }
 }
 
+class EclairHorizontalLine extends EclairComponent {
+    constructor() {
+        super()
+        
+        this.addStyle(eclair.styles.HorizontalLine)
+    }
+    build() {
+        return `${this.buildStyleCode()}<hr ${this.buildAttributeHTML()}/>`
+    }
+}
+
 
 /***
     Form Elements
@@ -714,13 +728,8 @@ class EclairSelect extends EclairComponent {
         this.font(eclair.theme.font)
     }
     
-    name(newName) {
-        if (newName == null) {
-            return this.getAttr("name");
-        } else {
-            this.setAttr("name", newName);
-            return this;
-        }
+    name(_name) {
+        return _name == null? this.getAttr("name") : this.setAttr("name", _name)
     }
     
     value(newValue) {
@@ -861,13 +870,8 @@ class EclairSlider extends EclairComponent {
         this.addStyle(eclair.styles.Slider)
     }
     
-    name(newName) {
-        if (newName == null) {
-            return this.getAttr("name");
-        } else {
-            this.setAttr("name", newName);
-            return this;
-        }
+    name(_name) {
+        return _name == null? this.getAttr("name") : this.setAttr("name", _name)
     }
     
     min(_min) {
@@ -915,6 +919,162 @@ class EclairSlider extends EclairComponent {
     }
 }
 
+class EclairHiddenInput extends EclairComponent {
+    constructor() {
+        super()
+        this.setAttr("type", "hidden")
+    }
+    
+    value(_text) {
+        let elem = this.getElement();
+        if (_text == null) {
+            if (elem != null) {
+                return elem.value;
+            }
+            return this.getAttr("value")
+        } else {
+            if (elem != null) {elem.value = _text;}
+            this.setAttr("value", _text)
+            return this
+        }
+    }
+    
+    name(_name) {
+        return _name == null? this.getAttr("name") : this.setAttr("name", _name)
+    }
+    
+    build() {
+        return `<input ${this.buildAttributeHTML()}/>`
+    }
+}
+
+class EclairToggle extends EclairComponent {
+    constructor() {
+        super()
+        
+        this._hiddenComponent = new EclairHiddenInput().value("false")
+        this._tickMark = new EclairText("✓")
+            .position("absolute")
+            .fontWeight(700)
+            .left("10px")
+            .fontColor("#ffffff")
+            .css("transition: 0.2s all;user-select:none;")
+            .opacity(0)
+        
+        this.knob = new EclairView([])
+            .css("transition: 0.2s all;box-sizing: border-box;user-select:none;")
+            .position("absolute")
+            .top("0px")
+            .left("0px")
+            .margin("3px")
+            .background("#ffffff")
+            .borderRadius("20px")
+            .height("14px")
+            .width("14px")
+            
+        
+        this.height("20px")
+            .display("inline-block")
+            .borderRadius("20px")
+            .width("50px")
+            .background("#dddddd")
+            .css("cursor:pointer;transition: 0.2s all;user-select:none;")
+        
+        // Manually update the callback map as onClick
+        // is void to prevent the user altering it.
+        this._updateCallback("onClick", e => {
+            if (this._enabled) {
+                this.toggle()
+            }
+        })
+        let self = this
+        this._updateCallback("onResize", e => {
+            alert("value")
+            self.value(self.value())
+        })
+        
+        this._showCheckMark = false
+        this._enabled = true
+    }
+    
+    // Prevent on click override
+    onClick(callback) {return this;}
+    onLoad(callback) {return this;}
+    
+    name(_name) {
+        return this._hiddenComponent.name(_name)
+    }
+    
+    enabled(_enabled) {
+        if (_enabled == null) {
+            return this._enabled
+        } else {
+            this._enabled = _enabled
+            return this.opacity(_enabled? 1 : 0.6)
+        }
+    }
+    
+    toggle() {
+        this.value(this._hiddenComponent.value() != "true")
+        return this;
+    }
+    
+    value(_bool) {
+        let cValue = this._hiddenComponent.value()
+        if  (_bool == null) {
+            return cValue == "true"
+        } else {
+            if (_bool) {
+                this._hiddenComponent.value("true")
+                this.background(eclair.theme.accent)
+                if (this._showCheckMark) {
+                    this._tickMark.opacity(1)
+                }
+                
+                let elem = this.getElement()
+                if (elem != null) {
+                    this.knob.right(null)
+                    this.knob.left((this.getElement().clientWidth - this.knob.getElement().clientWidth - 6) + "px")
+                } else {
+                    this.knob.right("0px")
+                    this.knob.left(null)
+                }
+            } else {
+                this._tickMark.opacity(0)
+                this._hiddenComponent.value("false")
+                this.background("#dddddd")
+                this.knob.left("0px")
+                this.knob.right(null)
+//                this.knob.right("0px")
+//                this.knob.css("float:left;")
+            }
+
+            if (this._hiddenComponent.value() != cValue) {
+                this.performCallback("onChange")    
+            }
+        }
+        
+        return this;
+    } 
+    
+    showTick(_bool) {
+        if  (_bool == null) {
+            return this._showCheckMark
+        } else {
+            this._showCheckMark = _bool
+            if (this._showCheckMark && this.value()) {
+                this._tickMark.opacity(1)
+            } else {
+                this._tickMark.opacity(0)
+            }
+        }
+        return this;
+    }
+    
+    build() {
+        return `${this.buildStyleCode()}<div ${this.buildAttributeHTML()}>`+this._tickMark.build()+this.knob.build()+this._hiddenComponent.build()+"</div>"
+    }
+}
 
 
 /* 
@@ -958,6 +1118,7 @@ class EclairProgressBar extends EclairComponent {
                 this.indicator.getStyleSheet()["background-image"] = "";
                 this.indicator.getStyleSheet()["background-size"] = "1rem 1rem;";
             }
+            this.indicator.updateCSSStyle()
         }
         
         return this;
@@ -979,11 +1140,7 @@ class EclairProgressBar extends EclairComponent {
         if (_show == null) {
             return this.label.getStyleSheet()["opacity"] != "0";
         } else {
-            if (_show) {
-                this.label.getStyleSheet()["opacity"] = "1";
-            } else {
-                this.label.getStyleSheet()["opacity"] = "0";
-            }
+            this.label.opacity(_show? "1":"0")
             return this;
         }
     }

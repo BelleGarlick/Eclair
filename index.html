@@ -40,6 +40,16 @@ let progress = eclair.ProgressBar()
     .displayLabel(true)
 
 
+let alertBox = eclair.Alert()
+    .info()
+    .text("This is developmental and things may change!")
+    .title("Warning")
+
+
+let toggle1 = eclair.Toggle()
+let progressBar = eclair.ProgressBar()
+
+
 VBox([
     HBox([
         Text("Eclair")  
@@ -51,10 +61,66 @@ VBox([
     
     ScrollView([
         VBox([
-            eclair.Alert()
-                .info()
-                .text("This is developmental and things may change!")
-                .title("Warning"),
+            VBox([
+                Text("Toggle Switch").type("heading2"),
+                
+                VBox([
+                    toggle1.display("inline-block")
+                ]).align("center"),
+                
+                eclair.HorizontalLine(),
+                
+                VBox([
+                    Text("Show tick"),
+                    eclair.Toggle().onChange(c => {toggle1.showTick(c.value())}),
+                ]).spacing(10).align("left"),
+                
+                VBox([
+                    Text("Toggle Button"),
+                    eclair.Toggle().onChange(c => {toggle1.toggle()}),
+                ]).spacing(10).align("left"),
+                
+                VBox([
+                    Text("Enabled"),
+                    eclair.Toggle().onChange(c => {toggle1.enabled(c.value())})
+                        .value(toggle1.enabled()),
+                ]).spacing(10).align("left"),
+            ])
+                .background("#f6f6f6")
+                .borderRadius("3px")
+                .padding("20px")
+                .align("left")
+                .spacing(30),
+            
+            
+            VBox([
+                Text("Progress Bar").type("heading2"),
+                progressBar,
+                eclair.HorizontalLine(),
+                VBox([
+                    Text("Progress"),
+                    Slider()
+                        .min(0).max(1).value(0.5).step(0.01)
+                        .onInput(e => {progressBar.progress(e.value())})
+                ]).spacing(10).align("left"),
+                
+                VBox([
+                    Text("Striped"),
+                    eclair.Toggle().onChange(c => {progressBar.striped(c.value())}),
+                ]).spacing(10).align("left"),
+                
+                VBox([
+                    Text("Show Label"),
+                    eclair.Toggle().onChange(c => {progressBar.displayLabel(c.value())}),
+                ]).spacing(10).align("left"),
+            ])
+                .background("#f6f6f6")
+                .borderRadius("3px")
+                .padding("20px")
+                .align("left")
+                .spacing(30),
+            
+            alertBox,
 
             Text("Params").type("heading2"),
 
@@ -64,7 +130,7 @@ VBox([
                 .maxLength(11)
                 .onKeyUp(tb => {
                     if (tb.text() == "Hello There") {
-                        alert("General Kenobi")
+                        alertBox.title("General Kenobi")
                     }
                 }),
 
@@ -103,7 +169,7 @@ VBox([
             }),
 
             Button("testStyle Change").onClick(() => {
-                eclair.styles.button.background(eclair.theme.accent)
+                eclair.styles.Button.background(eclair.theme.accent)
             })
         ])
             .width("400px")
