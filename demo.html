@@ -1,0 +1,39 @@
+<!Doctype html>
+<html>
+<head>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/tomorrow.min.css"/>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js"></script>
+
+    <style>
+        .hljs-keyword {
+            color: #8026b9;
+        }
+        .hljs-string {
+            color: #5c9600;
+        }
+    </style>
+    <script src="eclair.js"></script>
+</head>
+<body>
+    <script>
+        let synHigh = eclair.SyntaxHighlighter()
+                .value('eclair.Button("Test")\n    .onClick(() => {\n        alert("Hello World!")\n    })\n    .write()')
+        
+        let frame = eclair.IFrame()
+        
+        eclair.HBox([
+            synHigh,
+            eclair
+                .Button("Run")
+                .onClick(() => {
+                    let hljsImport = '<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/tomorrow.min.css"/><script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js"></scr'+'ipt>';
+                    let eclairImport = '<script src="eclair.js"></scrip'+'t>'
+                    let code = hljsImport + eclairImport + '<script>'+synHigh.value()+'</sc'+'ript>'
+                    frame.source(code)
+                }),
+            frame
+        ])
+            .write()
+    </script>
+</body>
+</html>

@@ -4,6 +4,9 @@
 // TODO Superscript/Subscript text
 // TOD o AUTO update css rules
 // TODO Implement these: https://getbootstrap.com/docs/4.0/components/progress/
+// Add string html to views
+// Add string classes
+// Add margin, paddding, border: left, top, right bottom
 let eclair = {
     _ids: 0,
     _styleIDs: 0,
@@ -23,12 +26,16 @@ let eclair = {
     Image: function() {return new EclairImage();},
     Text: function(text) {return new EclairText(text);},
     Textbox: function(placeholder) {return new EclairTextbox(placeholder);},
+    TextArea: function() {return new EclairTextArea();},
+    IFrame: function() {return new EclairIFrame();},
     Select: function() {return new EclairSelect();},
     Link: function(text) {return new EclairLink(text);},
     Slider: function() {return new EclairSlider();},
     HiddenInput: function() {return new EclairHiddenInput();},
     Toggle: function() {return new EclairToggle();},
     HorizontalLine: function() {return new EclairHorizontalLine();},
+    CustomTagComponent: function(tag) {return new EclairCustomTagComponent(tag);},
+    SyntaxHighlighter: function() {return new EclairSyntaxHighlighter();},
     
     ProgressBar: function() {return new EclairProgressBar();},
     Alert: function() {return new EclairAlertBox();},
@@ -106,7 +113,6 @@ class EclairStylableObject {
         if (cssElement != null) {
             cssElement.innerHTML = this.buildStyleCode(true)
         }
-        console.log(objectID)
         
         return this;
     }
@@ -278,6 +284,7 @@ class EclairComponent extends EclairStylableObject {
     onMouseMove(callback) {return this._updateCallback("onMouseMove", callback);}
     onClick(callback) {return this._updateCallback("onClick", callback);}
     onDblClick(callback) {return this._updateCallback("onDblClick", callback);}
+    onScroll(callback) {return this._updateCallback("onScroll", callback);}
     onLoad(callback) {return this._updateCallback("onLoad", callback);}
     onError(callback) {return this._updateCallback("onError", callback);}
     onUnload(callback) {return this._updateCallback("onUnload", callback);}
@@ -298,7 +305,7 @@ class EclairComponent extends EclairStylableObject {
 
 
 eclair.styles = {
-    Button: new EclairStyleComponent()
+    Button: eclair.Style()
         .borderSize("0px")
         .borderRadius("2px")
         .padding("8px 16px")
@@ -307,7 +314,7 @@ eclair.styles = {
         .background("#dddddd", "hover")
         .background("#cccccc", "active"),
     
-    Slider: new EclairStyleComponent()
+    Slider: eclair.Style()
         .css("-webkit-appearance: none; box-sizing: border-box; outline: none; -webkit-transition: .2s; transition: opacity .2s;")
         .css("-webkit-appearance: none; appearance: none; cursor: pointer;", ":-webkit-slider-thumb")
         .css("-webkit-appearance: none; appearance: none; cursor: pointer;", ":-moz-slider-thumb")
@@ -326,13 +333,13 @@ eclair.styles = {
         .opacity(0.7)
         .opacity(1, "hover"),
     
-    Link: new EclairStyleComponent()
+    Link: eclair.Style()
         .font(eclair.theme.font)   
         .fontColor(eclair.theme.accent)
         .css("text-decoration: none")
         .css("text-decoration: underline", "hover"),
     
-    Textbox: new EclairStyleComponent()
+    Textbox: eclair.Style()
         .width("100%")
         .borderSize("0px")
         .borderRadius("3px")
@@ -343,9 +350,9 @@ eclair.styles = {
         .background("#cccccc", "active")
         .background("#bbbbbb", "focused"),
     
-    HorizontalLine: new EclairStyleComponent()
+    HorizontalLine: eclair.Style()
         .borderSize("0px")
-        .css("border-top: 1px solid #999999")
+        .css("border-top: 1px solid #999999"),
 }
 
 
@@ -486,10 +493,6 @@ class EclairForm extends EclairComponent {
     }
 }
 
-
-
-
-
 class EclairTextbox extends EclairComponent {
     constructor(_placeholder) {
         super()
@@ -559,12 +562,38 @@ class EclairTextbox extends EclairComponent {
 }
 
 
+    
+class EclairTextArea extends EclairComponent {
+    constructor() {
+        super()
+        this._value = ""
+    }
+    
+    value(_val) {
+        let elem = this.getElement();
+        if (_val == null) {
+            if (elem != null) {
+                return elem.value;
+            }
+            return this._value
+        } else {
+            this._value = _val
+            if (elem != null) {
+                elem.value = _val
+            }
+            return this
+        }
+    }
+    
+    build() {
+        return `${this.buildStyleCode()}<textarea ${this.buildAttributeHTML()}>${this._value}</textarea>`
+    }
+}
 
 
-
-/*
-    Standard Elements
-*/
+//
+//  Standard Elements
+//
 class EclairImage extends EclairComponent {
     constructor() {
         super()
@@ -716,6 +745,54 @@ class EclairHorizontalLine extends EclairComponent {
     }
 }
 
+class EclairIFrame extends EclairComponent {
+    constructor() {
+        super()
+        this.borderColor("#333333")
+        this.borderSize("1px")
+        this.width("100%")
+        this.height("100%")
+    }
+    
+    url(_source) {
+        return _source == null? this.getAttr("src") : this.setAttr("src", _source)
+    }
+    
+    source(_source) {
+        return _source == null? this.getAttr("srcdoc") : this.setAttr("srcdoc", _source)
+    }
+    
+    build() {
+        return `${this.buildStyleCode()}<iframe ${this.buildAttributeHTML()}>Your client does not support iframes.</iframe>`
+    }
+    
+    //allow	 	Specifies a feature policy for the <iframe>
+    //allowfullscreen	true
+    //false	Set to true if the <iframe> can activate fullscreen mode by calling the requestFullscreen() method
+    //allowpaymentrequest	true
+    //false	Set to true if a cross-origin <iframe> should be allowed to invoke the Payment Request API
+    //height	pixels	Specifies the height of an <iframe>. Default height is 150 pixels
+    //loading	eager
+    //lazy	Specifies whether a browser should load an iframe immediately or to defer loading of iframes until some conditions are met
+    //name	text	Specifies the name of an <iframe>
+    //referrerpolicy	no-referrer
+    //no-referrer-when-downgrade
+    //origin
+    //origin-when-cross-origin
+    //same-origin
+    //strict-origin-when-cross-origin
+    //unsafe-url	Specifies which referrer information to send when fetching the iframe
+    //sandbox	allow-forms
+    //allow-pointer-lock
+    //allow-popups
+    //allow-same-origin
+    //allow-scripts
+    //allow-top-navigation	Enables an extra set of restrictions for the content in an <iframe>
+    //src	URL	Specifies the address of the document to embed in the <iframe>
+    //srcdoc	HTML_code	Specifies the HTML content of the page to show in the <iframe>
+    //width	pixels	Specifies the width of an <iframe>. Default width is 300 pixels
+}
+
 
 /***
     Form Elements
@@ -856,6 +933,9 @@ class EclairButton extends EclairComponent {
     
     build() {
         let text = this.text;
+        if (text == null) {
+            text = "Button"
+        }
         if (typeof(text) != "string") {
             text = this.text.build()
         }
@@ -1080,6 +1160,34 @@ class EclairToggle extends EclairComponent {
 /* 
     Eclair Custom Elements
 */
+class EclairCustomTagComponent extends EclairComponent {
+    constructor(tag) {
+        super()
+        this.tag = tag;
+        this._innerHTML = "";
+    }
+    
+    innerHTML(_html) {
+        let elem = this.getElement();
+        if (_html == null) {
+            if (elem != null) {
+                return elem.innerHTML;
+            }
+            return this._innerHTML;
+        } else {
+            this._innerHTML = _html;
+            if (elem != null) {
+                elem.innerHTML = _html;
+            }
+        }
+        return this;
+    }
+    
+    build() {
+        return this.buildStyleCode() + `<${this.tag} ${this.buildAttributeHTML()}>${this._innerHTML}</${this.tag}>`
+    }
+}
+
 class EclairProgressBar extends EclairComponent {
     constructor() {
         super()
@@ -1122,6 +1230,11 @@ class EclairProgressBar extends EclairComponent {
         }
         
         return this;
+    }
+    
+    color(_color) {
+        this.indicator.background(_color)
+        return this
     }
     
     progress(_progress) {
@@ -1183,7 +1296,7 @@ class EclairAlertBox extends EclairComponent {
     warning() {return this.background("#fff3cd")}
     info() {return this.background("#d1ecf1")}
     light() {return this.background("white")}
-    dark() {return this.backgorund("#d5d8d9")}
+    dark() {return this.background("#d5d8d9")}
     
     title(_text) {
         if (_text == null) {
@@ -1196,6 +1309,9 @@ class EclairAlertBox extends EclairComponent {
     }
     
     text(_text) {
+        if (_text == null) {
+            return this._text.text()
+        }
         this._text.text(_text);
         return this;
     }
@@ -1205,4 +1321,111 @@ class EclairAlertBox extends EclairComponent {
     }
 }
 
+class EclairSyntaxHighlighter extends EclairComponent {
+    constructor() {
+        super()
 
+        // Check if HLJS is imported, if not then let player know that it's not
+        try {
+            if (hljs) {}
+        } catch {
+            console.log("HLJS Not imported. Go to 'https://highlightjs.org/usage/' to import the stylesheet and the .js file.")
+
+            let node = document.createElement("link")
+            node.setAttribute("href", "//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/tomorrow.min.css")
+            node.setAttribute("rel", "stylesheet")
+            document.head.appendChild(node)
+
+            node = document.createElement("script")
+            node.setAttribute("src", "//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js")
+            document.head.appendChild(node)
+        }
+
+        this._value = "";
+
+        let self = this;
+        this
+            .position("relative")
+            .width("400px")
+            .height("400px")
+
+        this._pre = eclair.CustomTagComponent("pre")
+            .position("absolute")
+            .padding("0px")
+            .margin("0px")
+            .height("100%")
+            .width("100%")
+            .top("0px")
+            .left("0px")
+            .background("white")
+            .css("box-sizing: border-box;line-height: 1.05")
+
+        this._code = eclair.CustomTagComponent("code")
+            .position("absolute")
+            .top("0px")
+            .left("0px")
+            .background("white")
+            .width("100%")
+            .height("100%")
+            .margin("0px")
+            .padding("10px 10px 10px 15px")
+            .fontColor("black")
+            .setAttr("class", "javascript")
+            .textAlign("left")
+            .css("box-sizing: border-box;")
+
+        this._textarea = eclair.TextArea()
+            .setAttr("spellcheck", false)
+            .display("inline")
+            .position("absolute")
+            .top("0px")
+            .left("0px")
+            .width("100%")
+            .height("100%")
+            .background("transparent")
+            .fontColor("transparent")
+            .font("monospace")
+            .margin("0px")
+            .padding("10px 10px 10px 15px")
+            .css("box-sizing: border-box;line-height: 1.05; caret-color: black;resize:none;white-space: pre;letter-spacing: -0.2px;")
+            .onKeyUp(e => {
+                var escape = document.createElement('textarea');
+                escape.textContent = e.value();
+                self._code.innerHTML(escape.innerHTML);
+                hljs.highlightAll();
+            })
+            .onKeyDown(e => {
+                var escape = document.createElement('textarea');
+                escape.textContent = e.value();
+                self._code.innerHTML(escape.innerHTML);
+                hljs.highlightAll();
+            }) 
+            .onScroll(e => {
+                let textarea = e.getElement()
+                self._code.getElement().scroll(textarea.scrollLeft, textarea.scrollTop)
+            })
+    }
+
+    value(_value) {
+        if (_value == null) {
+            let elem = this._textarea.getElement();
+            if (elem != null) { 
+                return this._textarea.value()
+            }
+            return this._value;
+        } else {
+            this._value = _value;
+            this._textarea.value(_value);
+            var escape = document.createElement('textarea');
+            escape.textContent = this._textarea.value();
+            this._code.innerHTML(escape.innerHTML);
+            hljs.highlightAll();
+            return this;
+        }
+    }
+
+    build() {
+        this._pre.innerHTML(this._code.build())
+        return `${this.buildStyleCode()}<div ${this.buildAttributeHTML()}>${this._pre.build()}${this._textarea.build()}</div>` + "<sc"+"ript>hljs.highlightAll();</sc"+"ript>"
+    }
+}
