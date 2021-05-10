@@ -7,6 +7,8 @@
 // Add string html to views
 // Add string classes
 // Add margin, paddding, border: left, top, right bottom
+
+
 let eclair = {
     _ids: 0,
     _styleIDs: 0,
@@ -155,7 +157,13 @@ class EclairStyleComponent extends EclairStylableObject {
         let node = document.createElement("style")
         node.innerHTML = this.buildStyleCode(true)
         node.setAttribute("id", this.id() + "-css")
-        document.head.appendChild(node)
+        
+        let headElements = document.head.children;
+        if (headElements.length == 0) {
+            document.head.appendChild(node)
+        } else {
+            document.head.insertBefore(node, headElements[0])
+        }
     }
     
     id() {
@@ -215,15 +223,21 @@ class EclairComponent extends EclairStylableObject {
         return this;
     }
     
-    addStyle(sharedStyleObject) {
-        let sharedID = sharedStyleObject.id()
+    addStyle(sharedClass) {
+        if (sharedClass == null) {return this}
+        
+        let className = sharedClass;
+        if (typeof(className) != "string") {
+            className = sharedClass.id()
+        }
+        
         let found = false;
         for (let n = 0; n < this.sharedStyles.length; n++) {
-            found = found || this.sharedStyles[n] == sharedID;
+            found = found || this.sharedStyles[n] == className;
         }
         
         if (!found) {
-            this.sharedStyles.push(sharedID);
+            this.sharedStyles.push(className);
         }
         
         let classesString = "";
@@ -236,8 +250,13 @@ class EclairComponent extends EclairStylableObject {
         return this;
     }
     
-    removeStyle(sharedStyleObject) {
-        let sharedID = sharedStyleObject.id()
+    removeStyle(sharedClass) {
+        if (sharedClass == null) {return this}
+        
+        let className = sharedClass;
+        if (typeof(className) != "string") {
+            className = sharedClass.id()
+        }
         
         let newStyles = []
         for (let n = 0; n < this.sharedStyles.length; n++) {
@@ -1330,15 +1349,6 @@ class EclairSyntaxHighlighter extends EclairComponent {
             if (hljs) {}
         } catch {
             console.log("HLJS Not imported. Go to 'https://highlightjs.org/usage/' to import the stylesheet and the .js file.")
-
-            let node = document.createElement("link")
-            node.setAttribute("href", "//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/tomorrow.min.css")
-            node.setAttribute("rel", "stylesheet")
-            document.head.appendChild(node)
-
-            node = document.createElement("script")
-            node.setAttribute("src", "//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js")
-            document.head.appendChild(node)
         }
 
         this._value = "";

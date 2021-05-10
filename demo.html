@@ -11,10 +11,15 @@
         .hljs-string {
             color: #5c9600;
         }
+        
+        .customButton {
+            background: red;
+        }
     </style>
     <script src="eclair.js"></script>
 </head>
 <body>
+    <div id='test'></div>
     <script>
         let synHigh = eclair.SyntaxHighlighter()
                 .value('eclair.Button("Test")\n    .onClick(() => {\n        alert("Hello World!")\n    })\n    .write()')
@@ -25,6 +30,7 @@
             synHigh,
             eclair
                 .Button("Run")
+                .addStyle("customButton")
                 .onClick(() => {
                     let hljsImport = '<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/tomorrow.min.css"/><script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js"></scr'+'ipt>';
                     let eclairImport = '<script src="eclair.js"></scrip'+'t>'
@@ -33,7 +39,7 @@
                 }),
             frame
         ])
-            .write()
+            .to('test')
     </script>
 </body>
 </html>
