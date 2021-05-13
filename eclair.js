@@ -7,7 +7,10 @@
 // Add margin, paddding, border: left, top, right bottom
 // Add deleting element
 // Add spinner
+// TODO Radio buttons auto select first items
 // Add callback getters when accessing child element.
+// TODO Add default styles to everything
+// TODO Check getters and setters calling sub functions are correct
 
 
 let eclair = {
@@ -40,12 +43,11 @@ let eclair = {
     CustomTagComponent: function(tag) {return new EclairCustomTagComponent(tag);},
     SyntaxHighlighter: function() {return new EclairSyntaxHighlighter();},
     RadioButtons: function() {return new EclairRadioButtons();},
+    CheckBox: function() {return new EclairCheckbox();},
     
     ProgressBar: function() {return new EclairProgressBar();},
     Alert: function() {return new EclairAlertBox();},
     
-    // Event methods
-    // Input Events
     performCallback: function(eID, event, param1) {this._elements[eID].performCallback(event, param1);},
     
     theme: {
@@ -175,207 +177,6 @@ class EclairStyleComponent extends EclairStylableObject {
 }
 
 
-class EclairComponent extends EclairStylableObject {
-    constructor() {
-        super()
-        
-        this._id = eclair.newID();
-        eclair._elements[this.id()] = this;
-        
-        this._callbacks = {}
-        this.sharedStyles = []
-        this.attributes = {
-            id: this.id()
-        }
-        
-        this.position("relative")
-    }
-    
-    id() {
-        return "eclairElement" + this._id;
-    }
-    
-    write() {
-        document.write(this.build())
-    }
-    
-    to(elemID) {
-        document.getElementById(elemID).innerHTML = this.build();
-    }
-    
-    getElement(callback) {
-        let elem = document.getElementById(this.id());
-        if (callback != null && elem != null) {
-            callback(elem)
-        }
-        return elem;
-    }
-    
-    getAttr(key) {
-        let elem = this.getElement();
-        if (elem != null) {return elem.getAttribute(key);}
-        return this.attributes[key];
-    }
-    
-    setAttr(key, value) {
-        if (value == null) {
-            delete this.attributes[key];
-            this.getElement(elem => {elem.removeAttribute(key)})
-        } else {
-            this.attributes[key] = value;
-            this.getElement(elem => {elem.setAttribute(key, value)})
-        }
-        return this;
-    }
-    
-    addStyle(sharedClass) {
-        if (sharedClass == null) {return this}
-        
-        let className = sharedClass;
-        if (typeof(className) != "string") {
-            className = sharedClass.id()
-        }
-        
-        let found = false;
-        for (let n = 0; n < this.sharedStyles.length; n++) {
-            found = found || this.sharedStyles[n] == className;
-        }
-        
-        if (!found) {
-            this.sharedStyles.push(className);
-        }
-        
-        let classesString = "";
-        for (let n = 0; n < this.sharedStyles.length; n++) {
-            if (n > 0) {classesString += " ";}
-            classesString += this.sharedStyles[n];
-        }
-        this.setAttr("class", classesString)
-        
-        return this;
-    }
-    
-    removeStyle(sharedClass) {
-        if (sharedClass == null) {return this}
-        
-        let className = sharedClass;
-        if (typeof(className) != "string") {
-            className = sharedClass.id()
-        }
-        
-        let newStyles = []
-        for (let n = 0; n < this.sharedStyles.length; n++) {
-            if (this.sharedStyles[n] != sharedID) {
-                newStyles.push(sharedID)
-            }
-        }
-        
-        this.sharedStyles = newStyles;
-        
-        let classesString = "";
-        for (let n = 0; n < this.sharedStyles.length; n++) {
-            if (n > 0) {classesString += " ";}
-            classesString += this.sharedStyles[n];
-        }
-        this.setAttr("class", classesString)
-        
-        return this;
-    }
-    
-    _updateCallback(callbackKey, callback) {
-        this._callbacks[callbackKey] = callback;
-        if (callback == null) {
-            this.setAttr(callbackKey.toLowerCase(), null)
-        } else {
-            this.setAttr(callbackKey.toLowerCase(), `eclair.performCallback("${this.id()}", "${callbackKey}")`)
-        }
-        return this;
-    }
-    onBlur(callback) {return this._updateCallback("onBlur", callback);}
-    onChange(callback) {return this._updateCallback("onChange", callback);}
-    onFocus(callback) {return this._updateCallback("onFocus", callback);}
-    onSelect(callback) {return this._updateCallback("onSelect", callback);}
-    onSubmit(callback) {return this._updateCallback("onSubmit", callback);}
-    onReset(callback) {return this._updateCallback("onReset", callback);}
-    onKeyDown(callback) {return this._updateCallback("onKeyDown", callback);}
-    onKeyPress(callback) {return this._updateCallback("onKeyPress", callback);}
-    onKeyUp(callback) {return this._updateCallback("onKeyUp", callback);}
-    onInput(callback) {return this._updateCallback("onInput", callback);}
-    onMouseDown(callback) {return this._updateCallback("onMouseDown", callback);}
-    onMouseUp(callback) {return this._updateCallback("onMouseUp", callback);}
-    onMouseOver(callback) {return this._updateCallback("onMouseOver", callback);}
-    onMouseOut(callback) {return this._updateCallback("onMouseOut", callback);}
-    onMouseMove(callback) {return this._updateCallback("onMouseMove", callback);}
-    onClick(callback) {return this._updateCallback("onClick", callback);}
-    onDblClick(callback) {return this._updateCallback("onDblClick", callback);}
-    onScroll(callback) {return this._updateCallback("onScroll", callback);}
-    onLoad(callback) {return this._updateCallback("onLoad", callback);}
-    onError(callback) {return this._updateCallback("onError", callback);}
-    onUnload(callback) {return this._updateCallback("onUnload", callback);}
-    onResize(callback) {return this._updateCallback("onResize", callback);}
-    onCreate(callback) {return this._updateCallback("onCreate", callback);}
-    onBuild(callback) {return this._updateCallback("onBuild", callback);}
-    performCallback(event, param1) {this._callbacks[event](this, param1);}
-
-    wrapHTML(_html) {        
-        // Calling on build
-        if (this._callbacks.hasOwnProperty("onBuild")) {
-            this.performCallback("onBuild");
-        }
-        
-        // Adding element attributes
-        let wrapperElement = document.createElement("div")
-        wrapperElement.innerHTML = _html;
-        let element = wrapperElement.children[0]
-        
-        let self = this;
-        Object.keys(this.attributes).forEach(function(key) {
-            element.setAttribute(key, self.attributes[key])
-        });
-        
-        // Adding the style code
-        let html = this.buildStyleCode() + wrapperElement.innerHTML;
-        
-        // Adding the onCreateScript
-        if (this._callbacks.hasOwnProperty("onCreate")) {
-            let onCreateScript = document.createElement("script")
-            onCreateScript.innerHTML = `eclair.performCallback("${this.id()}", "onCreate")`;
-            
-            html += onCreateScript.outerHTML;
-        }
-        
-        return html
-    }
-}
-
-class EclairCustomTagComponent extends EclairComponent {
-    constructor(tag) {
-        super()
-        this.tag = tag;
-        this._innerHTML = "";
-    }
-    
-    innerHTML(_html) {
-        let elem = this.getElement();
-        if (_html == null) {
-            if (elem != null) {
-                return elem.innerHTML;
-            }
-            return this._innerHTML;
-        } else {
-            this._innerHTML = _html;
-            if (elem != null) {
-                elem.innerHTML = _html;
-            }
-        }
-        return this;
-    }
-    
-    build() {
-        return this.wrapHTML(`<${this.tag}>${this._innerHTML}</${this.tag}>`)
-    }
-}
-
 eclair.styles = {
     Button: eclair.Style()
         .borderSize("0px")
@@ -457,8 +258,233 @@ eclair.styles = {
         .borderStyle("solid")
         .borderColor(eclair.theme.accent)
         .borderRadius("100%")
+        .background(eclair.theme.accent),
+    
+    CheckBox: eclair.Style()    
+        .css("cursor: pointer")
+        .css("box-shadow: 0px 0px 0px 100px rgba(0, 0, 0, 0.05) inset", "hover")
+        .padding("2px")
+        .borderRadius("4px")
+        .width("100%")
+        .font(eclair.theme.font),
+    CheckBoxIcon: eclair.Style()
+        .borderSize("2px")
+        .borderRadius("4px")
+        .borderColor(eclair.theme.accent)
+        .borderStyle("solid")
+        .width("16px")
+        .height("16px")
+        .fontSize("0.85rem")
+        .textAlign("center"),        
+    CheckBoxActiveIcon: eclair.Style()
+        .borderSize("2px")
+        .borderRadius("4px")
+        .borderColor(eclair.theme.accent)
+        .borderStyle("solid")
+        .width("16px")
+        .height("16px")
         .background(eclair.theme.accent)
+        .fontColor("white")
+        .fontSize("0.85rem")
+        .textAlign("center"),
+        
 }
+
+
+class EclairComponent extends EclairStylableObject {
+    constructor() {
+        super()
+        
+        this._id = eclair.newID();
+        eclair._elements[this.id()] = this;
+        
+        this._callbacks = {}
+        this.sharedStyles = []
+        this.attributes = {
+            id: this.id()
+        }
+        
+        this.position("relative")
+    }
+    
+    id() {
+        return "eclairElement" + this._id;
+    }
+    
+    write() {
+        document.write(this.build())
+    }
+    
+    to(elemID) {
+        document.getElementById(elemID).innerHTML = this.build();
+    }
+    
+    getElement(callback) {
+        let elem = document.getElementById(this.id());
+        if (callback != null && elem != null) {
+            callback(elem)
+        }
+        return elem;
+    }
+    
+    getAttr(key) {
+        let elem = this.getElement();
+        if (elem != null) {return elem.getAttribute(key);}
+        return this.attributes[key];
+    }
+    
+    setAttr(key, value) {
+        if (value == null) {
+            delete this.attributes[key];
+            this.getElement(elem => {elem.removeAttribute(key)})
+        } else {
+            this.attributes[key] = value;
+            this.getElement(elem => {elem.setAttribute(key, value)})
+        }
+        return this;
+    }
+    
+    addStyle(sharedClass) {
+        if (sharedClass != null) {
+            let className = typeof(sharedClass) == "string"? sharedClass:sharedClass.id();
+
+            let found = false;
+            for (let n = 0; n < this.sharedStyles.length; n++) {
+                found = found || this.sharedStyles[n] == className;
+            }
+
+            if (!found) {
+                this.sharedStyles.push(className);
+            }
+
+            let classesString = "";
+            for (let n = 0; n < this.sharedStyles.length; n++) {
+                if (n > 0) {classesString += " ";}
+                classesString += this.sharedStyles[n];
+            }
+            this.setAttr("class", classesString)
+        }
+        return this;
+    }
+    
+    removeStyle(sharedClass) {
+        if (sharedClass != null) { 
+            let className = typeof(sharedClass) == "string"? sharedClass:sharedClass.id();
+            
+            let newStyles = []
+            for (let n = 0; n < this.sharedStyles.length; n++) {
+                if (this.sharedStyles[n] != className) {
+                    newStyles.push(this.sharedStyles[n])
+                }
+            }
+
+            this.sharedStyles = newStyles;
+
+            let classesString = "";
+            for (let n = 0; n < this.sharedStyles.length; n++) {
+                if (n > 0) {classesString += " ";}
+                classesString += this.sharedStyles[n];
+            }
+            this.setAttr("class", classesString)
+        }
+        return this;
+    }
+    
+    _updateCallback(callbackKey, callback) {
+        this._callbacks[callbackKey] = callback;
+        if (callback == null) {
+            this.setAttr(callbackKey.toLowerCase(), null)
+        } else {
+            this.setAttr(callbackKey.toLowerCase(), `eclair.performCallback("${this.id()}", "${callbackKey}")`)
+        }
+        return this;
+    }
+    onBlur(callback) {return this._updateCallback("onBlur", callback);}
+    onChange(callback) {return this._updateCallback("onChange", callback);}
+    onFocus(callback) {return this._updateCallback("onFocus", callback);}
+    onSelect(callback) {return this._updateCallback("onSelect", callback);}
+    onSubmit(callback) {return this._updateCallback("onSubmit", callback);}
+    onReset(callback) {return this._updateCallback("onReset", callback);}
+    onKeyDown(callback) {return this._updateCallback("onKeyDown", callback);}
+    onKeyPress(callback) {return this._updateCallback("onKeyPress", callback);}
+    onKeyUp(callback) {return this._updateCallback("onKeyUp", callback);}
+    onInput(callback) {return this._updateCallback("onInput", callback);}
+    onMouseDown(callback) {return this._updateCallback("onMouseDown", callback);}
+    onMouseUp(callback) {return this._updateCallback("onMouseUp", callback);}
+    onMouseOver(callback) {return this._updateCallback("onMouseOver", callback);}
+    onMouseOut(callback) {return this._updateCallback("onMouseOut", callback);}
+    onMouseMove(callback) {return this._updateCallback("onMouseMove", callback);}
+    onClick(callback) {return this._updateCallback("onClick", callback);}
+    onDblClick(callback) {return this._updateCallback("onDblClick", callback);}
+    onScroll(callback) {return this._updateCallback("onScroll", callback);}
+    onLoad(callback) {return this._updateCallback("onLoad", callback);}
+    onError(callback) {return this._updateCallback("onError", callback);}
+    onUnload(callback) {return this._updateCallback("onUnload", callback);}
+    onResize(callback) {return this._updateCallback("onResize", callback);}
+    onCreate(callback) {return this._updateCallback("onCreate", callback);}
+    onBuild(callback) {return this._updateCallback("onBuild", callback);}
+    performCallback(event, param1) {this._callbacks[event](this, param1);}
+
+    wrapHTML(_html) {        
+        // Calling on build
+        if (this._callbacks.hasOwnProperty("onBuild")) {
+            this.performCallback("onBuild");
+        }
+        
+        // Adding element attributes
+        let wrapperElement = document.createElement("div")
+        wrapperElement.innerHTML = _html;
+        let element = wrapperElement.children[0]
+        
+        let self = this;
+        Object.keys(this.attributes).forEach(function(key) {
+            element.setAttribute(key, self.attributes[key])
+        });
+        
+        // Adding the style code
+        let html = this.buildStyleCode() + wrapperElement.innerHTML;
+        
+        // Adding the onCreateScript
+        if (this._callbacks.hasOwnProperty("onCreate")) {
+            let onCreateScript = document.createElement("script")
+            onCreateScript.innerHTML = `eclair.performCallback("${this.id()}", "onCreate")`;
+            
+            html += onCreateScript.outerHTML;
+        }
+        
+        return html
+    }
+}
+
+
+class EclairCustomTagComponent extends EclairComponent {
+    constructor(tag) {
+        super()
+        this.tag = tag;
+        this._innerHTML = "";
+    }
+    
+    innerHTML(_html) {
+        let elem = this.getElement();
+        if (_html == null) {
+            if (elem != null) {
+                return elem.innerHTML;
+            }
+            return this._innerHTML;
+        } else {
+            this._innerHTML = _html;
+            if (elem != null) {
+                elem.innerHTML = _html;
+            }
+        }
+        return this;
+    }
+    
+    build() {
+        return this.wrapHTML(`<${this.tag}>${this._innerHTML}</${this.tag}>`)
+    }
+}
+
 
 class EclairTextbox extends EclairCustomTagComponent {
     constructor(_placeholder) {
@@ -1166,7 +1192,12 @@ class EclairToggle extends EclairComponent {
     }
     
     name(_name) {
-        return this._hiddenComponent.name(_name)
+        if (_name == null) {
+            return this._hiddenComponent.name()
+        } else {
+            this._hiddenComponent.name(_name)
+            return this;
+        }
     }
     
     enabled(_enabled) {
@@ -1246,7 +1277,6 @@ class EclairRadioButtons extends EclairComponent {
     constructor() {
         super()
         
-        this._selectedIndex = 0;
         this._enabled = true
         this._hidden = eclair.HiddenInput()
         
@@ -1321,35 +1351,25 @@ class EclairRadioButtons extends EclairComponent {
         })
     }
     
-    addItems(_values) { 
+    addItems(_items) { 
         for (let n = 0; n < _items.length; n++) {
-            this.addItem(_values[n])
+            this.addItem(_items[n])
         }
+        return this
     }
     
     value(_val) {
-        if (_val != null) {
-            let selectedIndex = -1;
-            for (let n = 0; n < this.items.length; n++) {
-                if (this.items[n].value == _val) {
-                    selectedIndex = n;
-                }
-            }
-            if (selectedIndex == -1) {
-                for (let n = 0; n < this.items.length; n++) {
-                    if (this.items[n].text == _val) {
-                        selectedIndex = n;
-                    }
-                }
-            }
-            this.selectedIndex(selectedIndex)
+        if (_val == null) {
+            return this._hidden.value()
         }
-            
-        return this._hidden.value(_val)
+        this._hidden.value(_val)
+        this.selectedIndex(this.selectedIndex())
+        return this;
     }
     
     name(_name) {
-        return this._hidden.name(_name)
+        this._hidden.name(_name)
+        return this;
     }
     
     enabled(_enabled) {
@@ -1363,7 +1383,21 @@ class EclairRadioButtons extends EclairComponent {
     
     selectedIndex(_index) {
         if (_index == null) {
-            return this._selectedIndex
+            let selectedIndex = -1;
+            let _val = this._hidden.value()
+            for (let n = 0; n < this.items.length; n++) {
+                if (this.items[n].value == _val) {
+                    selectedIndex = n;
+                }
+            }
+            if (selectedIndex == -1) {
+                for (let n = 0; n < this.items.length; n++) {
+                    if (this.items[n].text == _val) {
+                        selectedIndex = n;
+                    }
+                }
+            }
+            return selectedIndex;
         }
         
         this._hidden.value(this.items[_index].value)
@@ -1385,12 +1419,119 @@ class EclairRadioButtons extends EclairComponent {
         }
     }
     
-    build() {
+    build() {        
         let items = ""
         for (let i = 0; i < this.items.length; i++) {
             items += this.buildItem(this.items[i], i)
         }
         return this.wrapHTML(`<div>${items}</div>${this._hidden.build()}`)
+    }
+}
+
+class EclairCheckbox extends EclairComponent {
+    constructor() {
+        super()
+        
+        this._enabled = true     
+        
+        this.setAttr("cellpadding", 6)     
+            .addStyle(eclair.styles.CheckBox)   
+        
+        this.checkboxStyle = eclair.Style()        
+        this.checkboxStyleActive = eclair.Style()
+        
+        this._label = eclair.Text("Checkbox")
+        this._checkbox = eclair.CustomTagComponent("div")
+            .addStyle(eclair.styles.CheckBoxIcon)
+            .addStyle(this.checkboxStyle)
+        this._hidden = eclair.HiddenInput()
+            .value("false")
+        
+        this.items = []
+        
+        let self = this
+        this._updateCallback("onClick", () => {
+            if (this.overrideOnClick != null) {
+                this.overrideOnClick(this)
+            }
+            if (self._enabled) {   
+                this.toggle()
+                if (self._callbacks.hasOwnProperty("onChange")) 
+                    self.performCallback("onChange")
+            }  
+        })
+        
+        this.overrideOnClick = null
+    }
+        
+    onClick(callback) {
+        this.overrideOnClick = callback;
+        return this;
+    }
+    
+    value(_val) {
+        if (_val == null) {
+            return this._hidden.value() == "true"
+        }
+        
+        if (_val == true) {
+            this._hidden.value("true")
+            this._checkbox
+                .addStyle(eclair.styles.CheckBoxActiveIcon)
+                .addStyle(this.checkboxStyleActive)
+                .removeStyle(eclair.styles.CheckBoxIcon)
+                .removeStyle(this.checkboxStyle)
+                .innerHTML("✓")
+        } else {
+            this._hidden.value("false")
+            this._checkbox
+                .addStyle(eclair.styles.CheckBoxIcon)
+                .addStyle(this.checkboxStyle)
+                .removeStyle(eclair.styles.CheckBoxActiveIcon)
+                .removeStyle(this.checkboxStyleActive)
+                .innerHTML("")
+        }
+        return this        
+    }
+    
+    toggle() {
+        this.value(!this.value())
+        return this;
+    }
+    
+    name(_name) {
+        if (_name == null) {
+            return this._hidden.name()
+        } else {
+            this._hidden.name(_name)
+        }
+        return this;
+    }
+    
+    enabled(_enabled) {
+        if (_enabled == null) {
+            return this._enabled;
+        } else {
+            this._enabled = _enabled;
+            return this
+        }
+    }
+    
+    text(_text) {
+        if (_text == null) {
+            return this._label.text()
+        } else {
+            this._label.text(_text)
+        }
+        return this;
+    }
+    
+    build() {
+        let items = ""
+        for (let i = 0; i < this.items.length; i++) {
+            items += this.buildItem(this.items[i], i)
+        }
+        return this.wrapHTML(`<table><tr><td width=1>${this._checkbox.build()}</td><td>${this._label.build()}</td></tr></table>${this._hidden.build()}`)
     }
 }
 
@@ -1634,3 +1775,5 @@ class EclairSyntaxHighlighter extends EclairComponent {
         return this.wrapHTML(`<div>${this._pre.build()}${this._textarea.build()}</div>${postBuildScript.outerHTML}`)
     }
 }
+
+

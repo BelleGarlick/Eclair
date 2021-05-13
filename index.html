@@ -6,9 +6,8 @@ let toggle1 = eclair.Toggle()
     .value(true)
 let progressBar = eclair.ProgressBar().progress(0.5)
 
-let alertBox = eclair.Alert().success()
-    .title("Congrats")
-    .text("You're learning Eclair")
+let alertBox = eclair.Alert().success().title("Congrats").text("You're learning Eclair")
+
 let alertBoxTextbox = eclair.Textbox("Message...")
     .text("This is developmental and things may change!")
     .onKeyUp(e => {
@@ -30,6 +29,7 @@ function toggleLabels(text, callback) {
         eclair.Toggle().onChange(callback),
     ]).spacing(10).align("left")
 }
+    
 
 
 let codeView = eclair.SyntaxHighlighter()
@@ -47,16 +47,9 @@ eclair.VBox([
     
     eclair.ScrollView([
         eclair.VBox([
-            eclair.RadioButtons()
-                .addItem("test")
-                .addItem("testing")
-                .addItem("tests"),
-            
-            eclair.RadioButtons()
-                .addItem("also test")
-                .addItem("also testing")
-                .addItem("also tests"),
-            
+            eclair.CheckBox().text("Accept cookies?"),
+            eclair.RadioButtons().addItems(["test", "testing", "tests"]),
+            eclair.RadioButtons().addItems(["also test", "also testing", "also tests"]),
             group([
                 eclair.Text("Toggle Switch").type("heading2"),
                 
