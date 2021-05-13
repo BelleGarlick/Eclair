@@ -2,11 +2,13 @@
 // TODO Prevent layered on click events
 // TODO Hide show elements
 // TODO Superscript/Subscript text
-// TOD o AUTO update css rules
+// TODO AUTO update css rules
 // TODO Implement these: https://getbootstrap.com/docs/4.0/components/progress/
 // Add string html to views
-// Add string classes
 // Add margin, paddding, border: left, top, right bottom
+// Add deleting element
+// Add on loading element
+// Add callback getters when accessing child element.
 
 
 let eclair = {
@@ -38,13 +40,14 @@ let eclair = {
     HorizontalLine: function() {return new EclairHorizontalLine();},
     CustomTagComponent: function(tag) {return new EclairCustomTagComponent(tag);},
     SyntaxHighlighter: function() {return new EclairSyntaxHighlighter();},
+    RadioButtons: function() {return new EclairRadioButtons();},
     
     ProgressBar: function() {return new EclairProgressBar();},
     Alert: function() {return new EclairAlertBox();},
     
     // Event methods
     // Input Events
-    performCallback: function(eID, event) {this._elements[eID].performCallback(event);},
+    performCallback: function(eID, event, param1) {this._elements[eID].performCallback(event, param1);},
     
     theme: {
         "accent": "#ee8800",
@@ -110,8 +113,9 @@ class EclairStylableObject {
     }
     
     updateCSSStyle() {
-        let objectID = this.id() + "-css"
+        let objectID = this.id() + "-css";
         let cssElement = document.getElementById(objectID);
+        
         if (cssElement != null) {
             cssElement.innerHTML = this.buildStyleCode(true)
         }
@@ -308,7 +312,7 @@ class EclairComponent extends EclairStylableObject {
     onError(callback) {return this._updateCallback("onError", callback);}
     onUnload(callback) {return this._updateCallback("onUnload", callback);}
     onResize(callback) {return this._updateCallback("onResize", callback);}
-    performCallback(event) {this._callbacks[event](this);}
+    performCallback(event, param1) {this._callbacks[event](this, param1);}
     
     buildAttributeHTML() {
         let self = this;
@@ -372,144 +376,39 @@ eclair.styles = {
     HorizontalLine: eclair.Style()
         .borderSize("0px")
         .css("border-top: 1px solid #999999"),
-}
-
-
-class EclairView extends EclairComponent {
-    constructor(elements) {
-        super()
-        this.elements = elements;
-    }
     
-    build () {
-        let code = ""
-        for (let e = 0; e < this.elements.length; e++) {
-             code += this.elements[e].build();
-        }
-        return `${this.buildStyleCode()}<div ${this.buildAttributeHTML()}>` + code + "</div>";
-    }
-}
-
-class EclairScrollView extends EclairComponent {
-    constructor(elements) {
-        super()
-        this.elements = elements;
-        this.overflow("auto")
-        this.width("100%")
-        this.height("100%")
-    }
     
-    build () {
-        let code = ""
-        for (let e = 0; e < this.elements.length; e++) {
-             code += this.elements[e].build();
-        }
-        return "<div "+this.buildAttributeHTML()+">" + code + "</div>";
-    }
-}
-
-class EclairVBox extends EclairComponent {
-    constructor(elements) {
-        super()
-        
-        this._spacing = 0
-        this.elements = elements;
-        this.getStyleSheet()["table-layout"] = "fixed"
-        this.getStyleSheet()["max-width"] = "100%"
-        this.setAttr("border", 0)
-            .setAttr("cellspacing", 0)
-            .setAttr("cellpadding", 0)
-            .textAlign("center")
-            .margin("0px auto")
-            .width("100%")
-    }
-    
-    spacing(space) {
-        this._spacing = space;
-        return this;
-    }
-    
-    align(_align) {
-        this.textAlign(_align)
-        return this
-    }
-    
-    build () {
-        let code = this.buildStyleCode() + "<table "+this.buildAttributeHTML()+">"
-        for (let e = 0; e < this.elements.length; e++) {
-            if (e > 0) {
-                code += "<tr><td height='"+ this._spacing +"px'></td></tr>"
-            }
-            code += "<tr><td>" + this.elements[e].build() + "</td></tr>";
-        }
-        return code + "</table>";
-    }
-}
-
-class EclairHBox extends EclairComponent {
-    constructor(elements) {
-        super()
-        
-        this._spacing = 0
-        this.elements = elements;
-        this.getStyleSheet()["table-layout"] = "fixed"
-        this.setAttr("border", 0)
-        this.setAttr("cellspacing", 0)
-        this.setAttr("cellpadding", 0)
-        this.textAlign("center")
-        this.width("100%")
-            .margin("0px auto")
-    }
-    
-    spacing(space) {
-        this._spacing = space;
-        return this;
-    }
-    
-    build () {
-        let code = this.buildStyleCode() + "<table "+this.buildAttributeHTML()+">"
-        for (let e = 0; e < this.elements.length; e++) {
-            if (e > 0) {
-                code += "<td width='"+ this._spacing +"px'></td>"
-            }
-            code += "<td>" + this.elements[e].build() + "</td>";
-        }
-        return code + "</table>";
-    }
-}
-
-class EclairForm extends EclairComponent {
-    constructor(elements) {
-        super()
-        
-        this.elements = elements;
-        this._method = "POST"
-        this._action = null;
-    }
-    
-    method(_method) {
-        this._method = _method;
-        return this;
-    }
-    
-    action(_action) {
-        this._action = _action;
-        return this;
-    }
-    
-    submit() {
-        alert("Submit called")
-    }
-    
-    build() {
-        let code = `<form>`
-        for (let n = 0; n < this.elements.length; n++) {
-            code += this.elements[n].build();
-        }
-        code += "</form>"
-        
-        return code;
-    }
+    // Radio Buttons
+    RadioButtons: eclair.Style(),  // No default style
+    RadioButtonsItem: eclair.Style()
+        .css("cursor: pointer")
+        .css("box-shadow: 0px 0px 0px 100px rgba(0, 0, 0, 0.05) inset", "hover")
+        .padding("2px")
+        .borderRadius("4px")
+        .width("100%")
+        .font(eclair.theme.font),
+    RadioButtonsSelectedItem: eclair.Style()
+        .css("cursor: pointer")
+        .css("box-shadow: 0px 0px 0px 100px rgba(0, 0, 0, 0.05) inset", "hover")
+        .padding("2px")
+        .borderRadius("4px")
+        .width("100%")
+        .font(eclair.theme.font),
+    RadioButtonsRadio: eclair.Style()
+        .width("14px")
+        .height("14px")
+        .borderSize("2px")
+        .borderStyle("solid")
+        .borderColor(eclair.theme.accent)
+        .borderRadius("100%"),
+    RadioButtonsSelectedRadio: eclair.Style()
+        .width("14px")
+        .height("14px")
+        .borderSize("2px")
+        .borderStyle("solid")
+        .borderColor(eclair.theme.accent)
+        .borderRadius("100%")
+        .background(eclair.theme.accent)
 }
 
 class EclairTextbox extends EclairComponent {
@@ -581,7 +480,6 @@ class EclairTextbox extends EclairComponent {
 }
 
 
-    
 class EclairTextArea extends EclairComponent {
     constructor() {
         super()
@@ -611,7 +509,114 @@ class EclairTextArea extends EclairComponent {
 
 
 //
-//  Standard Elements
+// Layout
+//
+class EclairView extends EclairComponent {
+    constructor(elements) {
+        super()
+        this.elements = elements;
+    }
+    
+    build () {
+        let code = ""
+        for (let e = 0; e < this.elements.length; e++) {
+             code += this.elements[e].build();
+        }
+        return `${this.buildStyleCode()}<div ${this.buildAttributeHTML()}>` + code + "</div>";
+    }
+}
+
+class EclairScrollView extends EclairComponent {
+    constructor(elements) {
+        super()
+        this.elements = elements;
+        this.overflow("auto")
+        this.width("100%")
+        this.height("100%")
+    }
+    
+    build () {
+        let code = ""
+        for (let e = 0; e < this.elements.length; e++) {
+             code += this.elements[e].build();
+        }
+        return "<div "+this.buildAttributeHTML()+">" + code + "</div>";
+    }
+}
+
+class EclairVBox extends EclairComponent {
+    constructor(elements) {
+        super()
+        
+        this._spacing = 0
+        this.elements = elements;
+        this.getStyleSheet()["table-layout"] = "fixed"
+        this.getStyleSheet()["max-width"] = "100%"
+        this.setAttr("border", 0)
+            .setAttr("cellspacing", 0)
+            .setAttr("cellpadding", 0)
+            .textAlign("center")
+            .margin("0px auto")
+            .width("100%")
+    }
+    
+    spacing(space) {
+        this._spacing = space;
+        return this;
+    }
+    
+    align(_align) {
+        this.textAlign(_align)
+        return this
+    }
+    
+    build () {
+        let code = this.buildStyleCode() + "<table "+this.buildAttributeHTML()+">"
+        for (let e = 0; e < this.elements.length; e++) {
+            if (e > 0) {
+                code += "<tr><td style='height:"+ this._spacing +"px'></td></tr>"
+            }
+            code += "<tr><td>" + this.elements[e].build() + "</td></tr>";
+        }
+        return code + "</table>";
+    }
+}
+
+class EclairHBox extends EclairComponent {
+    constructor(elements) {
+        super()
+        
+        this._spacing = 0
+        this.elements = elements;
+        this.getStyleSheet()["table-layout"] = "fixed"
+        this.setAttr("border", 0)
+        this.setAttr("cellspacing", 0)
+        this.setAttr("cellpadding", 0)
+        this.textAlign("center")
+        this.width("100%")
+            .margin("0px auto")
+    }
+    
+    spacing(space) {
+        this._spacing = space;
+        return this;
+    }
+    
+    build () {
+        let code = this.buildStyleCode() + "<table "+this.buildAttributeHTML()+">"
+        for (let e = 0; e < this.elements.length; e++) {
+            if (e > 0) {
+                code += "<td style='width:"+ this._spacing +"px'></td>"
+            }
+            code += "<td>" + this.elements[e].build() + "</td>";
+        }
+        return code + "</table>";
+    }
+}
+
+
+//
+// Standard Elements
 //
 class EclairImage extends EclairComponent {
     constructor() {
@@ -781,41 +786,73 @@ class EclairIFrame extends EclairComponent {
         return _source == null? this.getAttr("srcdoc") : this.setAttr("srcdoc", _source)
     }
     
+    allowFullScren(_allow) {
+        return _allow == null? this.getAttr("allowfullscreen") : this.setAttr("allowfullscreen", _allow)
+    }
+    
+    allowPaymentRequest(_allow) {
+        return _allow == null? this.getAttr("allowpaymentrequest") : this.setAttr("allowpaymentrequest", _allow)
+    }
+    
+    loading(_loading) {
+        return _loading == null? this.getAttr("loading") : this.setAttr("loading", _loading)
+    }
+    
+    name(_name) {
+        return _name == null? this.getAttr("name") : this.setAttr("name", _name)
+    }
+    
+    referrerPolicy(_policy) {
+        return _policy == null? this.getAttr("referrerpolicy") : this.setAttr("referrerpolicy", _policy)
+    }
+    
+    sandbox(_sandbox) {
+        return _sandbox == null? this.getAttr("sandbox") : this.setAttr("sandbox", _sandbox)
+    }
+    
     build() {
         return `${this.buildStyleCode()}<iframe ${this.buildAttributeHTML()}>Your client does not support iframes.</iframe>`
     }
-    
-    //allow	 	Specifies a feature policy for the <iframe>
-    //allowfullscreen	true
-    //false	Set to true if the <iframe> can activate fullscreen mode by calling the requestFullscreen() method
-    //allowpaymentrequest	true
-    //false	Set to true if a cross-origin <iframe> should be allowed to invoke the Payment Request API
-    //height	pixels	Specifies the height of an <iframe>. Default height is 150 pixels
-    //loading	eager
-    //lazy	Specifies whether a browser should load an iframe immediately or to defer loading of iframes until some conditions are met
-    //name	text	Specifies the name of an <iframe>
-    //referrerpolicy	no-referrer
-    //no-referrer-when-downgrade
-    //origin
-    //origin-when-cross-origin
-    //same-origin
-    //strict-origin-when-cross-origin
-    //unsafe-url	Specifies which referrer information to send when fetching the iframe
-    //sandbox	allow-forms
-    //allow-pointer-lock
-    //allow-popups
-    //allow-same-origin
-    //allow-scripts
-    //allow-top-navigation	Enables an extra set of restrictions for the content in an <iframe>
-    //src	URL	Specifies the address of the document to embed in the <iframe>
-    //srcdoc	HTML_code	Specifies the HTML content of the page to show in the <iframe>
-    //width	pixels	Specifies the width of an <iframe>. Default width is 300 pixels
 }
 
 
-/***
-    Form Elements
-***/
+//
+// Form Elements
+//
+class EclairForm extends EclairComponent {
+    constructor(elements) {
+        super()
+        
+        this.elements = elements;
+        this._method = "POST"
+        this._action = null;
+    }
+    
+    method(_method) {
+        this._method = _method;
+        return this;
+    }
+    
+    action(_action) {
+        this._action = _action;
+        return this;
+    }
+    
+    submit() {
+        alert("Submit called")
+    }
+    
+    build() {
+        let code = `<form>`
+        for (let n = 0; n < this.elements.length; n++) {
+            code += this.elements[n].build();
+        }
+        code += "</form>"
+        
+        return code;
+    }
+}
+
 class EclairSelect extends EclairComponent {
     constructor() {
         super()
@@ -1086,11 +1123,6 @@ class EclairToggle extends EclairComponent {
                 this.toggle()
             }
         })
-        let self = this
-        this._updateCallback("onResize", e => {
-            alert("value")
-            self.value(self.value())
-        })
         
         this._showCheckMark = false
         this._enabled = true
@@ -1098,7 +1130,6 @@ class EclairToggle extends EclairComponent {
     
     // Prevent on click override
     onClick(callback) {return this;}
-    onLoad(callback) {return this;}
     
     name(_name) {
         return this._hiddenComponent.name(_name)
@@ -1174,11 +1205,164 @@ class EclairToggle extends EclairComponent {
         return `${this.buildStyleCode()}<div ${this.buildAttributeHTML()}>`+this._tickMark.build()+this.knob.build()+this._hiddenComponent.build()+"</div>"
     }
 }
+    
+class EclairRadioButtons extends EclairComponent {
+    constructor() {
+        super()
+        
+        this._selectedIndex = 0;
+        this._enabled = true
+        this._hidden = eclair.HiddenInput()
+        
+        this.itemStyle = eclair.Style()
+        this.selectedItemStyle = eclair.Style()
+        this.radioStyle = eclair.Style()
+        this.selectedRadioStyle = eclair.Style()
+        
+        this.addStyle(eclair.styles.RadioButtons)
+        
+        this.items = []
+        
+        let self = this
+        this._callbacks["selectRadioButton"] = function(object, selectedValue) {
+            if (self._enabled) {   
+                self.value(selectedValue)
+                if (self._callbacks.hasOwnProperty("onChange")) 
+                    self.performCallback("onChange")
+            }
+        }
+    }
+    
+    buildItem(_item, index) {
+        let style = `style='margin-top: 3px;'`
+        if (index == 0) {style = ""}
+        return `<table onclick='eclair.performCallback("${this.id()}", "selectRadioButton", "${_item.value}")' cellpadding=6 class='${eclair.styles.RadioButtonsItem.id()} ${this.itemStyle.id()}' ${style}><tbody><tr><td width=1><div class='${eclair.styles.RadioButtonsRadio.id()} ${this.radioStyle.id()}'></div></td><td>${_item.text}</td></tr></tbody></table>`
+    }
+    
+    addItem(value, text) {
+        text = text == null ? value : text
+        let item = {"value": value, "text": text}
+        this.items.push(item)
+        
+        let self = this;
+        this.getElement(e => {
+            // Create dummy element to set the inner html of, to get out the element as a child
+            var div = document.createElement('div');
+            div.innerHTML = self.buildItem(item, e.children.length)
+            e.appendChild(div.firstChild);
+        })
+        
+        return this;
+    }
+    
+    removeItem(_value) {
+        let selectedIndex = -1;
+        for (let n = 0; n < this.items.length; n++) {
+            if (this.items[n].value == _val) {
+                selectedIndex = n;
+            }
+        }
+        if (selectedIndex == -1) {
+            for (let n = 0; n < this.items.length; n++) {
+                if (this.items[n].text == _val) {
+                    selectedIndex = n;
+                }
+            }
+        }
+        this.removeIndex(selectedIndex);
+    }
+    
+    removeIndex(_index) {
+        let newItems = []
+        for (let n = 0; n < this.items.length; n++) {
+            if (n != _index)
+                newItems.push(this.items[n])
+        }
+        this.items = newItems;
+        
+        this.getElement(e => {
+            e.removeChild(e.childNodes[_index]);  
+        })
+    }
+    
+    addItems(_values) { 
+        for (let n = 0; n < _items.length; n++) {
+            this.addItem(_values[n])
+        }
+    }
+    
+    value(_val) {
+        if (_val != null) {
+            let selectedIndex = -1;
+            for (let n = 0; n < this.items.length; n++) {
+                if (this.items[n].value == _val) {
+                    selectedIndex = n;
+                }
+            }
+            if (selectedIndex == -1) {
+                for (let n = 0; n < this.items.length; n++) {
+                    if (this.items[n].text == _val) {
+                        selectedIndex = n;
+                    }
+                }
+            }
+            this.selectedIndex(selectedIndex)
+        }
+            
+        return this._hidden.value(_val)
+    }
+    
+    name(_name) {
+        return this._hidden.name(_name)
+    }
+    
+    enabled(_enabled) {
+        if (_enabled == null) {
+            return this._enabled;
+        } else {
+            this._enabled = _enabled;
+            return this
+        }
+    }
+    
+    selectedIndex(_index) {
+        if (_index == null) {
+            return this._selectedIndex
+        }
+        
+        this._hidden.value(this.items[_index].value)
+        
+        for (let n = 0; n < this.items.length; n++) {
+            let buttons = this.getElement().children;
+            if (n == _index) {
+                buttons[n].setAttribute("class", eclair.styles.RadioButtonsSelectedItem.id() + " " + this.selectedItemStyle.id())
+            } else {
+                buttons[n].setAttribute("class", eclair.styles.RadioButtonsItem.id() + " " + this.itemStyle.id())
+            }
+            
+            let radioButton = buttons[n].children[0].children[0].children[0].children[0]
+            if (n == _index) {
+                radioButton.setAttribute("class", eclair.styles.RadioButtonsSelectedRadio.id() + " " + this.selectedRadioStyle.id())
+            } else {
+                radioButton.setAttribute("class", eclair.styles.RadioButtonsRadio.id() + " " + this.radioStyle.id())
+            }
+        }
+    }
+    
+    build() {
+        let items = ""
+        for (let i = 0; i < this.items.length; i++) {
+            items += this.buildItem(this.items[i], i)
+        }
+        return `${this.buildStyleCode()}${this._hidden.build()}<div ${this.buildAttributeHTML()}>${items}</div>`
+    }
+}
 
 
-/* 
-    Eclair Custom Elements
-*/
+
+//
+// Custom Ecalir Elements
+//
 class EclairCustomTagComponent extends EclairComponent {
     constructor(tag) {
         super()

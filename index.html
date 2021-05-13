@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/tomorrow.min.css"/>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js"></script>
 <script src="eclair.js"></script>
 <script>
 let toggle1 = eclair.Toggle()
@@ -29,8 +31,20 @@ function toggleLabels(text, callback) {
 }
 
 
-let codeView = new EclairTextArea()
+let codeView = eclair.SyntaxHighlighter()
 let codeResult = eclair.IFrame()
+
+
+let radioButtons = eclair.RadioButtons()
+    .addItem("test")
+    .addItem("testing")
+    .addItem("tests")
+
+
+let alsoRadioButtons = eclair.RadioButtons()
+    .addItem("also test")
+    .addItem("also testing")
+    .addItem("also tests")
     
     
 eclair.VBox([
@@ -44,6 +58,9 @@ eclair.VBox([
     
     eclair.ScrollView([
         eclair.VBox([
+            radioButtons,
+            alsoRadioButtons,
+            
             group([
                 eclair.Text("Toggle Switch").type("heading2"),
                 
