@@ -3,6 +3,7 @@
 <script src="eclair.js"></script>
 <script>
 let toggle1 = eclair.Toggle()
+    .value(true)
 let progressBar = eclair.ProgressBar().progress(0.5)
 
 let alertBox = eclair.Alert().success()
@@ -34,18 +35,6 @@ function toggleLabels(text, callback) {
 let codeView = eclair.SyntaxHighlighter()
 let codeResult = eclair.IFrame()
 
-
-let radioButtons = eclair.RadioButtons()
-    .addItem("test")
-    .addItem("testing")
-    .addItem("tests")
-
-
-let alsoRadioButtons = eclair.RadioButtons()
-    .addItem("also test")
-    .addItem("also testing")
-    .addItem("also tests")
-    
     
 eclair.VBox([
     eclair.HBox([
@@ -58,8 +47,15 @@ eclair.VBox([
     
     eclair.ScrollView([
         eclair.VBox([
-            radioButtons,
-            alsoRadioButtons,
+            eclair.RadioButtons()
+                .addItem("test")
+                .addItem("testing")
+                .addItem("tests"),
+            
+            eclair.RadioButtons()
+                .addItem("also test")
+                .addItem("also testing")
+                .addItem("also tests"),
             
             group([
                 eclair.Text("Toggle Switch").type("heading2"),
