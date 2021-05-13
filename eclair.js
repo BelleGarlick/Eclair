@@ -2,12 +2,10 @@
 // TODO Prevent layered on click events
 // TODO Hide show elements
 // TODO Superscript/Subscript text
-// TODO AUTO update css rules
 // TODO Implement these: https://getbootstrap.com/docs/4.0/components/progress/
 // Add string html to views
 // Add margin, paddding, border: left, top, right bottom
 // Add deleting element
-// Add on loading element
 // Add spinner
 // Add callback getters when accessing child element.
 
@@ -181,12 +179,14 @@ class EclairComponent extends EclairStylableObject {
     constructor() {
         super()
         
-        this._callbacks = {}
-        this.sharedStyles = []
-        this.attributes = {}
-        
         this._id = eclair.newID();
         eclair._elements[this.id()] = this;
+        
+        this._callbacks = {}
+        this.sharedStyles = []
+        this.attributes = {
+            id: this.id()
+        }
         
         this.position("relative")
     }
@@ -316,36 +316,65 @@ class EclairComponent extends EclairStylableObject {
     onCreate(callback) {return this._updateCallback("onCreate", callback);}
     onBuild(callback) {return this._updateCallback("onBuild", callback);}
     performCallback(event, param1) {this._callbacks[event](this, param1);}
-    
-    buildAttributeHTML() {
-        let self = this;
-        let attrHTML = `id='${this.id()}'`;
-        
-        Object.keys(this.attributes).forEach(function(key) {
-            attrHTML += ` ${key}='${self.attributes[key]}'`;
-        });
-        
-        return attrHTML;
-    }
-    
-    wrapHTML(_html) {
+
+    wrapHTML(_html) {        
+        // Calling on build
         if (this._callbacks.hasOwnProperty("onBuild")) {
             this.performCallback("onBuild");
         }
         
-        let html = this.buildStyleCode() + _html;
+        // Adding element attributes
+        let wrapperElement = document.createElement("div")
+        wrapperElement.innerHTML = _html;
+        let element = wrapperElement.children[0]
         
+        let self = this;
+        Object.keys(this.attributes).forEach(function(key) {
+            element.setAttribute(key, self.attributes[key])
+        });
+        
+        // Adding the style code
+        let html = this.buildStyleCode() + wrapperElement.innerHTML;
+        
+        // Adding the onCreateScript
         if (this._callbacks.hasOwnProperty("onCreate")) {
-            let postBuildScript = document.createElement("script")
-            postBuildScript.innerHTML = `eclair.performCallback("${this.id()}", "onCreate")`;
+            let onCreateScript = document.createElement("script")
+            onCreateScript.innerHTML = `eclair.performCallback("${this.id()}", "onCreate")`;
             
-            html += postBuildScript.outerHTML;
+            html += onCreateScript.outerHTML;
         }
         
         return html
     }
 }
 
+class EclairCustomTagComponent extends EclairComponent {
+    constructor(tag) {
+        super()
+        this.tag = tag;
+        this._innerHTML = "";
+    }
+    
+    innerHTML(_html) {
+        let elem = this.getElement();
+        if (_html == null) {
+            if (elem != null) {
+                return elem.innerHTML;
+            }
+            return this._innerHTML;
+        } else {
+            this._innerHTML = _html;
+            if (elem != null) {
+                elem.innerHTML = _html;
+            }
+        }
+        return this;
+    }
+    
+    build() {
+        return this.wrapHTML(`<${this.tag}>${this._innerHTML}</${this.tag}>`)
+    }
+}
 
 eclair.styles = {
     Button: eclair.Style()
@@ -431,9 +460,9 @@ eclair.styles = {
         .background(eclair.theme.accent)
 }
 
-class EclairTextbox extends EclairComponent {
+class EclairTextbox extends EclairCustomTagComponent {
     constructor(_placeholder) {
-        super()
+        super("input")
         this.setAttr("type", "text")
             .addStyle(eclair.styles.Textbox)
             .placeholder(_placeholder)
@@ -484,10 +513,6 @@ class EclairTextbox extends EclairComponent {
         return this
     } 
     
-    build() {        
-        return this.wrapHTML(`<input ${this.buildAttributeHTML()}/>`)
-    }
-    
 //autocomplete	Sets or returns the value of the autocomplete attribute of a text field
 //autofocus	Sets or returns whether a text field should automatically get focus when the page loads
 //disabled	Sets or returns whether the text field is disabled, or not
@@ -500,9 +525,9 @@ class EclairTextbox extends EclairComponent {
 }
 
 
-class EclairTextArea extends EclairComponent {
+class EclairTextArea extends EclairCustomTagComponent {
     constructor() {
-        super()
+        super("textarea")
         this._value = ""
     }
     
@@ -520,10 +545,6 @@ class EclairTextArea extends EclairComponent {
             }
             return this
         }
-    }
-    
-    build() {        
-        return this.wrapHTML(`<textarea ${this.buildAttributeHTML()}>${this._value}</textarea>`)
     }
 }
 
@@ -543,7 +564,7 @@ class EclairView extends EclairComponent {
              code += this.elements[e].build();
         }
         
-        return this.wrapHTML(`<div ${this.buildAttributeHTML()}>` + code + "</div>");
+        return this.wrapHTML(`<div>` + code + "</div>");
     }
 }
 
@@ -561,7 +582,7 @@ class EclairScrollView extends EclairComponent {
         for (let e = 0; e < this.elements.length; e++) {
              code += this.elements[e].build();
         }
-        return this.wrapHTML("<div "+this.buildAttributeHTML()+">" + code + "</div>");
+        return this.wrapHTML("<div>" + code + "</div>");
     }
 }
 
@@ -592,7 +613,7 @@ class EclairVBox extends EclairComponent {
     }
     
     build () {
-        let code = "<table "+this.buildAttributeHTML()+">"
+        let code = "<table>"
         for (let e = 0; e < this.elements.length; e++) {
             if (e > 0) {
                 code += "<tr><td style='height:"+ this._spacing +"px'></td></tr>"
@@ -624,7 +645,7 @@ class EclairHBox extends EclairComponent {
     }
     
     build () {
-        let code = "<table "+this.buildAttributeHTML()+">"
+        let code = "<table>"
         for (let e = 0; e < this.elements.length; e++) {
             if (e > 0) {
                 code += "<td style='width:"+ this._spacing +"px'></td>"
@@ -639,9 +660,9 @@ class EclairHBox extends EclairComponent {
 //
 // Standard Elements
 //
-class EclairImage extends EclairComponent {
+class EclairImage extends EclairCustomTagComponent {
     constructor() {
-        super()
+        super("img")
         this.display("block")
     }
     
@@ -658,28 +679,18 @@ class EclairImage extends EclairComponent {
             return this
         }
     }
-    
-    build() {
-        return this.wrapHTML(`<img ${this.buildAttributeHTML()}/>`)
-    }
 }
 
-class EclairLink extends EclairComponent {
+class EclairLink extends EclairCustomTagComponent {
     constructor(text) {
-        super()
+        super("a")
         this._text = text;
         
         this.addStyle(eclair.styles.Link)
     }
     
     text(_text) {
-        if (_text == null) {
-            return this._text;
-        } else {
-            this._text = _text;
-            this.getElement(elem => {elem.innerHTML = _text})
-            return this;
-        }
+        return this.innerHTML(_text)
     }
     
     target(_target) {
@@ -698,10 +709,6 @@ class EclairLink extends EclairComponent {
             this.setAttr("href", _href)
         }
         return this
-    }
-    
-    build() {
-        return this.wrapHTML(`<a ${this.buildAttributeHTML()}>${this._text}</a>`)
     }
 }
 
@@ -775,29 +782,25 @@ class EclairText extends EclairComponent {
         if (this._superscript) {tagName = "sup"}
         if (this._subscript) {tagName = "sub"}
         
-        return this.wrapHTML(`<${tagName} ${this.buildAttributeHTML()}>${this._text}</${tagName}>`)
+        return this.wrapHTML(`<${tagName}>${this._text}</${tagName}>`)
     }
 }
 
-class EclairHorizontalLine extends EclairComponent {
+class EclairHorizontalLine extends EclairCustomTagComponent {
     constructor() {
-        super()
-        
+        super("hr")        
         this.addStyle(eclair.styles.HorizontalLine)
     }
-    
-    build() {
-        return this.wrapHTML(`<hr ${this.buildAttributeHTML()}/>`)
-    }
 }
 
-class EclairIFrame extends EclairComponent {
+class EclairIFrame extends EclairCustomTagComponent {
     constructor() {
-        super()
+        super("iframe")
+        this.innerHTML("Your client does not support iframes.")
         this.borderColor("#333333")
-        this.borderSize("1px")
-        this.width("100%")
-        this.height("100%")
+            .borderSize("1px")
+            .width("100%")
+            .height("100%")
     }
     
     url(_source) {
@@ -830,10 +833,6 @@ class EclairIFrame extends EclairComponent {
     
     sandbox(_sandbox) {
         return _sandbox == null? this.getAttr("sandbox") : this.setAttr("sandbox", _sandbox)
-    }
-    
-    build() {
-        return this.wrapHTML(`<iframe ${this.buildAttributeHTML()}>Your client does not support iframes.</iframe>`)
     }
 }
 
@@ -984,7 +983,7 @@ class EclairSelect extends EclairComponent {
             options += this.buildOptionHTML(this.options[n]);
         }
         
-        return this.wrapHTML(`<select ${this.buildAttributeHTML()}>${options}</select>`)
+        return this.wrapHTML(`<select>${options}</select>`)
     }
 }
 
@@ -1017,13 +1016,13 @@ class EclairButton extends EclairComponent {
         if (typeof(text) != "string") {
             text = this.text.build()
         }
-        return this.wrapHTML(`<button ${this.buildAttributeHTML()}>${this.text}</button>`)
+        return this.wrapHTML(`<button>${this.text}</button>`)
     }
 }
 
-class EclairSlider extends EclairComponent {
+class EclairSlider extends EclairCustomTagComponent {
     constructor() {
-        super()
+        super("input")
         this.setAttr("type", "range")
         this.addStyle(eclair.styles.Slider)
     }
@@ -1071,15 +1070,11 @@ class EclairSlider extends EclairComponent {
             return this
         }
     }
-    
-    build() {
-        return this.wrapHTML(`<input ${this.buildAttributeHTML()}/>`)
-    }
 }
 
-class EclairHiddenInput extends EclairComponent {
+class EclairHiddenInput extends EclairCustomTagComponent {
     constructor() {
-        super()
+        super("input")
         this.setAttr("type", "hidden")
     }
     
@@ -1099,10 +1094,6 @@ class EclairHiddenInput extends EclairComponent {
     
     name(_name) {
         return _name == null? this.getAttr("name") : this.setAttr("name", _name)
-    }
-    
-    build() {
-        return this.wrapHTML(`<input ${this.buildAttributeHTML()}/>`)
     }
 }
 
@@ -1247,7 +1238,7 @@ class EclairToggle extends EclairComponent {
     }
     
     build() {
-        return this.wrapHTML(`<div ${this.buildAttributeHTML()}>`+this._tickMark.build()+this.knob.build()+this._hiddenComponent.build()+"</div>")
+        return this.wrapHTML(`<div>`+this._tickMark.build()+this.knob.build()+this._hiddenComponent.build()+"</div>")
     }
 }
     
@@ -1399,7 +1390,7 @@ class EclairRadioButtons extends EclairComponent {
         for (let i = 0; i < this.items.length; i++) {
             items += this.buildItem(this.items[i], i)
         }
-        return this.wrapHTML(`${this._hidden.build()}<div ${this.buildAttributeHTML()}>${items}</div>`)
+        return this.wrapHTML(`<div>${items}</div>${this._hidden.build()}`)
     }
 }
 
@@ -1408,34 +1399,6 @@ class EclairRadioButtons extends EclairComponent {
 //
 // Custom Ecalir Elements
 //
-class EclairCustomTagComponent extends EclairComponent {
-    constructor(tag) {
-        super()
-        this.tag = tag;
-        this._innerHTML = "";
-    }
-    
-    innerHTML(_html) {
-        let elem = this.getElement();
-        if (_html == null) {
-            if (elem != null) {
-                return elem.innerHTML;
-            }
-            return this._innerHTML;
-        } else {
-            this._innerHTML = _html;
-            if (elem != null) {
-                elem.innerHTML = _html;
-            }
-        }
-        return this;
-    }
-    
-    build() {
-        return this.wrapHTML(`<${this.tag} ${this.buildAttributeHTML()}>${this._innerHTML}</${this.tag}>`)
-    }
-}
-
 class EclairProgressBar extends EclairComponent {
     constructor() {
         super()
@@ -1507,7 +1470,7 @@ class EclairProgressBar extends EclairComponent {
     }
     
     build() {
-        return this.wrapHTML(`<div ${this.buildAttributeHTML()}>${this.indicator.build()}</div>`)
+        return this.wrapHTML(`<div>${this.indicator.build()}</div>`)
     }
 }
 
@@ -1565,7 +1528,7 @@ class EclairAlertBox extends EclairComponent {
     }
     
     build() {
-        return this.wrapHTML(`<div ${this.buildAttributeHTML()}>${this._title.build()}${this._text.build()}</div>`)
+        return this.wrapHTML(`<div>${this._title.build()}${this._text.build()}</div>`)
     }
 }
 
@@ -1668,6 +1631,6 @@ class EclairSyntaxHighlighter extends EclairComponent {
         postBuildScript.innerHTML += "hljs.highlightAll();"
         
         this._pre.innerHTML(this._code.build())
-        return this.wrapHTML(`<div ${this.buildAttributeHTML()}>${this._pre.build()}${this._textarea.build()}</div>` + postBuildScript.outerHTML)
+        return this.wrapHTML(`<div>${this._pre.build()}${this._textarea.build()}</div>${postBuildScript.outerHTML}`)
     }
 }
