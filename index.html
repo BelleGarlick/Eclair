@@ -1,7 +1,7 @@
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/tomorrow.min.css"/>
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js"></script>
 <script src="eclair.js"></script>
-<script>
+<script>    
 let toggle1 = eclair.Toggle()
     .value(true)
 let progressBar = eclair.ProgressBar().progress(0.5)
@@ -35,7 +35,8 @@ function toggleLabels(text, callback) {
 let codeView = eclair.SyntaxHighlighter()
 let codeResult = eclair.IFrame()
 
-let rb = eclair.RadioButtons().addItems(["test", "testing", "tests"])
+
+let check = eclair.CheckBox().text("Accept cookies?")
 
 eclair.VBox([
     eclair.HBox([
@@ -48,8 +49,9 @@ eclair.VBox([
     
     eclair.ScrollView([
         eclair.VBox([
+            check,
             eclair.CheckBox().text("Accept cookies?"),
-            rb,
+            eclair.RadioButtons().addItems(["test", "testing", "tests"]),
             eclair.RadioButtons().addItems(["also test", "also testing", "also tests"]),
             group([
                 eclair.Text("Toggle Switch").type("heading2"),

@@ -104,8 +104,6 @@ class EclairStylableObject {
             styleCode += `${self._stylePrefix}${objectID}${selector}{${styleSheetCode}}`;
         });
         
-        if (styleCode.length == 0) {return "";}
-        
         if (cssOnly) {
             return styleCode
         }
@@ -149,6 +147,9 @@ class EclairStylableObject {
     bottom(_bottom, selector) {this.getStyleSheet(selector)["bottom"] = _bottom;return this.updateCSSStyle()}
     left(_left, selector) {this.getStyleSheet(selector)["left"] = _left;return this.updateCSSStyle()}
     right(_right, selector) {this.getStyleSheet(selector)["right"] = _right;return this.updateCSSStyle()}
+    cursor(_value, selector) {this.getStyleSheet(selector)["cursor"] = _value; return this.updateCSSStyle()}
+    textDecoration(_value, selector) {this.getStyleSheet(selector)["text-decoration"] = _value;return this.updateCSSStyle()}
+    transition(_value, selector) {this.getStyleSheet(selector)["transition"] = _value;return this.updateCSSStyle()}
 }
 
 class EclairStyleComponent extends EclairStylableObject {
@@ -176,6 +177,15 @@ class EclairStyleComponent extends EclairStylableObject {
 }
 
 eclair.styles = {
+    Text: eclair.Style()
+        .font(eclair.theme.font),
+    
+    IFrame: eclair.Style()
+        .borderColor("#333333")
+        .borderSize("1px")
+        .width("100%")
+        .height("100%"),
+    
     Button: eclair.Style()
         .borderSize("0px")
         .borderRadius("2px")
@@ -185,10 +195,16 @@ eclair.styles = {
         .background("#dddddd", "hover")
         .background("#cccccc", "active"),
     
+    Select: eclair.Style()
+        .font(eclair.theme.font),
+    
     Slider: eclair.Style()
-        .css("-webkit-appearance: none; box-sizing: border-box; outline: none; -webkit-transition: .2s; transition: opacity .2s;")
-        .css("-webkit-appearance: none; appearance: none; cursor: pointer;", ":-webkit-slider-thumb")
-        .css("-webkit-appearance: none; appearance: none; cursor: pointer;", ":-moz-slider-thumb")
+        .transition("0.2s all")
+        .css("-webkit-appearance: none; box-sizing: border-box; outline: none;")
+        .css("-webkit-appearance: none; appearance: none;", ":-webkit-slider-thumb")
+        .css("-webkit-appearance: none; appearance: none;", ":-moz-slider-thumb")
+        .cursor("pointer", ":-webkit-slider-thumb")
+        .cursor("pointer", ":-moz-slider-thumb")
         .background("#d3d3d3")
         .background(eclair.theme.accent, ":-webkit-slider-thumb")
         .background(eclair.theme.accent, ":-moz-slider-thumb")
@@ -207,8 +223,8 @@ eclair.styles = {
     Link: eclair.Style()
         .font(eclair.theme.font)   
         .fontColor(eclair.theme.accent)
-        .css("text-decoration: none")
-        .css("text-decoration: underline", "hover"),
+        .textDecoration("none")
+        .textDecoration("underline", "hover"),
     
     Image: eclair.Style()
         .display("block"),
@@ -228,18 +244,16 @@ eclair.styles = {
         .borderSize("0px")
         .css("border-top: 1px solid #999999"),
     
-    
-    // Radio Buttons
     RadioButtons: eclair.Style(),  // No default style
     RadioButtonsItem: eclair.Style()
-        .css("cursor: pointer")
+        .cursor("pointer")
         .css("box-shadow: 0px 0px 0px 100px rgba(0, 0, 0, 0.05) inset", "hover")
         .padding("2px")
         .borderRadius("4px")
         .width("100%")
         .font(eclair.theme.font),
     RadioButtonsSelectedItem: eclair.Style()
-        .css("cursor: pointer")
+        .cursor("pointer")
         .css("box-shadow: 0px 0px 0px 100px rgba(0, 0, 0, 0.05) inset", "hover")
         .padding("2px")
         .borderRadius("4px")
@@ -262,7 +276,7 @@ eclair.styles = {
         .background(eclair.theme.accent),
     
     CheckBox: eclair.Style()    
-        .css("cursor: pointer")
+        .cursor("pointer")
         .css("box-shadow: 0px 0px 0px 100px rgba(0, 0, 0, 0.05) inset", "hover")
         .padding("2px")
         .borderRadius("4px")
@@ -288,7 +302,52 @@ eclair.styles = {
         .fontColor("white")
         .fontSize("0.85rem")
         .textAlign("center"),
-        
+    CheckBoxLabel: eclair.Style(),
+    
+    ProgressBar: eclair.Style()
+        .background("#d3d3d3")
+        .borderRadius("3px")
+        .height("16px")
+        .overflow("hidden"),
+    ProgressBarIndicator: eclair.Style()
+        .background(eclair.theme.accent)
+        .height("100%")
+        .transition("0.3s all")
+        .margin("0px auto 0px 0px"),
+    ProgressBarLabel: eclair.Style()
+        .fontColor("white")
+        .fontWeight(700)
+        .fontSize("11px"),
+    
+    Toggle: eclair.Style()    
+        .position("relative")
+        .height("20px")
+        .display("inline-block")
+        .borderRadius("20px")
+        .width("50px")
+        .background("#dddddd")
+        .cursor("pointer")
+        .transition("0.2s all")
+        .css("user-select:none;"),
+    ToggleTick: eclair.Style()
+        .position("absolute")
+        .fontWeight(700)
+        .left("10px")
+        .fontColor("#ffffff")
+        .transition("0.2s all")
+        .css("user-select:none;")
+        .opacity(0),
+    ToggleKnob: eclair.Style()
+        .transition("0.2s all")
+        .css("box-sizing: border-box;user-select:none;")
+        .position("absolute")
+        .top("0px")
+        .left("0px")
+        .margin("3px")
+        .background("#ffffff")
+        .borderRadius("20px")
+        .height("14px")
+        .width("14px")
 }
 
 class EclairComponent extends EclairStylableObject {
@@ -303,8 +362,6 @@ class EclairComponent extends EclairStylableObject {
         this.attributes = {
             id: this.id()
         }
-        
-        this.position("relative")
     }
     
     id() {
@@ -742,7 +799,7 @@ class EclairText extends EclairComponent {
         this._subscript = false;
         this._superscript = false;
         
-        this.font(eclair.theme.font)
+        this.addStyle(eclair.styles.Text)
     }
     
     type(newType) {
@@ -820,10 +877,7 @@ class EclairIFrame extends EclairCustomTagComponent {
     constructor() {
         super("iframe")
         this.innerHTML("Your client does not support iframes.")
-        this.borderColor("#333333")
-            .borderSize("1px")
-            .width("100%")
-            .height("100%")
+        this.addStyle(eclair.styles.IFrame)
     }
     
     url(_source) {
@@ -901,8 +955,7 @@ class EclairSelect extends EclairComponent {
     constructor() {
         super()
         this.options = []
-        
-        this.font(eclair.theme.font)
+        this.addStyle(eclair.styles.Select)
     }
     
     name(_name) {
@@ -1128,32 +1181,13 @@ class EclairToggle extends EclairComponent {
         let overrideOnCreate = null;
         
         this._hiddenComponent = new EclairHiddenInput().value("false")
-        this._tickMark = new EclairText("✓")
-            .position("absolute")
-            .fontWeight(700)
-            .left("10px")
-            .fontColor("#ffffff")
-            .css("transition: 0.2s all;user-select:none;")
-            .opacity(0)
+        this._tickMark = eclair.Text("✓")
+            .addStyle(eclair.styles.ToggleTick)
         
-        this.knob = new EclairView([])
-            .css("transition: 0.2s all;box-sizing: border-box;user-select:none;")
-            .position("absolute")
-            .top("0px")
-            .left("0px")
-            .margin("3px")
-            .background("#ffffff")
-            .borderRadius("20px")
-            .height("14px")
-            .width("14px")
+        this._knob = new EclairView([])
+            .addStyle(eclair.styles.ToggleKnob)
             
-        
-        this.height("20px")
-            .display("inline-block")
-            .borderRadius("20px")
-            .width("50px")
-            .background("#dddddd")
-            .css("cursor:pointer;transition: 0.2s all;user-select:none;")
+        this.addStyle(eclair.styles.Toggle)
         
         // Manually update the callback map as onClick
         // is void to prevent the user altering it.
@@ -1186,6 +1220,11 @@ class EclairToggle extends EclairComponent {
     onCreate(callback) {
         this.overrideOnCreate = callback;
         return this;
+    }
+    
+    knob(callback) {
+        callback(this._knob)
+        return this
     }
     
     name(_name) {
@@ -1236,18 +1275,19 @@ class EclairToggle extends EclairComponent {
     updateStyle() {
         if (this.value()) {
             this.background(eclair.theme.accent)
+            console.log(eclair.theme.accent)
             if (this._showCheckMark) {
                 this._tickMark.opacity(1)
             }
 
             let elem = this.getElement()
             if (elem != null) {
-                this.knob.left((this.getElement().clientWidth - this.knob.getElement().clientWidth - 6) + "px")
+                this._knob.left((this.getElement().clientWidth - this._knob.getElement().clientWidth - 6) + "px")
             }
         } else {
             this._tickMark.opacity(0)
             this.background("#dddddd")
-            this.knob.left("0px")
+            this._knob.left("0px")
         }
     }
     
@@ -1266,7 +1306,7 @@ class EclairToggle extends EclairComponent {
     }
     
     build() {
-        return this.wrapHTML(`<div>`+this._tickMark.build()+this.knob.build()+this._hiddenComponent.build()+"</div>")
+        return this.wrapHTML(`<div>`+this._tickMark.build()+this._knob.build()+this._hiddenComponent.build()+"</div>")
     }
 }
     
@@ -1459,13 +1499,10 @@ class EclairCheckbox extends EclairComponent {
         this.setAttr("cellpadding", 6)     
             .addStyle(eclair.styles.CheckBox)   
         
-        this.checkboxStyle = eclair.Style()        
-        this.checkboxStyleActive = eclair.Style()
-        
         this._label = eclair.Text("Checkbox")
+            .addStyle(eclair.styles.CheckBoxLabel)
         this._checkbox = eclair.CustomTagComponent("div")
             .addStyle(eclair.styles.CheckBoxIcon)
-            .addStyle(this.checkboxStyle)
         this._hidden = eclair.HiddenInput()
             .value("false")
         
@@ -1485,6 +1522,16 @@ class EclairCheckbox extends EclairComponent {
         
         this.overrideOnClick = null
     }
+    
+    label(callback) {
+        callback(this._label)
+        return this;
+    }
+    
+    checkbox(callback) {
+        callback(this._checkbox)
+        return this;
+    }
         
     onClick(callback) {
         this.overrideOnClick = callback;
@@ -1500,17 +1547,13 @@ class EclairCheckbox extends EclairComponent {
             this._hidden.value("true")
             this._checkbox
                 .addStyle(eclair.styles.CheckBoxActiveIcon)
-                .addStyle(this.checkboxStyleActive)
                 .removeStyle(eclair.styles.CheckBoxIcon)
-                .removeStyle(this.checkboxStyle)
                 .innerHTML("✓")
         } else {
             this._hidden.value("false")
             this._checkbox
                 .addStyle(eclair.styles.CheckBoxIcon)
-                .addStyle(this.checkboxStyle)
                 .removeStyle(eclair.styles.CheckBoxActiveIcon)
-                .removeStyle(this.checkboxStyleActive)
                 .innerHTML("")
         }
         return this        
@@ -1569,24 +1612,15 @@ class EclairProgressBar extends EclairComponent {
         this._progress = 0
         this._striped = false
         
-        this.label = eclair.Text("0%")
-            .font(eclair.theme.font)
-            .fontColor("white")
-            .fontWeight(700)
-            .fontSize("11px")    
+        this._label = eclair.Text("0%")
+            .addStyle(eclair.styles.ProgressBarLabel)
         
-        this._indicator = eclair.HBox([this.label])
-            .background(eclair.theme.accent)
-            .height("100%")
-            .css("transition: 0.3s all")
-            .margin("none")
+        this._indicator = eclair.HBox([this._label])
+            .margin(null)  // Overrides default HBox Margin
+            .addStyle(eclair.styles.ProgressBarIndicator)
         
-        this
-            .background("#d3d3d3")
+        this.addStyle(eclair.styles.ProgressBar)
             .displayLabel(false)
-            .borderRadius("3px")
-            .height("16px")
-            .overflow("hidden")
     }
     
     striped(_on) {
@@ -1611,6 +1645,11 @@ class EclairProgressBar extends EclairComponent {
         return this;
     }
     
+    label(callback) {
+        callback(this._label)
+        return this;
+    }
+    
     color(_color) {
         this._indicator.background(_color)
         return this
@@ -1622,7 +1661,7 @@ class EclairProgressBar extends EclairComponent {
         } else {
             _progress = Math.max(Math.min(_progress, 1), 0)
             this._progress = _progress;
-            this.label.text(Math.round(_progress * 100) + "%")
+            this._label.text(Math.round(_progress * 100) + "%")
             this._indicator.width((_progress * 100 + 0.0001) + "%")
             return this
         }
@@ -1630,9 +1669,9 @@ class EclairProgressBar extends EclairComponent {
     
     displayLabel(_show) {
         if (_show == null) {
-            return this.label.getStyleSheet()["opacity"] != "0";
+            return this._label.getStyleSheet()["opacity"] != "0";
         } else {
-            this.label.opacity(_show? "1":"0")
+            this._label.opacity(_show? "1":"0")
             return this;
         }
     }
@@ -1661,7 +1700,6 @@ class EclairAlertBox extends EclairComponent {
             .background(eclair.theme.accent)
             .borderRadius(".25rem")
             .padding(".75rem 1.25rem")
-            .font(eclair.theme.font)
         
         this.getStyleSheet(" hr")["border"] = "0px"
         this.getStyleSheet(" hr")["margin-top"] = ".75rem"
