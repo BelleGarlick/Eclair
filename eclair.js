@@ -7,7 +7,7 @@
 // Add margin, paddding, border: left, top, right bottom
 // Add deleting element
 // Add spinner
-// TODO Radio buttons auto select first items
+// Add upload icon
 // Add callback getters when accessing child element.
 // TODO Add default styles to everything
 // TODO Check getters and setters calling sub functions are correct
@@ -151,7 +151,6 @@ class EclairStylableObject {
     right(_right, selector) {this.getStyleSheet(selector)["right"] = _right;return this.updateCSSStyle()}
 }
 
-
 class EclairStyleComponent extends EclairStylableObject {
     constructor() {
         super()
@@ -175,7 +174,6 @@ class EclairStyleComponent extends EclairStylableObject {
         return "eclairStyle" + this._id;
     }
 }
-
 
 eclair.styles = {
     Button: eclair.Style()
@@ -211,6 +209,9 @@ eclair.styles = {
         .fontColor(eclair.theme.accent)
         .css("text-decoration: none")
         .css("text-decoration: underline", "hover"),
+    
+    Image: eclair.Style()
+        .display("block"),
     
     Textbox: eclair.Style()
         .width("100%")
@@ -289,7 +290,6 @@ eclair.styles = {
         .textAlign("center"),
         
 }
-
 
 class EclairComponent extends EclairStylableObject {
     constructor() {
@@ -456,7 +456,6 @@ class EclairComponent extends EclairStylableObject {
     }
 }
 
-
 class EclairCustomTagComponent extends EclairComponent {
     constructor(tag) {
         super()
@@ -484,7 +483,6 @@ class EclairCustomTagComponent extends EclairComponent {
         return this.wrapHTML(`<${this.tag}>${this._innerHTML}</${this.tag}>`)
     }
 }
-
 
 class EclairTextbox extends EclairCustomTagComponent {
     constructor(_placeholder) {
@@ -549,7 +547,6 @@ class EclairTextbox extends EclairCustomTagComponent {
 //size	Sets or returns the value of the size attribute of a text field
 
 }
-
 
 class EclairTextArea extends EclairCustomTagComponent {
     constructor() {
@@ -689,7 +686,7 @@ class EclairHBox extends EclairComponent {
 class EclairImage extends EclairCustomTagComponent {
     constructor() {
         super("img")
-        this.display("block")
+        this.addStyle(eclair.styles.Image)
     }
     
     src(_src) {
@@ -1302,12 +1299,26 @@ class EclairRadioButtons extends EclairComponent {
     buildItem(_item, index) {
         let style = `style='margin-top: 3px;'`
         if (index == 0) {style = ""}
-        return `<table onclick='eclair.performCallback("${this.id()}", "selectRadioButton", "${_item.value}")' cellpadding=6 class='${eclair.styles.RadioButtonsItem.id()} ${this.itemStyle.id()}' ${style}><tbody><tr><td width=1><div class='${eclair.styles.RadioButtonsRadio.id()} ${this.radioStyle.id()}'></div></td><td>${_item.text}</td></tr></tbody></table>`
+        
+        let radioClass = `${eclair.styles.RadioButtonsItem.id()} ${this.itemStyle.id()}`
+        let divClass = `${eclair.styles.RadioButtonsRadio.id()} ${this.radioStyle.id()}`
+        
+        if (_item.value == this.value()) {
+            radioClass = `${eclair.styles.RadioButtonsSelectedItem.id()} ${this.selectedItemStyle.id()}`
+            divClass = `${eclair.styles.RadioButtonsSelectedRadio.id()} ${this.selectedRadioStyle.id()}`
+        }
+        
+        return `<table onclick='eclair.performCallback("${this.id()}", "selectRadioButton", "${_item.value}")' cellpadding=6 class='${radioClass}' ${style}><tbody><tr><td width=1><div class='${divClass}'></div></td><td>${_item.text}</td></tr></tbody></table>`
     }
     
     addItem(value, text) {
         text = text == null ? value : text
         let item = {"value": value, "text": text}
+        
+        if (this.items.length == 0) {
+            this._hidden.value(value)
+        }
+        
         this.items.push(item)
         
         let self = this;
@@ -1324,21 +1335,27 @@ class EclairRadioButtons extends EclairComponent {
     removeItem(_value) {
         let selectedIndex = -1;
         for (let n = 0; n < this.items.length; n++) {
-            if (this.items[n].value == _val) {
+            if (this.items[n].value == _value) {
                 selectedIndex = n;
             }
         }
         if (selectedIndex == -1) {
             for (let n = 0; n < this.items.length; n++) {
-                if (this.items[n].text == _val) {
+                if (this.items[n].text == _value) {
                     selectedIndex = n;
                 }
             }
         }
         this.removeIndex(selectedIndex);
+        
+        return this;
     }
     
     removeIndex(_index) {
+        if (this.value() == this.items[_index].value) {
+            this.selectedIndex((this.selectedIndex() + 1) % this.items.length)
+        }
+        
         let newItems = []
         for (let n = 0; n < this.items.length; n++) {
             if (n != _index)
@@ -1349,6 +1366,8 @@ class EclairRadioButtons extends EclairComponent {
         this.getElement(e => {
             e.removeChild(e.childNodes[_index]);  
         })
+        
+        return this;
     }
     
     addItems(_items) { 
@@ -1401,25 +1420,28 @@ class EclairRadioButtons extends EclairComponent {
         }
         
         this._hidden.value(this.items[_index].value)
-        
-        for (let n = 0; n < this.items.length; n++) {
-            let buttons = this.getElement().children;
-            if (n == _index) {
-                buttons[n].setAttribute("class", eclair.styles.RadioButtonsSelectedItem.id() + " " + this.selectedItemStyle.id())
-            } else {
-                buttons[n].setAttribute("class", eclair.styles.RadioButtonsItem.id() + " " + this.itemStyle.id())
+
+        let self = this
+        this.getElement(e => {
+            for (let n = 0; n < self.items.length; n++) {
+                let buttons = e.children;
+                if (n == _index) {
+                    buttons[n].setAttribute("class", eclair.styles.RadioButtonsSelectedItem.id() + " " + self.selectedItemStyle.id())
+                } else {
+                    buttons[n].setAttribute("class", eclair.styles.RadioButtonsItem.id() + " " + self.itemStyle.id())
+                }
+
+                let radioButton = buttons[n].children[0].children[0].children[0].children[0]
+                if (n == _index) {
+                    radioButton.setAttribute("class", eclair.styles.RadioButtonsSelectedRadio.id() + " " + self.selectedRadioStyle.id())
+                } else {
+                    radioButton.setAttribute("class", eclair.styles.RadioButtonsRadio.id() + " " + self.radioStyle.id())
+                }
             }
-            
-            let radioButton = buttons[n].children[0].children[0].children[0].children[0]
-            if (n == _index) {
-                radioButton.setAttribute("class", eclair.styles.RadioButtonsSelectedRadio.id() + " " + this.selectedRadioStyle.id())
-            } else {
-                radioButton.setAttribute("class", eclair.styles.RadioButtonsRadio.id() + " " + this.radioStyle.id())
-            }
-        }
+        })
     }
     
-    build() {        
+    build() {          
         let items = ""
         for (let i = 0; i < this.items.length; i++) {
             items += this.buildItem(this.items[i], i)
@@ -1553,13 +1575,13 @@ class EclairProgressBar extends EclairComponent {
             .fontWeight(700)
             .fontSize("11px")    
         
-        this.indicator = eclair.HBox([this.label])
+        this._indicator = eclair.HBox([this.label])
             .background(eclair.theme.accent)
             .height("100%")
             .css("transition: 0.3s all")
             .margin("none")
         
-        this.progress(0)
+        this
             .background("#d3d3d3")
             .displayLabel(false)
             .borderRadius("3px")
@@ -1572,20 +1594,25 @@ class EclairProgressBar extends EclairComponent {
             return this._striped;
         } else {
             if (_on) {
-                this.indicator.getStyleSheet()["background-image"] = "linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent)";
-                this.indicator.getStyleSheet()["background-size"] = "1rem 1rem;";
+                this._indicator.getStyleSheet()["background-image"] = "linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent)";
+                this._indicator.getStyleSheet()["background-size"] = "1rem 1rem;";
             } else {
-                this.indicator.getStyleSheet()["background-image"] = "";
-                this.indicator.getStyleSheet()["background-size"] = "1rem 1rem;";
+                this._indicator.getStyleSheet()["background-image"] = "";
+                this._indicator.getStyleSheet()["background-size"] = "1rem 1rem;";
             }
-            this.indicator.updateCSSStyle()
+            this._indicator.updateCSSStyle()
         }
         
         return this;
     }
     
+    indicator(callback) {
+        callback(this._indicator)
+        return this;
+    }
+    
     color(_color) {
-        this.indicator.background(_color)
+        this._indicator.background(_color)
         return this
     }
     
@@ -1596,7 +1623,7 @@ class EclairProgressBar extends EclairComponent {
             _progress = Math.max(Math.min(_progress, 1), 0)
             this._progress = _progress;
             this.label.text(Math.round(_progress * 100) + "%")
-            this.indicator.width((_progress * 100 + 0.0001) + "%")
+            this._indicator.width((_progress * 100 + 0.0001) + "%")
             return this
         }
     }
@@ -1611,7 +1638,7 @@ class EclairProgressBar extends EclairComponent {
     }
     
     build() {
-        return this.wrapHTML(`<div>${this.indicator.build()}</div>`)
+        return this.wrapHTML(`<div>${this._indicator.build()}</div>`)
     }
 }
 

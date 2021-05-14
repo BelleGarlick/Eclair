@@ -35,7 +35,8 @@ function toggleLabels(text, callback) {
 let codeView = eclair.SyntaxHighlighter()
 let codeResult = eclair.IFrame()
 
-    
+let rb = eclair.RadioButtons().addItems(["test", "testing", "tests"])
+
 eclair.VBox([
     eclair.HBox([
         eclair.Text("Eclair")  
@@ -48,7 +49,7 @@ eclair.VBox([
     eclair.ScrollView([
         eclair.VBox([
             eclair.CheckBox().text("Accept cookies?"),
-            eclair.RadioButtons().addItems(["test", "testing", "tests"]),
+            rb,
             eclair.RadioButtons().addItems(["also test", "also testing", "also tests"]),
             group([
                 eclair.Text("Toggle Switch").type("heading2"),
