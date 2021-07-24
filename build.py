@@ -2,7 +2,7 @@ import os
 
 BUILD_ORDER_FILE = "build.txt"
 SOURCE_DIR = "src"
-DOC_DIR = "doc"
+DOC_DIR = "docs"
 OUTPUT = "eclair.js"
 
 
@@ -26,14 +26,6 @@ def parse_file(breadcrumbs_path, text):
 
 
 def parse_documentation(source_doc):
-#/// CLASS EclairImage
-#/// An eclair image element.
-#//// image = eclair.Image('image.png')
-#/// FUNC altText
-#/// Set alt text of the image for accessibility.
-#//// image = eclair.Image('goldfish.png')
-#////     .altText('An image of a goldfish jumpong on a trampoline.')
-
     compiled_documentation = ""
     is_code = False
     
@@ -52,7 +44,10 @@ def parse_documentation(source_doc):
             if is_code:                
                 compiled_documentation += line[5:] + "\n"
             else:
-                compiled_documentation += line + "\n"
+                if line[:10] == "/// CLASS ":
+                    compiled_documentation += f"##{line[10:]}\n"
+                else:
+                    compiled_documentation += line + "\n"
     
     if is_code:
         compiled_documentation += "```\n"

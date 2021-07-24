@@ -1,4 +1,4 @@
-/// CLASS EclairImage
+##EclairImage
 /// An eclair image element.
 
 ```javascript
