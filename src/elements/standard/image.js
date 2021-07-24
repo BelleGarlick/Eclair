@@ -1,7 +1,7 @@
 /// ## Eclair Image
 /// An eclair image element.
 /// ```javascript
-/// image = eclair.Image('image.png')
+/// eclair.Image('image.png')
 /// ```
 class EclairImage extends EclairCustomTagComponent {
     constructor(_src) {
@@ -24,7 +24,7 @@ class EclairImage extends EclairCustomTagComponent {
     /// ### .altText
     /// Set alt text of the image for accessibility.
     /// ```javascript
-    /// image = eclair.Image('image.png')
+    /// eclair.Image('image.png')
     ///     .altText('An image of a goldfish jumping on a trampoline.')
     /// ```
     altText(_alt) {

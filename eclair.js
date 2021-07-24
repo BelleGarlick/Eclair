@@ -1581,17 +1581,80 @@ class EclairTextBox extends EclairCustomTagComponent {
         return this
     }
     
-    maxLength(maxLength) {
-        if (maxLength == null) {
-            return this.getAttr("maxlength");
+    maxLength(_maxLength) {
+        if (_maxLength instanceof EclairState) {
+            let self = this
+            _maxLength.addCallback(this.id() + "-maxLen", function(state) {
+                this.setAttr("maxlength", _maxLength.value())
+            }, true)
         } else {
-            this.setAttr("maxlength", maxLength)
+            this.setAttr("maxlength", _maxLength)
         }
         return this
     } 
     
+    enabled(_enabled) {
+        if (_enabled instanceof EclairState) {
+            let self = this
+            _enabled.addCallback(this.id() + "-enabled", function(state) {
+                if (state.bool()) {
+                    self.setAttr("disabled", null)
+                } else {
+                    self.setAttr("disabled", "true")
+                }
+            }, true)
+        } else {
+            if (_enabled) {
+                this.setAttr("disabled", null)
+            } else {
+                this.setAttr("disabled", "true")
+            }
+        }
+        return this
+    } 
     
+    required(_required) {
+        if (_required instanceof EclairState) {
+            let self = this
+            _required.addCallback(this.id() + "-required", function(state) {
+                if (state.bool()) {
+                    self.setAttr("required", "true")
+                } else {
+                    self.setAttr("required", null)
+                }
+            }, true)
+        } else {
+            if (_required) 
+                this.setAttr("required", "true")
+            } else {{
+                this.setAttr("required", null)
+            }
+        }
+        return this
+    } 
+    
+    autofocus(_autofocus) {
+        if (_autofocus instanceof EclairState) {
+            let self = this
+            _autofocus.addCallback(this.id() + "-autofocus", function(state) {
+                if (state.bool()) {
+                    self.setAttr("autofocus", "true")
+                } else {
+                    self.setAttr("autofocus", null)
+                }
+            }, true)
+        } else {
+            if (_autofocus) 
+                this.setAttr("autofocus", "true")
+            } else {{
+                this.setAttr("autofocus", null)
+            }
+        }
+        return this
+    } 
 }
+
+
 
 // elements.form.toggle
 class EclairToggle extends EclairComponent {
