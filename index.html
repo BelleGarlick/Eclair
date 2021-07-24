@@ -13,6 +13,8 @@ let progressValue = State(0.5)
 let alertBoxTheme = AlertState().success()
 let textHeadingStyle = TextStyleState().heading2()
 let showProgressState = State(false)
+let progressBarStripped = State(false)
+let progressBarColor = eclair.Color()
     
 let toggleOn = State(true)
 let toggleShowLabel = State(false)
@@ -22,11 +24,14 @@ let toggleEnabled = State(true)
 let alertBoxObject = eclair.Alert(alertBoxText).theme(alertBoxTheme)  //.title("Congrats")
 
 
+let backgroundColour = eclair.Color().hex("#f6f6f6")
+
+
 function group(elements) {
     return VBox(elements)
         .align("left")
         .spacing(30)
-        .background("#f6f6f6")
+        .backgroundColor(backgroundColour)
         .borderRadius("3px")
         .padding("20px")
 }
@@ -58,7 +63,6 @@ VBox([
             RadioButtons().addItems(["test", "testing", "tests"]),
             RadioButtons().addItems(["also test", "also testing", "also tests"]),
             
-            
             // Toggle Buttons
             group([
                 Text("Toggle Switch").type(textHeadingStyle),
@@ -80,7 +84,9 @@ VBox([
             group([
                 Text("Progress Bar").type(textHeadingStyle),
                 eclair.ProgressBar(progressValue)
-                    .displayLabel(showProgressState),
+                    .striped(progressBarStripped)
+                    .color(progressBarColor)
+                    .showLabel(showProgressState),
                 eclair.HorizontalLine(),
                 VBox([
                     Text("Progress"),
@@ -88,8 +94,8 @@ VBox([
                         .min(0).max(1).step(0.01)
                 ]).spacing(10).align("left"),
                 
-                toggleLabels("Striped", c => {progressBar.striped(c.value())}),
-                toggleLabels("Show Label", c => {progressBar.displayLabel(c.value())})
+                toggleLabels("Striped", progressBarStripped, c => {}),
+                toggleLabels("Show Label", showProgressState, c => {})
             ]),
             
             
@@ -138,7 +144,7 @@ VBox([
             VBox([
                 Text("Try it yourself!").type(textHeadingStyle),
                 codeView,
-                eclair.Button().onClick(() => {
+                eclair.Button("Run").onClick(() => {
                     let code = '<script src="eclair.js"></scrip'+'t><script>'+codeView.value()+'</sc'+'ript>'
                     codeResult.source(code)
                 }),

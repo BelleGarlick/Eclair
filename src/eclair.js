@@ -1,4 +1,4 @@
-//PRINT TODO Add events to callbacks
+//PRINT TODO Add events to callbacks (mousemove position etc)
 //PRINT TODO Prevent layered on click events
 //PRINT TODO Hide show elements
 //PRINT TODO Superscript/Subscript text

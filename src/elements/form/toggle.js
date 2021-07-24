@@ -13,6 +13,7 @@ class EclairToggle extends EclairComponent {
         this._hiddenComponent.value(_value)
     
         if (_value instanceof EclairState) {
+            // PRINT Toggle, TODO Check if addCallback can be auto run
             this._hiddenComponent.value(_value.bool())
             
             let self = this
@@ -26,7 +27,7 @@ class EclairToggle extends EclairComponent {
                 if (value != cValue && self._callbacks.hasOwnProperty("onChange")) {
                     self.performCallback("onChange")  
                 }
-            })
+            }, false)
         }
         
         // Manually update the callback map as onClick
@@ -83,12 +84,10 @@ class EclairToggle extends EclairComponent {
     enabled(_enabled) {
         if (_enabled instanceof EclairState) {
             let self = this
-            this._enabled = _enabled.bool()
-            this.opacity(this._enabled? 1 : 0.6)
             _enabled.addCallback(this.id() + "-enabled", function(state) {
                 self._enabled = state.bool()
                 self.opacity(self._enabled? 1 : 0.6)
-            })
+            }, true)
         } else {
             this._enabled = _enabled
             self.opacity(_enabled? 1 : 0.6)
@@ -118,12 +117,10 @@ class EclairToggle extends EclairComponent {
     showTick(_bool) {
         if (_bool instanceof EclairState) {
             let self = this
-            this._showCheckMark = _bool.bool()
-            this._tickMark.opacity((this._showCheckMark && (this._hiddenComponent.value() == "true"))? 1:0)
             _bool.addCallback(this.id() + "-showTick", function(state) {
                 self._showCheckMark = state.bool()
                 self._tickMark.opacity((self._showCheckMark && (self._hiddenComponent.value() == "true"))? 1:0)
-            })
+            }, true)
         } else {
             this._showCheckMark = _bool
             this._tickMark.opacity((_bool && (this._hiddenComponent.value() == "true"))? 1:0)

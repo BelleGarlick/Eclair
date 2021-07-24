@@ -33,8 +33,6 @@ def build_from_dir(directory):
                 build_order.append(file)
                 
         subs = build_order
-        
-        print(subs)
     
     
     for path in subs:
@@ -56,7 +54,7 @@ def build_from_dir(directory):
 
 if __name__ == "__main__":
     # Build eclair.
-    print("Building eclair.")
+    print("=" * 20 + "\nBuilding eclair.\n" + "=" * 20)
     
     # Get path to sources dir
     file_path = os.path.abspath(__file__)

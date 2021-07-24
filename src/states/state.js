@@ -19,8 +19,15 @@ class EclairState {
         return this
     }
     
-    addCallback(key, func) {
+    addCallback(key, func, perform) {
         this.callbacks[key] = func
+        if (perform == true) {
+            func(this)
+        }
+    }
+    
+    string() {
+        return `${this._value}`
     }
     
     bool() {

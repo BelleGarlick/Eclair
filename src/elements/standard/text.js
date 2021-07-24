@@ -4,14 +4,12 @@ class EclairText extends EclairComponent {
         
         this._text = text;
         if (text instanceof EclairState) {
-            this._text = text.value()
-            
             let self = this
             text.addCallback(this.id() + "-text", function(state) {
                 let newState = state.value()
                 self._text = newState;
                 self.getElement(elem => {elem.innerHTML = newState});
-            })
+            }, true)
         }
         
         this.addStyle(eclair.styles.Text)
@@ -19,12 +17,10 @@ class EclairText extends EclairComponent {
     
     type(_state) {
         if (_state instanceof EclairTextStyleState) {
-            this._setType(_state.value());
-            
             let self = this
             _state.addCallback(this.id() + "-type", function(state) {
                 self._setType(state.value())
-            })
+            }, true)
         } else {
             this._setType(_state);
         }

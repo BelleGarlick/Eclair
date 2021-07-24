@@ -40,13 +40,11 @@ class EclairAlertBox extends EclairComponent {
     }
     
     theme(_theme) {
-        if (_theme instanceof EclairAlertBoxState) {
-            this._setTheme(_theme)
-            
+        if (_theme instanceof EclairAlertBoxState) {            
             let self = this
             _theme.addCallback(this.id() + "-theme", function(state) {
                 self._setTheme(state)
-            })
+            }, true)
         }
         
         return this

@@ -1,4 +1,5 @@
 // PRINT Need to add more default colours
+// PRINT TODO Store all colours as rgba to allow for darkening colours.
 class EclairColour extends EclairState {
     constructor(_col) {
         super()
@@ -22,4 +23,10 @@ class EclairColour extends EclairState {
         this.value(`rgb(${r},${g},${b}, ${a})`)
         return this;
     }   
+    
+    red() {return this.hex("f00")}
+    orange() {return this.hex("f90")}
+    yellow() {return this.hex("ee0")}
+    green() {return this.hex("3d0")} 
+    blue() {return this.hex("06f")}
 }

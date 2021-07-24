@@ -6,14 +6,10 @@ class EclairStylableObject {
     }
     
     getStyleSheet(selector) {
-        if (selector == null) {
-            selector = ""
-        }
-        
+        selector = (selector == null)? "" : selector
         if (!this._styles.hasOwnProperty(selector)) {
             this._styles[selector] = {}
         }
-        
         return this._styles[selector];
     }
     
@@ -62,35 +58,52 @@ class EclairStylableObject {
         return this;
     }
     
-    css(_style, selector) {this.getStyleSheet(selector)["css"] = _style; return this.updateCSSStyle()}
-    display(_display, selector) {this.getStyleSheet(selector)["display"] = _display;return this.updateCSSStyle();}
-    background(color, selector) {this.getStyleSheet(selector)["background"] = color;return this.updateCSSStyle();}
-    borderSize(size, selector) {this.getStyleSheet(selector)["border-width"] = size; return this.updateCSSStyle()}
-    borderColor(color, selector) {this.getStyleSheet(selector)["border-color"] = color; return this.updateCSSStyle()}
-    borderStyle(style, selector) {this.getStyleSheet(selector)["border-style"] = style; return this.updateCSSStyle()}
-    borderRadius(radius, selector) {this.getStyleSheet(selector)["border-radius"] = radius; return this.updateCSSStyle()}
-    padding(size, selector) {this.getStyleSheet(selector)["padding"] = size; return this.updateCSSStyle()}
-    margin(size, selector) {this.getStyleSheet(selector)["margin"] = size; return this.updateCSSStyle()}
-    font(family, selector) {this.getStyleSheet(selector)["font-family"] = family; return this.updateCSSStyle()}
-    fontSize(size, selector) {this.getStyleSheet(selector)["font-size"] = size; return this.updateCSSStyle()}
-    fontColor(color, selector) {this.getStyleSheet(selector)["color"] = color; return this.updateCSSStyle()}
-    fontWeight(weight, selector) {this.getStyleSheet(selector)["font-weight"] = weight; return this.updateCSSStyle()}
-    width(_width, selector) {this.getStyleSheet(selector)["width"] = _width; return this.updateCSSStyle();}
-    height(_height, selector) {this.getStyleSheet(selector)["height"] = _height; return this.updateCSSStyle();}
-    display(_display, selector) {this.getStyleSheet(selector)["display"] = _display; return this.updateCSSStyle();}
-    overflow(_overflow, selector) {this.getStyleSheet(selector)["overflow"] = _overflow; return this.updateCSSStyle();}
-    opacity(_opacity, selector) {this.getStyleSheet(selector)["opacity"] = _opacity; return this.updateCSSStyle();}
-    textAlign(_align, selector) {this.getStyleSheet(selector)["text-align"] = _align; return this.updateCSSStyle()}
-    verticalAlign(_align, selector) {this.getStyleSheet(selector)["vertical-align"] = _align;return this.updateCSSStyle()}
-    position(_pos, selector) {this.getStyleSheet(selector)["position"] = _pos;return this.updateCSSStyle()}
-    top(_top, selector) {this.getStyleSheet(selector)["top"] = _top;return this.updateCSSStyle()}
-    bottom(_bottom, selector) {this.getStyleSheet(selector)["bottom"] = _bottom;return this.updateCSSStyle()}
-    left(_left, selector) {this.getStyleSheet(selector)["left"] = _left;return this.updateCSSStyle()}
-    right(_right, selector) {this.getStyleSheet(selector)["right"] = _right;return this.updateCSSStyle()}
-    cursor(_value, selector) {this.getStyleSheet(selector)["cursor"] = _value; return this.updateCSSStyle()}
-    textDecoration(_value, selector) {this.getStyleSheet(selector)["text-decoration"] = _value;return this.updateCSSStyle()}
-    transition(_value, selector) {this.getStyleSheet(selector)["transition"] = _value;return this.updateCSSStyle()}
-    userSelect(_value, selector) {this.getStyleSheet(selector)["user-select"] = _value;return this.updateCSSStyle()}
+    _set(selector, type, _style) {
+        this.getStyleSheet(selector)[type] = _style; 
+        
+        // Support eclair states
+        if (_style instanceof EclairState) {
+            let self = this
+            _style.addCallback(this.id() + `-style-{type}`, function(state) {
+                self.getStyleSheet(selector)[type] = _style.string(); 
+                self.updateCSSStyle()
+            }, true)
+        }
+        
+        return this.updateCSSStyle()
+    }
+    
+    //PRINT Finish updateing styles to allow for State varibles
+    css(_style, selector) {return this._set(selector, "css", _style)}
+    display(_display, selector) {return this._set(selector, "display", _display)}
+    background(_background, selector) {return this._set(selector, "background", _background)}
+    backgroundColor(_color, selector) {return this._set(selector, "background-color", _color)}
+    borderSize(_size, selector) {return this._set(selector, "border-width", _size)}
+    borderColor(_color, selector) {return this._set(selector, "border-color", _color)}
+    borderStyle(_style, selector) {return this._set(selector, "border-style", _style)}
+    borderRadius(_radius, selector) {return this._set(selector, "border-radius", _radius)}
+    padding(_size, selector) {return this._set(selector, "padding", _size)}
+    margin(_size, selector) {return this._set(selector, "margin", _size)}
+    font(_family, selector) {return this._set(selector, "font-family", _family)}
+    fontSize(_size, selector) {return this._set(selector, "font-size", _size)}
+    fontColor(_color, selector) {return this._set(selector, "color", _color)}
+    fontWeight(_weight, selector) {return this._set(selector, "font-weight", _weight)}
+    width(_width, selector) {return this._set(selector, "width", _width)}
+    height(_height, selector) {return this._set(selector, "height", _height)}
+    display(_display, selector) {return this._set(selector, "display", _display)}
+    overflow(_overflow, selector) {return this._set(selector, "overflow", _overflow)}
+    opacity(_opacity, selector) {return this._set(selector, "opacity", _opacity)}
+    textAlign(_align, selector) {return this._set(selector, "text-align", _align)}
+    verticalAlign(_align, selector) {return this._set(selector, "vertical-align", _align)}
+    position(_pos, selector) {return this._set(selector, "position", _pos)}
+    top(_top, selector) {return this._set(selector, "top", _top)}
+    bottom(_bottom, selector) {return this._set(selector, "bottom", _bottom)}
+    left(_left, selector) {return this._set(selector, "left", _left)}
+    right(_right, selector) {return this._set(selector, "right", _right)}
+    cursor(_value, selector) {return this._set(selector, "cursor", _value)}
+    textDecoration(_value, selector) {return this._set(selector, "text-decoration", _value)}
+    transition(_value, selector) {return this._set(selector, "transition", _value)}
+    userSelect(_value, selector) {return this._set(selector, "user-select", _value)}
 }
 
 class EclairStyleComponent extends EclairStylableObject {
@@ -115,189 +128,4 @@ class EclairStyleComponent extends EclairStylableObject {
     id() {
         return "eclairStyle" + this._id;
     }
-}
-
-eclair.styles = {
-    Text: eclair.Style()
-        .font(eclair.theme.font),
-    
-    IFrame: eclair.Style()
-        .borderColor("#333333")
-        .borderSize("1px")
-        .width("100%")
-        .height("100%"),
-    
-    Button: eclair.Style()
-        .borderSize("0px")
-        .borderRadius("2px")
-        .padding("8px 16px")
-        .background("#eeeeee")
-        .font(eclair.theme.font)
-        .background("#dddddd", "hover")
-        .background("#cccccc", "active"),
-    
-    Select: eclair.Style()
-        .font(eclair.theme.font),
-    
-    Slider: eclair.Style()
-        .transition("0.2s all")
-        .css("-webkit-appearance: none; box-sizing: border-box; outline: none;")
-        .css("-webkit-appearance: none; appearance: none;", ":-webkit-slider-thumb")
-        .css("-webkit-appearance: none; appearance: none;", ":-moz-slider-thumb")
-        .cursor("pointer", ":-webkit-slider-thumb")
-        .cursor("pointer", ":-moz-slider-thumb")
-        .background("#d3d3d3")
-        .background(eclair.theme.accent, ":-webkit-slider-thumb")
-        .background(eclair.theme.accent, ":-moz-slider-thumb")
-        .borderRadius("50%", ":-webkit-slider-thumb")
-        .borderRadius("50%", ":-moz-slider-thumb")
-        .height("25px", ":-webkit-slider-thumb")
-        .height("25px", ":-moz-slider-thumb")
-        .width("25px", ":-webkit-slider-thumb")
-        .width("25px", ":-moz-slider-thumb")
-        .width("100%")
-        .height("15px")
-        .borderRadius("5px")
-        .opacity(0.7)
-        .opacity(1, "hover"),
-    
-    Link: eclair.Style()
-        .font(eclair.theme.font)   
-        .fontColor(eclair.theme.accent)
-        .textDecoration("none")
-        .textDecoration("underline", "hover"),
-    
-    Image: eclair.Style()
-        .display("block"),
-    
-    TextBox: eclair.Style()
-        .width("100%")
-        .borderSize("0px")
-        .borderRadius("3px")
-        .padding("8px 16px")
-        .background("#eeeeee")
-        .font(eclair.theme.font)
-        .background("#dddddd", "hover")
-        .background("#cccccc", "active")
-        .background("#bbbbbb", "focused"),
-    
-    HorizontalLine: eclair.Style()
-        .borderSize("0px")
-        .css("border-top: 1px solid #999999"),
-    
-    RadioButtons: eclair.Style(),  // No default style
-    RadioButtonsItem: eclair.Style()
-        .cursor("pointer")
-        .css("box-shadow: 0px 0px 0px 100px rgba(0, 0, 0, 0.05) inset", "hover")
-        .padding("2px")
-        .borderRadius("4px")
-        .width("100%")
-        .userSelect("none")
-        .font(eclair.theme.font),
-    RadioButtonsSelectedItem: eclair.Style()
-        .cursor("pointer")
-        .css("box-shadow: 0px 0px 0px 100px rgba(0, 0, 0, 0.05) inset", "hover")
-        .padding("2px")
-        .borderRadius("4px")
-        .userSelect("none")
-        .width("100%")
-        .font(eclair.theme.font),
-    RadioButtonsRadio: eclair.Style()
-        .width("14px")
-        .height("14px")
-        .userSelect("none")
-        .borderSize("2px")
-        .borderStyle("solid")
-        .borderColor(eclair.theme.accent)
-        .borderRadius("100%"),
-    RadioButtonsSelectedRadio: eclair.Style()
-        .width("14px")
-        .height("14px")
-        .userSelect("none")
-        .borderSize("2px")
-        .borderStyle("solid")
-        .borderColor(eclair.theme.accent)
-        .borderRadius("100%")
-        .background(eclair.theme.accent),
-    
-    CheckBox: eclair.Style()    
-        .cursor("pointer")
-        .css("box-shadow: 0px 0px 0px 100px rgba(0, 0, 0, 0.05) inset", "hover")
-        .padding("2px")
-        .borderRadius("4px")
-        .width("100%")
-        .userSelect("none")
-        .font(eclair.theme.font),
-    CheckBoxIcon: eclair.Style()
-        .borderSize("2px")
-        .borderRadius("4px")
-        .borderColor(eclair.theme.accent)
-        .borderStyle("solid")
-        .width("16px")
-        .height("16px")
-        .fontSize("0.85rem")
-        .userSelect("none")
-        .textAlign("center"),        
-    CheckBoxActiveIcon: eclair.Style()
-        .borderSize("2px")
-        .borderRadius("4px")
-        .borderColor(eclair.theme.accent)
-        .borderStyle("solid")
-        .width("16px")
-        .height("16px")
-        .userSelect("none")
-        .background(eclair.theme.accent)
-        .fontColor("white")
-        .fontSize("0.85rem")
-        .textAlign("center"),
-    CheckBoxLabel: eclair.Style(),
-    
-    ProgressBar: eclair.Style()
-        .background("#d3d3d3")
-        .borderRadius("3px")
-        .height("16px")
-        .userSelect("none")
-        .overflow("hidden"),
-    ProgressBarIndicator: eclair.Style()
-        .background(eclair.theme.accent)
-        .height("100%")
-        .transition("0.3s all")
-        .userSelect("none")
-        .margin("0px auto 0px 0px"),
-    ProgressBarLabel: eclair.Style()
-        .fontColor("white")
-        .fontWeight(700)
-        .userSelect("none")
-        .fontSize("11px"),
-    
-    Toggle: eclair.Style()    
-        .position("relative")
-        .height("20px")
-        .display("inline-block")
-        .borderRadius("20px")
-        .width("50px")
-        .background("#dddddd")
-        .cursor("pointer")
-        .transition("0.2s all")
-        .userSelect("none"),
-    ToggleTick: eclair.Style()
-        .position("absolute")
-        .fontWeight(700)
-        .left("10px")
-        .fontColor("#ffffff")
-        .transition("0.2s all")
-        .userSelect("none")
-        .opacity(0),
-    ToggleKnob: eclair.Style()
-        .transition("0.2s all")
-        .userSelect("none")
-        .css("box-sizing: border-box;")
-        .position("absolute")
-        .top("0px")
-        .left("0px")
-        .margin("3px")
-        .background("#ffffff")
-        .borderRadius("20px")
-        .height("14px")
-        .width("14px")
 }

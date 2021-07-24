@@ -72,8 +72,15 @@ class EclairState {
         return this
     }
     
-    addCallback(key, func) {
+    addCallback(key, func, perform) {
         this.callbacks[key] = func
+        if (perform == true) {
+            func(this)
+        }
+    }
+    
+    string() {
+        return `${this._value}`
     }
     
     bool() {
@@ -111,6 +118,12 @@ class EclairColour extends EclairState {
         this.value(`rgb(${r},${g},${b}, ${a})`)
         return this;
     }   
+    
+    red() {return this.hex("f00")}
+    orange() {return this.hex("f90")}
+    yellow() {return this.hex("ee0")}
+    green() {return this.hex("3d0")} 
+    blue() {return this.hex("06f")}
 }
 
 // /Users/samgarlick/Developer/GitHub/JS-Declare/src/states/textStyles.js
@@ -134,14 +147,10 @@ class EclairStylableObject {
     }
     
     getStyleSheet(selector) {
-        if (selector == null) {
-            selector = ""
-        }
-        
+        selector = (selector == null)? "" : selector
         if (!this._styles.hasOwnProperty(selector)) {
             this._styles[selector] = {}
         }
-        
         return this._styles[selector];
     }
     
@@ -190,35 +199,50 @@ class EclairStylableObject {
         return this;
     }
     
-    css(_style, selector) {this.getStyleSheet(selector)["css"] = _style; return this.updateCSSStyle()}
-    display(_display, selector) {this.getStyleSheet(selector)["display"] = _display;return this.updateCSSStyle();}
-    background(color, selector) {this.getStyleSheet(selector)["background"] = color;return this.updateCSSStyle();}
-    borderSize(size, selector) {this.getStyleSheet(selector)["border-width"] = size; return this.updateCSSStyle()}
-    borderColor(color, selector) {this.getStyleSheet(selector)["border-color"] = color; return this.updateCSSStyle()}
-    borderStyle(style, selector) {this.getStyleSheet(selector)["border-style"] = style; return this.updateCSSStyle()}
-    borderRadius(radius, selector) {this.getStyleSheet(selector)["border-radius"] = radius; return this.updateCSSStyle()}
-    padding(size, selector) {this.getStyleSheet(selector)["padding"] = size; return this.updateCSSStyle()}
-    margin(size, selector) {this.getStyleSheet(selector)["margin"] = size; return this.updateCSSStyle()}
-    font(family, selector) {this.getStyleSheet(selector)["font-family"] = family; return this.updateCSSStyle()}
-    fontSize(size, selector) {this.getStyleSheet(selector)["font-size"] = size; return this.updateCSSStyle()}
-    fontColor(color, selector) {this.getStyleSheet(selector)["color"] = color; return this.updateCSSStyle()}
-    fontWeight(weight, selector) {this.getStyleSheet(selector)["font-weight"] = weight; return this.updateCSSStyle()}
-    width(_width, selector) {this.getStyleSheet(selector)["width"] = _width; return this.updateCSSStyle();}
-    height(_height, selector) {this.getStyleSheet(selector)["height"] = _height; return this.updateCSSStyle();}
-    display(_display, selector) {this.getStyleSheet(selector)["display"] = _display; return this.updateCSSStyle();}
-    overflow(_overflow, selector) {this.getStyleSheet(selector)["overflow"] = _overflow; return this.updateCSSStyle();}
-    opacity(_opacity, selector) {this.getStyleSheet(selector)["opacity"] = _opacity; return this.updateCSSStyle();}
-    textAlign(_align, selector) {this.getStyleSheet(selector)["text-align"] = _align; return this.updateCSSStyle()}
-    verticalAlign(_align, selector) {this.getStyleSheet(selector)["vertical-align"] = _align;return this.updateCSSStyle()}
-    position(_pos, selector) {this.getStyleSheet(selector)["position"] = _pos;return this.updateCSSStyle()}
-    top(_top, selector) {this.getStyleSheet(selector)["top"] = _top;return this.updateCSSStyle()}
-    bottom(_bottom, selector) {this.getStyleSheet(selector)["bottom"] = _bottom;return this.updateCSSStyle()}
-    left(_left, selector) {this.getStyleSheet(selector)["left"] = _left;return this.updateCSSStyle()}
-    right(_right, selector) {this.getStyleSheet(selector)["right"] = _right;return this.updateCSSStyle()}
-    cursor(_value, selector) {this.getStyleSheet(selector)["cursor"] = _value; return this.updateCSSStyle()}
-    textDecoration(_value, selector) {this.getStyleSheet(selector)["text-decoration"] = _value;return this.updateCSSStyle()}
-    transition(_value, selector) {this.getStyleSheet(selector)["transition"] = _value;return this.updateCSSStyle()}
-    userSelect(_value, selector) {this.getStyleSheet(selector)["user-select"] = _value;return this.updateCSSStyle()}
+    _set(selector, type, _style) {
+        this.getStyleSheet(selector)[type] = _style; 
+        
+        if (_style instanceof EclairState) {
+            let self = this
+            _style.addCallback(this.id() + `-style-{type}`, function(state) {
+                self.getStyleSheet(selector)[type] = _style.string(); 
+                self.updateCSSStyle()
+            }, true)
+        }
+        
+        return this.updateCSSStyle()
+    }
+    
+    css(_style, selector) {return this._set(selector, "css", _style)}
+    display(_display, selector) {return this._set(selector, "display", _display)}
+    background(_background, selector) {return this._set(selector, "background", _background)}
+    backgroundColor(_color, selector) {return this._set(selector, "background-color", _color)}
+    borderSize(_size, selector) {return this._set(selector, "border-width", _size)}
+    borderColor(_color, selector) {return this._set(selector, "border-color", _color)}
+    borderStyle(_style, selector) {return this._set(selector, "border-style", _style)}
+    borderRadius(_radius, selector) {return this._set(selector, "border-radius", _radius)}
+    padding(_size, selector) {return this._set(selector, "padding", _size)}
+    margin(_size, selector) {return this._set(selector, "margin", _size)}
+    font(_family, selector) {return this._set(selector, "font-family", _family)}
+    fontSize(_size, selector) {return this._set(selector, "font-size", _size)}
+    fontColor(_color, selector) {return this._set(selector, "color", _color)}
+    fontWeight(_weight, selector) {return this._set(selector, "font-weight", _weight)}
+    width(_width, selector) {return this._set(selector, "width", _width)}
+    height(_height, selector) {return this._set(selector, "height", _height)}
+    display(_display, selector) {return this._set(selector, "display", _display)}
+    overflow(_overflow, selector) {return this._set(selector, "overflow", _overflow)}
+    opacity(_opacity, selector) {return this._set(selector, "opacity", _opacity)}
+    textAlign(_align, selector) {return this._set(selector, "text-align", _align)}
+    verticalAlign(_align, selector) {return this._set(selector, "vertical-align", _align)}
+    position(_pos, selector) {return this._set(selector, "position", _pos)}
+    top(_top, selector) {return this._set(selector, "top", _top)}
+    bottom(_bottom, selector) {return this._set(selector, "bottom", _bottom)}
+    left(_left, selector) {return this._set(selector, "left", _left)}
+    right(_right, selector) {return this._set(selector, "right", _right)}
+    cursor(_value, selector) {return this._set(selector, "cursor", _value)}
+    textDecoration(_value, selector) {return this._set(selector, "text-decoration", _value)}
+    transition(_value, selector) {return this._set(selector, "transition", _value)}
+    userSelect(_value, selector) {return this._set(selector, "user-select", _value)}
 }
 
 class EclairStyleComponent extends EclairStylableObject {
@@ -244,6 +268,8 @@ class EclairStyleComponent extends EclairStylableObject {
         return "eclairStyle" + this._id;
     }
 }
+
+// /Users/samgarlick/Developer/GitHub/JS-Declare/src/style/object-styles.js
 
 eclair.styles = {
     Text: eclair.Style()
@@ -684,13 +710,11 @@ class EclairAlertBox extends EclairComponent {
     }
     
     theme(_theme) {
-        if (_theme instanceof EclairAlertBoxState) {
-            this._setTheme(_theme)
-            
+        if (_theme instanceof EclairAlertBoxState) {            
             let self = this
             _theme.addCallback(this.id() + "-theme", function(state) {
                 self._setTheme(state)
-            })
+            }, true)
         }
         
         return this
@@ -828,8 +852,6 @@ class EclairProgressBar extends EclairComponent {
     constructor(_progress) {
         super()
         
-        this._striped = false
-        
         this._labelText = eclair.State("0%")
         this._label = eclair.Text(this._labelText)
             .addStyle(eclair.styles.ProgressBarLabel)
@@ -840,26 +862,32 @@ class EclairProgressBar extends EclairComponent {
         
         this.progress = _progress
         if (_progress instanceof EclairState) {
-            this.progress = _progress.value()
-            this._labelText.value(Math.round(this.progress * 100) + "%")
-            this._indicator.width((this.progress * 100 + 0.0001) + "%")
-            
             let self = this
             _progress.addCallback(this.id() + "-progress", function(state) {
                 _progress = Math.max(Math.min(state.value(), 1), 0)
                 self._progress = _progress;
                 self._labelText.value(Math.round(_progress * 100) + "%")
                 self._indicator.width((_progress * 100 + 0.0001) + "%")
-            })
+            }, true)
         }
         
         this.addStyle(eclair.styles.ProgressBar)
-            .displayLabel(false)
+            .showLabel(false)
     }
     
     striped(_on) {
-        if (_on == null) {
-            return this._striped;
+        if (_on instanceof EclairState) {
+            let self = this
+            _on.addCallback(this.id() + "-color", function(state) {
+                if (state.value()) {
+                    self._indicator.getStyleSheet()["background-image"] = "linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent)";
+                    self._indicator.getStyleSheet()["background-size"] = "1rem 1rem;";
+                } else {
+                    self._indicator.getStyleSheet()["background-image"] = "";
+                    self._indicator.getStyleSheet()["background-size"] = "1rem 1rem;";
+                }
+                self._indicator.updateCSSStyle()
+            }, true)
         } else {
             if (_on) {
                 this._indicator.getStyleSheet()["background-image"] = "linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent)";
@@ -885,18 +913,16 @@ class EclairProgressBar extends EclairComponent {
     }
     
     color(_color) {
-        this._indicator.background(_color)
+        this._indicator.backgroundColor(_color)
         return this
     }
     
-    displayLabel(_show) {
+    showLabel(_show) {
         if (_show instanceof EclairState) {
             let self = this
-            self._label.opacity(_show.bool()? "1":"0")
-            
-            _show.addCallback(this.id() + "-password", function(state) {
+            _show.addCallback(this.id() + "-label", function(state) {
                 self._label.opacity(state.bool()? "1":"0")
-            })
+            }, true)
         } else {
             this._label.opacity(_show? "1":"0")
         }
@@ -1108,12 +1134,10 @@ class EclairSlider extends EclairCustomTagComponent {
         
         this.setAttr("value", progressValue)
         if (progressValue instanceof EclairState) {
-            this.setAttr("value", progressValue.value())
-            
             progressValue.addCallback(this.id() + "-value", function(state) {
                 self.setAttr("value", state.value())
                 self.getElement(elem => {elem.value = state.value()})
-            })
+            }, true)
            
             this._updateCallback("onInput", e => {
                 e.getElement(elem => {progressValue.value(elem.value)})
@@ -1489,13 +1513,11 @@ class EclairTextBox extends EclairCustomTagComponent {
         
         this.setAttr("value", _text)
         if (_text instanceof EclairState) {
-            this.setAttr("value", _text.value())
-            
             _text.addCallback(this.id() + "-value", function(state) {
                 let newState = state.value()
                 self.setAttr("value", newState)
                 self.getElement(elem => {elem.value = newState});
-            })
+            }, true)
             
             this._updateCallback("onInput", e => {
                 e.getElement(elem => {_text.value(elem.value)})
@@ -1510,10 +1532,9 @@ class EclairTextBox extends EclairCustomTagComponent {
     name(_name) {
         if (_name instanceof EclairState) {
             let self = this
-            this.setAttr("name", _text.value())
             _name.addCallback(this.id() + "-name", function(state) {
                 self.setAttr("name", state.value())
-            })
+            }, true)
         } else {
             this.setAttr("name", _name)
         }
@@ -1524,10 +1545,9 @@ class EclairTextBox extends EclairCustomTagComponent {
     placeholder(_placeholder) {
         if (_placeholder instanceof EclairState) {
             let self = this
-            this.setAttr("placeholder", _placeholder.value())
             _placeholder.addCallback(this.id() + "-placeholder", function(state) {
                 self.setAttr("placeholder", state.value())
-            })
+            }, true)
         } else {
             this.setAttr("placeholder", _placeholder)
         }
@@ -1538,10 +1558,9 @@ class EclairTextBox extends EclairCustomTagComponent {
     password(_password) {
         if (_password instanceof EclairState) {
             let self = this
-            this.setAttr("type", _password.bool()? "password":'text')
             _password.addCallback(this.id() + "-password", function(state) {
                 self.setAttr("type", _password.bool()? "password":'text')
-            })
+            }, true)
         } else {
             this.setAttr("type", isPassword? "password":'text')
         }
@@ -1589,7 +1608,7 @@ class EclairToggle extends EclairComponent {
                 if (value != cValue && self._callbacks.hasOwnProperty("onChange")) {
                     self.performCallback("onChange")  
                 }
-            })
+            }, false)
         }
         
         let self = this;
@@ -1642,12 +1661,10 @@ class EclairToggle extends EclairComponent {
     enabled(_enabled) {
         if (_enabled instanceof EclairState) {
             let self = this
-            this._enabled = _enabled.bool()
-            this.opacity(this._enabled? 1 : 0.6)
             _enabled.addCallback(this.id() + "-enabled", function(state) {
                 self._enabled = state.bool()
                 self.opacity(self._enabled? 1 : 0.6)
-            })
+            }, true)
         } else {
             this._enabled = _enabled
             self.opacity(_enabled? 1 : 0.6)
@@ -1677,12 +1694,10 @@ class EclairToggle extends EclairComponent {
     showTick(_bool) {
         if (_bool instanceof EclairState) {
             let self = this
-            this._showCheckMark = _bool.bool()
-            this._tickMark.opacity((this._showCheckMark && (this._hiddenComponent.value() == "true"))? 1:0)
             _bool.addCallback(this.id() + "-showTick", function(state) {
                 self._showCheckMark = state.bool()
                 self._tickMark.opacity((self._showCheckMark && (self._hiddenComponent.value() == "true"))? 1:0)
-            })
+            }, true)
         } else {
             this._showCheckMark = _bool
             this._tickMark.opacity((_bool && (this._hiddenComponent.value() == "true"))? 1:0)
@@ -1919,14 +1934,12 @@ class EclairText extends EclairComponent {
         
         this._text = text;
         if (text instanceof EclairState) {
-            this._text = text.value()
-            
             let self = this
             text.addCallback(this.id() + "-text", function(state) {
                 let newState = state.value()
                 self._text = newState;
                 self.getElement(elem => {elem.innerHTML = newState});
-            })
+            }, true)
         }
         
         this.addStyle(eclair.styles.Text)
@@ -1934,12 +1947,10 @@ class EclairText extends EclairComponent {
     
     type(_state) {
         if (_state instanceof EclairTextStyleState) {
-            this._setType(_state.value());
-            
             let self = this
             _state.addCallback(this.id() + "-type", function(state) {
                 self._setType(state.value())
-            })
+            }, true)
         } else {
             this._setType(_state);
         }

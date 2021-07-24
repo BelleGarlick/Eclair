@@ -15,13 +15,11 @@ class EclairTextBox extends EclairCustomTagComponent {
         
         this.setAttr("value", _text)
         if (_text instanceof EclairState) {
-            this.setAttr("value", _text.value())
-            
             _text.addCallback(this.id() + "-value", function(state) {
                 let newState = state.value()
                 self.setAttr("value", newState)
                 self.getElement(elem => {elem.value = newState});
-            })
+            }, true)
             
             this._updateCallback("onInput", e => {
                 e.getElement(elem => {_text.value(elem.value)})
@@ -36,10 +34,9 @@ class EclairTextBox extends EclairCustomTagComponent {
     name(_name) {
         if (_name instanceof EclairState) {
             let self = this
-            this.setAttr("name", _text.value())
             _name.addCallback(this.id() + "-name", function(state) {
                 self.setAttr("name", state.value())
-            })
+            }, true)
         } else {
             this.setAttr("name", _name)
         }
@@ -50,10 +47,9 @@ class EclairTextBox extends EclairCustomTagComponent {
     placeholder(_placeholder) {
         if (_placeholder instanceof EclairState) {
             let self = this
-            this.setAttr("placeholder", _placeholder.value())
             _placeholder.addCallback(this.id() + "-placeholder", function(state) {
                 self.setAttr("placeholder", state.value())
-            })
+            }, true)
         } else {
             this.setAttr("placeholder", _placeholder)
         }
@@ -64,10 +60,9 @@ class EclairTextBox extends EclairCustomTagComponent {
     password(_password) {
         if (_password instanceof EclairState) {
             let self = this
-            this.setAttr("type", _password.bool()? "password":'text')
             _password.addCallback(this.id() + "-password", function(state) {
                 self.setAttr("type", _password.bool()? "password":'text')
-            })
+            }, true)
         } else {
             this.setAttr("type", isPassword? "password":'text')
         }

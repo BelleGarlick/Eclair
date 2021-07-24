@@ -199,12 +199,10 @@ class EclairSlider extends EclairCustomTagComponent {
         // Attach slider value to the callback
         this.setAttr("value", progressValue)
         if (progressValue instanceof EclairState) {
-            this.setAttr("value", progressValue.value())
-            
             progressValue.addCallback(this.id() + "-value", function(state) {
                 self.setAttr("value", state.value())
                 self.getElement(elem => {elem.value = state.value()})
-            })
+            }, true)
            
             this._updateCallback("onInput", e => {
                 e.getElement(elem => {progressValue.value(elem.value)})
