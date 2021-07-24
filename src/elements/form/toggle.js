@@ -130,6 +130,6 @@ class EclairToggle extends EclairComponent {
     }
     
     build() {
-        return this.wrapHTML(`<div>`+this._tickMark.build()+this._knob.build()+this._hiddenComponent.build()+"</div>")
+        return this.wrapHTML(`<div>${this._tickMark.build()}`+this._knob.build()+this._hiddenComponent.build()+"</div>")
     }
 }

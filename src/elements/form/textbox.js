@@ -157,7 +157,7 @@ class EclairTextBox extends EclairCustomTagComponent {
         } else {
             if (_required) 
                 this.setAttr("required", "true")
-            } else {{
+            } else {
                 this.setAttr("required", null)
             }
         }
@@ -183,7 +183,7 @@ class EclairTextBox extends EclairCustomTagComponent {
         } else {
             if (_autofocus) 
                 this.setAttr("autofocus", "true")
-            } else {{
+            } else {
                 this.setAttr("autofocus", null)
             }
         }
