@@ -1,6 +1,8 @@
-/// CLASS EclairImage
+/// ## EclairImage
 /// An eclair image element.
-//// image = eclair.Image('image.png')
+/// ```javascript
+/// image = eclair.Image('image.png')
+/// ```
 class EclairImage extends EclairCustomTagComponent {
     constructor(_src) {
         super("img")
@@ -19,10 +21,12 @@ class EclairImage extends EclairCustomTagComponent {
         this.addStyle(eclair.styles.Image)
     }
     
-    /// FUNC altText
+    /// ### altText
     /// Set alt text of the image for accessibility.
-    //// image = eclair.Image('goldfish.png')
-    ////     .altText('An image of a goldfish jumpong on a trampoline.')
+    /// ```javascript
+    /// image = eclair.Image('image.png')
+    ///     .altText('An image of a goldfish jumpong on a trampoline.')
+    /// ```
     altText(_alt) {
         if (_alt instanceof EclairState) {
             let self = this

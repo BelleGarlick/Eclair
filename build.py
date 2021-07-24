@@ -25,37 +25,6 @@ def parse_file(breadcrumbs_path, text):
     return source_code, source_doc
 
 
-def parse_documentation(source_doc):
-    compiled_documentation = ""
-    is_code = False
-    
-    for line in source_doc.split("\n"):
-        if len(line) > 4:
-            if line[3] == "/":
-                if not is_code:
-                    is_code = True
-                    compiled_documentation += "\n```javascript\n"
-
-            else:
-                if is_code:
-                    is_code = False
-                    compiled_documentation += "```\n"
-
-            if is_code:                
-                compiled_documentation += line[5:] + "\n"
-            else:
-                if line[:10] == "/// CLASS ":
-                    compiled_documentation += f"##{line[10:]}\n"
-                else:
-                    compiled_documentation += line + "\n"
-    
-    if is_code:
-        compiled_documentation += "```\n"
-    
-    return compiled_documentation
-
-
-
 def build_from_dir(directory, documentation_path, breadcrumbs=None):
     dir_source = ""
     breadcrumbs = [] if breadcrumbs is None else breadcrumbs
@@ -91,7 +60,7 @@ def build_from_dir(directory, documentation_path, breadcrumbs=None):
                     if len(source_doc) > 0:
                         os.makedirs(documentation_path, exist_ok=True)
                         with open(doc_path[:-2] + "md", "w+") as doc_file:
-                            doc_file.write(parse_documentation(source_doc))
+                            doc_file.write(source_doc)
 
             path = os.path.join(directory, path)
             if os.path.isdir(path):
