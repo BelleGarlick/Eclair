@@ -1,3 +1,5 @@
+// PRINT eclair progress bar doc not finished.
+
 class EclairProgressBar extends EclairComponent {
     constructor(_progress) {
         super()
@@ -65,12 +67,27 @@ class EclairProgressBar extends EclairComponent {
         callback(this._label)
         return this;
     }
-    
+        
+    /// ### .color
+    /// Sets the colour of the progress bar
+    /// **args**:
+    /// - _color: Can be either a string, an eclair State or eclair Color. 
+    /// ```javascript
+    /// eclair.ProgressBar(0.5)
+    ///     .color("red")
+    /// ```
     color(_color) {
         this._indicator.backgroundColor(_color)
         return this
     }
     
+    /// ### .showLabel
+    /// Sets whether the progress label should show on the progress bar.
+    /// **args**:
+    /// - _show: Can be either a bool or an eclair State.
+    /// eclair.ProgressBar(0.5)
+    ///     .showLabel(true)
+    /// ```
     showLabel(_show) {
         if (_show instanceof EclairState) {
             let self = this
@@ -84,6 +101,7 @@ class EclairProgressBar extends EclairComponent {
         return this
     }
     
+    // Standard element. No documentation needed.
     build() {
         return this.wrapHTML(`<div>${this._indicator.build()}</div>`)
     }

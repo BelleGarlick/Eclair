@@ -1,4 +1,4 @@
-## Eclair EclairToggle
+## Eclair Toggle
 An eclair toggle element.
 ```javascript
 let on = eclair.State(true)
@@ -7,7 +7,7 @@ eclair.Toggle(on)
 ### .knob
 This function allows you to access the toggle's knob as a means modify it.
 ```javascript
-eclair.TextBox("Sam")
+eclair.Toggle(true)
     .knob((element) => {
         element.background("red")
     })

@@ -3,7 +3,7 @@ Create a eclair hyperlink object.
 ```javascript
 eclair.Link('DuckDuckGo')
     .url('https://duckduckgo.com/')
-    .target("_blank")
+    .target('_blank')
 ```
 ### .url
 Set target URL that the hyperlink references.
@@ -16,5 +16,5 @@ Set target for the hyperlink. This follows standard html targets for an 'a' elem
 ```javascript
 eclair.Link('DuckDuckGo')
     .url('https://duckduckgo.com/')
-    .target("_blank")
+    .target('_blank')
 ```

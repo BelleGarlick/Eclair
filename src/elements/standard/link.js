@@ -3,7 +3,7 @@
 /// ```javascript
 /// eclair.Link('DuckDuckGo')
 ///     .url('https://duckduckgo.com/')
-///     .target("_blank")
+///     .target('_blank')
 /// ```
 class EclairLink extends EclairCustomTagComponent {
     constructor(_text) {
@@ -46,7 +46,7 @@ class EclairLink extends EclairCustomTagComponent {
     /// ```javascript
     /// eclair.Link('DuckDuckGo')
     ///     .url('https://duckduckgo.com/')
-    ///     .target("_blank")
+    ///     .target('_blank')
     /// ```
     target(_target) {
         if (_target instanceof EclairState) {

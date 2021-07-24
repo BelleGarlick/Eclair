@@ -1,4 +1,4 @@
-## Eclair EclairTextBox
+## Eclair TextBox
 An eclair textbox element.
 ```javascript
 let userInput = eclair.State("")

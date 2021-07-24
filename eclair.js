@@ -860,6 +860,7 @@ class EclairSyntaxHighlighter extends EclairComponent {
 
 
 // elements.custom.progress
+
 class EclairProgressBar extends EclairComponent {
     constructor(_progress) {
         super()
@@ -923,7 +924,7 @@ class EclairProgressBar extends EclairComponent {
         callback(this._label)
         return this;
     }
-    
+        
     color(_color) {
         this._indicator.backgroundColor(_color)
         return this
