@@ -2,86 +2,90 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js"></script>
 <script src="eclair.js"></script>
 <script>    
-let toggle1 = eclair.Toggle()
-    .value(true)
-let progressBar = eclair.ProgressBar().progress(0.5)
+let VBox = eclair.VBox, Toggle = eclair.Toggle, Text = eclair.Text, CheckBox = eclair.CheckBox, 
+    RadioButtons = eclair.RadioButtons, TextBox = eclair.TextBox, State = eclair.State, 
+    AlertState = eclair.AlertState, TextStyleState = eclair.TextStyleState;
+    
+    
+let checkboxText = State("Accept Cookies?")
+let alertBoxText = State("You're learning Eclair")
+let progressValue = State(0.5)
+let alertBoxTheme = AlertState().success()
+let textHeadingStyle = TextStyleState().heading2()
+let showProgressState = State(false)
+    
+let toggleOn = State(true)
+let toggleShowLabel = State(false)
+let toggleEnabled = State(true)
 
-let alertBox = eclair.Alert().success().title("Congrats").text("You're learning Eclair")
 
-let alertBoxTextbox = eclair.Textbox("Message...")
-    .text("This is developmental and things may change!")
-    .onKeyUp(e => {
-        alertBox.text(e.text())
-    })
+let alertBoxObject = eclair.Alert(alertBoxText).theme(alertBoxTheme)  //.title("Congrats")
+
 
 function group(elements) {
-    return eclair.VBox(elements)
+    return VBox(elements)
+        .align("left")
+        .spacing(30)
         .background("#f6f6f6")
         .borderRadius("3px")
         .padding("20px")
-        .align("left")
-        .spacing(30)
 }
     
-function toggleLabels(text, callback) {
-    return eclair.VBox([
-        eclair.Text(text),
-        eclair.Toggle().onChange(callback),
+function toggleLabels(text, toggleLabel, callback) {
+    return VBox([
+        Text(text),
+        Toggle(toggleLabel).onChange(callback),
     ]).spacing(10).align("left")
 }
     
-
 
 let codeView = eclair.SyntaxHighlighter()
 let codeResult = eclair.IFrame()
 
 
-let check = eclair.CheckBox().text("Accept cookies?")
-
-eclair.VBox([
+VBox([
     eclair.HBox([
-        eclair.Text("Eclair")  
-            .type("heading2")
+        Text("Eclair")  
+            .type(textHeadingStyle)
             .fontColor("white")
     ])
         .background(eclair.theme.accent)
         .padding(8),
     
     eclair.ScrollView([
-        eclair.VBox([
-            check,
-            eclair.CheckBox().text("Accept cookies?"),
-            eclair.RadioButtons().addItems(["test", "testing", "tests"]),
-            eclair.RadioButtons().addItems(["also test", "also testing", "also tests"]),
+        VBox([
+            CheckBox(checkboxText),
+            RadioButtons().addItems(["test", "testing", "tests"]),
+            RadioButtons().addItems(["also test", "also testing", "also tests"]),
+            
+            
+            // Toggle Buttons
             group([
-                eclair.Text("Toggle Switch").type("heading2"),
+                Text("Toggle Switch").type(textHeadingStyle),
                 
-                eclair.VBox([
-                    toggle1.display("inline-block")
+                VBox([
+                    Toggle(toggleOn)
+                        .showTick(toggleShowLabel)
+                        .enabled(toggleEnabled)
+                        .display("inline-block")
                 ]).align("center"),
                 
                 eclair.HorizontalLine(),
-                toggleLabels("Show tick", c => {toggle1.showTick(c.value())}),
-                toggleLabels("Toggle Button", c => {toggle1.toggle()}),
-                
-                eclair.VBox([
-                    eclair.Text("Enabled"),
-                    eclair.Toggle()
-                    .onChange(c => {toggle1.enabled(c.value())})
-                        .value(toggle1.enabled()),
-                ]).spacing(10).align("left"),
+                toggleLabels("Show tick", toggleShowLabel, c => {}),
+                toggleLabels("Toggle Button", true, c => {toggleOn.value(!toggleOn.value())}),
+                toggleLabels("Enabled", toggleEnabled, c => {})
             ]),
             
             
             group([
-                eclair.Text("Progress Bar").type("heading2"),
-                progressBar,
+                Text("Progress Bar").type(textHeadingStyle),
+                eclair.ProgressBar(progressValue)
+                    .displayLabel(showProgressState),
                 eclair.HorizontalLine(),
-                eclair.VBox([
-                    eclair.Text("Progress"),
-                    eclair.Slider()
-                        .min(0).max(1).value(0.5).step(0.01)
-                        .onInput(e => {progressBar.progress(e.value())})
+                VBox([
+                    Text("Progress"),
+                    eclair.Slider(progressValue)
+                        .min(0).max(1).step(0.01)
                 ]).spacing(10).align("left"),
                 
                 toggleLabels("Striped", c => {progressBar.striped(c.value())}),
@@ -90,49 +94,49 @@ eclair.VBox([
             
             
             group([
-                eclair.Text("Alert Box").type("heading2"),
-                alertBox,
+                Text("Alert Box").type(textHeadingStyle),
+                alertBoxObject,
                 eclair.HorizontalLine(),
-                eclair.VBox([
-                    eclair.Text("Title"),
-                    eclair.Textbox("Title...")
-                        .text("Warning")
-                        .onKeyUp(e => {
-                            alertBox.title(e.text().length == ""? null : e.text())
-                        })
+                VBox([
+                    Text("Title"),
+                    TextBox("Warning")
+                        .placeholder("Title...")
+//                        .onKeyUp(e => {
+//                            alertBoxObject.title(e.text().length == ""? null : e.text())
+//                        })
                 ]).spacing(10).align("left"),
                 
-                eclair.VBox([
-                    eclair.Text("Message"),
-                    alertBoxTextbox
+                VBox([
+                    Text("Message"),
+                    TextBox(alertBoxText).placeholder("Message..."),
                 ]).spacing(10).align("left"),
                 
-                eclair.VBox([
-                    eclair.Text("Line breaker"),
+                VBox([
+                    Text("Line breaker"),
                     eclair.Button("Add line break").onClick(c => {
                         let newText = alertBox.text()
                         alertBox.text(newText + "<hr/>A new line break can be added by typing &lt;hr/&gt;.")
-                        alertBoxTextbox.text(newText + "<hr/>A new line break can be added by typing <hr/>.")
+                        alertBox.text(newText + "<hr/>A new line break can be added by typing <hr/>.")
                     }),
                 ]).spacing(10).align("left"),
                 
-                eclair.VBox([
-                    eclair.Text("Preset"),
+                VBox([
+                    Text("Preset"),
                     eclair.Select()
                         .addOptions(["Success", "Danger", "Warning", "Info", "Light", "Dark"])
                         .onChange(s => {
-                            if (s.value() == "Success") {alertBox.success()}
-                            if (s.value() == "Danger") {alertBox.danger()}
-                            if (s.value() == "Warning") {alertBox.warning()}
-                            if (s.value() == "Info") {alertBox.info()}
-                            if (s.value() == "Light") {alertBox.light()}
-                            if (s.value() == "Dark") {alertBox.dark()}
+                            if (s.value() == "Success") {alertBoxTheme.success()}
+                            if (s.value() == "Danger") {alertBoxTheme.danger()}
+                            if (s.value() == "Warning") {alertBoxTheme.warning()}
+                            if (s.value() == "Info") {alertBoxTheme.info()}
+                            if (s.value() == "Light") {alertBoxTheme.light()}
+                            if (s.value() == "Dark") {alertBoxTheme.dark()}
                         })
                 ]).spacing(10).align("left"),
             ]),
             
-            eclair.VBox([
-                eclair.Text("Try it yourself!").type("heading2"),
+            VBox([
+                Text("Try it yourself!").type(textHeadingStyle),
                 codeView,
                 eclair.Button().onClick(() => {
                     let code = '<script src="eclair.js"></scrip'+'t><script>'+codeView.value()+'</sc'+'ript>'
