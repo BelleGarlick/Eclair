@@ -41,10 +41,12 @@ function group(elements) {
 }
     
 function toggleLabels(text, toggleLabel, callback) {
-    return VBox([
+    let toggleButton = VBox([
         Text(text),
         Toggle(toggleLabel).onChange(callback),
     ]).spacing(10).align("left")
+    
+    return toggleButton
 }
     
 

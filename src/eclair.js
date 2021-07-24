@@ -39,7 +39,7 @@ let eclair = {
     Select: function() {return new EclairSelect();},
     Link: function(text) {return new EclairLink(text);},
     Slider: function(_value) {return new EclairSlider(_value);},
-    HiddenInput: function() {return new EclairHiddenInput();},
+    HiddenInput: function(_value) {return new EclairHiddenInput(_value);},
     Toggle: function(_value) {return new EclairToggle(_value);},
     HorizontalLine: function() {return new EclairHorizontalLine();},
     CustomTagComponent: function(tag) {return new EclairCustomTagComponent(tag);},

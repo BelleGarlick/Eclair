@@ -26,7 +26,7 @@ let eclair = {
     Select: function() {return new EclairSelect();},
     Link: function(text) {return new EclairLink(text);},
     Slider: function(_value) {return new EclairSlider(_value);},
-    HiddenInput: function() {return new EclairHiddenInput();},
+    HiddenInput: function(_value) {return new EclairHiddenInput(_value);},
     Toggle: function(_value) {return new EclairToggle(_value);},
     HorizontalLine: function() {return new EclairHorizontalLine();},
     CustomTagComponent: function(tag) {return new EclairCustomTagComponent(tag);},
@@ -145,8 +145,6 @@ class EclairTextStyleState extends EclairState {
     heading3() {this.value("heading3"); return this;}
     heading4() {this.value("heading4"); return this;}
 }
-
-
 
 
 
@@ -507,7 +505,9 @@ class EclairComponent extends EclairStylableObject {
     
     getAttr(key) {
         let elem = this.getElement();
-        if (elem != null) {return elem.getAttribute(key);}
+        if (elem != null) {
+            return elem.getAttribute(key);
+        }
         return this.attributes[key];
     }
     
@@ -949,6 +949,113 @@ class EclairProgressBar extends EclairComponent {
 
 
 
+// elements.form.checkbox
+class EclairCheckbox extends EclairComponent {
+    constructor(text) {
+        super()
+        
+        this._enabled = true     
+        
+        this.setAttr("cellpadding", 6)     
+            .addStyle(eclair.styles.CheckBox)   
+        
+        this._label = eclair.Text(text)
+            .addStyle(eclair.styles.CheckBoxLabel)
+        this._checkbox = eclair.CustomTagComponent("div")
+            .addStyle(eclair.styles.CheckBoxIcon)
+        
+        this._hiddenValue = eclair.State(false)
+        this._hidden = eclair.HiddenInput(this._hiddenValue)
+        
+        this.items = []
+        
+        let self = this
+        this._updateCallback("onClick", () => {
+            if (this.overrideOnClick != null) {
+                this.overrideOnClick(this)
+            }
+            if (self._enabled) {   
+                this.toggle()
+                if (self._callbacks.hasOwnProperty("onChange")) 
+                    self.performCallback("onChange")
+            }  
+        })
+        
+        this.overrideOnClick = null
+    }
+    
+    label(callback) {
+        callback(this._label)
+        return this;
+    }
+    
+    checkbox(callback) {
+        callback(this._checkbox)
+        return this;
+    }
+        
+    onClick(callback) {
+        this.overrideOnClick = callback;
+        return this;
+    }
+    
+    value(_val) {
+        if (_val == null) {
+            return this._hiddenValue.bool()
+        }
+        
+        if (this._callbacks.hasOwnProperty("onChange")) {
+            this.performCallback("onChange")    
+        }
+        
+        if (_val == true) {
+            this._hiddenValue.value(true)
+            this._checkbox
+                .addStyle(eclair.styles.CheckBoxActiveIcon)
+                .removeStyle(eclair.styles.CheckBoxIcon)
+                .innerHTML("✓")
+        } else {
+            this._hiddenValue.value(false)
+            this._checkbox
+                .addStyle(eclair.styles.CheckBoxIcon)
+                .removeStyle(eclair.styles.CheckBoxActiveIcon)
+                .innerHTML("")
+        }
+        return this        
+    }
+    
+    toggle() {
+        this.value(!this.value())
+        return this;
+    }
+    
+    name(_name) {
+        if (_name == null) {
+            return this._hidden.name()
+        } else {
+            this._hidden.name(_name)
+        }
+        return this;
+    }
+    
+    enabled(_enabled) {
+        if (_enabled == null) {
+            return this._enabled;
+        } else {
+            this._enabled = _enabled;
+            return this
+        }
+    }
+    
+    build() {
+        let items = ""
+        for (let i = 0; i < this.items.length; i++) {
+            items += this.buildItem(this.items[i], i)
+        }
+        return this.wrapHTML(`<table><tr><td width=1>${this._checkbox.build()}</td><td>${this._label.build()}</td></tr></table>${this._hidden.build()}`)
+    }
+}
+
 // elements.form.form
 class EclairForm extends EclairComponent {
     constructor(elements) {
@@ -1158,8 +1265,7 @@ class EclairSlider extends EclairCustomTagComponent {
                     overrideOnCreate(self)
                 }
             })
-        }
-        
+        } 
     }
     
     name(_name) {
@@ -1198,39 +1304,15 @@ class EclairSlider extends EclairCustomTagComponent {
         return this;
     }
 }
-
-class EclairHiddenInput extends EclairCustomTagComponent {
-    constructor() {
-        super("input")
-        this.setAttr("type", "hidden")
-    }
-    
-    value(_text) {
-        let elem = this.getElement();
-        if (_text == null) {
-            if (elem != null) {
-                return elem.value;
-            }
-            return this.getAttr("value")
-        } else {
-            if (elem != null) {elem.value = _text;}
-            this.setAttr("value", _text)
-            return this
-        }
-    }
-    
-    name(_name) {
-        return _name == null? this.getAttr("name") : this.setAttr("name", _name)
-    }
-}
-
     
 class EclairRadioButtons extends EclairComponent {
     constructor() {
         super()
         
         this._enabled = true
-        this._hidden = eclair.HiddenInput()
+        
+        this._hiddenValue = eclair.State("")
+        this._hidden = eclair.HiddenInput(this._hiddenValue)
         
         this.itemStyle = eclair.Style()
         this.selectedItemStyle = eclair.Style()
@@ -1271,7 +1353,7 @@ class EclairRadioButtons extends EclairComponent {
         let item = {"value": value, "text": text}
         
         if (this.items.length == 0) {
-            this._hidden.value(value)
+            this._hiddenValue.value(value)
         }
         
         this.items.push(item)
@@ -1332,10 +1414,7 @@ class EclairRadioButtons extends EclairComponent {
     }
     
     value(_val) {
-        if (_val == null) {
-            return this._hidden.value()
-        }
-        this._hidden.value(_val)
+        this._hiddenValue.value(_val)
         this.selectedIndex(this.selectedIndex())
         return this;
     }
@@ -1357,7 +1436,7 @@ class EclairRadioButtons extends EclairComponent {
     selectedIndex(_index) {
         if (_index == null) {
             let selectedIndex = -1;
-            let _val = this._hidden.value()
+            let _val = this._hiddenValue.value()
             for (let n = 0; n < this.items.length; n++) {
                 if (this.items[n].value == _val) {
                     selectedIndex = n;
@@ -1373,7 +1452,7 @@ class EclairRadioButtons extends EclairComponent {
             return selectedIndex;
         }
         
-        this._hidden.value(this.items[_index].value)
+        this._hiddenValue.value(this.items[_index].value)
 
         let self = this
         this.getElement(e => {
@@ -1404,108 +1483,37 @@ class EclairRadioButtons extends EclairComponent {
     }
 }
 
-class EclairCheckbox extends EclairComponent {
-    constructor(text) {
-        super()
-        
-        this._enabled = true     
-        
-        this.setAttr("cellpadding", 6)     
-            .addStyle(eclair.styles.CheckBox)   
-        
-        this._label = eclair.Text(text)
-            .addStyle(eclair.styles.CheckBoxLabel)
-        this._checkbox = eclair.CustomTagComponent("div")
-            .addStyle(eclair.styles.CheckBoxIcon)
-        this._hidden = eclair.HiddenInput()
-            .value("false")
-        
-        this.items = []
-        
-        let self = this
-        this._updateCallback("onClick", () => {
-            if (this.overrideOnClick != null) {
-                this.overrideOnClick(this)
-            }
-            if (self._enabled) {   
-                this.toggle()
-                if (self._callbacks.hasOwnProperty("onChange")) 
-                    self.performCallback("onChange")
-            }  
-        })
-        
-        this.overrideOnClick = null
-    }
-    
-    label(callback) {
-        callback(this._label)
-        return this;
-    }
-    
-    checkbox(callback) {
-        callback(this._checkbox)
-        return this;
-    }
-        
-    onClick(callback) {
-        this.overrideOnClick = callback;
-        return this;
-    }
-    
-    value(_val) {
-        if (_val == null) {
-            return this._hidden.value() == "true"
-        }
-        
-        if (this._callbacks.hasOwnProperty("onChange")) {
-            this.performCallback("onChange")    
-        }
-        
-        if (_val == true) {
-            this._hidden.value("true")
-            this._checkbox
-                .addStyle(eclair.styles.CheckBoxActiveIcon)
-                .removeStyle(eclair.styles.CheckBoxIcon)
-                .innerHTML("✓")
+// elements.form.hidden
+class EclairHiddenInput extends EclairCustomTagComponent {
+    constructor(_value) {
+        super("input")
+        this.setAttr("type", "hidden")
+
+        if (_value instanceof EclairState) {
+            let self = this
+            _value.addCallback(this.id() + "-value", function(state) {
+                let newState = state.value()
+                
+                self.setAttr("value", newState)
+                self.getElement(e => {e.value = newState})
+            }, true)
         } else {
-            this._hidden.value("false")
-            this._checkbox
-                .addStyle(eclair.styles.CheckBoxIcon)
-                .removeStyle(eclair.styles.CheckBoxActiveIcon)
-                .innerHTML("")
+            this.setAttr("value", _value)
+            this.getElement(e => {e.value = _value})
         }
-        return this        
-    }
-    
-    toggle() {
-        this.value(!this.value())
-        return this;
     }
     
     name(_name) {
-        if (_name == null) {
-            return this._hidden.name()
+        if (_name instanceof EclairState) {
+            let self = this
+            _name.addCallback(this.id() + "-name", function(state) {
+                self.setAttr("name", state.value())
+            }, true)
         } else {
-            this._hidden.name(_name)
+            this.setAttr("name", _name)
         }
-        return this;
-    }
-    
-    enabled(_enabled) {
-        if (_enabled == null) {
-            return this._enabled;
-        } else {
-            this._enabled = _enabled;
-            return this
-        }
-    }
-    
-    build() {
-        let items = ""
-        for (let i = 0; i < this.items.length; i++) {
-            items += this.buildItem(this.items[i], i)
-        }
-        return this.wrapHTML(`<table><tr><td width=1>${this._checkbox.build()}</td><td>${this._label.build()}</td></tr></table>${this._hidden.build()}`)
+        
+        return this
     }
 }
 
@@ -1624,9 +1632,9 @@ class EclairTextBox extends EclairCustomTagComponent {
                 }
             }, true)
         } else {
-            if (_required) 
+            if (_required) {
                 this.setAttr("required", "true")
-            } else {{
+            } else {
                 this.setAttr("required", null)
             }
         }
@@ -1644,9 +1652,9 @@ class EclairTextBox extends EclairCustomTagComponent {
                 }
             }, true)
         } else {
-            if (_autofocus) 
+            if (_autofocus) {
                 this.setAttr("autofocus", "true")
-            } else {{
+            } else {
                 this.setAttr("autofocus", null)
             }
         }
@@ -1664,44 +1672,52 @@ class EclairToggle extends EclairComponent {
         let overrideOnClick = null;
         let overrideOnCreate = null;
         
-        this.addStyle(eclair.styles.Toggle)
-        this._tickMark = eclair.Text("✓").addStyle(eclair.styles.ToggleTick)
-        this._knob = new EclairView([]).addStyle(eclair.styles.ToggleKnob)
+        this._tickMark = eclair.Text("✓")
+        this._knob = new EclairView([])
         
-        this._hiddenComponent = new EclairHiddenInput()
-        this._hiddenComponent.value(_value)
+        this._hiddenComponent = eclair.HiddenInput(_value)
     
         if (_value instanceof EclairState) {
-            this._hiddenComponent.value(_value.bool())
-            
             let self = this
             _value.addCallback(this.id() + "-toggle", function(state) {
                 let value = state.bool()
-                let cValue = self._hiddenComponent.value(value)
+                let cValue = value;
                 
-                self._hiddenComponent.value(value)
-                self.updateStyle()
+                self._hiddenComponent.getElement(e => {
+                    cValue = e.value == "true"
+                    e.value = value
+                })
                 
-                if (value != cValue && self._callbacks.hasOwnProperty("onChange")) {
+                self._updateStyle()
+                if (self._callbacks.hasOwnProperty("onChange")) {
                     self.performCallback("onChange")  
                 }
             }, false)
-        }
+        } 
         
         let self = this;
         this._updateCallback("onClick", e => {
             if (e._enabled) {
-                let cVal = this._hiddenComponent.value() == "true"
-                this._hiddenComponent.value(!cVal)
-                if (_value instanceof EclairState) {_value.value(!cVal)} else {this.performCallback("onChange")}
-                this.updateStyle()
+                this._hiddenComponent.getElement(e => {
+                    let cVal = e.value == "true"
+                    if (_value instanceof EclairState) {
+                        _value.value(!cVal)
+                    } else {
+                        e.value = !cVal
+                        this._updateStyle()
+                        if (self._callbacks.hasOwnProperty("onChange")) {
+                            self.performCallback("onChange")  
+                        }
+                    }
+                })
             }
             if (self.overrideOnClick != null) {
                 overrideOnClick(self)
             }
         })
+        
         this._updateCallback("onCreate", e => {
-            this.updateStyle();
+            this._updateStyle();
             if (self.overrideOnCreate != null) {
                 overrideOnCreate(self)
             }
@@ -1709,6 +1725,10 @@ class EclairToggle extends EclairComponent {
         
         this._showCheckMark = false
         this._enabled = true
+        
+        this.addStyle(eclair.styles.Toggle)
+        this._tickMark.addStyle(eclair.styles.ToggleTick)
+        this._knob.addStyle(eclair.styles.ToggleKnob)
     }
     
     onClick(callback) {
@@ -1727,12 +1747,8 @@ class EclairToggle extends EclairComponent {
     }
     
     name(_name) {
-        if (_name == null) {
-            return this._hiddenComponent.name()
-        } else {
-            this._hiddenComponent.name(_name)
-            return this;
-        }
+        this._hiddenComponent.name(_name)
+        return this;
     }
     
     enabled(_enabled) {
@@ -1750,8 +1766,23 @@ class EclairToggle extends EclairComponent {
         return this
     }
     
-    updateStyle() {
-        if (this._hiddenComponent.value() == "true") {
+    showTick(_bool) {
+        if (_bool instanceof EclairState) {
+            let self = this
+            _bool.addCallback(this.id() + "-showTick", function(state) {
+                self._showCheckMark = state.bool()
+                self._tickMark.opacity((self._showCheckMark && (self._hiddenComponent.getAttr("value") == "true"))? 1:0)
+            }, true)
+        } else {
+            this._showCheckMark = _bool
+            this._tickMark.opacity((_bool && (this._hiddenComponent.value() == "true"))? 1:0)
+        }
+        
+        return this
+    }
+    
+    _updateStyle() {
+        if (this._hiddenComponent.getAttr("value") == "true") {
             this.background(eclair.theme.accent)
             if (this._showCheckMark) {
                 this._tickMark.opacity(1)
@@ -1768,23 +1799,8 @@ class EclairToggle extends EclairComponent {
         }
     }
     
-    showTick(_bool) {
-        if (_bool instanceof EclairState) {
-            let self = this
-            _bool.addCallback(this.id() + "-showTick", function(state) {
-                self._showCheckMark = state.bool()
-                self._tickMark.opacity((self._showCheckMark && (self._hiddenComponent.value() == "true"))? 1:0)
-            }, true)
-        } else {
-            this._showCheckMark = _bool
-            this._tickMark.opacity((_bool && (this._hiddenComponent.value() == "true"))? 1:0)
-        }
-        
-        return this
-    }
-    
     build() {
-        return this.wrapHTML(`<div>`+this._tickMark.build()+this._knob.build()+this._hiddenComponent.build()+"</div>")
+        return this.wrapHTML(`<div>${this._tickMark.build()}`+this._knob.build()+this._hiddenComponent.build()+"</div>")
     }
 }
 

@@ -211,23 +211,7 @@ class EclairSlider extends EclairCustomTagComponent {
                     overrideOnCreate(self)
                 }
             })
-        }
-        
-//                        .onInput(e => {progressValue.value(e.value())})
-//    
-//                        value(_val) {
-//                            if (_val == null) {
-//                                let elem = this.getElement();
-//                                if (elem != null) {
-//                                    return elem.value;
-//                                }
-//                                return this.getAttr("value")
-//                            } else {
-//                                this.setAttr("value", _val)
-//                                return this
-//                            }
-//                        }
-//        
+        } 
     }
     
     name(_name) {
@@ -266,39 +250,15 @@ class EclairSlider extends EclairCustomTagComponent {
         return this;
     }
 }
-
-class EclairHiddenInput extends EclairCustomTagComponent {
-    constructor() {
-        super("input")
-        this.setAttr("type", "hidden")
-    }
-    
-    value(_text) {
-        let elem = this.getElement();
-        if (_text == null) {
-            if (elem != null) {
-                return elem.value;
-            }
-            return this.getAttr("value")
-        } else {
-            if (elem != null) {elem.value = _text;}
-            this.setAttr("value", _text)
-            return this
-        }
-    }
-    
-    name(_name) {
-        return _name == null? this.getAttr("name") : this.setAttr("name", _name)
-    }
-}
-
     
 class EclairRadioButtons extends EclairComponent {
     constructor() {
         super()
         
         this._enabled = true
-        this._hidden = eclair.HiddenInput()
+        
+        this._hiddenValue = eclair.State("")
+        this._hidden = eclair.HiddenInput(this._hiddenValue)
         
         this.itemStyle = eclair.Style()
         this.selectedItemStyle = eclair.Style()
@@ -339,7 +299,7 @@ class EclairRadioButtons extends EclairComponent {
         let item = {"value": value, "text": text}
         
         if (this.items.length == 0) {
-            this._hidden.value(value)
+            this._hiddenValue.value(value)
         }
         
         this.items.push(item)
@@ -401,10 +361,7 @@ class EclairRadioButtons extends EclairComponent {
     }
     
     value(_val) {
-        if (_val == null) {
-            return this._hidden.value()
-        }
-        this._hidden.value(_val)
+        this._hiddenValue.value(_val)
         this.selectedIndex(this.selectedIndex())
         return this;
     }
@@ -426,7 +383,7 @@ class EclairRadioButtons extends EclairComponent {
     selectedIndex(_index) {
         if (_index == null) {
             let selectedIndex = -1;
-            let _val = this._hidden.value()
+            let _val = this._hiddenValue.value()
             for (let n = 0; n < this.items.length; n++) {
                 if (this.items[n].value == _val) {
                     selectedIndex = n;
@@ -442,7 +399,7 @@ class EclairRadioButtons extends EclairComponent {
             return selectedIndex;
         }
         
-        this._hidden.value(this.items[_index].value)
+        this._hiddenValue.value(this.items[_index].value)
 
         let self = this
         this.getElement(e => {
@@ -470,110 +427,5 @@ class EclairRadioButtons extends EclairComponent {
             items += this.buildItem(this.items[i], i)
         }
         return this.wrapHTML(`<div>${items}</div>${this._hidden.build()}`)
-    }
-}
-
-class EclairCheckbox extends EclairComponent {
-    constructor(text) {
-        super()
-        
-        this._enabled = true     
-        
-        this.setAttr("cellpadding", 6)     
-            .addStyle(eclair.styles.CheckBox)   
-        
-        this._label = eclair.Text(text)
-            .addStyle(eclair.styles.CheckBoxLabel)
-        this._checkbox = eclair.CustomTagComponent("div")
-            .addStyle(eclair.styles.CheckBoxIcon)
-        this._hidden = eclair.HiddenInput()
-            .value("false")
-        
-        this.items = []
-        
-        let self = this
-        this._updateCallback("onClick", () => {
-            if (this.overrideOnClick != null) {
-                this.overrideOnClick(this)
-            }
-            if (self._enabled) {   
-                this.toggle()
-                if (self._callbacks.hasOwnProperty("onChange")) 
-                    self.performCallback("onChange")
-            }  
-        })
-        
-        this.overrideOnClick = null
-    }
-    
-    label(callback) {
-        callback(this._label)
-        return this;
-    }
-    
-    checkbox(callback) {
-        callback(this._checkbox)
-        return this;
-    }
-        
-    onClick(callback) {
-        this.overrideOnClick = callback;
-        return this;
-    }
-    
-    value(_val) {
-        if (_val == null) {
-            return this._hidden.value() == "true"
-        }
-        
-        if (this._callbacks.hasOwnProperty("onChange")) {
-            this.performCallback("onChange")    
-        }
-        
-        if (_val == true) {
-            this._hidden.value("true")
-            this._checkbox
-                .addStyle(eclair.styles.CheckBoxActiveIcon)
-                .removeStyle(eclair.styles.CheckBoxIcon)
-                .innerHTML("✓")
-        } else {
-            this._hidden.value("false")
-            this._checkbox
-                .addStyle(eclair.styles.CheckBoxIcon)
-                .removeStyle(eclair.styles.CheckBoxActiveIcon)
-                .innerHTML("")
-        }
-        return this        
-    }
-    
-    toggle() {
-        this.value(!this.value())
-        return this;
-    }
-    
-    name(_name) {
-        if (_name == null) {
-            return this._hidden.name()
-        } else {
-            this._hidden.name(_name)
-        }
-        return this;
-    }
-    
-    enabled(_enabled) {
-        if (_enabled == null) {
-            return this._enabled;
-        } else {
-            this._enabled = _enabled;
-            return this
-        }
-    }
-    
-    build() {
-        let items = ""
-        for (let i = 0; i < this.items.length; i++) {
-            items += this.buildItem(this.items[i], i)
-        }
-        return this.wrapHTML(`<table><tr><td width=1>${this._checkbox.build()}</td><td>${this._label.build()}</td></tr></table>${this._hidden.build()}`)
     }
 }

@@ -34,7 +34,9 @@ class EclairComponent extends EclairStylableObject {
     
     getAttr(key) {
         let elem = this.getElement();
-        if (elem != null) {return elem.getAttribute(key);}
+        if (elem != null) {
+            return elem.getAttribute(key);
+        }
         return this.attributes[key];
     }
     
