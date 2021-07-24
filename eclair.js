@@ -18,7 +18,7 @@ let eclair = {
     Form: function(elements) {return new EclairForm(elements);},
     Image: function() {return new EclairImage();},
     Text: function(text) {return new EclairText(text);},
-    TextStyleState: function() {return new EclairTextStyleState();},
+    TextStyle: function() {return new EclairTextStyleState();},
     
     TextBox: function(text) {return new EclairTextBox(text);},
     TextArea: function() {return new EclairTextArea();},
@@ -1878,19 +1878,6 @@ class EclairLink extends EclairCustomTagComponent {
         this.addStyle(eclair.styles.Link)
     }
     
-    target(_target) {
-        if (_target instanceof EclairState) {
-            let self = this
-            _target.addCallback(this.id() + "-target", function(state) {
-                self.setAttr("target", state.value())
-            }, true)
-        } else {
-            this.setAttr("target", _target)
-        }
-        
-        return this
-    }
-    
     url(_location) {
         if (_location instanceof EclairState) {
             let self = this
@@ -1899,6 +1886,19 @@ class EclairLink extends EclairCustomTagComponent {
             }, true)
         } else {
             this.setAttr("href", _location)
+        }
+        
+        return this
+    }
+    
+    target(_target) {
+        if (_target instanceof EclairState) {
+            let self = this
+            _target.addCallback(this.id() + "-target", function(state) {
+                self.setAttr("target", state.value())
+            }, true)
+        } else {
+            this.setAttr("target", _target)
         }
         
         return this
@@ -1986,35 +1986,38 @@ class EclairText extends EclairComponent {
     
     _setType(newType) {
         if (newType == "title") {
-            this.fontSize("40px").fontWeight(700).margin("50px 10px 10px 10px")
+            this.fontSize("40px")
+                .fontWeight(700)
+                .margin("50px 10px 10px 10px")
         }
         
         if (newType == "subtitle") {
-            this.fontSize("25px").margin("50px 10px 10px 10px")
+            this.fontSize("25px")
+                .margin("50px 10px 10px 10px")
         }
         
         if (newType == "heading1") {
             this.fontSize("30px")
-            this.fontWeight(700)
-            this.margin("50px 10px 10px 10px")
+                .fontWeight(700)
+                .margin("50px 10px 10px 10px")
         }
         
         if (newType == "heading2") {
             this.fontSize("25px")
-            this.fontWeight(700)
-            this.margin("50px 10px 10px 10px")
+                .fontWeight(700)
+                .margin("50px 10px 10px 10px")
         }
         
         if (newType == "heading3") {
             this.fontSize("20px")
-            this.fontWeight(700)
-            this.margin("50px 10px 10px 10px")
+                .fontWeight(700)
+                .margin("50px 10px 10px 10px")
         }
         
         if (newType == "heading4") {
             this.fontSize("15px")
-            this.fontWeight(700)
-            this.margin("50px 10px 10px 10px")
+                .fontWeight(700)
+                .margin("50px 10px 10px 10px")
         }
     }
     

@@ -1,3 +1,9 @@
+/// ## Eclair Text
+/// Create a eclair text object.
+/// ```javascript
+/// eclair.Text('Welcome')
+///     .type("title")
+/// ```
 class EclairText extends EclairComponent {
     constructor(text) {
         super()
@@ -15,6 +21,18 @@ class EclairText extends EclairComponent {
         this.addStyle(eclair.styles.Text)
     }
     
+    /// ### .type
+    /// Set the type of text this is to a predefined style from the list of following: title, subtitle, heading1, heading2, heading3, heading 4.    
+    /// ```javascript
+    /// eclair.Text('Hello')
+    ///     .type('heading1')
+    /// ```
+    ///
+    /// Alternatively, you can use an EclairTextStyleState to do this.
+    /// ```javascript
+    /// eclair.Text('Hello')
+    ///     .type(eclair.TextStyle().heading2())
+    /// ```
     type(_state) {
         if (_state instanceof EclairTextStyleState) {
             let self = this
@@ -28,40 +46,46 @@ class EclairText extends EclairComponent {
         return this
     }
     
+    // This shouldn't really be accessed externally as it should all be done via .type.
+    // All this does is set the style based upon the styling type given.
     _setType(newType) {
         if (newType == "title") {
-            this.fontSize("40px").fontWeight(700).margin("50px 10px 10px 10px")
+            this.fontSize("40px")
+                .fontWeight(700)
+                .margin("50px 10px 10px 10px")
         }
         
         if (newType == "subtitle") {
-            this.fontSize("25px").margin("50px 10px 10px 10px")
+            this.fontSize("25px")
+                .margin("50px 10px 10px 10px")
         }
         
         if (newType == "heading1") {
             this.fontSize("30px")
-            this.fontWeight(700)
-            this.margin("50px 10px 10px 10px")
+                .fontWeight(700)
+                .margin("50px 10px 10px 10px")
         }
         
         if (newType == "heading2") {
             this.fontSize("25px")
-            this.fontWeight(700)
-            this.margin("50px 10px 10px 10px")
+                .fontWeight(700)
+                .margin("50px 10px 10px 10px")
         }
         
         if (newType == "heading3") {
             this.fontSize("20px")
-            this.fontWeight(700)
-            this.margin("50px 10px 10px 10px")
+                .fontWeight(700)
+                .margin("50px 10px 10px 10px")
         }
         
         if (newType == "heading4") {
             this.fontSize("15px")
-            this.fontWeight(700)
-            this.margin("50px 10px 10px 10px")
+                .fontWeight(700)
+                .margin("50px 10px 10px 10px")
         }
     }
     
+    // No doc listed as this is standard eclair object
     build() {
         return this.wrapHTML(`<span>${this._text}</span>`)
     }

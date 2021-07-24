@@ -21,7 +21,7 @@ class EclairImage extends EclairCustomTagComponent {
         this.addStyle(eclair.styles.Image)
     }
     
-    /// ### altText
+    /// ### .altText
     /// Set alt text of the image for accessibility.
     /// ```javascript
     /// image = eclair.Image('image.png')

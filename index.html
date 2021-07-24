@@ -4,14 +4,14 @@
 <script>    
 let VBox = eclair.VBox, Toggle = eclair.Toggle, Text = eclair.Text, CheckBox = eclair.CheckBox, 
     RadioButtons = eclair.RadioButtons, TextBox = eclair.TextBox, State = eclair.State, 
-    AlertState = eclair.AlertState, TextStyleState = eclair.TextStyleState;
+    AlertState = eclair.AlertState, TextStyle = eclair.TextStyle;
     
     
 let checkboxText = State("Accept Cookies?")
 let alertBoxText = State("You're learning Eclair")
 let progressValue = State(0.5)
 let alertBoxTheme = AlertState().success()
-let textHeadingStyle = TextStyleState().heading2()
+let textHeadingStyle = TextStyle().heading2()
 let showProgressState = State(false)
 let progressBarStripped = State(false)
 let progressBarColor = eclair.Color()
