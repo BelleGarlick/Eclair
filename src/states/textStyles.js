@@ -6,3 +6,18 @@ class EclairTextStyleState extends EclairState {
     heading3() {this.value("heading3"); return this;}
     heading4() {this.value("heading4"); return this;}
 }
+
+
+
+//    /
+//    / Alternatively, you can use an EclairTextStyleState to do this. The EclairTextStyleState is like any other state, if you update the EclairTextStyleState, all elements using that State will be updated.
+//    / ```javascript
+//    / let style = eclair.TextStyle().heading2()
+//    /
+//    / eclair.VBox([
+//    /     eclair.Text('Hello').type(style),
+//    /     eclair.Text('Welcome').type(style),
+//    /     Button("Change "),
+//    / ]).write()
+//    / 
+//    / ```

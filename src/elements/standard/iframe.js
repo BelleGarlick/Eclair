@@ -1,10 +1,4 @@
-class EclairHorizontalLine extends EclairCustomTagComponent {
-    constructor() {
-        super("hr")        
-        this.addStyle(eclair.styles.HorizontalLine)
-    }
-}
-
+// PRINT TODO IFrame Needs documentation and updating to states.
 class EclairIFrame extends EclairCustomTagComponent {
     constructor() {
         super("iframe")
