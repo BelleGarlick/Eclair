@@ -1,27 +1,4 @@
 
-//
-// Standard Elements
-//
-class EclairImage extends EclairCustomTagComponent {
-    constructor() {
-        super("img")
-        this.addStyle(eclair.styles.Image)
-    }
-    
-    src(_src) {
-        this.setAttr("src", _src)
-        return this;
-    }
-    
-    altText(_alt) {
-        if (_alt == null) {
-            return this.getAttr("alt");
-        } else {
-            this.setAttr("alt", _alt)
-            return this
-        }
-    }
-}
 
 class EclairLink extends EclairCustomTagComponent {
     constructor(text) {
@@ -100,4 +77,3 @@ class EclairIFrame extends EclairCustomTagComponent {
         return _sandbox == null? this.getAttr("sandbox") : this.setAttr("sandbox", _sandbox)
     }
 }
-

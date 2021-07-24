@@ -24,9 +24,18 @@ class EclairColour extends EclairState {
         return this;
     }   
     
+    white() {return this.hex("fff")}
     red() {return this.hex("f00")}
     orange() {return this.hex("f90")}
     yellow() {return this.hex("ee0")}
     green() {return this.hex("3d0")} 
+    aqua() {return this.hex("0cc")}
     blue() {return this.hex("06f")}
+    
+    success() {return this.hex("d4edd9")}
+    danger() {return this.hex("f8d7d9")}
+    warning() {return this.hex("fff3cd")}
+    info() {return this.hex("d1ecf1")}
+    light() {return this.hex("efefef")}
+    dark() {return this.hex("d5d8d9")}
 }

@@ -2,24 +2,68 @@ import os
 
 BUILD_ORDER_FILE = "build.txt"
 SOURCE_DIR = "src"
+DOC_DIR = "doc"
 OUTPUT = "eclair.js"
 
 
-def parse_file(text):
-    output_text = ""
+def parse_file(breadcrumbs_path, text):
+    source_code = ""
+    source_doc = ""
+    
     for line in text.split("\n"):
-        if line.lstrip()[0:2] == "//":
+        if line.lstrip()[0:3] == "///":
+            source_doc += line.lstrip() + "\n"
+            
+        elif line.lstrip()[0:2] == "//":
             line = line.lstrip("/").lstrip(" ")
             if line[:5] == "PRINT":
                 print(line[5:].lstrip(" "))
                 
         else:
-            output_text += line + "\n"
-    return output_text
+            source_code += line + "\n"
+             
+    return source_code, source_doc
 
 
-def build_from_dir(directory):
-    dir_source = f"// {directory}\n"
+def parse_documentation(source_doc):
+#/// CLASS EclairImage
+#/// An eclair image element.
+#//// image = eclair.Image('image.png')
+#/// FUNC altText
+#/// Set alt text of the image for accessibility.
+#//// image = eclair.Image('goldfish.png')
+#////     .altText('An image of a goldfish jumpong on a trampoline.')
+
+    compiled_documentation = ""
+    is_code = False
+    
+    for line in source_doc.split("\n"):
+        if len(line) > 4:
+            if line[3] == "/":
+                if not is_code:
+                    is_code = True
+                    compiled_documentation += "\n```javascript\n"
+
+            else:
+                if is_code:
+                    is_code = False
+                    compiled_documentation += "```\n"
+
+            if is_code:                
+                compiled_documentation += line[5:] + "\n"
+            else:
+                compiled_documentation += line + "\n"
+    
+    if is_code:
+        compiled_documentation += "```\n"
+    
+    return compiled_documentation
+
+
+
+def build_from_dir(directory, documentation_path, breadcrumbs=None):
+    dir_source = ""
+    breadcrumbs = [] if breadcrumbs is None else breadcrumbs
     
     subs = sorted(os.listdir(directory))
     if BUILD_ORDER_FILE in subs:
@@ -35,18 +79,28 @@ def build_from_dir(directory):
         subs = build_order
     
     
-    for path in subs:
-        path = os.path.join(directory, path)
+    for sub in subs:
+        path = os.path.join(directory, sub)
+        doc_path = os.path.join(documentation_path, sub)
+        
         if os.path.exists(path):
             if path[-3:] == ".js":
-                print(path)
+                breadcrumbs_path = '.'.join(breadcrumbs + [sub[:-3]])
+                print(f"Parsing: {breadcrumbs_path}")
                 with open(path) as file:
-                    dir_source += f"// {path}\n"
-                    dir_source += parse_file(file.read())
+                    source_code, source_doc = parse_file(breadcrumbs_path, file.read())
+                    
+                    dir_source += f"\n// {breadcrumbs_path}\n"
+                    dir_source += source_code
+                    
+                    if len(source_doc) > 0:
+                        os.makedirs(documentation_path, exist_ok=True)
+                        with open(doc_path[:-2] + "md", "w+") as doc_file:
+                            doc_file.write(parse_documentation(source_doc))
 
             path = os.path.join(directory, path)
             if os.path.isdir(path):
-                dir_source += build_from_dir(path) + "\n"
+                dir_source += build_from_dir(path, doc_path, breadcrumbs + [sub]) + "\n"
                 
     return f"{dir_source}\n"
     
@@ -59,9 +113,10 @@ if __name__ == "__main__":
     # Get path to sources dir
     file_path = os.path.abspath(__file__)
     sources_path = os.path.join(os.path.dirname(file_path), SOURCE_DIR)
+    doc_path = os.path.join(os.path.dirname(file_path), DOC_DIR)
     
     # Source code
-    eclair_source = build_from_dir(sources_path)
+    eclair_source = build_from_dir(sources_path, doc_path)
     
     
     with open(OUTPUT, "w+") as file:

@@ -1,8 +1,3 @@
-
-
-//
-// Layout
-//
 class EclairView extends EclairComponent {
     constructor(elements) {
         super()
@@ -106,5 +101,3 @@ class EclairHBox extends EclairComponent {
         return this.wrapHTML(code + "</table>");
     }
 }
-
-

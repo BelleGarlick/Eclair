@@ -1,7 +1,5 @@
-// /Users/samgarlick/Developer/GitHub/JS-Declare/src
-// /Users/samgarlick/Developer/GitHub/JS-Declare/src/eclair.js
 
-
+// eclair
 let eclair = {
     _ids: 0,
     _elements: {},
@@ -49,8 +47,8 @@ let eclair = {
     }
 }
 
-// /Users/samgarlick/Developer/GitHub/JS-Declare/src/states
-// /Users/samgarlick/Developer/GitHub/JS-Declare/src/states/state.js
+
+// states.state
 class EclairState {
     constructor(newValue) {
         this._value = newValue
@@ -94,7 +92,8 @@ class EclairState {
     }
 }
 
-// /Users/samgarlick/Developer/GitHub/JS-Declare/src/states/colours.js
+
+// states.color
 class EclairColour extends EclairState {
     constructor(_col) {
         super()
@@ -119,14 +118,24 @@ class EclairColour extends EclairState {
         return this;
     }   
     
+    white() {return this.hex("fff")}
     red() {return this.hex("f00")}
     orange() {return this.hex("f90")}
     yellow() {return this.hex("ee0")}
     green() {return this.hex("3d0")} 
+    aqua() {return this.hex("0cc")}
     blue() {return this.hex("06f")}
+    
+    success() {return this.hex("d4edd9")}
+    danger() {return this.hex("f8d7d9")}
+    warning() {return this.hex("fff3cd")}
+    info() {return this.hex("d1ecf1")}
+    light() {return this.hex("efefef")}
+    dark() {return this.hex("d5d8d9")}
 }
 
-// /Users/samgarlick/Developer/GitHub/JS-Declare/src/states/textStyles.js
+
+// states.textStyles
 class EclairTextStyleState extends EclairState {
     title() {this.value("title"); return this;}
     subtitle() {this.value("subtitle"); return this;}
@@ -138,8 +147,8 @@ class EclairTextStyleState extends EclairState {
 
 
 
-// /Users/samgarlick/Developer/GitHub/JS-Declare/src/style
-// /Users/samgarlick/Developer/GitHub/JS-Declare/src/style/style.js
+
+// style.style
 class EclairStylableObject {
     constructor() {
         this._styles = {}
@@ -269,8 +278,8 @@ class EclairStyleComponent extends EclairStylableObject {
     }
 }
 
-// /Users/samgarlick/Developer/GitHub/JS-Declare/src/style/object-styles.js
 
+// style.object-styles
 eclair.styles = {
     Text: eclair.Style()
         .font(eclair.theme.font),
@@ -457,8 +466,8 @@ eclair.styles = {
 }
 
 
-// /Users/samgarlick/Developer/GitHub/JS-Declare/src/elements
-// /Users/samgarlick/Developer/GitHub/JS-Declare/src/elements/base.js
+
+// elements.base
 class EclairComponent extends EclairStylableObject {
     constructor() {
         super()
@@ -669,10 +678,8 @@ class EclairTextArea extends EclairCustomTagComponent {
     }
 }
 
-// /Users/samgarlick/Developer/GitHub/JS-Declare/src/elements/custom
-// /Users/samgarlick/Developer/GitHub/JS-Declare/src/elements/custom/custom.js
 
-
+// elements.custom.custom
 class EclairAlertBoxState extends EclairState {
     success() {this.value("success"); return this;}
     danger() {this.value("danger"); return this;}
@@ -681,6 +688,7 @@ class EclairAlertBoxState extends EclairState {
     light() {this.value("light"); return this;}
     dark() {this.value("dark"); return this;}
 }
+
 class EclairAlertBox extends EclairComponent {
     constructor(alert) {
         super()
@@ -847,7 +855,8 @@ class EclairSyntaxHighlighter extends EclairComponent {
 }
 
 
-// /Users/samgarlick/Developer/GitHub/JS-Declare/src/elements/custom/progress.js
+
+// elements.custom.progress
 class EclairProgressBar extends EclairComponent {
     constructor(_progress) {
         super()
@@ -936,8 +945,8 @@ class EclairProgressBar extends EclairComponent {
 }
 
 
-// /Users/samgarlick/Developer/GitHub/JS-Declare/src/elements/form
-// /Users/samgarlick/Developer/GitHub/JS-Declare/src/elements/form/form.js
+
+// elements.form.form
 class EclairForm extends EclairComponent {
     constructor(elements) {
         super()
@@ -1496,7 +1505,8 @@ class EclairCheckbox extends EclairComponent {
         return this.wrapHTML(`<table><tr><td width=1>${this._checkbox.build()}</td><td>${this._label.build()}</td></tr></table>${this._hidden.build()}`)
     }
 }
-// /Users/samgarlick/Developer/GitHub/JS-Declare/src/elements/form/textbox.js
+
+// elements.form.textbox
 class EclairTextBox extends EclairCustomTagComponent {
     constructor(_text) {
         super("input")
@@ -1579,7 +1589,8 @@ class EclairTextBox extends EclairCustomTagComponent {
     
     
 }
-// /Users/samgarlick/Developer/GitHub/JS-Declare/src/elements/form/toggle.js
+
+// elements.form.toggle
 class EclairToggle extends EclairComponent {
     constructor(_value) {
         super()
@@ -1712,10 +1723,8 @@ class EclairToggle extends EclairComponent {
 }
 
 
-// /Users/samgarlick/Developer/GitHub/JS-Declare/src/elements/layout
-// /Users/samgarlick/Developer/GitHub/JS-Declare/src/elements/layout/layout.js
 
-
+// elements.layout.layout
 class EclairView extends EclairComponent {
     constructor(elements) {
         super()
@@ -1822,31 +1831,37 @@ class EclairHBox extends EclairComponent {
 
 
 
-
-
-// /Users/samgarlick/Developer/GitHub/JS-Declare/src/elements/standard
-// /Users/samgarlick/Developer/GitHub/JS-Declare/src/elements/standard/standard.js
-
+// elements.standard.image
 class EclairImage extends EclairCustomTagComponent {
-    constructor() {
+    constructor(_src) {
         super("img")
+        
+        if (_src instanceof EclairState) {
+            let self = this
+            _src.addCallback(this.id() + "-src", function(state) {
+                self.setAttr("src", state.value())
+            }, true)
+        } else {
+            this.setAttr("src", _src)
+        }
+        
         this.addStyle(eclair.styles.Image)
     }
     
-    src(_src) {
-        this.setAttr("src", _src)
-        return this;
-    }
-    
     altText(_alt) {
-        if (_alt == null) {
-            return this.getAttr("alt");
+        if (_alt instanceof EclairState) {
+            let self = this
+            _alt.addCallback(this.id() + "-alt", function(state) {
+                self.setAttr("alt", state.value())
+            }, true)
         } else {
             this.setAttr("alt", _alt)
-            return this
         }
     }
 }
+
+// elements.standard.standard
+
 
 class EclairLink extends EclairCustomTagComponent {
     constructor(text) {
@@ -1926,8 +1941,7 @@ class EclairIFrame extends EclairCustomTagComponent {
     }
 }
 
-
-// /Users/samgarlick/Developer/GitHub/JS-Declare/src/elements/standard/text.js
+// elements.standard.text
 class EclairText extends EclairComponent {
     constructor(text) {
         super()

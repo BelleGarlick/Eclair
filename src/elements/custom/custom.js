@@ -1,8 +1,6 @@
 //
 // Custom Ecalir Elements
 //
-
-
 class EclairAlertBoxState extends EclairState {
     success() {this.value("success"); return this;}
     danger() {this.value("danger"); return this;}
@@ -11,6 +9,10 @@ class EclairAlertBoxState extends EclairState {
     light() {this.value("light"); return this;}
     dark() {this.value("dark"); return this;}
 }
+
+// PRINT move eclair themes to just colour
+// PRINT Move to class
+// PRINT Fix title and allow 
 class EclairAlertBox extends EclairComponent {
     constructor(alert) {
         super()

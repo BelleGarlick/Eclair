@@ -11,8 +11,6 @@
 //PRINT Add callback getters when accessing child element.
 //PRINT TODO Add default styles to everything
 //PRINT TODO Check getters and setters calling sub functions are correct
-
-
 let eclair = {
     _ids: 0,
     _elements: {},

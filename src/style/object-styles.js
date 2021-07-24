@@ -1,4 +1,3 @@
-
 eclair.styles = {
     Text: eclair.Style()
         .font(eclair.theme.font),
