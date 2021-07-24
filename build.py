@@ -12,7 +12,7 @@ def parse_file(breadcrumbs_path, text):
     
     for line in text.split("\n"):
         if line.lstrip()[0:3] == "///":
-            source_doc += line[4:] + "\n"
+            source_doc += line.lstrip()[4:] + "\n"
             
         elif line.lstrip()[0:2] == "//":
             line = line.lstrip("/").lstrip(" ")
