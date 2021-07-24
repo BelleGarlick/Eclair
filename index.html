@@ -20,6 +20,10 @@ let toggleOn = State(true)
 let toggleShowLabel = State(false)
 let toggleEnabled = State(true)
 
+let linkText = State("DuckDuckGo")
+let linkURL = State('https://duckduckgo.com/')
+let linkTarget = State("_blank")
+
 
 let alertBoxObject = eclair.Alert(alertBoxText).theme(alertBoxTheme)  //.title("Congrats")
 
@@ -59,6 +63,9 @@ VBox([
     
     eclair.ScrollView([
         VBox([
+            eclair.Link(linkText)
+                .url(linkURL)
+                .target(linkTarget),
             CheckBox(checkboxText),
             RadioButtons().addItems(["test", "testing", "tests"]),
             RadioButtons().addItems(["also test", "also testing", "also tests"]),

@@ -1,36 +1,3 @@
-
-
-class EclairLink extends EclairCustomTagComponent {
-    constructor(text) {
-        super("a")
-        this._text = text;
-        
-        this.addStyle(eclair.styles.Link)
-    }
-    
-    text(_text) {
-        return this.innerHTML(_text)
-    }
-    
-    target(_target) {
-        if (_target == null) {
-            return this.getAttr("target")
-        } else {
-            this.setAttr("target", _target)
-        }
-        return this
-    }
-    
-    href(_href) {
-        if (_href == null) {
-            return this.getAttr("href")
-        } else {
-            this.setAttr("href", _href)
-        }
-        return this
-    }
-}
-
 class EclairHorizontalLine extends EclairCustomTagComponent {
     constructor() {
         super("hr")        

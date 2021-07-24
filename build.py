@@ -17,7 +17,7 @@ def parse_file(breadcrumbs_path, text):
         elif line.lstrip()[0:2] == "//":
             line = line.lstrip("/").lstrip(" ")
             if line[:5] == "PRINT":
-                print(line[5:].lstrip(" "))
+                print("\033[0m" + line[5:].lstrip(" "))
                 
         else:
             source_code += line + "\n"
@@ -50,7 +50,7 @@ def build_from_dir(directory, documentation_path, breadcrumbs=None):
         if os.path.exists(path):
             if path[-3:] == ".js":
                 breadcrumbs_path = '.'.join(breadcrumbs + [sub[:-3]])
-                print(f"Parsing: {breadcrumbs_path}")
+                print(f"\033[32m{breadcrumbs_path}")
                 with open(path) as file:
                     source_code, source_doc = parse_file(breadcrumbs_path, file.read())
                     

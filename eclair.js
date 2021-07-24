@@ -1,5 +1,6 @@
 
 // eclair
+
 let eclair = {
     _ids: 0,
     _elements: {},
@@ -1860,40 +1861,51 @@ class EclairImage extends EclairCustomTagComponent {
     }
 }
 
-// elements.standard.standard
-
-
+// elements.standard.link
 class EclairLink extends EclairCustomTagComponent {
-    constructor(text) {
+    constructor(_text) {
         super("a")
-        this._text = text;
+        
+        let self = this
+        if (_text instanceof EclairState) {
+            _text.addCallback(self.id() + "-html", function(state) {
+                self.innerHTML(state.value())
+            }, true)
+        } else {
+            self.innerHTML(_text)
+        }
         
         this.addStyle(eclair.styles.Link)
     }
     
-    text(_text) {
-        return this.innerHTML(_text)
-    }
-    
     target(_target) {
-        if (_target == null) {
-            return this.getAttr("target")
+        if (_target instanceof EclairState) {
+            let self = this
+            _target.addCallback(this.id() + "-target", function(state) {
+                self.setAttr("target", state.value())
+            }, true)
         } else {
             this.setAttr("target", _target)
         }
+        
         return this
     }
     
-    href(_href) {
-        if (_href == null) {
-            return this.getAttr("href")
+    url(_location) {
+        if (_location instanceof EclairState) {
+            let self = this
+            _location.addCallback(this.id() + "-location", function(state) {
+                self.setAttr("href", state.value())
+            }, true)
         } else {
-            this.setAttr("href", _href)
+            this.setAttr("href", _location)
         }
+        
         return this
     }
 }
 
+// elements.standard.standard
 class EclairHorizontalLine extends EclairCustomTagComponent {
     constructor() {
         super("hr")        
