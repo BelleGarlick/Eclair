@@ -1,6 +1,7 @@
 //
 // Form Elements
 //
+// PRINT TODO, Need to do this, but also need to add child accosiations
 class EclairForm extends EclairComponent {
     constructor(elements) {
         super()
@@ -27,11 +28,11 @@ class EclairForm extends EclairComponent {
     build() {
         let code = `<form>`
         for (let n = 0; n < this.elements.length; n++) {
-            code += this.elements[n].build();
+            code += this.elements[n].compile();
         }
         code += "</form>"
         
-        return this.wrapHTML(code);
+        return code;
     }
 }
 
@@ -143,40 +144,7 @@ class EclairSelect extends EclairComponent {
             options += this.buildOptionHTML(this.options[n]);
         }
         
-        return this.wrapHTML(`<select>${options}</select>`)
-    }
-}
-
-class EclairButton extends EclairComponent {
-    constructor(text) {
-        super()
-        
-        this.text = text;
-        this.setAttr("type", "button")
-        this.addStyle(eclair.styles.Button)
-    }
-    
-    value(newText) {
-        this.text = newText;
-        this.getElement(elem => {
-            let html = newText;
-            if (typeof(html) != "string") {
-                html = html.build()
-            }
-            elem.innerHTML = html;
-        });
-        return this
-    }
-    
-    build() {
-        let text = this.text;
-        if (text == null) {
-            text = "Button"
-        }
-        if (typeof(text) != "string") {
-            text = this.text.build()
-        }
-        return this.wrapHTML(`<button>${this.text}</button>`)
+        return `<select>${options}</select>`
     }
 }
 
@@ -426,6 +394,6 @@ class EclairRadioButtons extends EclairComponent {
         for (let i = 0; i < this.items.length; i++) {
             items += this.buildItem(this.items[i], i)
         }
-        return this.wrapHTML(`<div>${items}</div>${this._hidden.build()}`)
+        return `<div>${items}</div>${this._hidden.compile()}`
     }
 }

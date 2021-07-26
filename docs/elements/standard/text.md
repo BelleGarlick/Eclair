@@ -1,3 +1,4 @@
+_elements.standard.text_
 ## Eclair Text
 Create a eclair text object.
 ```javascript

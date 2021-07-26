@@ -1,81 +1,4 @@
-//
-// Custom Ecalir Elements
-//
-class EclairAlertBoxState extends EclairState {
-    success() {this.value("success"); return this;}
-    danger() {this.value("danger"); return this;}
-    warning() {this.value("warning"); return this;}
-    info() {this.value("info"); return this;}
-    light() {this.value("light"); return this;}
-    dark() {this.value("dark"); return this;}
-}
-
-// PRINT move eclair themes to just colour
-// PRINT Move to class
-// PRINT Fix title and allow 
-class EclairAlertBox extends EclairComponent {
-    constructor(alert) {
-        super()
-        
-        this._title = eclair.Text(this.titleStateText)
-            .fontWeight(500)
-            .fontSize("1.5rem")
-            .display("none")
-            .fontColor("rgba(0, 0, 0, 0.6)")
-            .width("100%")
-        
-        this._title.getStyleSheet()["margin-bottom"] = ".5rem"
-        
-        this._text = eclair.Text(alert)
-            .fontColor("rgba(0, 0, 0, 0.6)")
-        
-        this
-            .background(eclair.theme.accent)
-            .borderRadius(".25rem")
-            .padding(".75rem 1.25rem")
-        
-        this.getStyleSheet(" hr")["border"] = "0px"
-        this.getStyleSheet(" hr")["margin-top"] = ".75rem"
-        this.getStyleSheet(" hr")["margin-bottom"] = ".75rem"
-        this.getStyleSheet(" hr")["border-top"] = "1px solid rgba(0, 0, 0, 0.2)"
-        this.getStyleSheet()["box-shadow"] = "0px 0px 0px 2px rgba(0, 0, 0, 0.2) inset"
-    }
-    
-    theme(_theme) {
-        if (_theme instanceof EclairAlertBoxState) {            
-            let self = this
-            _theme.addCallback(this.id() + "-theme", function(state) {
-                self._setTheme(state)
-            }, true)
-        }
-        
-        return this
-    }
-    
-    _setTheme(_state) {
-        let stateValue = _state.value()
-        if (stateValue == "success") {this.background("#d4edd9")}
-        if (stateValue == "danger") {this.background("#f8d7d9")}
-        if (stateValue == "warning") {this.background("#fff3cd")}
-        if (stateValue == "info") {this.background("#d1ecf1")}
-        if (stateValue == "light") {this.background("#white")}
-        if (stateValue == "dark") {this.background("#d5d8d9")}
-    }
-    
-    title(_text) {
-        if (_text == null) {
-            this._title.display("none")
-        } else {
-            this._title.display("block")
-            return this;
-        }
-    }
-    
-    build() {
-        return this.wrapHTML(`<div>${this._title.build()}${this._text.build()}</div>`)
-    }
-}
-
+// PRINT NEED to do parent relation stuff
 class EclairSyntaxHighlighter extends EclairComponent {
     constructor() {
         super()
@@ -174,8 +97,8 @@ class EclairSyntaxHighlighter extends EclairComponent {
         let postBuildScript = document.createElement("script")
         postBuildScript.innerHTML += "hljs.highlightAll();"
         
-        this._pre.innerHTML(this._code.build())
-        return this.wrapHTML(`<div>${this._pre.build()}${this._textarea.build()}</div>${postBuildScript.outerHTML}`)
+        this._pre.innerHTML(this._code.compile())
+        return `<div>${this._pre.compile()}${this._textarea.compile()}</div>${postBuildScript.outerHTML}`
     }
 }
 

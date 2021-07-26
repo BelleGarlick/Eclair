@@ -73,7 +73,6 @@ class EclairStylableObject {
         return this.updateCSSStyle()
     }
     
-    //PRINT Finish updateing styles to allow for State varibles
     css(_style, selector) {return this._set(selector, "css", _style)}
     display(_display, selector) {return this._set(selector, "display", _display)}
     background(_background, selector) {return this._set(selector, "background", _background)}
@@ -104,6 +103,10 @@ class EclairStylableObject {
     textDecoration(_value, selector) {return this._set(selector, "text-decoration", _value)}
     transition(_value, selector) {return this._set(selector, "transition", _value)}
     userSelect(_value, selector) {return this._set(selector, "user-select", _value)}
+    
+    // Flex model relations
+    flexDirection(_value, selector) {return this._set(selector, "flex-direction", _value)}
+    alignItems(_value, selector) {return this._set(selector, "align-items", _value)}
 }
 
 class EclairStyleComponent extends EclairStylableObject {

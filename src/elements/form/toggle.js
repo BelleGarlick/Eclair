@@ -16,7 +16,7 @@ class EclairToggle extends EclairComponent {
         
         // Create internal elements
         this._tickMark = eclair.Text("✓")
-        this._knob = new EclairView([])
+        this._knob = eclair.View()
         
         this._hiddenComponent = eclair.HiddenInput(_value)
     
@@ -74,6 +74,11 @@ class EclairToggle extends EclairComponent {
         // Set default states
         this._showCheckMark = false
         this._enabled = true
+        
+        // Configure parent/children relation
+        this._tickMark.parent = this
+        this._knob.parent = this
+        this.children = [this._tickMark, this._knob]
         
         // Add styles
         this.addStyle(eclair.styles.Toggle)
@@ -180,6 +185,6 @@ class EclairToggle extends EclairComponent {
     
     // Implement the build function. No doc needed as this is a standard function.
     build() {
-        return this.wrapHTML(`<div>${this._tickMark.build()}`+this._knob.build()+this._hiddenComponent.build()+"</div>")
+        return `<div>${this._tickMark.compile()}`+this._knob.compile()+this._hiddenComponent.compile()+"</div>"
     }
 }

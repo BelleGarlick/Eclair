@@ -1,24 +1,27 @@
 
 // eclair
 
+
 let eclair = {
     _ids: 0,
     _elements: {},
     _newID: function() {this._ids += 1; return this._ids - 1;},
     
     Style: function() {return new EclairStyleComponent();},
-    State: function(_val) {return new EclairState(_val);},
     
-    View: function(elements) {return new EclairView(elements);},
-    ScrollView: function(elements) {return new EclairScrollView(elements);},
-    VBox: function(elements) {return new EclairVBox(elements);},
-    HBox: function(elements) {return new EclairHBox(elements);},
+    State: function(_val) {return new EclairState(_val);},    
+    Color: function(_col) {return new EclairColour(_col);},
+    TextStyle: function() {return new EclairTextStyleState();},
+    Alignment: function() {return new EclairAlignmentState();},
+    
+    View: function(_func) {return new EclairView(_func);},
+    VStack: function(_func) {return new EclairVStack(_func);},
+    HStack: function(_func) {return new EclairHStack(_func);},
     
     Button: function(text) {return new EclairButton(text);},
     Form: function(elements) {return new EclairForm(elements);},
     Image: function() {return new EclairImage();},
     Text: function(text) {return new EclairText(text);},
-    TextStyle: function() {return new EclairTextStyleState();},
     
     TextBox: function(text) {return new EclairTextBox(text);},
     TextArea: function() {return new EclairTextArea();},
@@ -35,10 +38,7 @@ let eclair = {
     CheckBox: function(text) {return new EclairCheckbox(text);},
     
     ProgressBar: function(_progress) {return new EclairProgressBar(_progress);},
-    AlertState: function() {return new EclairAlertBoxState();},
     Alert: function(_value) {return new EclairAlertBox(_value);},
-    
-    Color: function(_col) {return new EclairColour(_col);},
     
     performCallback: function(eID, event, param1) {this._elements[eID].performCallback(event, param1);},
     
@@ -94,14 +94,22 @@ class EclairState {
 }
 
 
+// states.alignment
+class EclairAlignmentState extends EclairState {
+    constructor() {
+        super("center")
+    }
+    
+    start() {this.value("start"); return this;}
+    center() {this.value("center"); return this;}
+    end() {this.value("end"); return this;}
+}
+
+
 // states.color
 class EclairColour extends EclairState {
     constructor(_col) {
-        super()
-        
-        if (_col != null) {
-            this.value(_col)
-        }
+        super(_col)
     }
     
     hex(_hex) {
@@ -119,13 +127,154 @@ class EclairColour extends EclairState {
         return this;
     }   
     
-    white() {return this.hex("fff")}
-    red() {return this.hex("f00")}
-    orange() {return this.hex("f90")}
-    yellow() {return this.hex("ee0")}
-    green() {return this.hex("3d0")} 
-    aqua() {return this.hex("0cc")}
-    blue() {return this.hex("06f")}
+    aliceBlue() {return this.hex("F0F8FF")}
+    antiqueWhite() {return this.hex("FAEBD7")}
+    aqua() {return this.hex("00FFFF")}
+    aquamarine() {return this.hex("7FFFD4")}
+    azure() {return this.hex("F0FFFF")}
+    beige() {return this.hex("F5F5DC")}
+    bisque() {return this.hex("FFE4C4")}
+    black() {return this.hex("000000")}
+    blanchedAlmond() {return this.hex("FFEBCD")}
+    blue() {return this.hex("0000FF")}
+    blueViolet() {return this.hex("8A2BE2")}
+    brown() {return this.hex("A52A2A")}
+    burlyWood() {return this.hex("DEB887")}
+    cadetBlue() {return this.hex("5F9EA0")}
+    chartreuse() {return this.hex("7FFF00")}
+    chocolate() {return this.hex("D2691E")}
+    coral() {return this.hex("FF7F50")}
+    cornflowerBlue() {return this.hex("6495ED")}
+    cornsilk() {return this.hex("FFF8DC")}
+    crimson() {return this.hex("DC143C")}
+    cyan() {return this.hex("00FFFF")}
+    darkBlue() {return this.hex("00008B")}
+    darkCyan() {return this.hex("008B8B")}
+    darkGoldenRod() {return this.hex("B8860B")}
+    darkGray() {return this.hex("A9A9A9")}
+    darkGrey() {return this.hex("A9A9A9")}
+    darkGreen() {return this.hex("006400")}
+    darkKhaki() {return this.hex("BDB76B")}
+    darkMagenta() {return this.hex("8B008B")}
+    darkOliveGreen() {return this.hex("556B2F")}
+    darkOrange() {return this.hex("FF8C00")}
+    darkOrchid() {return this.hex("9932CC")}
+    darkRed() {return this.hex("8B0000")}
+    darkSalmon() {return this.hex("E9967A")}
+    darkSeaGreen() {return this.hex("8FBC8F")}
+    darkSlateBlue() {return this.hex("483D8B")}
+    darkSlateGray() {return this.hex("2F4F4F")}
+    darkSlateGrey() {return this.hex("2F4F4F")}
+    darkTurquoise() {return this.hex("00CED1")}
+    darkViolet() {return this.hex("9400D3")}
+    deepPink() {return this.hex("FF1493")}
+    deepSkyBlue() {return this.hex("00BFFF")}
+    dimGray() {return this.hex("696969")}
+    dimGrey() {return this.hex("696969")}
+    dodgerBlue() {return this.hex("1E90FF")}
+    fireBrick() {return this.hex("B22222")}
+    floralWhite() {return this.hex("FFFAF0")}
+    forestGreen() {return this.hex("228B22")}
+    fuchsia() {return this.hex("FF00FF")}
+    gainsboro() {return this.hex("DCDCDC")}
+    ghostWhite() {return this.hex("F8F8FF")}
+    gold() {return this.hex("FFD700")}
+    goldenRod() {return this.hex("DAA520")}
+    gray() {return this.hex("808080")}
+    grey() {return this.hex("808080")}
+    green() {return this.hex("008000")}
+    greenYellow() {return this.hex("ADFF2F")}
+    honeyDew() {return this.hex("F0FFF0")}
+    hotPink() {return this.hex("FF69B4")}
+    indianRed () {return this.hex("CD5C5C")}
+    indigo () {return this.hex("4B0082")}
+    ivory() {return this.hex("FFFFF0")}
+    khaki() {return this.hex("F0E68C")}
+    lavender() {return this.hex("E6E6FA")}
+    lavenderBlush() {return this.hex("FFF0F5")}
+    lawnGreen() {return this.hex("7CFC00")}
+    lemonChiffon() {return this.hex("FFFACD")}
+    lightBlue() {return this.hex("ADD8E6")}
+    lightCoral() {return this.hex("F08080")}
+    lightCyan() {return this.hex("E0FFFF")}
+    lightGoldenRodYellow() {return this.hex("FAFAD2")}
+    lightGray() {return this.hex("D3D3D3")}
+    lightGrey() {return this.hex("D3D3D3")}
+    lightGreen() {return this.hex("90EE90")}
+    lightPink() {return this.hex("FFB6C1")}
+    lightSalmon() {return this.hex("FFA07A")}
+    lightSeaGreen() {return this.hex("20B2AA")}
+    lightSkyBlue() {return this.hex("87CEFA")}
+    lightSlateGray() {return this.hex("778899")}
+    lightSlateGrey() {return this.hex("778899")}
+    lightSteelBlue() {return this.hex("B0C4DE")}
+    lightYellow() {return this.hex("FFFFE0")}
+    lime() {return this.hex("00FF00")}
+    limeGreen() {return this.hex("32CD32")}
+    linen() {return this.hex("FAF0E6")}
+    magenta() {return this.hex("FF00FF")}
+    maroon() {return this.hex("800000")}
+    mediumAquaMarine() {return this.hex("66CDAA")}
+    mediumBlue() {return this.hex("0000CD")}
+    mediumOrchid() {return this.hex("BA55D3")}
+    mediumPurple() {return this.hex("9370DB")}
+    mediumSeaGreen() {return this.hex("3CB371")}
+    mediumSlateBlue() {return this.hex("7B68EE")}
+    mediumSpringGreen() {return this.hex("00FA9A")}
+    mediumTurquoise() {return this.hex("48D1CC")}
+    mediumVioletRed() {return this.hex("C71585")}
+    midnightBlue() {return this.hex("191970")}
+    mintCream() {return this.hex("F5FFFA")}
+    mistyRose() {return this.hex("FFE4E1")}
+    moccasin() {return this.hex("FFE4B5")}
+    navajoWhite() {return this.hex("FFDEAD")}
+    navy() {return this.hex("000080")}
+    oldLace() {return this.hex("FDF5E6")}
+    olive() {return this.hex("808000")}
+    oliveDrab() {return this.hex("6B8E23")}
+    orange() {return this.hex("FFA500")}
+    orangeRed() {return this.hex("FF4500")}
+    orchid() {return this.hex("DA70D6")}
+    paleGoldenRod() {return this.hex("EEE8AA")}
+    paleGreen() {return this.hex("98FB98")}
+    paleTurquoise() {return this.hex("AFEEEE")}
+    paleVioletRed() {return this.hex("DB7093")}
+    papayaWhip() {return this.hex("FFEFD5")}
+    peachPuff() {return this.hex("FFDAB9")}
+    peru() {return this.hex("CD853F")}
+    pink() {return this.hex("FFC0CB")}
+    plum() {return this.hex("DDA0DD")}
+    powderBlue() {return this.hex("B0E0E6")}
+    purple() {return this.hex("800080")}
+    rebeccaPurple() {return this.hex("663399")}
+    red() {return this.hex("FF0000")}
+    rosyBrown() {return this.hex("BC8F8F")}
+    royalBlue() {return this.hex("4169E1")}
+    saddleBrown() {return this.hex("8B4513")}
+    salmon() {return this.hex("FA8072")}
+    sandyBrown() {return this.hex("F4A460")}
+    seaGreen() {return this.hex("2E8B57")}
+    seaShell() {return this.hex("FFF5EE")}
+    sienna() {return this.hex("A0522D")}
+    silver() {return this.hex("C0C0C0")}
+    skyBlue() {return this.hex("87CEEB")}
+    slateBlue() {return this.hex("6A5ACD")}
+    slateGray() {return this.hex("708090")}
+    slateGrey() {return this.hex("708090")}
+    snow() {return this.hex("FFFAFA")}
+    springGreen() {return this.hex("00FF7F")}
+    steelBlue() {return this.hex("4682B4")}
+    tan() {return this.hex("D2B48C")}
+    teal() {return this.hex("008080")}
+    thistle() {return this.hex("D8BFD8")}
+    tomato() {return this.hex("FF6347")}
+    turquoise() {return this.hex("40E0D0")}
+    violet() {return this.hex("EE82EE")}
+    wheat() {return this.hex("F5DEB3")}
+    white() {return this.hex("FFFFFF")}
+    whiteSmoke() {return this.hex("F5F5F5")}
+    yellow() {return this.hex("FFFF00")}
+    yellowGreen() {return this.hex("9ACD32")}
     
     success() {return this.hex("d4edd9")}
     danger() {return this.hex("f8d7d9")}
@@ -134,7 +283,6 @@ class EclairColour extends EclairState {
     light() {return this.hex("efefef")}
     dark() {return this.hex("d5d8d9")}
 }
-
 
 // states.textStyles
 class EclairTextStyleState extends EclairState {
@@ -253,6 +401,9 @@ class EclairStylableObject {
     textDecoration(_value, selector) {return this._set(selector, "text-decoration", _value)}
     transition(_value, selector) {return this._set(selector, "transition", _value)}
     userSelect(_value, selector) {return this._set(selector, "user-select", _value)}
+    
+    flexDirection(_value, selector) {return this._set(selector, "flex-direction", _value)}
+    alignItems(_value, selector) {return this._set(selector, "align-items", _value)}
 }
 
 class EclairStyleComponent extends EclairStylableObject {
@@ -282,6 +433,10 @@ class EclairStyleComponent extends EclairStylableObject {
 
 // style.object-styles
 eclair.styles = {
+    View: eclair.Style(),
+    VStack: eclair.Style(),
+    HStack: eclair.Style(),
+    
     Text: eclair.Style()
         .font(eclair.theme.font),
     
@@ -481,6 +636,9 @@ class EclairComponent extends EclairStylableObject {
         this.attributes = {
             id: this.id()
         }
+        
+        this.parent = null
+        this.children = []
     }
     
     id() {
@@ -488,11 +646,11 @@ class EclairComponent extends EclairStylableObject {
     }
     
     write() {
-        document.write(this.build())
+        document.write(this.compile())
     }
     
     to(elemID) {
-        document.getElementById(elemID).innerHTML = this.build();
+        document.getElementById(elemID).innerHTML = this.compile();
     }
     
     getElement(callback) {
@@ -602,7 +760,15 @@ class EclairComponent extends EclairStylableObject {
     onCreate(callback) {return this._updateCallback("onCreate", callback);}
     onBuild(callback) {return this._updateCallback("onBuild", callback);}
     performCallback(event, param1) {this._callbacks[event](this, param1);}
-
+    
+    build() {
+        throw "Build function not implemented"
+    }
+    
+    compile() {
+        return this.wrapHTML(this.build())
+    }
+    
     wrapHTML(_html) {        
         if (this._callbacks.hasOwnProperty("onBuild")) {
             this.performCallback("onBuild");
@@ -654,7 +820,7 @@ class EclairCustomTagComponent extends EclairComponent {
     }
     
     build() {
-        return this.wrapHTML(`<${this.tag}>${this._innerHTML}</${this.tag}>`)
+        return `<${this.tag}>${this._innerHTML}</${this.tag}>`
     }
 }
 
@@ -682,79 +848,81 @@ class EclairTextArea extends EclairCustomTagComponent {
 }
 
 
-// elements.custom.custom
-class EclairAlertBoxState extends EclairState {
-    success() {this.value("success"); return this;}
-    danger() {this.value("danger"); return this;}
-    warning() {this.value("warning"); return this;}
-    info() {this.value("info"); return this;}
-    light() {this.value("light"); return this;}
-    dark() {this.value("dark"); return this;}
-}
-
+// elements.custom.alertBox
 class EclairAlertBox extends EclairComponent {
     constructor(alert) {
         super()
         
-        this._title = eclair.Text(this.titleStateText)
+        this._titleText = eclair.State(null)
+        this._title = eclair.Text(this._titleText)
             .fontWeight(500)
             .fontSize("1.5rem")
             .display("none")
             .fontColor("rgba(0, 0, 0, 0.6)")
             .width("100%")
-        
-        this._title.getStyleSheet()["margin-bottom"] = ".5rem"
-        
         this._text = eclair.Text(alert)
             .fontColor("rgba(0, 0, 0, 0.6)")
+        
+        this._title.parent = this
+        this._text.parent = this
+        this.children = [this._title, this._text]
+        
+        this._title.getStyleSheet()["margin-bottom"] = ".5rem"
         
         this
             .background(eclair.theme.accent)
             .borderRadius(".25rem")
             .padding(".75rem 1.25rem")
         
-        this.getStyleSheet(" hr")["border"] = "0px"
-        this.getStyleSheet(" hr")["margin-top"] = ".75rem"
-        this.getStyleSheet(" hr")["margin-bottom"] = ".75rem"
-        this.getStyleSheet(" hr")["border-top"] = "1px solid rgba(0, 0, 0, 0.2)"
+        let styleSheet = this.getStyleSheet(" hr")
+        styleSheet["border"] = "0px"
+        styleSheet["margin-top"] = ".75rem"
+        styleSheet["margin-bottom"] = ".75rem"
+        styleSheet["border-top"] = "1px solid rgba(0, 0, 0, 0.2)"
         this.getStyleSheet()["box-shadow"] = "0px 0px 0px 2px rgba(0, 0, 0, 0.2) inset"
     }
     
     theme(_theme) {
-        if (_theme instanceof EclairAlertBoxState) {            
+        if (_theme instanceof EclairState) {            
             let self = this
             _theme.addCallback(this.id() + "-theme", function(state) {
-                self._setTheme(state)
+                self.background(state.value())
             }, true)
+        } else {
+            this.background(_theme)
+        }
+        
+        return this
+    }
+        
+    title(_text) {        
+        if (_text instanceof EclairState) {            
+            let self = this
+            _text.addCallback(this.id() + "-title", function(state) {
+                self._titleText.value(state.value())
+                if (state.value() == null || state.value().trim().length == 0) {
+                    self._title.display("none")
+                } else {
+                    self._title.display("block")
+                }
+            }, true)
+        } else {
+            if (_text == null || _text.trim().length == 0) {
+                this._title.display("none")
+            } else {
+                this._title.display("block")
+            }
         }
         
         return this
     }
     
-    _setTheme(_state) {
-        let stateValue = _state.value()
-        if (stateValue == "success") {this.background("#d4edd9")}
-        if (stateValue == "danger") {this.background("#f8d7d9")}
-        if (stateValue == "warning") {this.background("#fff3cd")}
-        if (stateValue == "info") {this.background("#d1ecf1")}
-        if (stateValue == "light") {this.background("#white")}
-        if (stateValue == "dark") {this.background("#d5d8d9")}
-    }
-    
-    title(_text) {
-        if (_text == null) {
-            this._title.display("none")
-        } else {
-            this._title.display("block")
-            return this;
-        }
-    }
-    
     build() {
-        return this.wrapHTML(`<div>${this._title.build()}${this._text.build()}</div>`)
+        return `<div>${this._title.compile()}${this._text.compile()}</div>`
     }
 }
 
+// elements.custom.custom
 class EclairSyntaxHighlighter extends EclairComponent {
     constructor() {
         super()
@@ -852,8 +1020,8 @@ class EclairSyntaxHighlighter extends EclairComponent {
         let postBuildScript = document.createElement("script")
         postBuildScript.innerHTML += "hljs.highlightAll();"
         
-        this._pre.innerHTML(this._code.build())
-        return this.wrapHTML(`<div>${this._pre.build()}${this._textarea.build()}</div>${postBuildScript.outerHTML}`)
+        this._pre.innerHTML(this._code.compile())
+        return `<div>${this._pre.compile()}${this._textarea.compile()}</div>${postBuildScript.outerHTML}`
     }
 }
 
@@ -869,7 +1037,7 @@ class EclairProgressBar extends EclairComponent {
         this._label = eclair.Text(this._labelText)
             .addStyle(eclair.styles.ProgressBarLabel)
         
-        this._indicator = eclair.HBox([this._label])
+        this._indicator = eclair.HStack([this._label])
             .margin(null)  // Overrides default HBox Margin
             .addStyle(eclair.styles.ProgressBarIndicator)
         
@@ -884,8 +1052,10 @@ class EclairProgressBar extends EclairComponent {
             }, true)
         }
         
+        this._indicator.parent = this
+        this.children = [this._indicator]
+        
         this.addStyle(eclair.styles.ProgressBar)
-            .showLabel(false)
     }
     
     striped(_on) {
@@ -944,11 +1114,42 @@ class EclairProgressBar extends EclairComponent {
     }
     
     build() {
-        return this.wrapHTML(`<div>${this._indicator.build()}</div>`)
+        return `<div>${this._indicator.compile()}</div>`
     }
 }
 
 
+
+// elements.form.button
+class EclairButton extends EclairComponent {
+    constructor(text) {
+        super()
+        
+        this.text = text;
+        this.setAttr("type", "button")
+        this.addStyle(eclair.styles.Button)
+    }
+    
+    value(newText) {
+        this.text = newText;
+        this.getElement(elem => {
+            let html = newText;
+            if (typeof(html) != "string") {
+                html = html.compile()
+            }
+            elem.innerHTML = html;
+        });
+        return this
+    }
+    
+    build() {
+        let text = this.text;
+        if (text == null) {
+            text = "Button"
+        }
+        return `<button>${this.text}</button>`
+    }
+}
 
 // elements.form.checkbox
 class EclairCheckbox extends EclairComponent {
@@ -967,6 +1168,11 @@ class EclairCheckbox extends EclairComponent {
         
         this._hiddenValue = eclair.State(false)
         this._hidden = eclair.HiddenInput(this._hiddenValue)
+        
+        this._label.parent = this
+        this._checkbox.parent = this
+        this._hidden.parent = this
+        this.children = [this._label, this._checkbox, this._hidden]
         
         this.items = []
         
@@ -1053,7 +1259,7 @@ class EclairCheckbox extends EclairComponent {
         for (let i = 0; i < this.items.length; i++) {
             items += this.buildItem(this.items[i], i)
         }
-        return this.wrapHTML(`<table><tr><td width=1>${this._checkbox.build()}</td><td>${this._label.build()}</td></tr></table>${this._hidden.build()}`)
+        return `<table><tr><td width=1>${this._checkbox.compile()}</td><td>${this._label.compile()}</td></tr></table>${this._hidden.compile()}`
     }
 }
 
@@ -1084,11 +1290,11 @@ class EclairForm extends EclairComponent {
     build() {
         let code = `<form>`
         for (let n = 0; n < this.elements.length; n++) {
-            code += this.elements[n].build();
+            code += this.elements[n].compile();
         }
         code += "</form>"
         
-        return this.wrapHTML(code);
+        return code;
     }
 }
 
@@ -1199,40 +1405,7 @@ class EclairSelect extends EclairComponent {
             options += this.buildOptionHTML(this.options[n]);
         }
         
-        return this.wrapHTML(`<select>${options}</select>`)
-    }
-}
-
-class EclairButton extends EclairComponent {
-    constructor(text) {
-        super()
-        
-        this.text = text;
-        this.setAttr("type", "button")
-        this.addStyle(eclair.styles.Button)
-    }
-    
-    value(newText) {
-        this.text = newText;
-        this.getElement(elem => {
-            let html = newText;
-            if (typeof(html) != "string") {
-                html = html.build()
-            }
-            elem.innerHTML = html;
-        });
-        return this
-    }
-    
-    build() {
-        let text = this.text;
-        if (text == null) {
-            text = "Button"
-        }
-        if (typeof(text) != "string") {
-            text = this.text.build()
-        }
-        return this.wrapHTML(`<button>${this.text}</button>`)
+        return `<select>${options}</select>`
     }
 }
 
@@ -1480,7 +1653,7 @@ class EclairRadioButtons extends EclairComponent {
         for (let i = 0; i < this.items.length; i++) {
             items += this.buildItem(this.items[i], i)
         }
-        return this.wrapHTML(`<div>${items}</div>${this._hidden.build()}`)
+        return `<div>${items}</div>${this._hidden.compile()}`
     }
 }
 
@@ -1674,7 +1847,7 @@ class EclairToggle extends EclairComponent {
         let overrideOnCreate = null;
         
         this._tickMark = eclair.Text("✓")
-        this._knob = new EclairView([])
+        this._knob = eclair.View()
         
         this._hiddenComponent = eclair.HiddenInput(_value)
     
@@ -1726,6 +1899,10 @@ class EclairToggle extends EclairComponent {
         
         this._showCheckMark = false
         this._enabled = true
+        
+        this._tickMark.parent = this
+        this._knob.parent = this
+        this.children = [this._tickMark, this._knob]
         
         this.addStyle(eclair.styles.Toggle)
         this._tickMark.addStyle(eclair.styles.ToggleTick)
@@ -1801,114 +1978,149 @@ class EclairToggle extends EclairComponent {
     }
     
     build() {
-        return this.wrapHTML(`<div>${this._tickMark.build()}`+this._knob.build()+this._hiddenComponent.build()+"</div>")
+        return `<div>${this._tickMark.compile()}`+this._knob.compile()+this._hiddenComponent.compile()+"</div>"
     }
 }
 
 
 
-// elements.layout.layout
+// elements.layout.view
 class EclairView extends EclairComponent {
     constructor(elements) {
         super()
-        this.elements = elements;
+        
+        if (elements != null) {
+            for (let i = 0; i < elements.length; i++) {
+                this.addChild(elements[i])
+            }
+        }
+        
+        this.addStyle(eclair.styles.View)
+    }
+    
+    addChild(_child) {
+        this.children.push(_child)
+        if (_child instanceof EclairComponent) {
+            _child.parent = this
+        }
+        
+        this.getElement(e => {
+            let childHTML = child;
+            if (_child instanceof EclairComponent) {
+                childHTML = _child.compile()
+            }
+            e.insertAdjacentHTML('beforeend', childHTML)
+        })
     }
     
     build () {                
         let code = ""
-        for (let e = 0; e < this.elements.length; e++) {
-             code += this.elements[e].build();
+        for (let e = 0; e < this.children.length; e++) {
+            let child = this.children[e];
+            
+            if (child instanceof EclairComponent) {
+                code += this.children[e].compile();
+            }
+
+            else if (typeof(child) == "string") { 
+                code += child
+            } 
+            
+            else {
+                console.log(child)
+                throw `Unable to compile object type: ${typeof(child)}`
+            }
         }
         
-        return this.wrapHTML(`<div>` + code + "</div>");
+        return "<div>" + code + "</div>";
     }
 }
 
-class EclairScrollView extends EclairComponent {
-    constructor(elements) {
-        super()
-        this.elements = elements;
-        this.overflow("auto")
-        this.width("100%")
-        this.height("100%")
-    }
-    
-    build () {
-        let code = ""
-        for (let e = 0; e < this.elements.length; e++) {
-             code += this.elements[e].build();
-        }
-        return this.wrapHTML("<div>" + code + "</div>");
-    }
-}
-
-class EclairVBox extends EclairComponent {
-    constructor(elements) {
-        super()
+// elements.layout.vstack
+class EclairVStack extends EclairView {
+    constructor(func) {
+        super(func)
+        this
+            .display("flex")
+            .flexDirection("column")
+            .alignItems("center")
+        this.css("justify-content: space-around;")
         
-        this._spacing = 0
-        this.elements = elements;
-        this.getStyleSheet()["table-layout"] = "fixed"
-        this.getStyleSheet()["max-width"] = "100%"
-        this.setAttr("border", 0)
-            .setAttr("cellspacing", 0)
-            .setAttr("cellpadding", 0)
-            .textAlign("center")
-            .margin("0px auto")
-            .width("100%")
+        this.removeStyle(eclair.styles.View)
+        this.addStyle(eclair.styles.VStack)
     }
     
-    spacing(space) {
-        this._spacing = space;
-        return this;
-    }
     
-    align(_align) {
-        this.textAlign(_align)
+    alignment(_alignment) {
+        if (_alignment instanceof EclairState) {
+            _alignment.addCallback(this.id() + "-alignment", function(state) {
+                this._setAlignment(state.value())
+            }, true)
+        } else {
+            this._setAlignment(_alignment)
+        }
         return this
     }
     
-    build () {
-        let code = "<table>"
-        for (let e = 0; e < this.elements.length; e++) {
-            if (e > 0 && this._spacing > 0) {
-                code += "<tr><td style='height:"+ this._spacing +"px'></td></tr>"
-            }
-            code += "<tr><td>" + this.elements[e].build() + "</td></tr>";
+    _setAlignment(_alignment) {
+        if (_alignment == "start") {
+            this.alignItems("flex-start")
+        } 
+        else if (_alignment == "center") {
+            this.alignItems("center")
         }
-        return this.wrapHTML(code + "</table>");
+        else if (_alignment == "end") {
+            this.alignItems("flex-end")
+        }
+        else if (_alignment == "stretch") {
+            this.alignItems("stretch")
+        } else {
+            throw "Unknown alignment"
+        }
     }
 }
 
-class EclairHBox extends EclairComponent {
-    constructor(elements) {
-        super()
+// elements.layout.layout
+class EclairHStack extends EclairView {
+    constructor(func) {
+        super(func)
+        this
+            .display("flex")
+            .flexDirection("row")
+            .alignItems("center")
+        this.css("justify-content: space-around;")
         
-        this._spacing = 0
-        this.elements = elements;
-        this.getStyleSheet()["table-layout"] = "fixed"
-        this.setAttr("border", 0)
-        this.setAttr("cellspacing", 0)
-        this.setAttr("cellpadding", 0)
-        this.textAlign("center")
-        this.width("100%")
-            .margin("0px auto")
+        this.removeStyle(eclair.styles.View)
+        this.addStyle(eclair.styles.HStack)
     }
     
-    spacing(space) {
-        this._spacing = space;
-        return this;
-    }
     
-    build () {
-        let code = "<table>"
-        for (let e = 0; e < this.elements.length; e++) {
-            if (e > 0 && this._spacing > 0) {
-                code += "<td style='width:"+ this._spacing +"px'></td>"
-            }
-            code += "<td>" + this.elements[e].build() + "</td>";
+    alignment(_alignment) {
+        if (_alignment instanceof EclairState) {
+            _alignment.addCallback(this.id() + "-alignment", function(state) {
+                this._setAlignment(state.value())
+            }, true)
+        } else {
+            this._setAlignment(_alignment)
         }
-        return this.wrapHTML(code + "</table>");
+        return this
+    }
+    
+    _setAlignment(_alignment) {
+        if (_alignment == "start") {
+            this.alignItems("flex-start")
+        } 
+        else if (_alignment == "center") {
+            this.alignItems("center")
+        }
+        else if (_alignment == "end") {
+            this.alignItems("flex-end")
+        }
+        else if (_alignment == "stretch") {
+            this.alignItems("stretch")
+        } else {
+            throw "Unknown alignment"
+        }
     }
 }
 
@@ -2071,41 +2283,41 @@ class EclairText extends EclairComponent {
         if (newType == "title") {
             this.fontSize("40px")
                 .fontWeight(700)
-                .margin("50px 10px 10px 10px")
+                .margin("20px 10px 10px 10px")
         }
         
         if (newType == "subtitle") {
             this.fontSize("25px")
-                .margin("50px 10px 10px 10px")
+                .margin("20px 10px 10px 10px")
         }
         
         if (newType == "heading1") {
             this.fontSize("30px")
                 .fontWeight(700)
-                .margin("50px 10px 10px 10px")
+                .margin("20px 10px 10px 10px")
         }
         
         if (newType == "heading2") {
             this.fontSize("25px")
                 .fontWeight(700)
-                .margin("50px 10px 10px 10px")
+                .margin("20px 10px 10px 10px")
         }
         
         if (newType == "heading3") {
             this.fontSize("20px")
                 .fontWeight(700)
-                .margin("50px 10px 10px 10px")
+                .margin("20px 10px 10px 10px")
         }
         
         if (newType == "heading4") {
             this.fontSize("15px")
                 .fontWeight(700)
-                .margin("50px 10px 10px 10px")
+                .margin("20px 10px 10px 10px")
         }
     }
     
     build() {
-        return this.wrapHTML(`<span>${this._text}</span>`)
+        return `<span>${this._text}</span>`
     }
 }
 

@@ -10,7 +10,13 @@
 //PRINT Add upload icon
 //PRINT Add callback getters when accessing child element.
 //PRINT TODO Add default styles to everything
-//PRINT TODO Check getters and setters calling sub functions are correct
+// PRINT Layout objects have no shared style
+// PRINT MAKE SURE ALL OBJECTS HAVE PARENT ACCOCIATION
+// PRINT when building doc, clear current folder
+
+// When creating a new element make sure
+//  - Links to children objects
+//  - Default styles
 
 /// # Eclair
 /// The `eclair` object allows you to easily construct an eclair object and interact in the Eclair development kit.
@@ -19,19 +25,25 @@ let eclair = {
     _elements: {},
     _newID: function() {this._ids += 1; return this._ids - 1;},
     
+    // Styling
     Style: function() {return new EclairStyleComponent();},
-    State: function(_val) {return new EclairState(_val);},
     
-    View: function(elements) {return new EclairView(elements);},
-    ScrollView: function(elements) {return new EclairScrollView(elements);},
-    VBox: function(elements) {return new EclairVBox(elements);},
-    HBox: function(elements) {return new EclairHBox(elements);},
+    // State based 
+    State: function(_val) {return new EclairState(_val);},    
+    Color: function(_col) {return new EclairColour(_col);},
+    TextStyle: function() {return new EclairTextStyleState();},
+    Alignment: function() {return new EclairAlignmentState();},
+    
+    // Layout 
+    View: function(_func) {return new EclairView(_func);},
+//    ScrollView: function(elements) {return new EclairScrollView(elements);},
+    VStack: function(_func) {return new EclairVStack(_func);},
+    HStack: function(_func) {return new EclairHStack(_func);},
     
     Button: function(text) {return new EclairButton(text);},
     Form: function(elements) {return new EclairForm(elements);},
     Image: function() {return new EclairImage();},
     Text: function(text) {return new EclairText(text);},
-    TextStyle: function() {return new EclairTextStyleState();},
     
     TextBox: function(text) {return new EclairTextBox(text);},
     TextArea: function() {return new EclairTextArea();},
@@ -48,10 +60,7 @@ let eclair = {
     CheckBox: function(text) {return new EclairCheckbox(text);},
     
     ProgressBar: function(_progress) {return new EclairProgressBar(_progress);},
-    AlertState: function() {return new EclairAlertBoxState();},
     Alert: function(_value) {return new EclairAlertBox(_value);},
-    
-    Color: function(_col) {return new EclairColour(_col);},
     
     performCallback: function(eID, event, param1) {this._elements[eID].performCallback(event, param1);},
     

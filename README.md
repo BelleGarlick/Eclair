@@ -25,7 +25,6 @@ eclair.Button("Hello There!")
     .onClick(() => {
         alert("General Kenobi")
     })
-    .write()
 ```
 
 ### Destructive Select
@@ -55,7 +54,6 @@ eclair.Select()
     .onChange(self => {
         self.removeOption(self.value())
     })
-    .write()
 ```
 
 ### Sharing Styles
@@ -85,10 +83,9 @@ let labelFont = eclair.Style()
     .fontWeight(300, "hover")
 
 eclair.View([
-    eclair.Text("Label 1").addStyle(labelFont),
+    eclair.Text("Label 1").addStyle(labelFont)
     eclair.Text("Label 2").addStyle(labelFont)
 ])
-    .write()
 ```
 
 ## How does it work?
@@ -119,3 +116,8 @@ There are three main ways to add a style to an element:
 # More documentation coming one day...
 # Element Specific
 ### Selects
+
+
+## Road Map
+### Versioning
+Version will work based on the standard major.minor.patch. Any major update will be a large undertaking and is unlikely to happen. This be a large update that would break current development and is unlikely to be backwards compatable. Minor updates include element additions to the library which are unlikely to break backwards compatability. Patch is for bug fixes.

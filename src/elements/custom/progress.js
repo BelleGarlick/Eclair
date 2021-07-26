@@ -8,7 +8,7 @@ class EclairProgressBar extends EclairComponent {
         this._label = eclair.Text(this._labelText)
             .addStyle(eclair.styles.ProgressBarLabel)
         
-        this._indicator = eclair.HBox([this._label])
+        this._indicator = eclair.HStack([this._label])
             .margin(null)  // Overrides default HBox Margin
             .addStyle(eclair.styles.ProgressBarIndicator)
         
@@ -24,8 +24,11 @@ class EclairProgressBar extends EclairComponent {
             }, true)
         }
         
+        // Configure parent/children relation. Note label is a child of the inidicator so that sets the parent/child.
+        this._indicator.parent = this
+        this.children = [this._indicator]
+        
         this.addStyle(eclair.styles.ProgressBar)
-            .showLabel(false)
     }
     
     striped(_on) {
@@ -69,7 +72,7 @@ class EclairProgressBar extends EclairComponent {
     }
         
     /// ### .color
-    /// Sets the colour of the progress bar
+    /// Sets the colour of the progress bar.  
     /// **args**:
     /// - _color: Can be either a string, an eclair State or eclair Color. 
     /// ```javascript
@@ -82,9 +85,10 @@ class EclairProgressBar extends EclairComponent {
     }
     
     /// ### .showLabel
-    /// Sets whether the progress label should show on the progress bar.
+    /// Sets whether the progress label should show on the progress bar.  
     /// **args**:
     /// - _show: Can be either a bool or an eclair State.
+    /// ```javascript
     /// eclair.ProgressBar(0.5)
     ///     .showLabel(true)
     /// ```
@@ -103,6 +107,6 @@ class EclairProgressBar extends EclairComponent {
     
     // Standard element. No documentation needed.
     build() {
-        return this.wrapHTML(`<div>${this._indicator.build()}</div>`)
+        return `<div>${this._indicator.compile()}</div>`
     }
 }

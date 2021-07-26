@@ -1,3 +1,4 @@
+_elements.standard.image_
 ## Eclair Image
 An eclair image element.
 ```javascript

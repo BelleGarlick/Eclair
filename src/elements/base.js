@@ -10,6 +10,9 @@ class EclairComponent extends EclairStylableObject {
         this.attributes = {
             id: this.id()
         }
+        
+        this.parent = null
+        this.children = []
     }
     
     id() {
@@ -17,11 +20,11 @@ class EclairComponent extends EclairStylableObject {
     }
     
     write() {
-        document.write(this.build())
+        document.write(this.compile())
     }
     
     to(elemID) {
-        document.getElementById(elemID).innerHTML = this.build();
+        document.getElementById(elemID).innerHTML = this.compile();
     }
     
     getElement(callback) {
@@ -131,7 +134,15 @@ class EclairComponent extends EclairStylableObject {
     onCreate(callback) {return this._updateCallback("onCreate", callback);}
     onBuild(callback) {return this._updateCallback("onBuild", callback);}
     performCallback(event, param1) {this._callbacks[event](this, param1);}
-
+    
+    build() {
+        throw "Build function not implemented"
+    }
+    
+    compile() {
+        return this.wrapHTML(this.build())
+    }
+    
     wrapHTML(_html) {        
         // Calling on build
         if (this._callbacks.hasOwnProperty("onBuild")) {
@@ -187,7 +198,7 @@ class EclairCustomTagComponent extends EclairComponent {
     }
     
     build() {
-        return this.wrapHTML(`<${this.tag}>${this._innerHTML}</${this.tag}>`)
+        return `<${this.tag}>${this._innerHTML}</${this.tag}>`
     }
 }
 

@@ -15,6 +15,12 @@ class EclairCheckbox extends EclairComponent {
         this._hiddenValue = eclair.State(false)
         this._hidden = eclair.HiddenInput(this._hiddenValue)
         
+        // Configure parent/children relation
+        this._label.parent = this
+        this._checkbox.parent = this
+        this._hidden.parent = this
+        this.children = [this._label, this._checkbox, this._hidden]
+        
         this.items = []
         
         let self = this
@@ -102,6 +108,6 @@ class EclairCheckbox extends EclairComponent {
         for (let i = 0; i < this.items.length; i++) {
             items += this.buildItem(this.items[i], i)
         }
-        return this.wrapHTML(`<table><tr><td width=1>${this._checkbox.build()}</td><td>${this._label.build()}</td></tr></table>${this._hidden.build()}`)
+        return `<table><tr><td width=1>${this._checkbox.compile()}</td><td>${this._label.compile()}</td></tr></table>${this._hidden.compile()}`
     }
 }

@@ -1,3 +1,4 @@
+_elements.standard.link_
 ## Eclair Hyperlink
 Create a eclair hyperlink object.
 ```javascript

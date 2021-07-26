@@ -6,6 +6,9 @@ DOC_DIR = "docs"
 OUTPUT = "eclair.js"
 
 
+SHARED_DOC = {}
+
+
 def parse_file(breadcrumbs_path, text):
     source_code = ""
     source_doc = ""
@@ -18,11 +21,78 @@ def parse_file(breadcrumbs_path, text):
             line = line.lstrip("/").lstrip(" ")
             if line[:5] == "PRINT":
                 print("\033[0m" + line[5:].lstrip(" "))
+            if line[:4] == "WARN":
+                print(f"\033[33m" + line[4:].lstrip(" "))
+                    
                 
         else:
             source_code += line + "\n"
              
+    if len(source_doc.replace("\n", "").strip()) == 0:
+        print("\033[31mMissng src doc for: " + breadcrumbs_path)
+        
+                
     return source_code, source_doc
+
+
+def parse_doc(breadcrumbs, documentation):
+    def create_default_shared_data():
+        return {
+            "active": False,
+            "func": "",
+            "wildcard": None,
+            "raw": []
+        }
+    
+    lines = [f"_{breadcrumbs}_"]
+    shared = create_default_shared_data()
+    
+    for line in documentation.split("\n"):
+        if line[:6] == "SHARED":
+            args = line.split(" ")[1:]
+            shared["active"] = True
+            shared["func"] = args[0]
+            if len(args) > 1:
+                shared["wildcard"] = " ".join(args[1:])
+            
+        elif line[:10] == "WILDCARD":
+            if shared["wildcard"] is not None:
+                shared["raw"] += [line]
+                lines += [shared["wildcard"]]
+            else:
+                print(f"\033[31mMISSING WILD CARD FOR DOC {breadcrumbs}.{shared['func']}")
+            
+        elif line[:10] == "END-SHARED":
+            SHARED_DOC[breadcrumbs + "." + shared["func"]] = shared["raw"]
+            shared = create_default_shared_data()
+            
+        elif line[:7] == "INCLUDE":
+            args = line.split(" ")
+            func = args[1]
+            wildcard = None
+            if len(args) > 2:
+                wildcard = " ".join(args[2:])
+            
+            if func in SHARED_DOC:
+                func_code = SHARED_DOC[func]
+                for func_line in func_code:
+                    if func_line[:10] == "WILDCARD":
+                        if wildcard is None:
+                            print(f"\033[31mMissing wild card in include path: {breadcrumbs}")
+                        lines.append(wildcard)
+                    else:
+                        lines.append(func_line)
+                    
+            else:
+                print(f"\033[31mUnknown doc include. Check your path: {func}")
+        
+        else:
+            lines.append(line)
+            
+            if shared["active"]:
+                shared["raw"].append(line)
+
+    return "\n".join(lines)
 
 
 def build_from_dir(directory, documentation_path, breadcrumbs=None):
@@ -60,7 +130,9 @@ def build_from_dir(directory, documentation_path, breadcrumbs=None):
                     if len(source_doc) > 0:
                         os.makedirs(documentation_path, exist_ok=True)
                         with open(doc_path[:-2] + "md", "w+") as doc_file:
-                            doc_file.write(source_doc)
+                            doc_file.write(
+                                parse_doc(breadcrumbs_path, source_doc)
+                            )
 
             path = os.path.join(directory, path)
             if os.path.isdir(path):

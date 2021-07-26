@@ -28,8 +28,8 @@
                 .width("100%")
                 .height("100%")
         
-        eclair.HBox([
-            eclair.VBox([
+        eclair.HStack([
+            eclair.VStack([
                 eclair
                     .Button("Run")
                     .addStyle("customButton")
@@ -41,7 +41,7 @@
                     }),
                 synHigh
             ])
-                .align("left"),
+                //.align("left"),
             frame
         ])
             .css("border: 1px solid black", " td")

@@ -4,11 +4,11 @@
 /// ```javascript
 /// let style = eclair.TextStyle().heading2()
 ///
-/// eclair.VBox([
-///     eclair.Text('Hello').type(style),
-///     eclair.Text('Welcome').type(style),
+/// eclair.VStack([
+///     eclair.Text('Hello').type(style)
+///     eclair.Text('Welcome').type(style)
 ///     Button("Change")
-///         .onClick(() => {style.title()}),
+///         .onClick(() => {style.title()})
 /// ]).write()
 /// 
 /// ```

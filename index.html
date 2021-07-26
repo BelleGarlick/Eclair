@@ -2,15 +2,18 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js"></script>
 <script src="eclair.js"></script>
 <script>    
-let VBox = eclair.VBox, Toggle = eclair.Toggle, Text = eclair.Text, CheckBox = eclair.CheckBox, 
+let Toggle = eclair.Toggle, Text = eclair.Text, CheckBox = eclair.CheckBox, 
     RadioButtons = eclair.RadioButtons, TextBox = eclair.TextBox, State = eclair.State, 
-    AlertState = eclair.AlertState, TextStyle = eclair.TextStyle;
-    
+    AlertState = eclair.AlertState, TextStyle = eclair.TextStyle, VStack = eclair.VStack,
+    HStack = eclair.HStack;
     
 let checkboxText = State("Accept Cookies?")
+
+let alertBoxTitle = State("Alert Box")
 let alertBoxText = State("You're learning Eclair")
+let alertBoxTheme = eclair.Color().success()
+
 let progressValue = State(0.5)
-let alertBoxTheme = AlertState().success()
 let textHeadingStyle = TextStyle().heading2()
 let showProgressState = State(false)
 let progressBarStripped = State(false)
@@ -25,46 +28,54 @@ let linkURL = State('https://duckduckgo.com/')
 let linkTarget = State("_blank")
 
 
-let alertBoxObject = eclair.Alert(alertBoxText).theme(alertBoxTheme)  //.title("Congrats")
-
-
 let backgroundColour = eclair.Color().hex("#f6f6f6")
 
 
-function group(elements) {
-    return VBox(elements)
-        .align("left")
-        .spacing(30)
+function group(func) {
+    return VStack(func)
+        .alignment("stretch")
         .backgroundColor(backgroundColour)
         .borderRadius("3px")
         .padding("20px")
+        .margin("10px")
+        .width("100%")
 }
     
 function toggleLabels(text, toggleLabel, callback) {
-    let toggleButton = VBox([
+    return VStack([
         Text(text),
-        Toggle(toggleLabel).onChange(callback),
-    ]).spacing(10).align("left")
-    
-    return toggleButton
+        Toggle(toggleLabel).onChange(callback)
+    ])
 }
     
 
 let codeView = eclair.SyntaxHighlighter()
-let codeResult = eclair.IFrame()
 
 
-VBox([
-    eclair.HBox([
+VStack([   
+    HStack([
         Text("Eclair")  
             .type(textHeadingStyle)
             .fontColor("white")
+            .margin("0px")
     ])
+        .width("100%")
         .background(eclair.theme.accent)
         .padding(8),
     
-    eclair.ScrollView([
-        VBox([
+    eclair.VStack([
+        VStack([           
+            "hello",
+            eclair.View([
+                eclair.Button("test")
+                    .onClick(e => {
+                        e.parent.background("red")
+                        e.parent.children[1].background("red")
+                    }),
+                eclair.Button("test"),
+                eclair.Button("test")
+            ]).width("100%"),
+            
             eclair.Link(linkText)
                 .url(linkURL)
                 .target(linkTarget),
@@ -76,12 +87,12 @@ VBox([
             group([
                 Text("Toggle Switch").type(textHeadingStyle),
                 
-                VBox([
+                VStack([
                     Toggle(toggleOn)
                         .showTick(toggleShowLabel)
                         .enabled(toggleEnabled)
                         .display("inline-block")
-                ]).align("center"),
+                ]), // .align("center")
                 
                 eclair.HorizontalLine(),
                 toggleLabels("Show tick", toggleShowLabel, c => {}),
@@ -92,16 +103,19 @@ VBox([
             
             group([
                 Text("Progress Bar").type(textHeadingStyle),
+                
                 eclair.ProgressBar(progressValue)
                     .striped(progressBarStripped)
                     .color(progressBarColor)
                     .showLabel(showProgressState),
+                
                 eclair.HorizontalLine(),
-                VBox([
+                
+                VStack([
                     Text("Progress"),
                     eclair.Slider(progressValue)
                         .min(0).max(1).step(0.01)
-                ]).spacing(10).align("left"),
+                ]), //.spacing(10).align("left"),
                 
                 toggleLabels("Striped", progressBarStripped, c => {}),
                 toggleLabels("Show Label", showProgressState, c => {})
@@ -110,32 +124,32 @@ VBox([
             
             group([
                 Text("Alert Box").type(textHeadingStyle),
-                alertBoxObject,
+                
+                eclair.Alert(alertBoxText)
+                    .title(alertBoxTitle)
+                    .theme(alertBoxTheme),
+                
                 eclair.HorizontalLine(),
-                VBox([
+                
+                VStack([
                     Text("Title"),
-                    TextBox("Warning")
+                    TextBox(alertBoxTitle)
                         .placeholder("Title...")
-//                        .onKeyUp(e => {
-//                            alertBoxObject.title(e.text().length == ""? null : e.text())
-//                        })
-                ]).spacing(10).align("left"),
+                ]), //.spacing(10).align("left"),
                 
-                VBox([
+                VStack([
                     Text("Message"),
-                    TextBox(alertBoxText).placeholder("Message..."),
-                ]).spacing(10).align("left"),
+                    TextBox(alertBoxText).placeholder("Message...")
+                ]), //.spacing(10).align("left"),
                 
-                VBox([
+                VStack([
                     Text("Line breaker"),
                     eclair.Button("Add line break").onClick(c => {
-                        let newText = alertBox.text()
-                        alertBox.text(newText + "<hr/>A new line break can be added by typing &lt;hr/&gt;.")
-                        alertBox.text(newText + "<hr/>A new line break can be added by typing <hr/>.")
-                    }),
-                ]).spacing(10).align("left"),
+                        alertBoxText.value(alertBoxText.value() + "<hr/>A new line break can be added by typing &lt;hr/&gt;.")
+                    })
+                ]),//.spacing(10).align("left"),
                 
-                VBox([
+                VStack([
                     Text("Preset"),
                     eclair.Select()
                         .addOptions(["Success", "Danger", "Warning", "Info", "Light", "Dark"])
@@ -147,30 +161,36 @@ VBox([
                             if (s.value() == "Light") {alertBoxTheme.light()}
                             if (s.value() == "Dark") {alertBoxTheme.dark()}
                         })
-                ]).spacing(10).align("left"),
+                ]) // ]).spacing(10).align("left")
             ]),
             
-            VBox([
+            VStack([
                 Text("Try it yourself!").type(textHeadingStyle),
                 codeView,
-                eclair.Button("Run").onClick(() => {
+                eclair.Button("Run").onClick((self) => {
                     let code = '<script src="eclair.js"></scrip'+'t><script>'+codeView.value()+'</sc'+'ript>'
-                    codeResult.source(code)
+                    self.parent.children[3].source(code)
                 }),
-                codeResult
+                
+                eclair.IFrame()
+                    .height("100%")
+                    .width("100%")
             ])
                 .background("#f6f6f6")
                 .borderRadius("3px")
                 .padding("20px")
-                .spacing(30)
+                //.spacing(30)
         ])
-            .width("600px")
-            .align("left")
-            .spacing(25)
+//            .spacing(25)
             .padding(10)
     ])
+        .alignment("stretch")
+        .width("600px")
 ])
     .position("absolute")
-    .top("0px").left("0px").width("100%")
+    .top("0px")
+    .left("0px")
+    .width("100%")
+    .alignment("center")
     .write()
 </script>

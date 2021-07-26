@@ -46,41 +46,41 @@ class EclairText extends EclairComponent {
         if (newType == "title") {
             this.fontSize("40px")
                 .fontWeight(700)
-                .margin("50px 10px 10px 10px")
+                .margin("20px 10px 10px 10px")
         }
         
         if (newType == "subtitle") {
             this.fontSize("25px")
-                .margin("50px 10px 10px 10px")
+                .margin("20px 10px 10px 10px")
         }
         
         if (newType == "heading1") {
             this.fontSize("30px")
                 .fontWeight(700)
-                .margin("50px 10px 10px 10px")
+                .margin("20px 10px 10px 10px")
         }
         
         if (newType == "heading2") {
             this.fontSize("25px")
                 .fontWeight(700)
-                .margin("50px 10px 10px 10px")
+                .margin("20px 10px 10px 10px")
         }
         
         if (newType == "heading3") {
             this.fontSize("20px")
                 .fontWeight(700)
-                .margin("50px 10px 10px 10px")
+                .margin("20px 10px 10px 10px")
         }
         
         if (newType == "heading4") {
             this.fontSize("15px")
                 .fontWeight(700)
-                .margin("50px 10px 10px 10px")
+                .margin("20px 10px 10px 10px")
         }
     }
     
     // No doc listed as this is standard eclair object
     build() {
-        return this.wrapHTML(`<span>${this._text}</span>`)
+        return `<span>${this._text}</span>`
     }
 }

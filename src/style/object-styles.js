@@ -1,4 +1,8 @@
 eclair.styles = {
+    View: eclair.Style(),
+    VStack: eclair.Style(),
+    HStack: eclair.Style(),
+    
     Text: eclair.Style()
         .font(eclair.theme.font),
     
