@@ -1,4 +1,4 @@
-_elements.layout.tabs_
+[_elements.layout.tabs_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/layout/tabs.js)
 ## Eclair TabView
 Create a tab view capable of hiding and showing states.
 <br/>**args**:

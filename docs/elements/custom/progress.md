@@ -1,4 +1,4 @@
-_elements.custom.progress_
+[_elements.custom.progress_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/custom/progress.js)
 ### .color
 Sets the colour of the progress bar.  
 <br/>**args**:

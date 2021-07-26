@@ -1,4 +1,4 @@
-_elements.layout.view_
+[_elements.layout.view_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/layout/view.js)
 ## Eclair View
 Create a generic eclair View.
 <br/>**args**:

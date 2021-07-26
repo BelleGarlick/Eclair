@@ -1,4 +1,4 @@
-_elements.form.toggle_
+[_elements.form.toggle_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/form/toggle.js)
 ## Eclair Toggle
 An eclair toggle element.
 ```javascript

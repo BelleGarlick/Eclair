@@ -1,4 +1,3 @@
-// PRINT NEED to do parent relation stuff
 class EclairSyntaxHighlighter extends EclairComponent {
     constructor() {
         super()
@@ -73,6 +72,11 @@ class EclairSyntaxHighlighter extends EclairComponent {
                 let textarea = e.getElement()
                 self._code.getElement().scroll(textarea.scrollLeft, textarea.scrollTop)
             })
+        
+        this._pre.parent = this
+        this._code.parent = this
+        this._textarea.parent = this
+        this.children = [this._pre, this._code, this._textarea]
     }
 
     value(_value) {

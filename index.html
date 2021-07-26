@@ -66,13 +66,12 @@ VStack([
         .padding(8),
     
     eclair.VStack([
-        VStack([           
-            "hello",
+        VStack([        
             View([
                 eclair.Button("Toggles").onClick(e => {selectedTab.value(0)}),
                 eclair.Button("Progress Bar").onClick(e => {selectedTab.value(1)}),
                 eclair.Button("test").onClick(e => {selectedTab.value(2)}),
-            ]).width("100%"),
+            ]),
             
             TabView(selectedTab, [
                 // Toggle button
@@ -114,7 +113,7 @@ VStack([
                 ]),
                 
                 View([Text("Tab 2")]),
-            ]),
+            ]).width("100%"),
             
             eclair.Link(linkText)
                 .url(linkURL)

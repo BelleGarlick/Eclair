@@ -1,4 +1,4 @@
-_elements.layout.vstack_
+[_elements.layout.vstack_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/layout/vstack.js)
 ## Eclair VStack
 Create a vertically stacked view in eclair.
 <br/>**args**:

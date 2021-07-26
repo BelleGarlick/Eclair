@@ -2,21 +2,20 @@ class EclairButton extends EclairComponent {
     constructor(text) {
         super()
         
-        this.text = text;
+        // Bind state
+        if (text instanceof EclairState) {
+            let self = this
+            text.addCallback(this.id() + "-text", function(state) {
+                let newText = state.value()
+                self.text = newText;
+                self.getElement(elem => {elem.innerHTML = newText;});
+            }, true)
+        } else {
+            this.text = text;
+        }
+        
         this.setAttr("type", "button")
         this.addStyle(eclair.styles.Button)
-    }
-    
-    value(newText) {
-        this.text = newText;
-        this.getElement(elem => {
-            let html = newText;
-            if (typeof(html) != "string") {
-                html = html.compile()
-            }
-            elem.innerHTML = html;
-        });
-        return this
     }
     
     // overriden, no need to document.

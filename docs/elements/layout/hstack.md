@@ -1,4 +1,4 @@
-_elements.layout.hstack_
+[_elements.layout.hstack_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/layout/hstack.js)
 ## Eclair EclairHStack
 Create a horizontally stacked view in eclair.
 <br/>**args**:

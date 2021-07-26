@@ -1,5 +1,6 @@
 import os
 
+DOC_SRC_LINK = "https://github.com/SamGarlick/Eclair/tree/main/src/"
 BUILD_ORDER_FILE = "build.txt"
 SOURCE_DIR = "src"
 DOC_DIR = "docs"
@@ -46,7 +47,7 @@ def parse_doc(breadcrumbs, documentation):
             "raw": []
         }
     
-    lines = [f"_{breadcrumbs}_"]
+    lines = [f"[_{breadcrumbs}_]({DOC_SRC_LINK}{breadcrumbs.replace('.', '/')}.js)"]
     shared = create_default_shared_data()
     
     for line in documentation.split("\n"):

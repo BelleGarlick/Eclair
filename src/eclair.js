@@ -3,25 +3,23 @@
 //TODO Hide show elements
 //TODO Superscript/Subscript text
 //TODO Implement these: https://getbootstrap.com/docs/4.0/components/progress/
-//PRINT Add string html to views
 //PRINT Add margin, paddding, border: left, top, right bottom
 //PRINT Add deleting element
 //PRINT Add spinner
-//PRINT Add upload icon
+//PRINT Add upload file element
 //PRINT Add callback getters when accessing child element.
 //TODO Add default styles to everything
-// PRINT Layout objects have no shared style
+// WARM Layout objects have no shared style
 // PRINT MAKE SURE ALL OBJECTS HAVE PARENT ACCOCIATION
 // PRINT when building doc, clear current folder
 // TODO State all the shared styles
-// TODO Link documentation to source
 // TODO Examples
 // TODO Tutorials
 // TODO Multimedia
 // Add get/post stuff
 
 // When creating a new element make sure
-//  - Links to children objects
+//  - Links to children objects and parent association
 //  - Default styles
 //  - Documentation: states the shared styles. Add functions doc and class doc
 

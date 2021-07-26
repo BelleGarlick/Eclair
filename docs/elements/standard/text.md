@@ -1,4 +1,4 @@
-_elements.standard.text_
+[_elements.standard.text_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/standard/text.js)
 ## Eclair Text
 Create a eclair text object.
 ```javascript

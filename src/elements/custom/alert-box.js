@@ -1,3 +1,4 @@
+// WARN Alert box doc not finished
 class EclairAlertBox extends EclairComponent {
     constructor(alert) {
         super()
@@ -45,14 +46,14 @@ class EclairAlertBox extends EclairComponent {
         return this
     }
         
-//    / ### .showLabel
-//    / Sets whether the progress label should show on the progress bar.  
-//    / **args**:
-//    / - _show: Can be either a bool or an eclair State.
-//    / ```javascript
-//    / eclair.ProgressBar(0.5)
-//    /     .showLabel(true)
-//    / ```
+    /// ### .title
+    /// Set the title of the alert box.
+    /// **args**:
+    /// - _text: A string or State representing the value.
+    /// ```javascript
+    /// eclair.AlertBox("Invalid password")
+    ///     .title("Error")
+    /// ```
     title(_text) {        
         if (_text instanceof EclairState) {            
             let self = this

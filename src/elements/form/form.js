@@ -1,4 +1,6 @@
-// TODO Need to do this, but also need to add child accosiations
+// TODO Need to do this
+// TODO Child/Parent association
+// TODO Multiple elements in this one file.
 class EclairForm extends EclairComponent {
     constructor(elements) {
         super()

@@ -1,4 +1,4 @@
-_elements.standard.image_
+[_elements.standard.image_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/standard/image.js)
 ## Eclair Image
 An eclair image element.
 ```javascript
