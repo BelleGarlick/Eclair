@@ -1,10 +1,10 @@
-_elements.layout.vstack_
-## Eclair VStack
-Create a vertically stacked view in eclair.
+_elements.layout.hstack_
+## Eclair EclairHStack
+Create a horizontally stacked view in eclair.
 <br/>**args**:
 - elements: Elements within the view.
 ```javascript
-eclair.VStack([
+eclair.HStack([
    eclair.Text("This is a view"),
    eclair.Button("Views can have multiple elements"),
    "Or even just html"
@@ -15,7 +15,7 @@ Add a child element to this object.
 <br/>**args**:
 - child: Can be either raw html or an eclair element. 
 ```javascript
-eclair.VStack()
+eclair.HStack()
     .addChild(eclair.Text("Add an eclair object"))
     .addChild("Add raw text")
     .addChild("<p>Or even HTML</p>")
@@ -25,6 +25,6 @@ Set the alignment of child items.
 <br/>**args**:
 - alignment: Takes in an eclair elignment state object.
 ```javascript
-eclair.VStack()
+eclair.HStack()
     .alignment(eclair.Alignment().center())
 ```

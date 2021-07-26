@@ -1,4 +1,4 @@
-// PRINT eclair progress bar doc not finished.
+// WARN eclair progress bar doc not finished.
 
 class EclairProgressBar extends EclairComponent {
     constructor(_progress) {
@@ -6,14 +6,10 @@ class EclairProgressBar extends EclairComponent {
         
         this._labelText = eclair.State("0%")
         this._label = eclair.Text(this._labelText)
-            .addStyle(eclair.styles.ProgressBarLabel)
-        
         this._indicator = eclair.HStack([this._label])
-            .margin(null)  // Overrides default HBox Margin
-            .addStyle(eclair.styles.ProgressBarIndicator)
         
         // Add callback for progress changing state
-        this.progress = _progress
+        this.progress = 0
         if (_progress instanceof EclairState) {
             let self = this
             _progress.addCallback(this.id() + "-progress", function(state) {
@@ -22,12 +18,20 @@ class EclairProgressBar extends EclairComponent {
                 self._labelText.value(Math.round(_progress * 100) + "%")
                 self._indicator.width((_progress * 100 + 0.0001) + "%")
             }, true)
+        } else {
+            _progress = Math.max(Math.min(_progress, 1), 0)
+            this._progress = _progress;
+            this._labelText.value(Math.round(_progress * 100) + "%")
+            this._indicator.width((_progress * 100 + 0.0001) + "%")
         }
         
         // Configure parent/children relation. Note label is a child of the inidicator so that sets the parent/child.
         this._indicator.parent = this
         this.children = [this._indicator]
         
+        // Set styles
+        this._label.addStyle(eclair.styles.ProgressBarLabel)
+        this._indicator.addStyle(eclair.styles.ProgressBarIndicator)
         this.addStyle(eclair.styles.ProgressBar)
     }
     
@@ -73,7 +77,7 @@ class EclairProgressBar extends EclairComponent {
         
     /// ### .color
     /// Sets the colour of the progress bar.  
-    /// **args**:
+    /// <br/>**args**:
     /// - _color: Can be either a string, an eclair State or eclair Color. 
     /// ```javascript
     /// eclair.ProgressBar(0.5)
@@ -86,7 +90,7 @@ class EclairProgressBar extends EclairComponent {
     
     /// ### .showLabel
     /// Sets whether the progress label should show on the progress bar.  
-    /// **args**:
+    /// <br/>**args**:
     /// - _show: Can be either a bool or an eclair State.
     /// ```javascript
     /// eclair.ProgressBar(0.5)

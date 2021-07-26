@@ -1,4 +1,4 @@
-// PRINT TODO Store all colours as rgba to allow for darkening colours.
+// TODO Store all colours as rgba to allow for darkening colours.
 class EclairColour extends EclairState {
     constructor(_col) {
         super(_col)

@@ -1,4 +1,4 @@
-// PRINT TODO IFrame Needs documentation and updating to states.
+// TODO IFrame Needs documentation and updating to states.
 class EclairIFrame extends EclairCustomTagComponent {
     constructor() {
         super("iframe")

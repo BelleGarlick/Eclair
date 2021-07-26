@@ -1,9 +1,9 @@
 /// ## Eclair VStack
 /// Create a vertically stacked view in eclair.
-/// **args**:
+/// <br/>**args**:
 /// - elements: Elements within the view.
 /// ```javascript
-/// eclair.EclairVStack([
+/// eclair.VStack([
 ///    eclair.Text("This is a view"),
 ///    eclair.Button("Views can have multiple elements"),
 ///    "Or even just html"
@@ -12,6 +12,7 @@
 class EclairVStack extends EclairView {
     constructor(func) {
         super(func)
+        
         this
             .display("flex")
             .flexDirection("column")
@@ -28,7 +29,7 @@ class EclairVStack extends EclairView {
     /// SHARED alignment eclair.VStack()
     /// ### .alignment
     /// Set the alignment of child items.
-    /// **args**:
+    /// <br/>**args**:
     /// - alignment: Takes in an eclair elignment state object.
     /// ```javascript
     /// WILDCARD

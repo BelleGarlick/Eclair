@@ -1,7 +1,4 @@
-//
-// Form Elements
-//
-// PRINT TODO, Need to do this, but also need to add child accosiations
+// TODO Need to do this, but also need to add child accosiations
 class EclairForm extends EclairComponent {
     constructor(elements) {
         super()

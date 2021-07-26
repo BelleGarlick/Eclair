@@ -11,7 +11,7 @@ eclair.HStack()
 ```
 ### .alignment
 Set the alignment of child items.
-**args**:
+<br/>**args**:
 - alignment: Takes in an eclair elignment state object.
 ```javascript
 eclair.HStack()

@@ -5,7 +5,7 @@
 let Toggle = eclair.Toggle, Text = eclair.Text, CheckBox = eclair.CheckBox, 
     RadioButtons = eclair.RadioButtons, TextBox = eclair.TextBox, State = eclair.State, 
     AlertState = eclair.AlertState, TextStyle = eclair.TextStyle, VStack = eclair.VStack,
-    HStack = eclair.HStack;
+    HStack = eclair.HStack, View = eclair.View, TabView = eclair.TabView;
     
 let checkboxText = State("Accept Cookies?")
 
@@ -26,6 +26,8 @@ let toggleEnabled = State(true)
 let linkText = State("DuckDuckGo")
 let linkURL = State('https://duckduckgo.com/')
 let linkTarget = State("_blank")
+
+let selectedTab = State(0)
 
 
 let backgroundColour = eclair.Color().hex("#f6f6f6")
@@ -66,15 +68,53 @@ VStack([
     eclair.VStack([
         VStack([           
             "hello",
-            eclair.View([
-                eclair.Button("test")
-                    .onClick(e => {
-                        e.parent.background("red")
-                        e.parent.children[1].background("red")
-                    }),
-                eclair.Button("test"),
-                eclair.Button("test")
+            View([
+                eclair.Button("Toggles").onClick(e => {selectedTab.value(0)}),
+                eclair.Button("Progress Bar").onClick(e => {selectedTab.value(1)}),
+                eclair.Button("test").onClick(e => {selectedTab.value(2)}),
             ]).width("100%"),
+            
+            TabView(selectedTab, [
+                // Toggle button
+                group([
+                    Text("Toggle Switch").type(textHeadingStyle),
+
+                    VStack([
+                        Toggle(toggleOn)
+                            .showTick(toggleShowLabel)
+                            .enabled(toggleEnabled)
+                            .display("inline-block")
+                    ]), // .align("center")
+
+                    eclair.HorizontalLine(),
+                    toggleLabels("Show tick", toggleShowLabel, c => {}),
+                    toggleLabels("Toggle Button", true, c => {toggleOn.value(!toggleOn.value())}),
+                    toggleLabels("Enabled", toggleEnabled, c => {})
+                ]),
+                
+                // Progress Bar
+                group([
+                    Text("Progress Bar").type(textHeadingStyle),
+
+                    eclair.ProgressBar(progressValue)
+                        .striped(progressBarStripped)
+                        .color(progressBarColor)
+                        .showLabel(showProgressState),
+
+                    eclair.HorizontalLine(),
+
+                    VStack([
+                        Text("Progress"),
+                        eclair.Slider(progressValue)
+                            .min(0).max(1).step(0.01)
+                    ]), //.spacing(10).align("left"),
+
+                    toggleLabels("Striped", progressBarStripped, c => {}),
+                    toggleLabels("Show Label", showProgressState, c => {})
+                ]),
+                
+                View([Text("Tab 2")]),
+            ]),
             
             eclair.Link(linkText)
                 .url(linkURL)
@@ -82,45 +122,6 @@ VStack([
             CheckBox(checkboxText),
             RadioButtons().addItems(["test", "testing", "tests"]),
             RadioButtons().addItems(["also test", "also testing", "also tests"]),
-            
-            // Toggle Buttons
-            group([
-                Text("Toggle Switch").type(textHeadingStyle),
-                
-                VStack([
-                    Toggle(toggleOn)
-                        .showTick(toggleShowLabel)
-                        .enabled(toggleEnabled)
-                        .display("inline-block")
-                ]), // .align("center")
-                
-                eclair.HorizontalLine(),
-                toggleLabels("Show tick", toggleShowLabel, c => {}),
-                toggleLabels("Toggle Button", true, c => {toggleOn.value(!toggleOn.value())}),
-                toggleLabels("Enabled", toggleEnabled, c => {})
-            ]),
-            
-            
-            group([
-                Text("Progress Bar").type(textHeadingStyle),
-                
-                eclair.ProgressBar(progressValue)
-                    .striped(progressBarStripped)
-                    .color(progressBarColor)
-                    .showLabel(showProgressState),
-                
-                eclair.HorizontalLine(),
-                
-                VStack([
-                    Text("Progress"),
-                    eclair.Slider(progressValue)
-                        .min(0).max(1).step(0.01)
-                ]), //.spacing(10).align("left"),
-                
-                toggleLabels("Striped", progressBarStripped, c => {}),
-                toggleLabels("Show Label", showProgressState, c => {})
-            ]),
-            
             
             group([
                 Text("Alert Box").type(textHeadingStyle),

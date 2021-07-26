@@ -1,22 +1,30 @@
-//PRINT TODO Add events to callbacks (mousemove position etc)
-//PRINT TODO Prevent layered on click events
-//PRINT TODO Hide show elements
-//PRINT TODO Superscript/Subscript text
-//PRINT TODO Implement these: https://getbootstrap.com/docs/4.0/components/progress/
+//TODO Add events to callbacks (mousemove position etc)
+//TODO Prevent layered on click events
+//TODO Hide show elements
+//TODO Superscript/Subscript text
+//TODO Implement these: https://getbootstrap.com/docs/4.0/components/progress/
 //PRINT Add string html to views
 //PRINT Add margin, paddding, border: left, top, right bottom
 //PRINT Add deleting element
 //PRINT Add spinner
 //PRINT Add upload icon
 //PRINT Add callback getters when accessing child element.
-//PRINT TODO Add default styles to everything
+//TODO Add default styles to everything
 // PRINT Layout objects have no shared style
 // PRINT MAKE SURE ALL OBJECTS HAVE PARENT ACCOCIATION
 // PRINT when building doc, clear current folder
+// TODO State all the shared styles
+// TODO Link documentation to source
+// TODO Examples
+// TODO Tutorials
+// TODO Multimedia
+// Add get/post stuff
 
 // When creating a new element make sure
 //  - Links to children objects
 //  - Default styles
+//  - Documentation: states the shared styles. Add functions doc and class doc
+
 
 /// # Eclair
 /// The `eclair` object allows you to easily construct an eclair object and interact in the Eclair development kit.
@@ -35,10 +43,10 @@ let eclair = {
     Alignment: function() {return new EclairAlignmentState();},
     
     // Layout 
-    View: function(_func) {return new EclairView(_func);},
-//    ScrollView: function(elements) {return new EclairScrollView(elements);},
-    VStack: function(_func) {return new EclairVStack(_func);},
-    HStack: function(_func) {return new EclairHStack(_func);},
+    View: function(_elements) {return new EclairView(_elements);},
+    VStack: function(_elements) {return new EclairVStack(_elements);},
+    HStack: function(_elements) {return new EclairHStack(_elements);},
+    TabView: function(_tab, _elements) {return new EclairTabView(_tab, _elements);},
     
     Button: function(text) {return new EclairButton(text);},
     Form: function(elements) {return new EclairForm(elements);},

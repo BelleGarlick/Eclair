@@ -1,10 +1,10 @@
 _elements.layout.view_
 ## Eclair View
 Create a generic eclair View.
-**args**:
+<br/>**args**:
 - elements: Elements within the view.
 ```javascript
-eclair.EclairView([
+eclair.View([
    eclair.Text("This is a view"),
    eclair.Button("Views can have multiple elements"),
    "Or even just html"
@@ -12,7 +12,7 @@ eclair.EclairView([
 ```
 ### .addChild
 Add a child element to this object.
-**args**:
+<br/>**args**:
 - child: Can be either raw html or an eclair element. 
 ```javascript
 eclair.View()

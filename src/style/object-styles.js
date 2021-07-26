@@ -2,6 +2,9 @@ eclair.styles = {
     View: eclair.Style(),
     VStack: eclair.Style(),
     HStack: eclair.Style(),
+    TabView: eclair.Style()
+        .display("flex")
+        .alignItems("center"),
     
     Text: eclair.Style()
         .font(eclair.theme.font),

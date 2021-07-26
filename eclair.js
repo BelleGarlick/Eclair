@@ -2,6 +2,7 @@
 // eclair
 
 
+
 let eclair = {
     _ids: 0,
     _elements: {},
@@ -14,9 +15,10 @@ let eclair = {
     TextStyle: function() {return new EclairTextStyleState();},
     Alignment: function() {return new EclairAlignmentState();},
     
-    View: function(_func) {return new EclairView(_func);},
-    VStack: function(_func) {return new EclairVStack(_func);},
-    HStack: function(_func) {return new EclairHStack(_func);},
+    View: function(_elements) {return new EclairView(_elements);},
+    VStack: function(_elements) {return new EclairVStack(_elements);},
+    HStack: function(_elements) {return new EclairHStack(_elements);},
+    TabView: function(_tab, _elements) {return new EclairTabView(_tab, _elements);},
     
     Button: function(text) {return new EclairButton(text);},
     Form: function(elements) {return new EclairForm(elements);},
@@ -80,6 +82,18 @@ class EclairState {
     
     string() {
         return `${this._value}`
+    }
+    
+    int(_default) {
+        try {
+            return parseInt(this._value)
+        } catch {
+            if (_default == null) {
+                return 0
+            } else {
+                return -1
+            }
+        }
     }
     
     bool() {
@@ -436,6 +450,9 @@ eclair.styles = {
     View: eclair.Style(),
     VStack: eclair.Style(),
     HStack: eclair.Style(),
+    TabView: eclair.Style()
+        .display("flex")
+        .alignItems("center"),
     
     Text: eclair.Style()
         .font(eclair.theme.font),
@@ -1035,13 +1052,9 @@ class EclairProgressBar extends EclairComponent {
         
         this._labelText = eclair.State("0%")
         this._label = eclair.Text(this._labelText)
-            .addStyle(eclair.styles.ProgressBarLabel)
-        
         this._indicator = eclair.HStack([this._label])
-            .margin(null)  // Overrides default HBox Margin
-            .addStyle(eclair.styles.ProgressBarIndicator)
         
-        this.progress = _progress
+        this.progress = 0
         if (_progress instanceof EclairState) {
             let self = this
             _progress.addCallback(this.id() + "-progress", function(state) {
@@ -1050,11 +1063,18 @@ class EclairProgressBar extends EclairComponent {
                 self._labelText.value(Math.round(_progress * 100) + "%")
                 self._indicator.width((_progress * 100 + 0.0001) + "%")
             }, true)
+        } else {
+            _progress = Math.max(Math.min(_progress, 1), 0)
+            this._progress = _progress;
+            this._labelText.value(Math.round(_progress * 100) + "%")
+            this._indicator.width((_progress * 100 + 0.0001) + "%")
         }
         
         this._indicator.parent = this
         this.children = [this._indicator]
         
+        this._label.addStyle(eclair.styles.ProgressBarLabel)
+        this._indicator.addStyle(eclair.styles.ProgressBarIndicator)
         this.addStyle(eclair.styles.ProgressBar)
     }
     
@@ -2040,6 +2060,7 @@ class EclairView extends EclairComponent {
 class EclairVStack extends EclairView {
     constructor(func) {
         super(func)
+        
         this
             .display("flex")
             .flexDirection("column")
@@ -2080,15 +2101,15 @@ class EclairVStack extends EclairView {
     }
 }
 
-// elements.layout.layout
+// elements.layout.hstack
 class EclairHStack extends EclairView {
-    constructor(func) {
-        super(func)
+    constructor(elements) {
+        super(elements)
         this
             .display("flex")
             .flexDirection("row")
             .alignItems("center")
-        this.css("justify-content: space-around;")
+            .css("justify-content: space-around;")
         
         this.removeStyle(eclair.styles.View)
         this.addStyle(eclair.styles.HStack)
@@ -2120,6 +2141,45 @@ class EclairHStack extends EclairView {
             this.alignItems("stretch")
         } else {
             throw "Unknown alignment"
+        }
+    }
+}
+
+// elements.layout.tabs
+class EclairTabView extends EclairView {
+    constructor(_selectedView, elements) {
+        super(elements)
+        
+        if (_selectedView instanceof EclairState) {
+            let self = this
+            _selectedView.addCallback(this.id() + "-tab", function(state) {
+                let newState = state.int(0)
+                for (let e = 0; e < self.children.length; e++) {
+                    self.children[e].display(newState == e? "flex": "none")
+                }
+            }, true)
+        } else {
+            throw "First parameter of Eclair TabView's must be an Eclair State"
+        }
+        
+        this.removeStyle(eclair.styles.View)
+        this.addStyle(eclair.styles.TabView)
+    }
+    
+    addChild(_child) {
+        if (_child instanceof EclairView) {
+            this.children.push(_child)
+            _child.parent = this
+
+            this.getElement(e => {
+                let childHTML = child;
+                if (_child instanceof EclairComponent) {
+                    childHTML = _child.compile()
+                }
+                e.insertAdjacentHTML('beforeend', childHTML)
+            })
+        } else {
+            throw "All children of Eclair's Tab View must inherit from an Eclair View"
         }
     }
 }

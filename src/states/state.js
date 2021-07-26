@@ -30,6 +30,18 @@ class EclairState {
         return `${this._value}`
     }
     
+    int(_default) {
+        try {
+            return parseInt(this._value)
+        } catch {
+            if (_default == null) {
+                return 0
+            } else {
+                return -1
+            }
+        }
+    }
+    
     bool() {
         return this._value == "true" || this._value == "True" || this._value == "TRUE" || 
             this._value == "yes" || this._value == "1" || this._value == "Yes" || 

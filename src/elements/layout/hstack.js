@@ -1,12 +1,22 @@
-// WARN Need to finish documentation and stuffs
+/// ## Eclair EclairHStack
+/// Create a horizontally stacked view in eclair.
+/// <br/>**args**:
+/// - elements: Elements within the view.
+/// ```javascript
+/// eclair.HStack([
+///    eclair.Text("This is a view"),
+///    eclair.Button("Views can have multiple elements"),
+///    "Or even just html"
+/// ])
+/// ```
 class EclairHStack extends EclairView {
-    constructor(func) {
-        super(func)
+    constructor(elements) {
+        super(elements)
         this
             .display("flex")
             .flexDirection("row")
             .alignItems("center")
-        this.css("justify-content: space-around;")
+            .css("justify-content: space-around;")
         
         // Need to remove view as given by parent
         this.removeStyle(eclair.styles.View)

@@ -23,6 +23,8 @@ def parse_file(breadcrumbs_path, text):
                 print("\033[0m" + line[5:].lstrip(" "))
             if line[:4] == "WARN":
                 print(f"\033[33m" + line[4:].lstrip(" "))
+            if line[:4] == "TODO":
+                print(f"\033[36m" + line[4:].lstrip(" "))
                     
                 
         else:
