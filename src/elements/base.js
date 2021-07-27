@@ -135,6 +135,17 @@ class EclairComponent extends EclairStylableObject {
     onBuild(callback) {return this._updateCallback("onBuild", callback);}
     performCallback(event, param1) {this._callbacks[event](this, param1);}
     
+    bindState(state, stateBindingID, onCallback, valueCallback) {
+        if (state instanceof EclairState) {
+            state.addCallback(`${this.id()}-${stateBindingID}`, function(state) {
+                let value = (valueCallback == null)? state.value() : valueCallback(state)
+                onCallback(value)
+            }, true)
+        } else {
+            onCallback(state)
+        }
+    }
+    
     build() {
         throw "Build function not implemented"
     }

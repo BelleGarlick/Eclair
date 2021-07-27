@@ -7,34 +7,50 @@ class EclairIFrame extends EclairCustomTagComponent {
     }
     
     url(_source) {
-        return _source == null? this.getAttr("src") : this.setAttr("src", _source)
+        this.bindState(_source, "src", value => {
+            this.setAttr("src", value)
+        })  
     }
     
     source(_source) {
-        return _source == null? this.getAttr("srcdoc") : this.setAttr("srcdoc", _source)
+        this.bindState(_source, "srcdoc", value => {
+            this.setAttr("srcdoc", value)
+        })  
     }
     
     allowFullScren(_allow) {
-        return _allow == null? this.getAttr("allowfullscreen") : this.setAttr("allowfullscreen", _allow)
+        this.bindState(_allow, "allowfullscreen", value => {
+            this.setAttr("allowfullscreen", value)
+        })  
     }
     
     allowPaymentRequest(_allow) {
-        return _allow == null? this.getAttr("allowpaymentrequest") : this.setAttr("allowpaymentrequest", _allow)
+        this.bindState(_allow, "allowpaymentrequest", value => {
+            this.setAttr("allowpaymentrequest", value)
+        })  
     }
     
     loading(_loading) {
-        return _loading == null? this.getAttr("loading") : this.setAttr("loading", _loading)
+        this.bindState(_loading, "loading", value => {
+            this.setAttr("loading", value)
+        })  
     }
     
     name(_name) {
-        return _name == null? this.getAttr("name") : this.setAttr("name", _name)
+        this.bindState(_name, "name", value => {
+            this.setAttr("name", value)
+        })  
     }
     
     referrerPolicy(_policy) {
-        return _policy == null? this.getAttr("referrerpolicy") : this.setAttr("referrerpolicy", _policy)
+        this.bindState(_policy, "referrerpolicy", value => {
+            this.setAttr("referrerpolicy", value)
+        })  
     }
     
     sandbox(_sandbox) {
-        return _sandbox == null? this.getAttr("sandbox") : this.setAttr("sandbox", _sandbox)
+        this.bindState(_sandbox, "sandbox", value => {
+            this.setAttr("sandbox", value)
+        })  
     }
 }

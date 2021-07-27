@@ -1,6 +1,14 @@
-// WARN Alert box doc not finished
+/// ## Eclair Alert Box
+/// Create an alert box to display a message.
+/// <br/>**args**:
+/// - text: Text message to display.
+/// ```javascript
+/// eclair.AlertBox("You have been signed out.")
+///     .title("Warning")
+///     .theme(eclair.Color().warning)
+/// ```
 class EclairAlertBox extends EclairComponent {
-    constructor(alert) {
+    constructor(text) {
         super()
         
         this._titleText = eclair.State(null)
@@ -10,7 +18,9 @@ class EclairAlertBox extends EclairComponent {
             .display("none")
             .fontColor("rgba(0, 0, 0, 0.6)")
             .width("100%")
-        this._text = eclair.Text(alert)
+        
+        // Add binding here for the text object
+        this._text = eclair.Text(text)
             .fontColor("rgba(0, 0, 0, 0.6)")
         
         // Configure parent/children relation
@@ -33,45 +43,37 @@ class EclairAlertBox extends EclairComponent {
         this.getStyleSheet()["box-shadow"] = "0px 0px 0px 2px rgba(0, 0, 0, 0.2) inset"
     }
     
-    theme(_theme) {
-        if (_theme instanceof EclairState) {            
-            let self = this
-            _theme.addCallback(this.id() + "-theme", function(state) {
-                self.background(state.value())
-            }, true)
-        } else {
-            this.background(_theme)
-        }
+    /// ### .theme
+    /// Set the theme of the alert box using an Eclair Color.
+    /// <br/>**args**:
+    /// - color: An eclair color object.
+    /// ```javascript
+    /// eclair.AlertBox("Invalid password")
+    ///     .theme(eclair.Color().red())
+    /// ```
+    theme(_color) {
+        this.bindState(_color, "color", value => {
+            this.background(value)
+        })
         
         return this
     }
         
     /// ### .title
     /// Set the title of the alert box.
-    /// **args**:
-    /// - _text: A string or State representing the value.
+    /// <br/>**args**:
+    /// - text: A string or State representing the value.
     /// ```javascript
     /// eclair.AlertBox("Invalid password")
     ///     .title("Error")
     /// ```
     title(_text) {        
-        if (_text instanceof EclairState) {            
-            let self = this
-            _text.addCallback(this.id() + "-title", function(state) {
-                self._titleText.value(state.value())
-                if (state.value() == null || state.value().trim().length == 0) {
-                    self._title.display("none")
-                } else {
-                    self._title.display("block")
-                }
-            }, true)
-        } else {
-            if (_text == null || _text.trim().length == 0) {
-                this._title.display("none")
-            } else {
-                this._title.display("block")
-            }
-        }
+        this.bindState(_text, "title", value => {
+            this._titleText.value(state.value())
+            
+            let hideTitle = _text == null || _text.trim().length == 0
+            this._title.display(hideTitle? "none": "block")
+        })
         
         return this
     }

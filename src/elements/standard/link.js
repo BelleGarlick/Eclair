@@ -10,14 +10,9 @@ class EclairLink extends EclairCustomTagComponent {
         super("a")
         
         // Set inner html to text or bind with state.
-        let self = this
-        if (_text instanceof EclairState) {
-            _text.addCallback(self.id() + "-html", function(state) {
-                self.innerHTML(state.value())
-            }, true)
-        } else {
-            self.innerHTML(_text)
-        }
+        this.bindState(_text, "html", value => {
+            this.innerHTML(value)
+        })  
         
         this.addStyle(eclair.styles.Link)
     }
@@ -29,14 +24,9 @@ class EclairLink extends EclairCustomTagComponent {
     ///     .url('https://duckduckgo.com/')
     /// ```
     url(_location) {
-        if (_location instanceof EclairState) {
-            let self = this
-            _location.addCallback(this.id() + "-location", function(state) {
-                self.setAttr("href", state.value())
-            }, true)
-        } else {
-            this.setAttr("href", _location)
-        }
+        this.bindState(_location, "href", value => {
+            this.setAttr("href", value)
+        })  
         
         return this
     }
@@ -49,14 +39,9 @@ class EclairLink extends EclairCustomTagComponent {
     ///     .target('_blank')
     /// ```
     target(_target) {
-        if (_target instanceof EclairState) {
-            let self = this
-            _target.addCallback(this.id() + "-target", function(state) {
-                self.setAttr("target", state.value())
-            }, true)
-        } else {
-            this.setAttr("target", _target)
-        }
+        this.bindState(_target, "target", value => {
+            this.setAttr("target", value)
+        })  
         
         return this
     }

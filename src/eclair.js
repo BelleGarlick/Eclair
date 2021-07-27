@@ -16,12 +16,14 @@
 // TODO Examples
 // TODO Tutorials
 // TODO Multimedia
-// Add get/post stuff
+// TODO Add get/post stuff
+// TODO Add more style fucntions to remove the need for .getStyleSheet
+// TODO Make sure all args are declared in documentation
 
 // When creating a new element make sure
 //  - Links to children objects and parent association
 //  - Default styles
-//  - Documentation: states the shared styles. Add functions doc and class doc
+//  - Documentation: states the shared styles. Add functions doc and class doc, args
 
 
 /// # Eclair
@@ -36,7 +38,7 @@ let eclair = {
     
     // State based 
     State: function(_val) {return new EclairState(_val);},    
-    Color: function(_col) {return new EclairColour(_col);},
+    Color: function(_col) {return new EclairColor(_col);},
     TextStyle: function() {return new EclairTextStyleState();},
     Alignment: function() {return new EclairAlignmentState();},
     

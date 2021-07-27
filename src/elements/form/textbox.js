@@ -13,20 +13,21 @@ class EclairTextBox extends EclairCustomTagComponent {
         
         let self = this
         
+        // TODO ON INPUT HERE IS WRONG
         this._updateCallback("onInput", e => {
             if (self.overrideOnCreate != null) {
                 overrideOnCreate(self)
             }
         })
         
-        this.setAttr("value", _text)
+        this.bindState(_text, "value", value => {
+            this.setAttr("value", value)
+            this.getElement(elem => {elem.value = value});
+        })
+        
+        
+        // TODO ON INPUT HERE IS WRONG NEED TO CALL ON CREATE AND HAVE FUNC FOR IT
         if (_text instanceof EclairState) {
-            _text.addCallback(this.id() + "-value", function(state) {
-                let newState = state.value()
-                self.setAttr("value", newState)
-                self.getElement(elem => {elem.value = newState});
-            }, true)
-            
             this._updateCallback("onInput", e => {
                 e.getElement(elem => {_text.value(elem.value)})
                 
@@ -44,14 +45,9 @@ class EclairTextBox extends EclairCustomTagComponent {
     ///     .name("fname")
     /// ```
     name(_name) {
-        if (_name instanceof EclairState) {
-            let self = this
-            _name.addCallback(this.id() + "-name", function(state) {
-                self.setAttr("name", state.value())
-            }, true)
-        } else {
-            this.setAttr("name", _name)
-        }
+        this.bindState(_name, "name", value => {
+            this.setAttr("name", value)
+        })
         
         return this
     }
@@ -63,14 +59,9 @@ class EclairTextBox extends EclairCustomTagComponent {
     ///     .placeholder("First name...")
     /// ```
     placeholder(_placeholder) {
-        if (_placeholder instanceof EclairState) {
-            let self = this
-            _placeholder.addCallback(this.id() + "-placeholder", function(state) {
-                self.setAttr("placeholder", state.value())
-            }, true)
-        } else {
-            this.setAttr("placeholder", _placeholder)
-        }
+        this.bindState(_placeholder, "placeholder", value => {
+            this.setAttr("placeholder", value)
+        })
         
         return this
     }
@@ -82,14 +73,9 @@ class EclairTextBox extends EclairCustomTagComponent {
     ///     .password(true)
     /// ```
     password(_password) {
-        if (_password instanceof EclairState) {
-            let self = this
-            _password.addCallback(this.id() + "-password", function(state) {
-                self.setAttr("type", _password.bool()? "password":'text')
-            }, true)
-        } else {
-            this.setAttr("type", isPassword? "password":'text')
-        }
+        this.bindState(_password, "password", value => {
+            this.setAttr("type", _password.bool()? "password":'text')
+        }, state => {return state.bool()})
         
         return this
     }
@@ -101,14 +87,10 @@ class EclairTextBox extends EclairCustomTagComponent {
     ///     .maxLength(280)
     /// ```
     maxLength(_maxLength) {
-        if (_maxLength instanceof EclairState) {
-            let self = this
-            _maxLength.addCallback(this.id() + "-maxLen", function(state) {
-                this.setAttr("maxlength", _maxLength.value())
-            }, true)
-        } else {
-            this.setAttr("maxlength", _maxLength)
-        }
+        this.bindState(_maxLength, "maxlength", value => {
+            this.setAttr("maxlength", value)
+        })
+        
         return this
     } 
     
@@ -119,22 +101,10 @@ class EclairTextBox extends EclairCustomTagComponent {
     ///     .enabled(false)
     /// ```
     enabled(_enabled) {
-        if (_enabled instanceof EclairState) {
-            let self = this
-            _enabled.addCallback(this.id() + "-enabled", function(state) {
-                if (state.bool()) {
-                    self.setAttr("disabled", null)
-                } else {
-                    self.setAttr("disabled", "true")
-                }
-            }, true)
-        } else {
-            if (_enabled) {
-                this.setAttr("disabled", null)
-            } else {
-                this.setAttr("disabled", "true")
-            }
-        }
+        this.bindState(_enabled, "enabled", value => {
+            this.setAttr("enabled", value ? "true" : "null")
+        }, state => {return state.bool()})
+        
         return this
     } 
     
@@ -145,22 +115,10 @@ class EclairTextBox extends EclairCustomTagComponent {
     ///     .required(true)
     /// ```
     required(_required) {
-        if (_required instanceof EclairState) {
-            let self = this
-            _required.addCallback(this.id() + "-required", function(state) {
-                if (state.bool()) {
-                    self.setAttr("required", "true")
-                } else {
-                    self.setAttr("required", null)
-                }
-            }, true)
-        } else {
-            if (_required) {
-                this.setAttr("required", "true")
-            } else {
-                this.setAttr("required", null)
-            }
-        }
+        this.bindState(_required, "required", value => {
+            this.setAttr("required", value ? "true" : "null")
+        }, state => {return state.bool()})
+        
         return this
     } 
     
@@ -171,22 +129,10 @@ class EclairTextBox extends EclairCustomTagComponent {
     ///     .autofocus(true)
     /// ```
     autofocus(_autofocus) {
-        if (_autofocus instanceof EclairState) {
-            let self = this
-            _autofocus.addCallback(this.id() + "-autofocus", function(state) {
-                if (state.bool()) {
-                    self.setAttr("autofocus", "true")
-                } else {
-                    self.setAttr("autofocus", null)
-                }
-            }, true)
-        } else {
-            if (_autofocus) {
-                this.setAttr("autofocus", "true")
-            } else {
-                this.setAttr("autofocus", null)
-            }
-        }
+        this.bindState(_autofocus, "autofocus", value => {
+            this.setAttr("autofocus", value ? "true" : "null")
+        }, state => {return state.bool()})
+        
         return this
     } 
 }

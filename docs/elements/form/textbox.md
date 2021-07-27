@@ -1,4 +1,3 @@
-[_elements.form.textbox_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/form/textbox.js)
 ## Eclair TextBox
 An eclair textbox element.
 ```javascript
@@ -48,3 +47,5 @@ Set whether the textbox is autofocused.
 eclair.TextBox("This textbox is autofocused")
     .autofocus(true)
 ```
+
+<br/><br/>Source: [_elements.form.textbox_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/form/textbox.js)

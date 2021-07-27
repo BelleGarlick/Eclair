@@ -27,30 +27,23 @@ class EclairHStack extends EclairView {
     /// INCLUDE elements.layout.vstack.alignment eclair.HStack()
     
     alignment(_alignment) {
-        if (_alignment instanceof EclairState) {
-            _alignment.addCallback(this.id() + "-alignment", function(state) {
-                this._setAlignment(state.value())
-            }, true)
-        } else {
-            this._setAlignment(_alignment)
-        }
+        this.bindState(_alignment, "alignment", value => {
+            if (value == "start") {
+                this.alignItems("flex-start")
+            } 
+            else if (value == "center") {
+                this.alignItems("center")
+            }
+            else if (value == "end") {
+                this.alignItems("flex-end")
+            }
+            else if (value == "stretch") {
+                this.alignItems("stretch")
+            } else {
+                throw "Unknown alignment"
+            }
+        })  
+        
         return this
-    }
-    
-    _setAlignment(_alignment) {
-        if (_alignment == "start") {
-            this.alignItems("flex-start")
-        } 
-        else if (_alignment == "center") {
-            this.alignItems("center")
-        }
-        else if (_alignment == "end") {
-            this.alignItems("flex-end")
-        }
-        else if (_alignment == "stretch") {
-            this.alignItems("stretch")
-        } else {
-            throw "Unknown alignment"
-        }
     }
 }

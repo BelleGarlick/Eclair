@@ -21,6 +21,7 @@ class EclairToggle extends EclairComponent {
         this._hiddenComponent = eclair.HiddenInput(_value)
     
         // Bind this object with the given eclair states
+        // TODO Move this this.bindState
         if (_value instanceof EclairState) {
             let self = this
             _value.addCallback(this.id() + "-toggle", function(state) {
@@ -129,16 +130,10 @@ class EclairToggle extends EclairComponent {
     ///     .enabled(true)
     /// ```
     enabled(_enabled) {
-        if (_enabled instanceof EclairState) {
-            let self = this
-            _enabled.addCallback(this.id() + "-enabled", function(state) {
-                self._enabled = state.bool()
-                self.opacity(self._enabled? 1 : 0.6)
-            }, true)
-        } else {
-            this._enabled = _enabled
-            self.opacity(_enabled? 1 : 0.6)
-        }
+        this.bindState(_enabled, "enabled", value => {
+            this._enabled = value
+            this.opacity(value? 1 : 0.6)
+        }, state => {return state.bool()})
         
         return this
     }
@@ -150,16 +145,10 @@ class EclairToggle extends EclairComponent {
     ///     .showTick(true)
     /// ```
     showTick(_bool) {
-        if (_bool instanceof EclairState) {
-            let self = this
-            _bool.addCallback(this.id() + "-showTick", function(state) {
-                self._showCheckMark = state.bool()
-                self._tickMark.opacity((self._showCheckMark && (self._hiddenComponent.getAttr("value") == "true"))? 1:0)
-            }, true)
-        } else {
-            this._showCheckMark = _bool
-            this._tickMark.opacity((_bool && (this._hiddenComponent.value() == "true"))? 1:0)
-        }
+        this.bindState(_bool, "showTick", value => {
+            this._showCheckMark = value
+            this._tickMark.opacity((value && (this._hiddenComponent.getAttr("value") == "true"))? 1:0)
+        }, state => {return state.bool()})
         
         return this
     }

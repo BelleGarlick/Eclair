@@ -1,4 +1,3 @@
-[_elements.layout.tabs_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/layout/tabs.js)
 ## Eclair TabView
 Create a tab view capable of hiding and showing states.
 <br/>**args**:
@@ -31,3 +30,5 @@ eclair.TabView(selectedTab)
     .addChild(eclair.View(eclair.Text("Tab 2")))
     .addChild(eclair.View(eclair.Text("Tab 3")))
 ```
+
+<br/><br/>Source: [_elements.layout.tabs_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/layout/tabs.js)

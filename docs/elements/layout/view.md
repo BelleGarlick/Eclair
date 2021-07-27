@@ -1,4 +1,3 @@
-[_elements.layout.view_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/layout/view.js)
 ## Eclair View
 Create a generic eclair View.
 <br/>**args**:
@@ -20,3 +19,5 @@ eclair.View()
     .addChild("Add raw text")
     .addChild("<p>Or even HTML</p>")
 ```
+
+<br/><br/>Source: [_elements.layout.view_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/layout/view.js)

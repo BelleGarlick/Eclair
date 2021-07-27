@@ -1,4 +1,3 @@
-[_elements.layout.vstack_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/layout/vstack.js)
 ## Eclair VStack
 Create a vertically stacked view in eclair.
 <br/>**args**:
@@ -28,3 +27,5 @@ Set the alignment of child items.
 eclair.VStack()
     .alignment(eclair.Alignment().center())
 ```
+
+<br/><br/>Source: [_elements.layout.vstack_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/layout/vstack.js)

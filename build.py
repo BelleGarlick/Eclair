@@ -19,7 +19,7 @@ def parse_file(breadcrumbs_path, text):
             source_doc += line.lstrip()[4:] + "\n"
             
         elif line.lstrip()[0:2] == "//":
-            line = line.lstrip("/").lstrip(" ")
+            line = line.lstrip().lstrip("/").lstrip(" ")
             if line[:5] == "PRINT":
                 print("\033[0m" + line[5:].lstrip(" "))
             if line[:4] == "WARN":
@@ -47,7 +47,7 @@ def parse_doc(breadcrumbs, documentation):
             "raw": []
         }
     
-    lines = [f"[_{breadcrumbs}_]({DOC_SRC_LINK}{breadcrumbs.replace('.', '/')}.js)"]
+    lines = []
     shared = create_default_shared_data()
     
     for line in documentation.split("\n"):
@@ -95,6 +95,7 @@ def parse_doc(breadcrumbs, documentation):
             if shared["active"]:
                 shared["raw"].append(line)
 
+    lines.append(f"<br/><br/>Source: [_{breadcrumbs}_]({DOC_SRC_LINK}{breadcrumbs.replace('.', '/')}.js)")
     return "\n".join(lines)
 
 

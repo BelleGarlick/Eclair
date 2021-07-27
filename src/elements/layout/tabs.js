@@ -24,13 +24,11 @@ class EclairTabView extends EclairView {
         
         // Add callback for selecting tabs
         if (_selectedView instanceof EclairState) {
-            let self = this
-            _selectedView.addCallback(this.id() + "-tab", function(state) {
-                let newState = state.int(0)
+            this.bindState(_selectedView, "tab", value => {
                 for (let e = 0; e < self.children.length; e++) {
-                    self.children[e].display(newState == e? "flex": "none")
+                    self.children[e].display(value == e? "flex": "none")
                 }
-            }, true)
+            }, state => {return state.int(0)})
         } else {
             throw "First parameter of Eclair TabView's must be an Eclair State"
         }

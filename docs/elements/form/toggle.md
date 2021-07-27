@@ -1,4 +1,3 @@
-[_elements.form.toggle_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/form/toggle.js)
 ## Eclair Toggle
 An eclair toggle element.
 ```javascript
@@ -31,3 +30,5 @@ Set whether the tick is showing.
 eclair.Toggle(false)
     .showTick(true)
 ```
+
+<br/><br/>Source: [_elements.form.toggle_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/form/toggle.js)

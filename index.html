@@ -30,13 +30,13 @@ let linkTarget = State("_blank")
 let selectedTab = State(0)
 
 
-let backgroundColour = eclair.Color().hex("#f6f6f6")
+let backgroundColor = eclair.Color().hex("#f6f6f6")
 
 
 function group(func) {
     return VStack(func)
         .alignment("stretch")
-        .backgroundColor(backgroundColour)
+        .backgroundColor(backgroundColor)
         .borderRadius("3px")
         .padding("20px")
         .margin("10px")

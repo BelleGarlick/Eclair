@@ -11,7 +11,7 @@ let eclair = {
     Style: function() {return new EclairStyleComponent();},
     
     State: function(_val) {return new EclairState(_val);},    
-    Color: function(_col) {return new EclairColour(_col);},
+    Color: function(_col) {return new EclairColor(_col);},
     TextStyle: function() {return new EclairTextStyleState();},
     Alignment: function() {return new EclairAlignmentState();},
     
@@ -84,6 +84,10 @@ class EclairState {
         return `${this._value}`
     }
     
+    number() {
+        return this.value
+    }
+    
     int(_default) {
         try {
             return parseInt(this._value)
@@ -100,6 +104,16 @@ class EclairState {
         return this._value == "true" || this._value == "True" || this._value == "TRUE" || 
             this._value == "yes" || this._value == "1" || this._value == "Yes" || 
             this._value == "YES" || this._value || this._value == 1
+    }
+
+    true() {
+        this.value(true)
+        return this
+    }
+
+    false() {
+        this.value(false)
+        return this
     }
     
     toggle() {
@@ -121,7 +135,7 @@ class EclairAlignmentState extends EclairState {
 
 
 // states.color
-class EclairColour extends EclairState {
+class EclairColor extends EclairState {
     constructor(_col) {
         super(_col)
     }
@@ -445,7 +459,7 @@ class EclairStyleComponent extends EclairStylableObject {
 }
 
 
-// style.object-styles
+// style.defaults
 eclair.styles = {
     View: eclair.Style(),
     VStack: eclair.Style(),
@@ -778,6 +792,17 @@ class EclairComponent extends EclairStylableObject {
     onBuild(callback) {return this._updateCallback("onBuild", callback);}
     performCallback(event, param1) {this._callbacks[event](this, param1);}
     
+    bindState(state, stateBindingID, onCallback, valueCallback) {
+        if (state instanceof EclairState) {
+            state.addCallback(`${this.id()}-${stateBindingID}`, function(state) {
+                let value = (valueCallback == null)? state.value() : valueCallback(state)
+                onCallback(value)
+            }, true)
+        } else {
+            onCallback(state)
+        }
+    }
+    
     build() {
         throw "Build function not implemented"
     }
@@ -867,7 +892,7 @@ class EclairTextArea extends EclairCustomTagComponent {
 
 // elements.custom.alert-box
 class EclairAlertBox extends EclairComponent {
-    constructor(alert) {
+    constructor(text) {
         super()
         
         this._titleText = eclair.State(null)
@@ -877,7 +902,8 @@ class EclairAlertBox extends EclairComponent {
             .display("none")
             .fontColor("rgba(0, 0, 0, 0.6)")
             .width("100%")
-        this._text = eclair.Text(alert)
+        
+        this._text = eclair.Text(text)
             .fontColor("rgba(0, 0, 0, 0.6)")
         
         this._title.parent = this
@@ -899,37 +925,21 @@ class EclairAlertBox extends EclairComponent {
         this.getStyleSheet()["box-shadow"] = "0px 0px 0px 2px rgba(0, 0, 0, 0.2) inset"
     }
     
-    theme(_theme) {
-        if (_theme instanceof EclairState) {            
-            let self = this
-            _theme.addCallback(this.id() + "-theme", function(state) {
-                self.background(state.value())
-            }, true)
-        } else {
-            this.background(_theme)
-        }
+    theme(_color) {
+        this.bindState(_color, "color", value => {
+            this.background(value)
+        })
         
         return this
     }
         
     title(_text) {        
-        if (_text instanceof EclairState) {            
-            let self = this
-            _text.addCallback(this.id() + "-title", function(state) {
-                self._titleText.value(state.value())
-                if (state.value() == null || state.value().trim().length == 0) {
-                    self._title.display("none")
-                } else {
-                    self._title.display("block")
-                }
-            }, true)
-        } else {
-            if (_text == null || _text.trim().length == 0) {
-                this._title.display("none")
-            } else {
-                this._title.display("block")
-            }
-        }
+        this.bindState(_text, "title", value => {
+            this._titleText.value(state.value())
+            
+            let hideTitle = _text == null || _text.trim().length == 0
+            this._title.display(hideTitle? "none": "block")
+        })
         
         return this
     }
@@ -940,7 +950,6 @@ class EclairAlertBox extends EclairComponent {
 }
 
 // elements.custom.progress
-
 class EclairProgressBar extends EclairComponent {
     constructor(_progress) {
         super()
@@ -949,21 +958,12 @@ class EclairProgressBar extends EclairComponent {
         this._label = eclair.Text(this._labelText)
         this._indicator = eclair.HStack([this._label])
         
-        this.progress = 0
-        if (_progress instanceof EclairState) {
-            let self = this
-            _progress.addCallback(this.id() + "-progress", function(state) {
-                _progress = Math.max(Math.min(state.value(), 1), 0)
-                self._progress = _progress;
-                self._labelText.value(Math.round(_progress * 100) + "%")
-                self._indicator.width((_progress * 100 + 0.0001) + "%")
-            }, true)
-        } else {
-            _progress = Math.max(Math.min(_progress, 1), 0)
-            this._progress = _progress;
-            this._labelText.value(Math.round(_progress * 100) + "%")
-            this._indicator.width((_progress * 100 + 0.0001) + "%")
-        }
+        this.bindState(_progress, "progress", value => {
+            _progress = Math.max(Math.min(value, 1), 0)
+            this._progress = value;
+            this._labelText.value(Math.round(value * 100) + "%")
+            this._indicator.width((value * 100 + 0.0001) + "%")
+        }, state => {return state.number()})
         
         this._indicator.parent = this
         this.children = [this._indicator]
@@ -974,28 +974,15 @@ class EclairProgressBar extends EclairComponent {
     }
     
     striped(_on) {
-        if (_on instanceof EclairState) {
-            let self = this
-            _on.addCallback(this.id() + "-color", function(state) {
-                if (state.value()) {
-                    self._indicator.getStyleSheet()["background-image"] = "linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent)";
-                    self._indicator.getStyleSheet()["background-size"] = "1rem 1rem;";
-                } else {
-                    self._indicator.getStyleSheet()["background-image"] = "";
-                    self._indicator.getStyleSheet()["background-size"] = "1rem 1rem;";
-                }
-                self._indicator.updateCSSStyle()
-            }, true)
-        } else {
-            if (_on) {
+        this.bindState(_on, "color", value => {
+            if (value) {
                 this._indicator.getStyleSheet()["background-image"] = "linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent)";
                 this._indicator.getStyleSheet()["background-size"] = "1rem 1rem;";
             } else {
                 this._indicator.getStyleSheet()["background-image"] = "";
                 this._indicator.getStyleSheet()["background-size"] = "1rem 1rem;";
             }
-            this._indicator.updateCSSStyle()
-        }
+        }, state => {return state.bool()})
         
         return this;
     }
@@ -1016,14 +1003,9 @@ class EclairProgressBar extends EclairComponent {
     }
     
     showLabel(_show) {
-        if (_show instanceof EclairState) {
-            let self = this
-            _show.addCallback(this.id() + "-label", function(state) {
-                self._label.opacity(state.bool()? "1":"0")
-            }, true)
-        } else {
-            this._label.opacity(_show? "1":"0")
-        }
+        this.bindState(_show, "label", value => {
+            this._label.opacity(value? "1":"0")
+        }, state => {return state.bool()});
         
         return this
     }
@@ -1150,16 +1132,10 @@ class EclairButton extends EclairComponent {
     constructor(text) {
         super()
         
-        if (text instanceof EclairState) {
-            let self = this
-            text.addCallback(this.id() + "-text", function(state) {
-                let newText = state.value()
-                self.text = newText;
-                self.getElement(elem => {elem.innerHTML = newText;});
-            }, true)
-        } else {
-            this.text = text;
-        }
+        this.bindState(text, "text", value => {
+            this.text = value;
+            this.getElement(elem => {elem.innerHTML = value;});
+        })
         
         this.setAttr("type", "button")
         this.addStyle(eclair.styles.Button)
@@ -1686,29 +1662,16 @@ class EclairHiddenInput extends EclairCustomTagComponent {
         super("input")
         this.setAttr("type", "hidden")
 
-        if (_value instanceof EclairState) {
-            let self = this
-            _value.addCallback(this.id() + "-value", function(state) {
-                let newState = state.value()
-                
-                self.setAttr("value", newState)
-                self.getElement(e => {e.value = newState})
-            }, true)
-        } else {
-            this.setAttr("value", _value)
-            this.getElement(e => {e.value = _value})
-        }
+        this.bindState(_value, "value", value => {
+            this.setAttr("value", value)
+            this.getElement(e => {e.value = value})
+        })
     }
     
     name(_name) {
-        if (_name instanceof EclairState) {
-            let self = this
-            _name.addCallback(this.id() + "-name", function(state) {
-                self.setAttr("name", state.value())
-            }, true)
-        } else {
-            this.setAttr("name", _name)
-        }
+        this.bindState(_name, "name", value => {
+            this.setAttr("name", value)
+        })
         
         return this
     }
@@ -1729,14 +1692,13 @@ class EclairTextBox extends EclairCustomTagComponent {
             }
         })
         
-        this.setAttr("value", _text)
+        this.bindState(_text, "value", value => {
+            this.setAttr("value", value)
+            this.getElement(elem => {elem.value = value});
+        })
+        
+        
         if (_text instanceof EclairState) {
-            _text.addCallback(this.id() + "-value", function(state) {
-                let newState = state.value()
-                self.setAttr("value", newState)
-                self.getElement(elem => {elem.value = newState});
-            }, true)
-            
             this._updateCallback("onInput", e => {
                 e.getElement(elem => {_text.value(elem.value)})
                 
@@ -1748,113 +1710,58 @@ class EclairTextBox extends EclairCustomTagComponent {
     }
     
     name(_name) {
-        if (_name instanceof EclairState) {
-            let self = this
-            _name.addCallback(this.id() + "-name", function(state) {
-                self.setAttr("name", state.value())
-            }, true)
-        } else {
-            this.setAttr("name", _name)
-        }
+        this.bindState(_name, "name", value => {
+            this.setAttr("name", value)
+        })
         
         return this
     }
     
     placeholder(_placeholder) {
-        if (_placeholder instanceof EclairState) {
-            let self = this
-            _placeholder.addCallback(this.id() + "-placeholder", function(state) {
-                self.setAttr("placeholder", state.value())
-            }, true)
-        } else {
-            this.setAttr("placeholder", _placeholder)
-        }
+        this.bindState(_placeholder, "placeholder", value => {
+            this.setAttr("placeholder", value)
+        })
         
         return this
     }
     
     password(_password) {
-        if (_password instanceof EclairState) {
-            let self = this
-            _password.addCallback(this.id() + "-password", function(state) {
-                self.setAttr("type", _password.bool()? "password":'text')
-            }, true)
-        } else {
-            this.setAttr("type", isPassword? "password":'text')
-        }
+        this.bindState(_password, "password", value => {
+            this.setAttr("type", _password.bool()? "password":'text')
+        }, state => {return state.bool()})
         
         return this
     }
     
     maxLength(_maxLength) {
-        if (_maxLength instanceof EclairState) {
-            let self = this
-            _maxLength.addCallback(this.id() + "-maxLen", function(state) {
-                this.setAttr("maxlength", _maxLength.value())
-            }, true)
-        } else {
-            this.setAttr("maxlength", _maxLength)
-        }
+        this.bindState(_maxLength, "maxlength", value => {
+            this.setAttr("maxlength", value)
+        })
+        
         return this
     } 
     
     enabled(_enabled) {
-        if (_enabled instanceof EclairState) {
-            let self = this
-            _enabled.addCallback(this.id() + "-enabled", function(state) {
-                if (state.bool()) {
-                    self.setAttr("disabled", null)
-                } else {
-                    self.setAttr("disabled", "true")
-                }
-            }, true)
-        } else {
-            if (_enabled) {
-                this.setAttr("disabled", null)
-            } else {
-                this.setAttr("disabled", "true")
-            }
-        }
+        this.bindState(_enabled, "enabled", value => {
+            this.setAttr("enabled", value ? "true" : "null")
+        }, state => {return state.bool()})
+        
         return this
     } 
     
     required(_required) {
-        if (_required instanceof EclairState) {
-            let self = this
-            _required.addCallback(this.id() + "-required", function(state) {
-                if (state.bool()) {
-                    self.setAttr("required", "true")
-                } else {
-                    self.setAttr("required", null)
-                }
-            }, true)
-        } else {
-            if (_required) {
-                this.setAttr("required", "true")
-            } else {
-                this.setAttr("required", null)
-            }
-        }
+        this.bindState(_required, "required", value => {
+            this.setAttr("required", value ? "true" : "null")
+        }, state => {return state.bool()})
+        
         return this
     } 
     
     autofocus(_autofocus) {
-        if (_autofocus instanceof EclairState) {
-            let self = this
-            _autofocus.addCallback(this.id() + "-autofocus", function(state) {
-                if (state.bool()) {
-                    self.setAttr("autofocus", "true")
-                } else {
-                    self.setAttr("autofocus", null)
-                }
-            }, true)
-        } else {
-            if (_autofocus) {
-                this.setAttr("autofocus", "true")
-            } else {
-                this.setAttr("autofocus", null)
-            }
-        }
+        this.bindState(_autofocus, "autofocus", value => {
+            this.setAttr("autofocus", value ? "true" : "null")
+        }, state => {return state.bool()})
+        
         return this
     } 
 }
@@ -1953,31 +1860,19 @@ class EclairToggle extends EclairComponent {
     }
     
     enabled(_enabled) {
-        if (_enabled instanceof EclairState) {
-            let self = this
-            _enabled.addCallback(this.id() + "-enabled", function(state) {
-                self._enabled = state.bool()
-                self.opacity(self._enabled? 1 : 0.6)
-            }, true)
-        } else {
-            this._enabled = _enabled
-            self.opacity(_enabled? 1 : 0.6)
-        }
+        this.bindState(_enabled, "enabled", value => {
+            this._enabled = value
+            this.opacity(value? 1 : 0.6)
+        }, state => {return state.bool()})
         
         return this
     }
     
     showTick(_bool) {
-        if (_bool instanceof EclairState) {
-            let self = this
-            _bool.addCallback(this.id() + "-showTick", function(state) {
-                self._showCheckMark = state.bool()
-                self._tickMark.opacity((self._showCheckMark && (self._hiddenComponent.getAttr("value") == "true"))? 1:0)
-            }, true)
-        } else {
-            this._showCheckMark = _bool
-            this._tickMark.opacity((_bool && (this._hiddenComponent.value() == "true"))? 1:0)
-        }
+        this.bindState(_bool, "showTick", value => {
+            this._showCheckMark = value
+            this._tickMark.opacity((value && (this._hiddenComponent.getAttr("value") == "true"))? 1:0)
+        }, state => {return state.bool()})
         
         return this
     }
@@ -2076,31 +1971,24 @@ class EclairVStack extends EclairView {
     
     
     alignment(_alignment) {
-        if (_alignment instanceof EclairState) {
-            _alignment.addCallback(this.id() + "-alignment", function(state) {
-                this._setAlignment(state.value())
-            }, true)
-        } else {
-            this._setAlignment(_alignment)
-        }
+        this.bindState(_alignment, "alignment", value => {
+            if (value == "start") {
+                this.alignItems("flex-start")
+            } 
+            else if (value == "center") {
+                this.alignItems("center")
+            }
+            else if (value == "end") {
+                this.alignItems("flex-end")
+            }
+            else if (value == "stretch") {
+                this.alignItems("stretch")
+            } else {
+                throw "Unknown alignment"
+            }
+        })  
+        
         return this
-    }
-    
-    _setAlignment(_alignment) {
-        if (_alignment == "start") {
-            this.alignItems("flex-start")
-        } 
-        else if (_alignment == "center") {
-            this.alignItems("center")
-        }
-        else if (_alignment == "end") {
-            this.alignItems("flex-end")
-        }
-        else if (_alignment == "stretch") {
-            this.alignItems("stretch")
-        } else {
-            throw "Unknown alignment"
-        }
     }
 }
 
@@ -2120,31 +2008,24 @@ class EclairHStack extends EclairView {
     
     
     alignment(_alignment) {
-        if (_alignment instanceof EclairState) {
-            _alignment.addCallback(this.id() + "-alignment", function(state) {
-                this._setAlignment(state.value())
-            }, true)
-        } else {
-            this._setAlignment(_alignment)
-        }
+        this.bindState(_alignment, "alignment", value => {
+            if (value == "start") {
+                this.alignItems("flex-start")
+            } 
+            else if (value == "center") {
+                this.alignItems("center")
+            }
+            else if (value == "end") {
+                this.alignItems("flex-end")
+            }
+            else if (value == "stretch") {
+                this.alignItems("stretch")
+            } else {
+                throw "Unknown alignment"
+            }
+        })  
+        
         return this
-    }
-    
-    _setAlignment(_alignment) {
-        if (_alignment == "start") {
-            this.alignItems("flex-start")
-        } 
-        else if (_alignment == "center") {
-            this.alignItems("center")
-        }
-        else if (_alignment == "end") {
-            this.alignItems("flex-end")
-        }
-        else if (_alignment == "stretch") {
-            this.alignItems("stretch")
-        } else {
-            throw "Unknown alignment"
-        }
     }
 }
 
@@ -2154,13 +2035,11 @@ class EclairTabView extends EclairView {
         super(elements)
         
         if (_selectedView instanceof EclairState) {
-            let self = this
-            _selectedView.addCallback(this.id() + "-tab", function(state) {
-                let newState = state.int(0)
+            this.bindState(_selectedView, "tab", value => {
                 for (let e = 0; e < self.children.length; e++) {
-                    self.children[e].display(newState == e? "flex": "none")
+                    self.children[e].display(value == e? "flex": "none")
                 }
-            }, true)
+            }, state => {return state.int(0)})
         } else {
             throw "First parameter of Eclair TabView's must be an Eclair State"
         }
@@ -2206,35 +2085,51 @@ class EclairIFrame extends EclairCustomTagComponent {
     }
     
     url(_source) {
-        return _source == null? this.getAttr("src") : this.setAttr("src", _source)
+        this.bindState(_source, "src", value => {
+            this.setAttr("src", value)
+        })  
     }
     
     source(_source) {
-        return _source == null? this.getAttr("srcdoc") : this.setAttr("srcdoc", _source)
+        this.bindState(_source, "srcdoc", value => {
+            this.setAttr("srcdoc", value)
+        })  
     }
     
     allowFullScren(_allow) {
-        return _allow == null? this.getAttr("allowfullscreen") : this.setAttr("allowfullscreen", _allow)
+        this.bindState(_allow, "allowfullscreen", value => {
+            this.setAttr("allowfullscreen", value)
+        })  
     }
     
     allowPaymentRequest(_allow) {
-        return _allow == null? this.getAttr("allowpaymentrequest") : this.setAttr("allowpaymentrequest", _allow)
+        this.bindState(_allow, "allowpaymentrequest", value => {
+            this.setAttr("allowpaymentrequest", value)
+        })  
     }
     
     loading(_loading) {
-        return _loading == null? this.getAttr("loading") : this.setAttr("loading", _loading)
+        this.bindState(_loading, "loading", value => {
+            this.setAttr("loading", value)
+        })  
     }
     
     name(_name) {
-        return _name == null? this.getAttr("name") : this.setAttr("name", _name)
+        this.bindState(_name, "name", value => {
+            this.setAttr("name", value)
+        })  
     }
     
     referrerPolicy(_policy) {
-        return _policy == null? this.getAttr("referrerpolicy") : this.setAttr("referrerpolicy", _policy)
+        this.bindState(_policy, "referrerpolicy", value => {
+            this.setAttr("referrerpolicy", value)
+        })  
     }
     
     sandbox(_sandbox) {
-        return _sandbox == null? this.getAttr("sandbox") : this.setAttr("sandbox", _sandbox)
+        this.bindState(_sandbox, "sandbox", value => {
+            this.setAttr("sandbox", value)
+        })  
     }
 }
 
@@ -2243,27 +2138,17 @@ class EclairImage extends EclairCustomTagComponent {
     constructor(_src) {
         super("img")
         
-        if (_src instanceof EclairState) {
-            let self = this
-            _src.addCallback(this.id() + "-src", function(state) {
-                self.setAttr("src", state.value())
-            }, true)
-        } else {
-            this.setAttr("src", _src)
-        }
+        this.bindState(_src, "src", value => {
+            this.setAttr("src", value)
+        })  
         
         this.addStyle(eclair.styles.Image)
     }
     
     altText(_alt) {
-        if (_alt instanceof EclairState) {
-            let self = this
-            _alt.addCallback(this.id() + "-alt", function(state) {
-                self.setAttr("alt", state.value())
-            }, true)
-        } else {
-            this.setAttr("alt", _alt)
-        }
+        this.bindState(_alt, "alt", value => {
+            this.setAttr("alt", value)
+        })  
     }
 }
 
@@ -2272,40 +2157,25 @@ class EclairLink extends EclairCustomTagComponent {
     constructor(_text) {
         super("a")
         
-        let self = this
-        if (_text instanceof EclairState) {
-            _text.addCallback(self.id() + "-html", function(state) {
-                self.innerHTML(state.value())
-            }, true)
-        } else {
-            self.innerHTML(_text)
-        }
+        this.bindState(_text, "html", value => {
+            this.innerHTML(value)
+        })  
         
         this.addStyle(eclair.styles.Link)
     }
     
     url(_location) {
-        if (_location instanceof EclairState) {
-            let self = this
-            _location.addCallback(this.id() + "-location", function(state) {
-                self.setAttr("href", state.value())
-            }, true)
-        } else {
-            this.setAttr("href", _location)
-        }
+        this.bindState(_location, "href", value => {
+            this.setAttr("href", value)
+        })  
         
         return this
     }
     
     target(_target) {
-        if (_target instanceof EclairState) {
-            let self = this
-            _target.addCallback(this.id() + "-target", function(state) {
-                self.setAttr("target", state.value())
-            }, true)
-        } else {
-            this.setAttr("target", _target)
-        }
+        this.bindState(_target, "target", value => {
+            this.setAttr("target", value)
+        })  
         
         return this
     }
@@ -2316,67 +2186,53 @@ class EclairText extends EclairComponent {
     constructor(text) {
         super()
         
-        this._text = text;
-        if (text instanceof EclairState) {
-            let self = this
-            text.addCallback(this.id() + "-text", function(state) {
-                let newState = state.value()
-                self._text = newState;
-                self.getElement(elem => {elem.innerHTML = newState});
-            }, true)
-        }
+        this.bindState(text, "text", value => {
+            this._text = value;
+            this.getElement(elem => {elem.innerHTML = value});
+        })  
         
         this.addStyle(eclair.styles.Text)
     }
     
     type(_state) {
-        if (_state instanceof EclairTextStyleState) {
-            let self = this
-            _state.addCallback(this.id() + "-type", function(state) {
-                self._setType(state.value())
-            }, true)
-        } else {
-            this._setType(_state);
-        }
+        this.bindState(_state, "type", newType => {
+            if (newType == "title") {
+                this.fontSize("40px")
+                    .fontWeight(700)
+                    .margin("20px 10px 10px 10px")
+            }
+
+            if (newType == "subtitle") {
+                this.fontSize("25px")
+                    .margin("20px 10px 10px 10px")
+            }
+
+            if (newType == "heading1") {
+                this.fontSize("30px")
+                    .fontWeight(700)
+                    .margin("20px 10px 10px 10px")
+            }
+
+            if (newType == "heading2") {
+                this.fontSize("25px")
+                    .fontWeight(700)
+                    .margin("20px 10px 10px 10px")
+            }
+
+            if (newType == "heading3") {
+                this.fontSize("20px")
+                    .fontWeight(700)
+                    .margin("20px 10px 10px 10px")
+            }
+
+            if (newType == "heading4") {
+                this.fontSize("15px")
+                    .fontWeight(700)
+                    .margin("20px 10px 10px 10px")
+            }
+        })  
         
         return this
-    }
-    
-    _setType(newType) {
-        if (newType == "title") {
-            this.fontSize("40px")
-                .fontWeight(700)
-                .margin("20px 10px 10px 10px")
-        }
-        
-        if (newType == "subtitle") {
-            this.fontSize("25px")
-                .margin("20px 10px 10px 10px")
-        }
-        
-        if (newType == "heading1") {
-            this.fontSize("30px")
-                .fontWeight(700)
-                .margin("20px 10px 10px 10px")
-        }
-        
-        if (newType == "heading2") {
-            this.fontSize("25px")
-                .fontWeight(700)
-                .margin("20px 10px 10px 10px")
-        }
-        
-        if (newType == "heading3") {
-            this.fontSize("20px")
-                .fontWeight(700)
-                .margin("20px 10px 10px 10px")
-        }
-        
-        if (newType == "heading4") {
-            this.fontSize("15px")
-                .fontWeight(700)
-                .margin("20px 10px 10px 10px")
-        }
     }
     
     build() {

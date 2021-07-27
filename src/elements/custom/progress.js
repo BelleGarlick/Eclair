@@ -1,5 +1,10 @@
-// WARN eclair progress bar doc not finished.
-
+/// ## Eclair Progress Bar
+/// Create a eclair progress bar object.
+/// ```javascript
+/// eclair.EclairProgressBar(0.5)
+///     .striped(true)
+///     .background("blue")
+/// ```
 class EclairProgressBar extends EclairComponent {
     constructor(_progress) {
         super()
@@ -9,21 +14,12 @@ class EclairProgressBar extends EclairComponent {
         this._indicator = eclair.HStack([this._label])
         
         // Add callback for progress changing state
-        this.progress = 0
-        if (_progress instanceof EclairState) {
-            let self = this
-            _progress.addCallback(this.id() + "-progress", function(state) {
-                _progress = Math.max(Math.min(state.value(), 1), 0)
-                self._progress = _progress;
-                self._labelText.value(Math.round(_progress * 100) + "%")
-                self._indicator.width((_progress * 100 + 0.0001) + "%")
-            }, true)
-        } else {
-            _progress = Math.max(Math.min(_progress, 1), 0)
-            this._progress = _progress;
-            this._labelText.value(Math.round(_progress * 100) + "%")
-            this._indicator.width((_progress * 100 + 0.0001) + "%")
-        }
+        this.bindState(_progress, "progress", value => {
+            _progress = Math.max(Math.min(value, 1), 0)
+            this._progress = value;
+            this._labelText.value(Math.round(value * 100) + "%")
+            this._indicator.width((value * 100 + 0.0001) + "%")
+        }, state => {return state.number()})
         
         // Configure parent/children relation. Note label is a child of the inidicator so that sets the parent/child.
         this._indicator.parent = this
@@ -35,48 +31,60 @@ class EclairProgressBar extends EclairComponent {
         this.addStyle(eclair.styles.ProgressBar)
     }
     
+    /// ### .striped
+    /// Enable or disable a stripey background.
+    /// <br/>**args**:
+    /// - on: If true, stripe the background
+    /// ```javascript
+    /// eclair.ProgressBar(0.5)
+    ///     .stiped(true)
+    /// ```
     striped(_on) {
-        if (_on instanceof EclairState) {
-            let self = this
-            _on.addCallback(this.id() + "-color", function(state) {
-                if (state.value()) {
-                    self._indicator.getStyleSheet()["background-image"] = "linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent)";
-                    self._indicator.getStyleSheet()["background-size"] = "1rem 1rem;";
-                } else {
-                    self._indicator.getStyleSheet()["background-image"] = "";
-                    self._indicator.getStyleSheet()["background-size"] = "1rem 1rem;";
-                }
-                self._indicator.updateCSSStyle()
-            }, true)
-        } else {
-            if (_on) {
+        this.bindState(_on, "color", value => {
+            if (value) {
                 this._indicator.getStyleSheet()["background-image"] = "linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent)";
                 this._indicator.getStyleSheet()["background-size"] = "1rem 1rem;";
             } else {
                 this._indicator.getStyleSheet()["background-image"] = "";
                 this._indicator.getStyleSheet()["background-size"] = "1rem 1rem;";
             }
-            this._indicator.updateCSSStyle()
-        }
+        }, state => {return state.bool()})
         
         return this;
     }
     
-    // DOC func indicator 
-    // This function allows you to access the progress bar's indicator via a callback. 
-    // ARG callback
+    /// ### .indicator
+    /// Callback function to access the indicator component.
+    /// <br/>**args**:
+    /// - callback: The callback function to be executed with the indicator component as a parameter.
+    /// ```javascript
+    /// eclair.ProgressBar(0.5)
+    ///     .indicator(e => {
+    ///         indicator.background("blue")
+    ///     })
+    /// ```
     indicator(callback) {
         callback(this._indicator)
         return this;
     }
     
+    /// ### .label
+    /// Callback function to access the label component.
+    /// <br/>**args**:
+    /// - callback: The callback function to be executed with the label component as a parameter.
+    /// ```javascript
+    /// eclair.ProgressBar(0.5)
+    ///     .label(e => {
+    ///         e.fontColor("black")
+    ///     })
+    /// ```
     label(callback) {
         callback(this._label)
         return this;
     }
         
     /// ### .color
-    /// Sets the colour of the progress bar.  
+    /// Sets the color of the progress bar.  
     /// <br/>**args**:
     /// - _color: Can be either a string, an eclair State or eclair Color. 
     /// ```javascript
@@ -97,14 +105,9 @@ class EclairProgressBar extends EclairComponent {
     ///     .showLabel(true)
     /// ```
     showLabel(_show) {
-        if (_show instanceof EclairState) {
-            let self = this
-            _show.addCallback(this.id() + "-label", function(state) {
-                self._label.opacity(state.bool()? "1":"0")
-            }, true)
-        } else {
-            this._label.opacity(_show? "1":"0")
-        }
+        this.bindState(_show, "label", value => {
+            this._label.opacity(value? "1":"0")
+        }, state => {return state.bool()});
         
         return this
     }

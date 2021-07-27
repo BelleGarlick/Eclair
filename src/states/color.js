@@ -1,5 +1,5 @@
 // TODO Store all colours as rgba to allow for darkening colours.
-class EclairColour extends EclairState {
+class EclairColor extends EclairState {
     constructor(_col) {
         super(_col)
     }
@@ -19,7 +19,7 @@ class EclairColour extends EclairState {
         return this;
     }   
     
-    // Standard colours.
+    // Standard colors.
     aliceBlue() {return this.hex("F0F8FF")}
     antiqueWhite() {return this.hex("FAEBD7")}
     aqua() {return this.hex("00FFFF")}
@@ -169,7 +169,7 @@ class EclairColour extends EclairState {
     yellow() {return this.hex("FFFF00")}
     yellowGreen() {return this.hex("9ACD32")}
     
-    // Themed colours?
+    // Themed colors
     success() {return this.hex("d4edd9")}
     danger() {return this.hex("f8d7d9")}
     warning() {return this.hex("fff3cd")}

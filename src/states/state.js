@@ -30,6 +30,11 @@ class EclairState {
         return `${this._value}`
     }
     
+    number() {
+        // TODO Properly implement
+        return this.value
+    }
+    
     int(_default) {
         try {
             return parseInt(this._value)
@@ -46,6 +51,16 @@ class EclairState {
         return this._value == "true" || this._value == "True" || this._value == "TRUE" || 
             this._value == "yes" || this._value == "1" || this._value == "Yes" || 
             this._value == "YES" || this._value || this._value == 1
+    }
+
+    true() {
+        this.value(true)
+        return this
+    }
+
+    false() {
+        this.value(false)
+        return this
     }
     
     toggle() {

@@ -10,18 +10,10 @@ class EclairHiddenInput extends EclairCustomTagComponent {
         super("input")
         this.setAttr("type", "hidden")
 
-        if (_value instanceof EclairState) {
-            let self = this
-            _value.addCallback(this.id() + "-value", function(state) {
-                let newState = state.value()
-                
-                self.setAttr("value", newState)
-                self.getElement(e => {e.value = newState})
-            }, true)
-        } else {
-            this.setAttr("value", _value)
-            this.getElement(e => {e.value = _value})
-        }
+        this.bindState(_value, "value", value => {
+            this.setAttr("value", value)
+            this.getElement(e => {e.value = value})
+        })
     }
     
     /// ### .name
@@ -31,14 +23,9 @@ class EclairHiddenInput extends EclairCustomTagComponent {
     ///     .name("hiddenElement")
     /// ```
     name(_name) {
-        if (_name instanceof EclairState) {
-            let self = this
-            _name.addCallback(this.id() + "-name", function(state) {
-                self.setAttr("name", state.value())
-            }, true)
-        } else {
-            this.setAttr("name", _name)
-        }
+        this.bindState(_name, "name", value => {
+            this.setAttr("name", value)
+        })
         
         return this
     }
