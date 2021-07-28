@@ -340,7 +340,6 @@ class EclairTextStyleState extends EclairState {
 
 
 
-
 // style.style
 class EclairStylableObject {
     constructor() {
@@ -859,7 +858,7 @@ class EclairComponent extends EclairStylableObject {
     }
 }
 
-// elements.base
+// elements.custom-tag
 class EclairCustomTagComponent extends EclairComponent {
     constructor(tag) {
         super()
@@ -1466,7 +1465,6 @@ class EclairHiddenInput extends EclairCustomTagComponent {
 }
 
 // elements.form.select
-
 class EclairSelect extends EclairComponent {
     constructor() {
         super()

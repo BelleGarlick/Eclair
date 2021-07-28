@@ -33,6 +33,9 @@ let selectedTab = State(0)
 
 let htmlCode = State("Texting")
 
+let selectedTabStyle = eclair.Style()
+    .backgroundColor("red")
+    
 
 let backgroundColor = eclair.Color().hex("#f6f6f6")
 
@@ -59,6 +62,15 @@ function toggleLabels(text, toggleLabel, callback) {
 }
     
 
+function selectTab(element, index) {
+    selectedTab.value(0)
+    
+    for (let c = 0; c < element.parent.children.length; c++) {
+        element.parent.children[c].removeStyle(selectedTabStyle)
+    }
+    element.addStyle(selectedTabStyle)
+}
+    
 let codeView = eclair.SyntaxHighlighter()
 
 
@@ -76,10 +88,10 @@ VStack([
     eclair.VStack([
         VStack([        
             View([
-                eclair.Button("Toggles").onClick(e => {selectedTab.value(0)}),
-                eclair.Button("Progress Bar").onClick(e => {selectedTab.value(1)}),
-                eclair.Button("Alert Box").onClick(e => {selectedTab.value(2)}),
-                eclair.Button("Check Box").onClick(e => {selectedTab.value(3)}),
+                eclair.Button("Toggles").onClick(e => {selectTab(e, 0);}),
+                eclair.Button("Progress Bar").onClick(e => {selectTab(e, 1);}),
+                eclair.Button("Alert Box").onClick(e => {selectTab(e, 2);}),
+                eclair.Button("Check Box").onClick(e => {selectTab(e, 3);}),
             ]),
             
             TabView(selectedTab, [

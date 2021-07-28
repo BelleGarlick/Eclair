@@ -1,4 +1,3 @@
-
 class EclairSelect extends EclairComponent {
     constructor() {
         super()
