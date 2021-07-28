@@ -50,4 +50,4 @@ eclair.CheckBox(false)
     .enabled(true)
 ```
 
-<br/><br/>Source: [_elements.form.checkbox_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/form/checkbox.js)
+<br/>Source: [_elements.form.checkbox_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/form/checkbox.js)

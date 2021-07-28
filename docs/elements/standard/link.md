@@ -19,4 +19,4 @@ eclair.Link('DuckDuckGo')
     .target('_blank')
 ```
 
-<br/><br/>Source: [_elements.standard.link_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/standard/link.js)
+<br/>Source: [_elements.standard.link_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/standard/link.js)

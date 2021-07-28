@@ -50,4 +50,4 @@ eclair.TextBox("This textbox is autofocused")
     .autofocus(true)
 ```
 
-<br/><br/>Source: [_elements.form.textbox_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/form/textbox.js)
+<br/>Source: [_elements.form.textbox_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/form/textbox.js)

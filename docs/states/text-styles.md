@@ -1,7 +1,5 @@
 ## EclairTextStyleState
 Text can have it's theme set using a string, this class allows you to do it programatically, and bind the theme of multiple strings together like a normal eclair state.
-
-```javascript
 let style = eclair.TextStyle().heading2()
 
 eclair.VStack([
@@ -22,4 +20,4 @@ heading3
 heading4
 ```
 
-<br/><br/>Source: [_states.textStyles_](https://github.com/SamGarlick/Eclair/tree/main/src/states/textStyles.js)
+<br/>Source: [_states.text-styles_](https://github.com/SamGarlick/Eclair/tree/main/src/states/text-styles.js)

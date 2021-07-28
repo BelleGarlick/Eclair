@@ -34,7 +34,6 @@ class EclairCheckBox extends EclairComponent {
             }  
         })
         
-        
         // Add binding for check box
         this.bindState(checked, "checked", value => {
             this._hiddenValue.value(value)

@@ -34,6 +34,8 @@ def parse_file(breadcrumbs_path, text):
     if len(source_doc.replace("\n", "").strip()) == 0:
         print("\033[31mMissng src doc for: " + breadcrumbs_path)
         
+    for i in range(10):
+        source_code.replace("\n\n", "\n")
                 
     return source_code, source_doc
 
@@ -95,7 +97,7 @@ def parse_doc(breadcrumbs, documentation):
             if shared["active"]:
                 shared["raw"].append(line)
 
-    lines.append(f"<br/><br/>Source: [_{breadcrumbs}_]({DOC_SRC_LINK}{breadcrumbs.replace('.', '/')}.js)")
+    lines.append(f"<br/>Source: [_{breadcrumbs}_]({DOC_SRC_LINK}{breadcrumbs.replace('.', '/')}.js)")
     return "\n".join(lines)
 
 

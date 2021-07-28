@@ -1,3 +1,13 @@
+/// ## Eclair Button
+/// An eclair Button.
+/// <br/>**args**:
+/// - text: The text value within the button.
+/// ```javascript
+/// eclair.Button("Foo")
+///     .onClick(e => {
+///         alert("Bar")
+///     })
+/// ```
 class EclairButton extends EclairComponent {
     constructor(text) {
         super()

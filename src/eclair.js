@@ -5,12 +5,10 @@
 // TODO Implement these: https://getbootstrap.com/docs/4.0/components/progress/
 // PRINT Add margin, paddding, border: left, top, right bottom
 // PRINT Add deleting element
-// PRINT Add spinner
-// PRINT Add upload file element
 // PRINT Add callback getters when accessing child element.
 // TODO Add default styles to everything
 // WARN Layout objects have no shared style
-// PRINT MAKE SURE ALL OBJECTS HAVE PARENT ACCOCIATION
+// PRINT MAKE SURE ALL OBJECTS HAVE PARENT AssOCIATION
 // PRINT when building doc, clear current folder
 // TODO State all the shared styles in docs for an object .e.g. alert box uses eclair.styles.AlertBox, ...
 // TODO Examples
@@ -24,6 +22,9 @@
 //  - Cookies accept + ability to set
 //  - Colour picker
 //  - multi media - video, audio etc
+//  - Loading elements - spinenrs etc.
+//  - Upload file element
+//  - dropdown
 
 // When creating a new element make sure
 //  - Links to children objects and parent association

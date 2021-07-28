@@ -10,4 +10,4 @@ eclair.Image('image.png')
     .altText('An image of a goldfish jumping on a trampoline.')
 ```
 
-<br/><br/>Source: [_elements.standard.image_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/standard/image.js)
+<br/>Source: [_elements.standard.image_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/standard/image.js)

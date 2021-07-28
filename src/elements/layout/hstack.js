@@ -26,7 +26,6 @@ class EclairHStack extends EclairView {
     
     /// INCLUDE elements.layout.view.addChild eclair.HStack()
     /// INCLUDE elements.layout.vstack.alignment eclair.HStack()
-    
     alignment(_alignment) {
         this.bindState(_alignment, "alignment", value => {
             if (value == "start") {

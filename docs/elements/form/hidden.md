@@ -12,4 +12,4 @@ eclair.EclairHiddenInput("Fixed")
     .name("hiddenElement")
 ```
 
-<br/><br/>Source: [_elements.form.hidden_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/form/hidden.js)
+<br/>Source: [_elements.form.hidden_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/form/hidden.js)

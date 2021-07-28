@@ -29,4 +29,4 @@ eclair.HStack()
     .alignment(eclair.Alignment().center())
 ```
 
-<br/><br/>Source: [_elements.layout.hstack_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/layout/hstack.js)
+<br/>Source: [_elements.layout.hstack_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/layout/hstack.js)

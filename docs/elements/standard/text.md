@@ -11,4 +11,4 @@ eclair.Text('Hello')
     .type('heading1')
 ```
 
-<br/><br/>Source: [_elements.standard.text_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/standard/text.js)
+<br/>Source: [_elements.standard.text_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/standard/text.js)

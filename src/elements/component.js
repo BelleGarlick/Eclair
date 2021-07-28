@@ -156,9 +156,8 @@ class EclairComponent extends EclairStylableObject {
     
     /// ### Event Handling
     /// All eclair components have a range of built in event handing functions easily accessable using callback functions. You can assign these functions to any eclair object, however, if the HTML object cannot invoke the event then the event will never get called. For example onError invoked when an image element fails to load an image, but the button object would never invoke that function. The parameter given in the callback parameters is the object eclair object. Full list of events:
-    /// <br/>**args**:
-    /// - callback: Call back function which passes the object as a parameter.
-    /// <br/>Full list of callback functoins are:
+    /// <br/>**args**: callback: Call back function which passes the object as a parameter.
+    /// <br/><br/>Full list of callback functoins are:
     /// <br/>**onBlur**: When the object loses focus.
     /// <br/>**onChange**: When the object's selected item changes.
     /// <br/>**onFocus**: When the object gains focus from the user.
@@ -214,6 +213,7 @@ class EclairComponent extends EclairStylableObject {
     ///     .onMouseOut(e => {
     ///         e.background("blue")
     ///     })
+    /// ```
     
     // Eclair calls
     performCallback(event, param1) {

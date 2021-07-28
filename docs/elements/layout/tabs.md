@@ -31,4 +31,4 @@ eclair.TabView(selectedTab)
     .addChild(eclair.View(eclair.Text("Tab 3")))
 ```
 
-<br/><br/>Source: [_elements.layout.tabs_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/layout/tabs.js)
+<br/>Source: [_elements.layout.tabs_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/layout/tabs.js)

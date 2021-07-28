@@ -24,4 +24,4 @@ eclair.AlertBox("Invalid password")
     .title("Error")
 ```
 
-<br/><br/>Source: [_elements.custom.alert-box_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/custom/alert-box.js)
+<br/>Source: [_elements.custom.alert-box_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/custom/alert-box.js)

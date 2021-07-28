@@ -129,6 +129,7 @@ class EclairState {
         return this
     }
     
+
     toggle() {
         this.value(!this.bool())
     }
@@ -142,7 +143,9 @@ class EclairAlignmentState extends EclairState {
     }
     
     start() {this.value("start"); return this;}
+    
     center() {this.value("center"); return this;}
+    
     end() {this.value("end"); return this;}
 }
 
@@ -325,7 +328,7 @@ class EclairColor extends EclairState {
     dark() {return this.hex("d5d8d9")}
 }
 
-// states.textStyles
+// states.text-styles
 class EclairTextStyleState extends EclairState {
     title() {this.value("title"); return this;}
     subtitle() {this.value("subtitle"); return this;}
@@ -626,6 +629,9 @@ eclair.styles = {
         .userSelect("none")
         .overflow("hidden"),
     ProgressBarIndicator: eclair.Style()
+        .display("flex")
+        .flexDirection("row")
+        .alignItems("center")
         .background(eclair.theme.accent)
         .height("100%")
         .transition("0.3s all")
@@ -1196,7 +1202,6 @@ class EclairCheckBox extends EclairComponent {
             }  
         })
         
-        
         this.bindState(checked, "checked", value => {
             this._hiddenValue.value(value)
             
@@ -1302,188 +1307,30 @@ class EclairForm extends EclairComponent {
     }
 }
 
-class EclairSelect extends EclairComponent {
-    constructor() {
-        super()
-        this.options = []
-        this.addStyle(eclair.styles.Select)
+
+// elements.form.hidden
+class EclairHiddenInput extends EclairCustomTagComponent {
+    constructor(_value) {
+        super("input")
+        this.setAttr("type", "hidden")
+
+        this.bindState(_value, "value", value => {
+            this.setAttr("value", value)
+            this.getElement(e => {e.value = value})
+        })
     }
     
     name(_name) {
-        return _name == null? this.getAttr("name") : this.setAttr("name", _name)
-    }
-    
-    value(newValue) {
-        if (newValue == null) {
-            return this.getElement().value;
-        } else {
-            for (let n = 0; n < this.options.length; n++) {
-                this.options[n].selected = newValue == this.options[n].value;
-            }
-            
-            this.getElement(elem => {elem.value = newValue})
-
-            return this;
-        }
-    }
-    
-    selectedIndex(index) {
-        if (index == null) {
-            return this.getElement().selectedIndex;
-        } else {
-            for (let n = 0; n < this.options.length; n++) {
-                this.options[n].selected = index == n;
-            }
-            this.getElement(elem => {elem.selectedIndex = `${index}`})
-            
-            return this;
-        }
-    }
-    
-    addOptions(items) {
-        for (let i = 0; i < items.length; i++) {
-            this.addOption(items[i]);
-        }
-        return this;
-    }
-    
-    addOption(value, text, selected) {
-        if (typeof(text) == "boolean" && selected == null) {
-            selected = text;
-            text = null;
-        }
-        if (text == null) {text = value}
-        if (selected == null) {selected = false}
-        
-        let newOption = {
-            "value": value,
-            "text": text,
-            "selected": selected
-        }
-        
-        this.options.push(newOption)
-        
-        let elem = this.getElement();
-        if (elem != null) {
-            elem.appendChild(this.buildOptionHTML(newOption))
-        }
-        
-        return this;
-    }
-    
-    removeOption(value) {
-        let nonRemovedOptions = []
-        for (let n = 0; n < this.options.length; n++) {
-            if (this.options[n].value != value) {
-                nonRemovedOptions.push(this.options[n]);
-            }
-        }
-        this.options = nonRemovedOptions;
-        
-        let elem = this.getElement()
-        if (elem != null) {
-            let ops = elem.children;
-            let removes = [];
-            
-            for (let o = 0; o < ops.length; o++) {
-                if (ops[o].value == value) {
-                    removes.push(ops[o]);
-                }
-            }
-            
-            for (let r = 0; r < removes.length; r++) {
-                elem.removeChild(removes[r]);
-            }
-        }
-        
-        return this;
-    }
-    
-    buildOptionHTML(newOption) {
-        return `<option value='${newOption.value}'${newOption.selected ? " selected": ""}>${newOption.text}</option>`
-    }
-    
-    build() {
-        let options = ""
-        for (let n = 0; n < this.options.length; n++) {
-            options += this.buildOptionHTML(this.options[n]);
-        }
-        
-        return `<select>${options}</select>`
-    }
-}
-
-class EclairSlider extends EclairCustomTagComponent {
-    constructor(progressValue) {
-        super("input")
-        
-        let overrideOnInput = null;
-        
-        this.setAttr("type", "range")
-        this.addStyle(eclair.styles.Slider)
-        
-        let self = this
-        this._updateCallback("onInput", e => {
-            if (self.overrideOnCreate != null) {
-                overrideOnCreate(self)
-            }
+        this.bindState(_name, "name", value => {
+            this.setAttr("name", value)
         })
         
-        this.setAttr("value", progressValue)
-        if (progressValue instanceof EclairState) {
-            progressValue.addCallback(this.id() + "-value", function(state) {
-                self.setAttr("value", state.value())
-                self.getElement(elem => {elem.value = state.value()})
-            }, true)
-           
-            this._updateCallback("onInput", e => {
-                e.getElement(elem => {progressValue.value(elem.value)})
-                
-                if (self.overrideOnCreate != null) {
-                    overrideOnCreate(self)
-                }
-            })
-        } 
-    }
-    
-    name(_name) {
-        return _name == null? this.getAttr("name") : this.setAttr("name", _name)
-    }
-    
-    min(_min) {
-        if (_min == null) {
-            return this.getAttr("min");
-        } else {
-            this.setAttr("min", _min);
-        }
-        return this;
-    }
-    
-    max(_max) {
-        if (_max == null) {
-            return this.getAttr("max");
-        } else {
-            this.setAttr("max", _max);
-        }
-        return this;
-    }
-    
-    step(_step) {
-        if (_step == null) {
-            return this.getAttr("step");
-        } else {
-            this.setAttr("step", _step);
-        }
-        return this;
-    }
-    
-    onInput(callback) {
-        this.overrideOnInput = callback;
-        return this;
+        return this
     }
 }
-    
-class EclairRadioButtons extends EclairComponent {
+
+// elements.form.radio-buttons
+ class EclairRadioButtons extends EclairComponent {
     constructor() {
         super()
         
@@ -1660,26 +1507,191 @@ class EclairRadioButtons extends EclairComponent {
     }
 }
 
-// elements.form.hidden
-class EclairHiddenInput extends EclairCustomTagComponent {
-    constructor(_value) {
-        super("input")
-        this.setAttr("type", "hidden")
+// elements.form.select
 
-        this.bindState(_value, "value", value => {
-            this.setAttr("value", value)
-            this.getElement(e => {e.value = value})
+class EclairSelect extends EclairComponent {
+    constructor() {
+        super()
+        this.options = []
+        this.addStyle(eclair.styles.Select)
+    }
+    
+    name(_name) {
+        return _name == null? this.getAttr("name") : this.setAttr("name", _name)
+    }
+    
+    value(newValue) {
+        if (newValue == null) {
+            return this.getElement().value;
+        } else {
+            for (let n = 0; n < this.options.length; n++) {
+                this.options[n].selected = newValue == this.options[n].value;
+            }
+            
+            this.getElement(elem => {elem.value = newValue})
+
+            return this;
+        }
+    }
+    
+    selectedIndex(index) {
+        if (index == null) {
+            return this.getElement().selectedIndex;
+        } else {
+            for (let n = 0; n < this.options.length; n++) {
+                this.options[n].selected = index == n;
+            }
+            this.getElement(elem => {elem.selectedIndex = `${index}`})
+            
+            return this;
+        }
+    }
+    
+    addOptions(items) {
+        for (let i = 0; i < items.length; i++) {
+            this.addOption(items[i]);
+        }
+        return this;
+    }
+    
+    addOption(value, text, selected) {
+        if (typeof(text) == "boolean" && selected == null) {
+            selected = text;
+            text = null;
+        }
+        if (text == null) {text = value}
+        if (selected == null) {selected = false}
+        
+        let newOption = {
+            "value": value,
+            "text": text,
+            "selected": selected
+        }
+        
+        this.options.push(newOption)
+        
+        let elem = this.getElement();
+        if (elem != null) {
+            elem.appendChild(this.buildOptionHTML(newOption))
+        }
+        
+        return this;
+    }
+    
+    removeOption(value) {
+        let nonRemovedOptions = []
+        for (let n = 0; n < this.options.length; n++) {
+            if (this.options[n].value != value) {
+                nonRemovedOptions.push(this.options[n]);
+            }
+        }
+        this.options = nonRemovedOptions;
+        
+        let elem = this.getElement()
+        if (elem != null) {
+            let ops = elem.children;
+            let removes = [];
+            
+            for (let o = 0; o < ops.length; o++) {
+                if (ops[o].value == value) {
+                    removes.push(ops[o]);
+                }
+            }
+            
+            for (let r = 0; r < removes.length; r++) {
+                elem.removeChild(removes[r]);
+            }
+        }
+        
+        return this;
+    }
+    
+    buildOptionHTML(newOption) {
+        return `<option value='${newOption.value}'${newOption.selected ? " selected": ""}>${newOption.text}</option>`
+    }
+    
+    build() {
+        let options = ""
+        for (let n = 0; n < this.options.length; n++) {
+            options += this.buildOptionHTML(this.options[n]);
+        }
+        
+        return `<select>${options}</select>`
+    }
+}
+
+
+// elements.form.slider
+class EclairSlider extends EclairCustomTagComponent {
+    constructor(progressValue) {
+        super("input")
+        
+        let overrideOnInput = null;
+        
+        this.setAttr("type", "range")
+        this.addStyle(eclair.styles.Slider)
+        
+        let self = this
+        this._updateCallback("onInput", e => {
+            if (self.overrideOnCreate != null) {
+                overrideOnCreate(self)
+            }
         })
+        
+        this.setAttr("value", progressValue)
+        if (progressValue instanceof EclairState) {
+            progressValue.addCallback(this.id() + "-value", function(state) {
+                self.setAttr("value", state.value())
+                self.getElement(elem => {elem.value = state.value()})
+            }, true)
+           
+            this._updateCallback("onInput", e => {
+                e.getElement(elem => {progressValue.value(elem.value)})
+                
+                if (self.overrideOnCreate != null) {
+                    overrideOnCreate(self)
+                }
+            })
+        } 
     }
     
     name(_name) {
         this.bindState(_name, "name", value => {
             this.setAttr("name", value)
         })
+        return this;
+    }
+    
+    min(_min) {
+        this.bindState(_min, "min", value => {
+            this.setAttr("min", value);
+        }, state => {return state.number()})
         
-        return this
+        return this;
+    }
+    
+    max(_max) {
+        this.bindState(_max, "max", value => {
+            this.setAttr("max", value);
+        }, state => {return state.number()})
+        
+        return this;
+    }
+    
+    step(_step) {
+        this.bindState(_step, "step", value => {
+            this.setAttr("step", value);
+        }, state => {return state.number()})
+        
+        return this;
+    }
+    
+    onInput(callback) {
+        this.overrideOnInput = callback;
+        return this;
     }
 }
+   
 
 // elements.form.textbox
 class EclairTextBox extends EclairCustomTagComponent {
@@ -1690,27 +1702,26 @@ class EclairTextBox extends EclairCustomTagComponent {
         
         let self = this
         
-        this._updateCallback("onInput", e => {
-            if (self.overrideOnCreate != null) {
-                overrideOnCreate(self)
-            }
-        })
-        
         this.bindState(_text, "value", value => {
             this.setAttr("value", value)
             this.getElement(elem => {elem.value = value});
         })
         
-        
-        if (_text instanceof EclairState) {
-            this._updateCallback("onInput", e => {
+        this.overrideOnInput = null
+        this._updateCallback("onInput", e => {
+            if (_text instanceof EclairState) {
                 e.getElement(elem => {_text.value(elem.value)})
-                
-                if (self.overrideOnCreate != null) {
-                    overrideOnCreate(self)
-                }
-            })
-        }
+            }
+
+            if (this.overrideOnInput != null) {
+                this.overrideOnInput(this)
+            }
+        })
+    }
+    
+    onInput(callback) {
+        this.overrideOnInput = callback
+        return this
     }
     
     name(_name) {
@@ -1988,7 +1999,6 @@ class EclairHStack extends EclairView {
         this.removeStyle(eclair.styles.View)
         this.addStyle(eclair.styles.HStack)
     }
-    
     
     alignment(_alignment) {
         this.bindState(_alignment, "alignment", value => {

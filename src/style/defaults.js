@@ -148,6 +148,9 @@ eclair.styles = {
         .userSelect("none")
         .overflow("hidden"),
     ProgressBarIndicator: eclair.Style()
+        .display("flex")
+        .flexDirection("row")
+        .alignItems("center")
         .background(eclair.theme.accent)
         .height("100%")
         .transition("0.3s all")

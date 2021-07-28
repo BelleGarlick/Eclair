@@ -4,4 +4,4 @@ A horizontal line element.
 eclair.HorizontalLine()
 ```
 
-<br/><br/>Source: [_elements.standard.hr_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/standard/hr.js)
+<br/>Source: [_elements.standard.hr_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/standard/hr.js)

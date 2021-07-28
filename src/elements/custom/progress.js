@@ -39,7 +39,6 @@ class EclairProgressBar extends EclairComponent {
     /// eclair.ProgressBar(0.5)
     ///     .stiped(true)
     /// ```
-    // TODO Background only updates once the progress has changed.
     striped(_on) {
         this.bindState(_on, "color", value => {
             if (value) {

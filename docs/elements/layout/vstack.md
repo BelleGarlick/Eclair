@@ -29,4 +29,4 @@ eclair.VStack()
     .alignment(eclair.Alignment().center())
 ```
 
-<br/><br/>Source: [_elements.layout.vstack_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/layout/vstack.js)
+<br/>Source: [_elements.layout.vstack_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/layout/vstack.js)

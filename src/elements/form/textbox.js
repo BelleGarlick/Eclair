@@ -13,29 +13,29 @@ class EclairTextBox extends EclairCustomTagComponent {
         
         let self = this
         
-        // TODO ON INPUT HERE IS WRONG
-        this._updateCallback("onInput", e => {
-            if (self.overrideOnCreate != null) {
-                overrideOnCreate(self)
-            }
-        })
-        
+        // Binding
         this.bindState(_text, "value", value => {
             this.setAttr("value", value)
             this.getElement(elem => {elem.value = value});
         })
         
-        
-        // TODO ON INPUT HERE IS WRONG NEED TO CALL ON CREATE AND HAVE FUNC FOR IT
-        if (_text instanceof EclairState) {
-            this._updateCallback("onInput", e => {
+        // Override on input to adapt the state to changes made to the text
+        this.overrideOnInput = null
+        this._updateCallback("onInput", e => {
+            if (_text instanceof EclairState) {
                 e.getElement(elem => {_text.value(elem.value)})
-                
-                if (self.overrideOnCreate != null) {
-                    overrideOnCreate(self)
-                }
-            })
-        }
+            }
+
+            if (this.overrideOnInput != null) {
+                this.overrideOnInput(this)
+            }
+        })
+    }
+    
+    // Override method, no need for doc.
+    onInput(callback) {
+        this.overrideOnInput = callback
+        return this
     }
     
     /// ### .name

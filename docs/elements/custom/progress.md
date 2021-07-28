@@ -50,4 +50,4 @@ eclair.ProgressBar(0.5)
     .showLabel(true)
 ```
 
-<br/><br/>Source: [_elements.custom.progress_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/custom/progress.js)
+<br/>Source: [_elements.custom.progress_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/custom/progress.js)

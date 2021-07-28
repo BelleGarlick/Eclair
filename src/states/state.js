@@ -74,6 +74,7 @@ class EclairState {
         return this
     }
     
+
     toggle() {
         this.value(!this.bool())
     }

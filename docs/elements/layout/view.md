@@ -20,4 +20,4 @@ eclair.View()
     .addChild("<p>Or even HTML</p>")
 ```
 
-<br/><br/>Source: [_elements.layout.view_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/layout/view.js)
+<br/>Source: [_elements.layout.view_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/layout/view.js)
