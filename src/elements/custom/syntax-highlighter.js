@@ -5,7 +5,7 @@ class EclairSyntaxHighlighter extends EclairComponent {
         // Check if HLJS is imported, if not then let player know that it's not
         try {
             if (hljs) {}
-        } catch {
+        } catch (error) {
             console.log("HLJS Not imported. Go to 'https://highlightjs.org/usage/' to import the stylesheet and the .js file.")
         }
 

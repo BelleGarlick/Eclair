@@ -115,6 +115,7 @@ eclair.styles = {
         .padding("2px")
         .borderRadius("4px")
         .width("100%")
+        .transition("0.2s all")
         .userSelect("none")
         .font(eclair.theme.font),
     CheckBoxIcon: eclair.Style()
@@ -183,9 +184,6 @@ eclair.styles = {
         .transition("0.2s all")
         .userSelect("none")
         .borderRadius("20px"),
-    ToggleKnobWrapper: eclair.Style()  // Lol 'KnobWrapper = Condom'
-        .width("100%")
-        .transition("0.2s all"),
     ToggleTick: eclair.Style()
         .position("absolute")
         .fontColor("#ffffff")

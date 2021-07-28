@@ -92,7 +92,7 @@ class EclairState {
     number(_default) {
         try {
             return parseFloat(this._value)
-        } catch {
+        } catch (error) {
             if (_default == null) {
                 return 0
             } else {
@@ -104,7 +104,7 @@ class EclairState {
     int(_default) {
         try {
             return parseInt(this._value)
-        } catch {
+        } catch (error) {
             if (_default == null) {
                 return 0
             } else {
@@ -596,6 +596,7 @@ eclair.styles = {
         .padding("2px")
         .borderRadius("4px")
         .width("100%")
+        .transition("0.2s all")
         .userSelect("none")
         .font(eclair.theme.font),
     CheckBoxIcon: eclair.Style()
@@ -664,9 +665,6 @@ eclair.styles = {
         .transition("0.2s all")
         .userSelect("none")
         .borderRadius("20px"),
-    ToggleKnobWrapper: eclair.Style()  // Lol 'KnobWrapper = Condom'
-        .width("100%")
-        .transition("0.2s all"),
     ToggleTick: eclair.Style()
         .position("absolute")
         .fontColor("#ffffff")
@@ -1047,7 +1045,7 @@ class EclairSyntaxHighlighter extends EclairComponent {
 
         try {
             if (hljs) {}
-        } catch {
+        } catch (error) {
             console.log("HLJS Not imported. Go to 'https://highlightjs.org/usage/' to import the stylesheet and the .js file.")
         }
 
@@ -1623,36 +1621,33 @@ class EclairSelect extends EclairComponent {
 
 // elements.form.slider
 class EclairSlider extends EclairCustomTagComponent {
-    constructor(progressValue) {
+    constructor(value) {
         super("input")
         
+        this.bindState(value, "value", value => {
+            this.setAttr("value", value)
+            this.getElement(elem => {elem.value = value})
+        }, state => {return state.number()})
+        
         let overrideOnInput = null;
-        
-        this.setAttr("type", "range")
-        this.addStyle(eclair.styles.Slider)
-        
-        let self = this
         this._updateCallback("onInput", e => {
-            if (self.overrideOnCreate != null) {
-                overrideOnCreate(self)
+            if (value instanceof EclairState) {
+                e.getElement(elem => {value.value(elem.value)})
+            }
+            
+            if (this.overrideOnInput != null) {
+                this.overrideOnInput(this)
             }
         })
         
-        this.setAttr("value", progressValue)
-        if (progressValue instanceof EclairState) {
-            progressValue.addCallback(this.id() + "-value", function(state) {
-                self.setAttr("value", state.value())
-                self.getElement(elem => {elem.value = state.value()})
-            }, true)
-           
-            this._updateCallback("onInput", e => {
-                e.getElement(elem => {progressValue.value(elem.value)})
-                
-                if (self.overrideOnCreate != null) {
-                    overrideOnCreate(self)
-                }
-            })
-        } 
+        this.setAttr("type", "range")
+        this.addStyle(eclair.styles.Slider)
+    }
+    
+    onInput(callback) {
+        console.log("on input called")
+        this.overrideOnInput = callback;
+        return this;
     }
     
     name(_name) {
@@ -1683,11 +1678,6 @@ class EclairSlider extends EclairCustomTagComponent {
             this.setAttr("step", value);
         }, state => {return state.number()})
         
-        return this;
-    }
-    
-    onInput(callback) {
-        this.overrideOnInput = callback;
         return this;
     }
 }

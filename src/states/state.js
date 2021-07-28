@@ -37,7 +37,7 @@ class EclairState {
     number(_default) {
         try {
             return parseFloat(this._value)
-        } catch {
+        } catch (error) {
             if (_default == null) {
                 return 0
             } else {
@@ -49,7 +49,7 @@ class EclairState {
     int(_default) {
         try {
             return parseInt(this._value)
-        } catch {
+        } catch (error) {
             if (_default == null) {
                 return 0
             } else {

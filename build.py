@@ -1,4 +1,6 @@
 import os
+import uglipyjs
+
 
 DOC_SRC_LINK = "https://github.com/SamGarlick/Eclair/tree/main/src/"
 BUILD_ORDER_FILE = "build.txt"
@@ -163,6 +165,8 @@ if __name__ == "__main__":
     
     with open(OUTPUT, "w+") as file:
         file.write(eclair_source)
+        
+#    print(uglipyjs.compile(eclair_source, {'mangle':False}))
     
     
     
