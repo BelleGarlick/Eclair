@@ -8,6 +8,8 @@ let Toggle = eclair.Toggle, Text = eclair.Text, CheckBox = eclair.CheckBox,
     HStack = eclair.HStack, View = eclair.View, TabView = eclair.TabView;
     
 let checkboxText = State("Accept Cookies?")
+let checkBoxState = State(false)
+let checkboxEnabled = State(true)
 
 let alertBoxTitle = State("Alert Box")
 let alertBoxText = State("You're learning Eclair")
@@ -35,12 +37,13 @@ let backgroundColor = eclair.Color().hex("#f6f6f6")
 
 function group(func) {
     return VStack(func)
-        .alignment("stretch")
+        .alignment(eclair.Alignment().start())
         .backgroundColor(backgroundColor)
         .borderRadius("3px")
         .padding("20px")
         .margin("10px")
         .width("100%")
+        .gap("8px")
 }
     
 function toggleLabels(text, toggleLabel, callback) {
@@ -48,6 +51,9 @@ function toggleLabels(text, toggleLabel, callback) {
         Text(text),
         Toggle(toggleLabel).onChange(callback)
     ])
+        .width("100%")
+        .alignment(eclair.Alignment().start())
+        .gap("8px")
 }
     
 
@@ -70,7 +76,8 @@ VStack([
             View([
                 eclair.Button("Toggles").onClick(e => {selectedTab.value(0)}),
                 eclair.Button("Progress Bar").onClick(e => {selectedTab.value(1)}),
-                eclair.Button("test").onClick(e => {selectedTab.value(2)}),
+                eclair.Button("Alert Box").onClick(e => {selectedTab.value(2)}),
+                eclair.Button("Check Box").onClick(e => {selectedTab.value(3)}),
             ]),
             
             TabView(selectedTab, [
@@ -82,8 +89,7 @@ VStack([
                         Toggle(toggleOn)
                             .showTick(toggleShowLabel)
                             .enabled(toggleEnabled)
-                            .display("inline-block")
-                    ]), // .align("center")
+                    ]).width("100%"), // .align("center")
 
                     eclair.HorizontalLine(),
                     toggleLabels("Show tick", toggleShowLabel, c => {}),
@@ -98,58 +104,42 @@ VStack([
                     eclair.ProgressBar(progressValue)
                         .striped(progressBarStripped)
                         .color(progressBarColor)
-                        .showLabel(showProgressState),
+                        .showLabel(showProgressState)
+                        .width("100%"),
 
                     eclair.HorizontalLine(),
 
-                    VStack([
-                        Text("Progress"),
-                        eclair.Slider(progressValue)
-                            .min(0).max(1).step(0.01)
-                    ]), //.spacing(10).align("left"),
+                    Text("Progress"),
+                    eclair.Slider(progressValue)
+                        .min(0).max(1).step(0.01)
+                        .width("100%"),
 
                     toggleLabels("Striped", progressBarStripped, c => {}),
                     toggleLabels("Show Label", showProgressState, c => {})
                 ]),
                 
-                View([Text("Tab 2")]),
-            ]).width("100%"),
-            
-            eclair.Link(linkText)
-                .url(linkURL)
-                .target(linkTarget),
-            CheckBox(checkboxText),
-            RadioButtons().addItems(["test", "testing", "tests"]),
-            RadioButtons().addItems(["also test", "also testing", "also tests"]),
-            
-            group([
-                Text("Alert Box").type(textHeadingStyle),
-                
-                eclair.Alert(alertBoxText)
-                    .title(alertBoxTitle)
-                    .theme(alertBoxTheme),
-                
-                eclair.HorizontalLine(),
-                
-                VStack([
+                // Alert Box
+                group([
+                    Text("Alert Box").type(textHeadingStyle),
+
+                    eclair.Alert(alertBoxText)
+                        .title(alertBoxTitle)
+                        .theme(alertBoxTheme),
+
+                    eclair.HorizontalLine(),
+
                     Text("Title"),
                     TextBox(alertBoxTitle)
-                        .placeholder("Title...")
-                ]), //.spacing(10).align("left"),
-                
-                VStack([
+                        .placeholder("Title..."),
+
                     Text("Message"),
-                    TextBox(alertBoxText).placeholder("Message...")
-                ]), //.spacing(10).align("left"),
-                
-                VStack([
+                    TextBox(alertBoxText).placeholder("Message..."),
+
                     Text("Line breaker"),
                     eclair.Button("Add line break").onClick(c => {
                         alertBoxText.value(alertBoxText.value() + "<hr/>A new line break can be added by typing &lt;hr/&gt;.")
-                    })
-                ]),//.spacing(10).align("left"),
-                
-                VStack([
+                    }),
+
                     Text("Preset"),
                     eclair.Select()
                         .addOptions(["Success", "Danger", "Warning", "Info", "Light", "Dark"])
@@ -161,8 +151,32 @@ VStack([
                             if (s.value() == "Light") {alertBoxTheme.light()}
                             if (s.value() == "Dark") {alertBoxTheme.dark()}
                         })
-                ]) // ]).spacing(10).align("left")
-            ]),
+                ]),
+                
+                // Check box
+                group([
+                    Text("Check Box").type(textHeadingStyle),
+                    
+                    CheckBox(checkBoxState)
+                        .text(checkboxText)
+                        .enabled(checkboxEnabled),
+
+                    eclair.HorizontalLine(),
+
+                    TextBox(checkboxText),
+                    TextBox(checkBoxState),
+
+                    toggleLabels("Enabled", checkboxEnabled, c => {}),
+                ]),
+            ]).width("100%"),
+            
+            eclair.Link(linkText)
+                .url(linkURL)
+                .target(linkTarget),
+        
+            RadioButtons().addItems(["test", "testing", "tests"]),
+            RadioButtons().addItems(["also test", "also testing", "also tests"]),
+            
             
             VStack([
                 Text("Try it yourself!").type(textHeadingStyle),

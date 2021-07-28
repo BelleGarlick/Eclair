@@ -26,13 +26,24 @@ class EclairState {
         }
     }
     
+    removeCallback(key) {
+        delete this.callbacks[key]
+    }
+    
     string() {
         return `${this._value}`
     }
     
-    number() {
-        // TODO Properly implement
-        return this.value
+    number(_default) {
+        try {
+            return parseFloat(this._value)
+        } catch {
+            if (_default == null) {
+                return 0
+            } else {
+                return _default
+            }
+        }
     }
     
     int(_default) {
@@ -42,7 +53,7 @@ class EclairState {
             if (_default == null) {
                 return 0
             } else {
-                return -1
+                return _default
             }
         }
     }
@@ -50,7 +61,7 @@ class EclairState {
     bool() {
         return this._value == "true" || this._value == "True" || this._value == "TRUE" || 
             this._value == "yes" || this._value == "1" || this._value == "Yes" || 
-            this._value == "YES" || this._value || this._value == 1
+            this._value == "YES" || this._value == true || this._value == 1
     }
 
     true() {

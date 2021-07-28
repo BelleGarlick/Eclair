@@ -8,37 +8,29 @@ class EclairToggle extends EclairComponent {
     constructor(_value) {
         super()
         
-        // If the user want's onclicks/oncreates then they need to be stored here as 
+        // If the user want's onclicks then they need to be stored here as 
         // this class has it's own methods. So we need this alternative place to 
         // store the callbacks.
         let overrideOnClick = null;
-        let overrideOnCreate = null;
         
         // Create internal elements
         this._tickMark = eclair.Text("✓")
         this._knob = eclair.View()
         
-        this._hiddenComponent = eclair.HiddenInput(_value)
+        this._value = eclair.State((_value instanceof EclairState)? _value.bool() : _value)
+        this._hiddenComponent = eclair.HiddenInput(this._value)
     
         // Bind this object with the given eclair states
-        // TODO Move this this.bindState
-        if (_value instanceof EclairState) {
-            let self = this
-            _value.addCallback(this.id() + "-toggle", function(state) {
-                let value = state.bool()
-                let cValue = value;
-                
-                self._hiddenComponent.getElement(e => {
-                    cValue = e.value == "true"
-                    e.value = value
-                })
-                
-                self._updateStyle()
-                if (self._callbacks.hasOwnProperty("onChange")) {
-                    self.performCallback("onChange")  
-                }
-            }, false)
-        } 
+        this.bindState(_value, "toggle", value => {
+            let cVal = this._value.bool()
+            
+            this._value.value(value)
+            this._updateStyle()
+            
+            if (value != cVal) {
+                this.performCallback("onChange")  
+            }
+        }, state => {return state.bool()})
         
         // Manually update the callback map as onClick
         // is void to prevent the user altering it.
@@ -46,29 +38,17 @@ class EclairToggle extends EclairComponent {
         this._updateCallback("onClick", e => {
             if (e._enabled) {
                 // Toggle the option and 
-                this._hiddenComponent.getElement(e => {
-                    let cVal = e.value == "true"
-                    if (_value instanceof EclairState) {
-                        _value.value(!cVal)
-                    } else {
-                        e.value = !cVal
-                        this._updateStyle()
-                        if (self._callbacks.hasOwnProperty("onChange")) {
-                            self.performCallback("onChange")  
-                        }
-                    }
-                })
+                let cVal = this._value.bool()
+                if (_value instanceof EclairState) {
+                    _value.value(!cVal)
+                } else {
+                    this._value.value(!cVal)
+                }
+                this._updateStyle()
+                this.performCallback("onChange")  
             }
             if (self.overrideOnClick != null) {
                 overrideOnClick(self)
-            }
-        })
-        
-        // Create custom on create callback which calls and updates the style of this object
-        this._updateCallback("onCreate", e => {
-            this._updateStyle();
-            if (self.overrideOnCreate != null) {
-                overrideOnCreate(self)
             }
         })
         
@@ -85,17 +65,14 @@ class EclairToggle extends EclairComponent {
         this.addStyle(eclair.styles.Toggle)
         this._tickMark.addStyle(eclair.styles.ToggleTick)
         this._knob.addStyle(eclair.styles.ToggleKnob)
+        
+        this.width("100%", " .wrapper")
+            .transition("0.2s all", " .wrapper")
     }
     
     // No need for documentation as this is an overriden method.
     onClick(callback) {
         this.overrideOnClick = callback;
-        return this;
-    }
-    
-    // No need for documentation as this is an overriden method.
-    onCreate(callback) {
-        this.overrideOnCreate = callback;
         return this;
     }
     
@@ -123,12 +100,7 @@ class EclairToggle extends EclairComponent {
         return this;
     }
     
-    /// ### .enabled
-    /// Set whether the toggle button is enabled.    
-    /// ```javascript
-    /// eclair.Toggle(false)
-    ///     .enabled(true)
-    /// ```
+    /// INCLUDE elements.form.checkbox.enabled eclair.Toggle(false)
     enabled(_enabled) {
         this.bindState(_enabled, "enabled", value => {
             this._enabled = value
@@ -147,7 +119,7 @@ class EclairToggle extends EclairComponent {
     showTick(_bool) {
         this.bindState(_bool, "showTick", value => {
             this._showCheckMark = value
-            this._tickMark.opacity((value && (this._hiddenComponent.getAttr("value") == "true"))? 1:0)
+            this._tickMark.opacity((value && (this._value.bool()))? 1:0)
         }, state => {return state.bool()})
         
         return this
@@ -155,25 +127,24 @@ class EclairToggle extends EclairComponent {
     
     // Doesn't need to be accessed externally as is managed internally.
     _updateStyle() {
-        if (this._hiddenComponent.getAttr("value") == "true") {
+        if (this._value.bool()) {
+            this._tickMark.opacity(this._showCheckMark ? 1 : 0)
             this.background(eclair.theme.accent)
-            if (this._showCheckMark) {
-                this._tickMark.opacity(1)
-            }
-
-            let elem = this.getElement()
-            if (elem != null) {
-                this._knob.left((this.getElement().clientWidth - this._knob.getElement().clientWidth - 6) + "px")
-            }
+                .transform("translateX(100%)", " .wrapper")
+            this._knob
+                .transform("translateX(-100%)")
         } else {
             this._tickMark.opacity(0)
             this.background("#dddddd")
-            this._knob.left("0px")
+                .transform("translateX(0%)", " .wrapper")
+            
+            this._knob
+                .transform("translateX(0%)")
         }
     }
     
     // Implement the build function. No doc needed as this is a standard function.
     build() {
-        return `<div>${this._tickMark.compile()}`+this._knob.compile()+this._hiddenComponent.compile()+"</div>"
+        return `<toggle>${this._tickMark.compile()}<div class='wrapper'>${this._knob.compile()}</div>${this._hiddenComponent.compile()}</toggle>`
     }
 }

@@ -8,6 +8,7 @@
 ///    eclair.Button("Views can have multiple elements"),
 ///    "Or even just html"
 /// ])
+///     .gap("8px")
 /// ```
 class EclairVStack extends EclairView {
     constructor(func) {

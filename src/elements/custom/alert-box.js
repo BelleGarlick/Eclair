@@ -69,9 +69,9 @@ class EclairAlertBox extends EclairComponent {
     /// ```
     title(_text) {        
         this.bindState(_text, "title", value => {
-            this._titleText.value(state.value())
+            this._titleText.value(value)
             
-            let hideTitle = _text == null || _text.trim().length == 0
+            let hideTitle = value == null || value.trim().length == 0
             this._title.display(hideTitle? "none": "block")
         })
         

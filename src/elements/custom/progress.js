@@ -19,7 +19,7 @@ class EclairProgressBar extends EclairComponent {
             this._progress = value;
             this._labelText.value(Math.round(value * 100) + "%")
             this._indicator.width((value * 100 + 0.0001) + "%")
-        }, state => {return state.number()})
+        }, state => {return state.number(0.5)})
         
         // Configure parent/children relation. Note label is a child of the inidicator so that sets the parent/child.
         this._indicator.parent = this
@@ -39,6 +39,7 @@ class EclairProgressBar extends EclairComponent {
     /// eclair.ProgressBar(0.5)
     ///     .stiped(true)
     /// ```
+    // TODO Background only updates once the progress has changed.
     striped(_on) {
         this.bindState(_on, "color", value => {
             if (value) {
@@ -48,6 +49,7 @@ class EclairProgressBar extends EclairComponent {
                 this._indicator.getStyleSheet()["background-image"] = "";
                 this._indicator.getStyleSheet()["background-size"] = "1rem 1rem;";
             }
+            this._indicator.updateCSSStyle()
         }, state => {return state.bool()})
         
         return this;

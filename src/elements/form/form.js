@@ -240,8 +240,7 @@ class EclairRadioButtons extends EclairComponent {
         this._callbacks["selectRadioButton"] = function(object, selectedValue) {
             if (self._enabled) {   
                 self.value(selectedValue)
-                if (self._callbacks.hasOwnProperty("onChange")) 
-                    self.performCallback("onChange")
+                self.performCallback("onChange")
             }
         }
     }

@@ -19,7 +19,9 @@ eclair.Toggle(true)
     .name("fname")
 ```
 ### .enabled
-Set whether the toggle button is enabled.    
+Enable / Disable the element.
+<br/>**args**:
+- enabled: If true, the user can modify this element.
 ```javascript
 eclair.Toggle(false)
     .enabled(true)

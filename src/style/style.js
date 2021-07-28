@@ -83,6 +83,7 @@ class EclairStylableObject {
     borderRadius(_radius, selector) {return this._set(selector, "border-radius", _radius)}
     padding(_size, selector) {return this._set(selector, "padding", _size)}
     margin(_size, selector) {return this._set(selector, "margin", _size)}
+    gap(_size, selector) {return this._set(selector, "gap", _size)}
     font(_family, selector) {return this._set(selector, "font-family", _family)}
     fontSize(_size, selector) {return this._set(selector, "font-size", _size)}
     fontColor(_color, selector) {return this._set(selector, "color", _color)}
@@ -103,6 +104,8 @@ class EclairStylableObject {
     textDecoration(_value, selector) {return this._set(selector, "text-decoration", _value)}
     transition(_value, selector) {return this._set(selector, "transition", _value)}
     userSelect(_value, selector) {return this._set(selector, "user-select", _value)}
+    boxSizing(_value, selector) {return this._set(selector, "box-sizing", _value)}
+    transform(_value, selector) {return this._set(selector, "transform", _value)}
     
     // Flex model relations
     flexDirection(_value, selector) {return this._set(selector, "flex-direction", _value)}

@@ -71,6 +71,7 @@ eclair.styles = {
     
     HorizontalLine: eclair.Style()
         .borderSize("0px")
+        .width("100%")
         .css("border-top: 1px solid #999999"),
     
     RadioButtons: eclair.Style(),  // No default style
@@ -159,33 +160,36 @@ eclair.styles = {
         .fontSize("11px"),
     
     Toggle: eclair.Style()    
+        .display("flex")
+        .flexDirection("row")
+        .alignItems("center")
         .position("relative")
-        .height("20px")
-        .display("inline-block")
-        .borderRadius("20px")
         .width("50px")
         .background("#dddddd")
+        .padding("3px")
         .cursor("pointer")
-        .transition("0.2s all")
-        .userSelect("none"),
-    ToggleTick: eclair.Style()
-        .position("absolute")
-        .fontWeight(700)
-        .left("10px")
-        .fontColor("#ffffff")
-        .transition("0.2s all")
         .userSelect("none")
-        .opacity(0),
-    ToggleKnob: eclair.Style()
-        .transition("0.2s all")
-        .userSelect("none")
-        .css("box-sizing: border-box;")
-        .position("absolute")
-        .top("0px")
-        .left("0px")
-        .margin("3px")
-        .background("#ffffff")
         .borderRadius("20px")
+        .transition("0.2s all")
+        .boxSizing("border-box"),
+    ToggleKnob: eclair.Style()
         .height("14px")
         .width("14px")
+        .background("#ffffff")
+        .transform("translateX(0%)")
+        .transition("0.2s all")
+        .userSelect("none")
+        .borderRadius("20px"),
+    ToggleKnobWrapper: eclair.Style()  // Lol 'KnobWrapper = Condom'
+        .width("100%")
+        .transition("0.2s all"),
+    ToggleTick: eclair.Style()
+        .position("absolute")
+        .fontColor("#ffffff")
+        .left("35%")
+        .transition("0.2s all")
+        .transform("translateX(-50%)")
+        .fontWeight(700)
+        .userSelect("none")
+        .opacity(0)
 }

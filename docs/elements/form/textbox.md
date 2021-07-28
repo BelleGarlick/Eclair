@@ -30,10 +30,12 @@ eclair.TextBox("This textbox is has a maximum length")
     .maxLength(280)
 ```
 ### .enabled
-Set whether the textbox is enabled.
+Enable / Disable the element.
+<br/>**args**:
+- enabled: If true, the user can modify this element.
 ```javascript
-eclair.TextBox("This textbox is enabled")
-    .enabled(false)
+eclair.TextBox("Hello World")
+    .enabled(true)
 ```
 ### .required
 Set whether the textbox is required in a form.

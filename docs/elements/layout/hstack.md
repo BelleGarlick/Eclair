@@ -8,6 +8,7 @@ eclair.HStack([
    eclair.Button("Views can have multiple elements"),
    "Or even just html"
 ])
+    .gap("8px")
 ```
 ### .addChild
 Add a child element to this object.

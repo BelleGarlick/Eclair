@@ -94,12 +94,7 @@ class EclairTextBox extends EclairCustomTagComponent {
         return this
     } 
     
-    /// ### .enabled
-    /// Set whether the textbox is enabled.
-    /// ```javascript
-    /// eclair.TextBox("This textbox is enabled")
-    ///     .enabled(false)
-    /// ```
+    /// INCLUDE elements.form.checkbox.enabled eclair.TextBox("Hello World")
     enabled(_enabled) {
         this.bindState(_enabled, "enabled", value => {
             this.setAttr("enabled", value ? "true" : "null")
