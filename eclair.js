@@ -27,7 +27,7 @@ let eclair = {
     Text: function(text) {return new EclairText(text);},
     
     TextBox: function(text) {return new EclairTextBox(text);},
-    TextArea: function() {return new EclairTextArea();},
+    TextArea: function(_value) {return new EclairTextArea(_value);},
     IFrame: function() {return new EclairIFrame();},
     Select: function() {return new EclairSelect();},
     Link: function(text) {return new EclairLink(text);},
@@ -868,46 +868,17 @@ class EclairCustomTagComponent extends EclairComponent {
     }
     
     innerHTML(_html) {
-        let elem = this.getElement();
-        if (_html == null) {
-            if (elem != null) {
-                return elem.innerHTML;
-            }
-            return this._innerHTML;
-        } else {
-            this._innerHTML = _html;
-            if (elem != null) {
-                elem.innerHTML = _html;
-            }
-        }
+        this.bindState(_html, "html", value => {
+            this._innerHTML = value;
+            this.getElement(e => {
+                e.innerHTML = value
+            })
+        })
         return this;
     }
     
     build() {
         return `<${this.tag}>${this._innerHTML}</${this.tag}>`
-    }
-}
-
-class EclairTextArea extends EclairCustomTagComponent {
-    constructor() {
-        super("textarea")
-        this._value = ""
-    }
-    
-    value(_val) {
-        let elem = this.getElement();
-        if (_val == null) {
-            if (elem != null) {
-                return elem.value;
-            }
-            return this._value
-        } else {
-            this._value = _val
-            if (elem != null) {
-                elem.value = _val
-            }
-            return this
-        }
     }
 }
 
@@ -1040,7 +1011,7 @@ class EclairProgressBar extends EclairComponent {
 
 // elements.custom.syntax-highlighter
 class EclairSyntaxHighlighter extends EclairComponent {
-    constructor() {
+    constructor(_html) {
         super()
 
         try {
@@ -1049,13 +1020,14 @@ class EclairSyntaxHighlighter extends EclairComponent {
             console.log("HLJS Not imported. Go to 'https://highlightjs.org/usage/' to import the stylesheet and the .js file.")
         }
 
-        this._value = "";
-
         let self = this;
         this
             .position("relative")
             .width("400px")
             .height("400px")
+        
+        this._html = _html == null? eclair.State() : _html
+        this.highlightTimeout = null
 
         this._pre = eclair.CustomTagComponent("pre")
             .position("absolute")
@@ -1081,8 +1053,9 @@ class EclairSyntaxHighlighter extends EclairComponent {
             .setAttr("class", "javascript")
             .textAlign("left")
             .css("box-sizing: border-box;")
+            .innerHTML(this._html)
 
-        this._textarea = eclair.TextArea()
+        this._textarea = eclair.TextArea(this._html)
             .setAttr("spellcheck", false)
             .display("inline")
             .position("absolute")
@@ -1098,15 +1071,20 @@ class EclairSyntaxHighlighter extends EclairComponent {
             .css("box-sizing: border-box;line-height: 1.05; caret-color: black;resize:none;white-space: pre;letter-spacing: -0.2px;")
             .onKeyUp(e => {
                 var escape = document.createElement('textarea');
-                escape.textContent = e.value();
-                self._code.innerHTML(escape.innerHTML);
-                hljs.highlightAll();
+                escape.textContent = e.getElement().value;
+                this._html.value(escape)
+                clearTimeout(this.highlightTimeout);
+                hljs.highlightAll()
             })
             .onKeyDown(e => {
                 var escape = document.createElement('textarea');
-                escape.textContent = e.value();
-                self._code.innerHTML(escape.innerHTML);
-                hljs.highlightAll();
+                console.log(e)
+                console.log(e.getElement())
+                console.log(e.getElement().value)
+                escape.textContent = e.getElement().value;
+                this._html.value(escape)
+                clearTimeout(this.highlightTimeout);
+                hljs.highlightAll()
             }) 
             .onScroll(e => {
                 let textarea = e.getElement()
@@ -1117,24 +1095,6 @@ class EclairSyntaxHighlighter extends EclairComponent {
         this._code.parent = this
         this._textarea.parent = this
         this.children = [this._pre, this._code, this._textarea]
-    }
-
-    value(_value) {
-        if (_value == null) {
-            let elem = this._textarea.getElement();
-            if (elem != null) { 
-                return this._textarea.value()
-            }
-            return this._value;
-        } else {
-            this._value = _value;
-            this._textarea.value(_value);
-            var escape = document.createElement('textarea');
-            escape.textContent = this._textarea.value();
-            this._code.innerHTML(escape.innerHTML);
-            hljs.highlightAll();
-            return this;
-        }
     }
 
     build() {
@@ -1682,6 +1642,50 @@ class EclairSlider extends EclairCustomTagComponent {
     }
 }
    
+
+// elements.form.text-area
+class EclairTextArea extends EclairCustomTagComponent {
+    constructor(_value) {
+        super("textarea")
+        
+        this.bindState(_value, "value", value => {
+            this.innerHTML(value)
+            this.getElement(e => {e.value = value})
+        })
+        
+        this._overrideOnKeyUp = null
+        this._updateCallback("onKeyUp", e => {
+            if (_value instanceof EclairState) {
+                _value.value(e.getElement().value)
+            }
+            
+            if (this._overrideOnKeyUp != null) {
+                this._overrideOnKeyUp(e)
+            } 
+        })
+        
+        this._overrideOnKeyDown = null
+        this._updateCallback("onKeyDown", e => {
+            if (_value instanceof EclairState) {
+                _value.value(e.getElement().value)
+            }
+            
+            if (this._overrideOnKeyDown != null) {
+                this._overrideOnKeyDown(e)
+            } 
+        })
+    }
+    
+    onKeyUp(callback) {
+        this._overrideOnKeyUp = callback
+        return this
+    }
+    
+    onKeyDown(callback) {
+        this._overrideOnKeyDown = callback
+        return this
+    }
+}
 
 // elements.form.textbox
 class EclairTextBox extends EclairCustomTagComponent {

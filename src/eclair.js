@@ -60,7 +60,7 @@ let eclair = {
     Text: function(text) {return new EclairText(text);},
     
     TextBox: function(text) {return new EclairTextBox(text);},
-    TextArea: function() {return new EclairTextArea();},
+    TextArea: function(_value) {return new EclairTextArea(_value);},
     IFrame: function() {return new EclairIFrame();},
     Select: function() {return new EclairSelect();},
     Link: function(text) {return new EclairLink(text);},

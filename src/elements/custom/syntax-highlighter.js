@@ -1,21 +1,23 @@
+// WARN This whole class is a mess.
 class EclairSyntaxHighlighter extends EclairComponent {
-    constructor() {
+    constructor(_html) {
         super()
 
-        // Check if HLJS is imported, if not then let player know that it's not
+        // Check if HLJS is imported, if not then let user know that it's not
         try {
             if (hljs) {}
         } catch (error) {
             console.log("HLJS Not imported. Go to 'https://highlightjs.org/usage/' to import the stylesheet and the .js file.")
         }
 
-        this._value = "";
-
         let self = this;
         this
             .position("relative")
             .width("400px")
             .height("400px")
+        
+        this._html = _html == null? eclair.State() : _html
+        this.highlightTimeout = null
 
         this._pre = eclair.CustomTagComponent("pre")
             .position("absolute")
@@ -41,8 +43,9 @@ class EclairSyntaxHighlighter extends EclairComponent {
             .setAttr("class", "javascript")
             .textAlign("left")
             .css("box-sizing: border-box;")
+            .innerHTML(this._html)
 
-        this._textarea = eclair.TextArea()
+        this._textarea = eclair.TextArea(this._html)
             .setAttr("spellcheck", false)
             .display("inline")
             .position("absolute")
@@ -58,15 +61,22 @@ class EclairSyntaxHighlighter extends EclairComponent {
             .css("box-sizing: border-box;line-height: 1.05; caret-color: black;resize:none;white-space: pre;letter-spacing: -0.2px;")
             .onKeyUp(e => {
                 var escape = document.createElement('textarea');
-                escape.textContent = e.value();
-                self._code.innerHTML(escape.innerHTML);
-                hljs.highlightAll();
+                escape.textContent = e.getElement().value;
+                this._html.value(escape)
+//                self._code.innerHTML(escape.innerHTML);
+                clearTimeout(this.highlightTimeout);
+                hljs.highlightAll()
             })
             .onKeyDown(e => {
                 var escape = document.createElement('textarea');
-                escape.textContent = e.value();
-                self._code.innerHTML(escape.innerHTML);
-                hljs.highlightAll();
+                console.log(e)
+                console.log(e.getElement())
+                console.log(e.getElement().value)
+                escape.textContent = e.getElement().value;
+                this._html.value(escape)
+//                self._code.innerHTML(escape.innerHTML);
+                clearTimeout(this.highlightTimeout);
+                hljs.highlightAll()
             }) 
             .onScroll(e => {
                 let textarea = e.getElement()
@@ -77,24 +87,6 @@ class EclairSyntaxHighlighter extends EclairComponent {
         this._code.parent = this
         this._textarea.parent = this
         this.children = [this._pre, this._code, this._textarea]
-    }
-
-    value(_value) {
-        if (_value == null) {
-            let elem = this._textarea.getElement();
-            if (elem != null) { 
-                return this._textarea.value()
-            }
-            return this._value;
-        } else {
-            this._value = _value;
-            this._textarea.value(_value);
-            var escape = document.createElement('textarea');
-            escape.textContent = this._textarea.value();
-            this._code.innerHTML(escape.innerHTML);
-            hljs.highlightAll();
-            return this;
-        }
     }
 
     build() {

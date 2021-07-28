@@ -31,6 +31,8 @@ let linkTarget = State("_blank")
 
 let selectedTab = State(0)
 
+let htmlCode = State("Texting")
+
 
 let backgroundColor = eclair.Color().hex("#f6f6f6")
 
@@ -172,6 +174,9 @@ VStack([
             
             RadioButtons().addItems(["test", "testing", "tests"]),
             RadioButtons().addItems(["also test", "also testing", "also tests"]),
+            
+            eclair.TextArea(htmlCode),
+            eclair.TextArea(htmlCode).onKeyUp(e => {e.background("red")}),
             
             VStack([
                 Text("Try it yourself!").type(textHeadingStyle),
