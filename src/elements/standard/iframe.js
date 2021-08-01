@@ -23,6 +23,7 @@ class EclairIFrame extends EclairCustomTagComponent {
         this.bindState(_source, "src", value => {
             this.setAttr("src", value)
         })  
+        return this
     }
     
     /// ### .source
@@ -37,6 +38,7 @@ class EclairIFrame extends EclairCustomTagComponent {
         this.bindState(_source, "srcdoc", value => {
             this.setAttr("srcdoc", value)
         })  
+        return this
     }
     
     /// ### .source
@@ -51,6 +53,7 @@ class EclairIFrame extends EclairCustomTagComponent {
         this.bindState(_allow, "allowfullscreen", value => {
             this.setAttr("allowfullscreen", value)
         })  
+        return this
     }
     
     /// ### .allowPaymentRequest
@@ -65,6 +68,7 @@ class EclairIFrame extends EclairCustomTagComponent {
         this.bindState(_allow, "allowpaymentrequest", value => {
             this.setAttr("allowpaymentrequest", value)
         })  
+        return this
     }
     
     /// ### .loading
@@ -79,6 +83,7 @@ class EclairIFrame extends EclairCustomTagComponent {
         this.bindState(_loading, "loading", value => {
             this.setAttr("loading", value)
         })  
+        return this
     }
     
     /// ### .name
@@ -93,6 +98,7 @@ class EclairIFrame extends EclairCustomTagComponent {
         this.bindState(_name, "name", value => {
             this.setAttr("name", value)
         })  
+        return this
     }
     
     /// ### .referrerPolicy
@@ -107,6 +113,7 @@ class EclairIFrame extends EclairCustomTagComponent {
         this.bindState(_policy, "referrerpolicy", value => {
             this.setAttr("referrerpolicy", value)
         })  
+        return this
     }
     
     /// ### .sandbox
@@ -121,5 +128,6 @@ class EclairIFrame extends EclairCustomTagComponent {
         this.bindState(_sandbox, "sandbox", value => {
             this.setAttr("sandbox", value)
         })  
+        return this
     }
 }

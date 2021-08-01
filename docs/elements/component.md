@@ -1,3 +1,5 @@
+Warn test .hide
+Warn test .show
 ### .build
 This function should be implemented in a subclass but not called. Only the parent class should call this function otherwise the returned element will not be linked with all the eclair library.
 ### .compile

@@ -1,4 +1,4 @@
-## Eclair EclairHStack
+## Eclair HStack
 Create a horizontally stacked view in eclair.
 <br/>**args**:
 - elements: Elements within the view.

@@ -1,0 +1,29 @@
+<script src="../eclair.js"></script>
+<script>
+    eclair.VStack([
+        eclair.VStack([
+            eclair.Text("Log in.").type("heading1").fontColor("white"),
+                
+            eclair.TextBox()
+                .placeholder("Email Address"),
+            eclair.TextBox()
+                .password(true)
+                .placeholder("Password"),
+            eclair.HorizontalLine(),
+            eclair.Button("Sign In"),
+        ])
+            .css("box-shadow: 0px 0px 0px 10000px rgba(0, 0, 0, 0.3) inset")
+            .padding("24px")
+            .gap("8px")
+            .borderRadius("8px")
+            .width("240px")
+    ])
+        .background("url('https://cdn.pixabay.com/photo/2020/05/15/14/03/lake-5173683_1280.jpg')")
+        .position("absolute")
+        .left("0px")
+        .top("0px")
+        .height("100%")
+        .width("100%")
+        .css("background-size: cover; justify-content: center;")
+        .write()
+</script>

@@ -1,0 +1,52 @@
+<script src="../eclair.js"></script>
+<script>
+    let VStack = eclair.VStack, HStack = eclair.HStack, Text = eclair.Text;
+    
+    let linkStyle = eclair.Style()
+        .padding("10px 16px")
+        .css("text-decoration: none", "hover")  
+        .fontColor("black")
+        .background(eclair.Color().rgb(240, 240, 240))
+        .background(eclair.Color().rgb(220, 220, 220), "hover")
+    
+    
+    function navLink(text, url) {
+        return eclair.Link(text)
+            .url(url)
+            .addStyle(linkStyle)
+    }
+    
+    
+    VStack([
+        VStack([
+            VStack([
+                Text("My Website")
+                    .type("title")
+                    .fontColor("white")
+            ])
+                .height("100%"),
+                
+            HStack([
+                navLink("Home", "#home"),
+                navLink("My Projects", "#myProjects"),
+                navLink("Online CV", "#onlineCV"),
+                navLink("About Me", "#aboutMe")
+            ])
+                .transform("translateY(50%)")
+        ])  
+            .height("200px")    
+            .background("url('https://cdn.pixabay.com/photo/2020/05/15/14/03/lake-5173683_1280.jpg')")
+            .css("background-size: cover; justify-content: space-between")
+            .width("100%"),
+        
+        VStack([
+            eclair.TextBox("hello")
+        ])
+    ])
+        .position("absolute")
+        .left("0px")
+        .top("0px")
+        .width("100%")
+        .gap("24px")
+        .write()
+</script>

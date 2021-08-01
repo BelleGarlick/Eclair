@@ -25,7 +25,13 @@ eclair.styles = {
         .background("#cccccc", "active"),
     
     Select: eclair.Style()
-        .font(eclair.theme.font),
+        .borderSize("0px")
+        .borderRadius("2px")
+        .padding("8px 16px")
+        .background("#eeeeee")
+        .font(eclair.theme.font)
+        .background("#dddddd", "hover")
+        .background("#cccccc", "active"),
     
     Slider: eclair.Style()
         .transition("0.2s all")
@@ -68,6 +74,7 @@ eclair.styles = {
         .background("#dddddd", "hover")
         .background("#cccccc", "active")
         .background("#bbbbbb", "focused"),
+    TextArea: eclair.Style(),
     
     HorizontalLine: eclair.Style()
         .borderSize("0px")

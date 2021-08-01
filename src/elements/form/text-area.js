@@ -38,6 +38,8 @@ class EclairTextArea extends EclairCustomTagComponent {
                 this._overrideOnKeyDown(e)
             } 
         })
+        
+        this.addStyle(eclair.styles.TextArea)
     }
     
     onKeyUp(callback) {

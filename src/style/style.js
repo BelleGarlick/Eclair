@@ -26,11 +26,14 @@ class EclairStylableObject {
             let styleSheetCode = '';
             
             Object.keys(self._styles[selector]).forEach(function(key) {
-                let value = self._styles[selector][key]
-                if (value != null) {
-                    styleSheetCode += (key == "css")? value + ";" : `${key}:${value};` 
+                if (key != "css") {
+                    let value = self._styles[selector][key]
+                    styleSheetCode += `${key}:${value};` 
                 }
             });
+            if (self._styles[selector].hasOwnProperty("css")) {
+                styleSheetCode += self._styles[selector]['css']
+            }
             
             if (selector.length > 0) {
                 if (selector[0] != " ") {
@@ -123,12 +126,7 @@ class EclairStyleComponent extends EclairStylableObject {
         node.innerHTML = this.buildStyleCode(true)
         node.setAttribute("id", this.id() + "-css")
         
-        let headElements = document.head.children;
-        if (headElements.length == 0) {
-            document.head.appendChild(node)
-        } else {
-            document.head.insertBefore(node, headElements[0])
-        }
+        document.head.appendChild(node)
     }
     
     id() {

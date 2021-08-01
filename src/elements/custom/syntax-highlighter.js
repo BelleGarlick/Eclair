@@ -9,6 +9,8 @@ class EclairSyntaxHighlighter extends EclairComponent {
         } catch (error) {
             console.log("HLJS Not imported. Go to 'https://highlightjs.org/usage/' to import the stylesheet and the .js file.")
         }
+        
+        this._writtenCode = eclair.State()
 
         let self = this;
         this
@@ -17,7 +19,6 @@ class EclairSyntaxHighlighter extends EclairComponent {
             .height("400px")
         
         this._html = _html == null? eclair.State() : _html
-        this.highlightTimeout = null
 
         this._pre = eclair.CustomTagComponent("pre")
             .position("absolute")
@@ -43,7 +44,7 @@ class EclairSyntaxHighlighter extends EclairComponent {
             .setAttr("class", "javascript")
             .textAlign("left")
             .css("box-sizing: border-box;")
-            .innerHTML(this._html)
+            .innerHTML(this._writtenCode)
 
         this._textarea = eclair.TextArea(this._html)
             .setAttr("spellcheck", false)
@@ -59,29 +60,18 @@ class EclairSyntaxHighlighter extends EclairComponent {
             .margin("0px")
             .padding("10px 10px 10px 15px")
             .css("box-sizing: border-box;line-height: 1.05; caret-color: black;resize:none;white-space: pre;letter-spacing: -0.2px;")
-            .onKeyUp(e => {
-                var escape = document.createElement('textarea');
-                escape.textContent = e.getElement().value;
-                this._html.value(escape)
-//                self._code.innerHTML(escape.innerHTML);
-                clearTimeout(this.highlightTimeout);
-                hljs.highlightAll()
-            })
-            .onKeyDown(e => {
-                var escape = document.createElement('textarea');
-                console.log(e)
-                console.log(e.getElement())
-                console.log(e.getElement().value)
-                escape.textContent = e.getElement().value;
-                this._html.value(escape)
-//                self._code.innerHTML(escape.innerHTML);
-                clearTimeout(this.highlightTimeout);
-                hljs.highlightAll()
-            }) 
             .onScroll(e => {
                 let textarea = e.getElement()
                 self._code.getElement().scroll(textarea.scrollLeft, textarea.scrollTop)
             })
+        
+        this.bindState(this._html, "html", value => {
+            var escape = document.createElement('textarea');
+            escape.textContent = value;
+            this._writtenCode.value(escape.innerHTML)
+
+            hljs.highlightAll()
+        })
         
         this._pre.parent = this
         this._code.parent = this

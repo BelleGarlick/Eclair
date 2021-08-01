@@ -17,6 +17,7 @@ class EclairHStack extends EclairView {
             .display("flex")
             .flexDirection("row")
             .alignItems("center")
+        // TODO CSs for justyf content
             .css("justify-content: space-around;")
         
         // Need to remove view as given by parent

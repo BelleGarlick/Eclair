@@ -6,201 +6,250 @@ let Toggle = eclair.Toggle, Text = eclair.Text, CheckBox = eclair.CheckBox,
     RadioButtons = eclair.RadioButtons, TextBox = eclair.TextBox, State = eclair.State, 
     AlertState = eclair.AlertState, TextStyle = eclair.TextStyle, VStack = eclair.VStack,
     HStack = eclair.HStack, View = eclair.View, TabView = eclair.TabView;
-    
-let checkboxText = State("Accept Cookies?")
-let checkBoxState = State(false)
-let checkboxEnabled = State(true)
 
-let alertBoxTitle = State("Alert Box")
-let alertBoxText = State("You're learning Eclair")
-let alertBoxTheme = eclair.Color().success()
 
-let progressValue = State(0.5)
 let textHeadingStyle = TextStyle().heading2()
-let showProgressState = State(false)
-let progressBarStripped = State(false)
-let progressBarColor = eclair.Color()
-    
-let toggleOn = State(true)
-let toggleShowLabel = State(false)
-let toggleEnabled = State(true)
-
 let linkText = State("DuckDuckGo")
 let linkURL = State('https://duckduckgo.com/')
 let linkTarget = State("_blank")
 
 let selectedTab = State(0)
 
-let htmlCode = State("Texting")
+let iframeHTMLCode = State("")
 
 let selectedTabStyle = eclair.Style()
     .backgroundColor("red")
+
+let selectedAlertBoxColour = eclair.State()
+let selectedAlertBoxColourIndex = eclair.State()
     
 
 let backgroundColor = eclair.Color().hex("#f6f6f6")
 
+let htmlCode = eclair.State()
 
-function group(func) {
-    return VStack(func)
-        .alignment(eclair.Alignment().start())
-        .backgroundColor(backgroundColor)
-        .borderRadius("3px")
-        .padding("20px")
-        .margin("10px")
-        .width("100%")
-        .gap("8px")
-}
+
+let selectedRadio = eclair.State()
+let selectedRadioIndex = eclair.State()
+
+function codeExample(title, code, height) {
+    let tab = eclair.State(0)
     
-function toggleLabels(text, toggleLabel, callback) {
     return VStack([
-        Text(text),
-        Toggle(toggleLabel).onChange(callback)
-    ])
-        .width("100%")
-        .alignment(eclair.Alignment().start())
-        .gap("8px")
+            HStack([
+                Text(title).type(textHeadingStyle),
+                HStack([
+                    eclair.Button("Result").onClick(_=> {tab.value(0)}),
+                    eclair.Button("Code").onClick(_=> {tab.value(1)})
+                ])
+            ])
+                .css("justify-content: space-between;")
+                .width("100%"),
+            TabView(tab, [
+                eclair.View([
+                    eclair.IFrame()
+                        .source('<script src="eclair.js"></scrip'+'t><script>'+code+'</sc'+'ript>')
+                        .height(`${height}px`)
+                        .borderSize("0px")
+                ])
+                    .width("100%"),
+                eclair.View([
+                    eclair.SyntaxHighlighter(code)
+                        .width("100%")
+                ])
+                    .width("100%")
+            ])  
+                .width("100%")
+            
+        ])
+            .alignment(eclair.Alignment().start())
+            .backgroundColor(backgroundColor)
+            .borderRadius("3px")
+            .padding("20px")
+            .margin("10px")
+            .width("100%")
+            .gap("8px")
 }
-    
-
-function selectTab(element, index) {
-    selectedTab.value(0)
-    
-    for (let c = 0; c < element.parent.children.length; c++) {
-        element.parent.children[c].removeStyle(selectedTabStyle)
-    }
-    element.addStyle(selectedTabStyle)
-}
-    
-let codeView = eclair.SyntaxHighlighter()
 
 
 VStack([   
     HStack([
-        Text("Eclair")  
+        Text("Eclair Playground")  
             .type(textHeadingStyle)
             .fontColor("white")
-            .margin("0px")
     ])
         .width("100%")
         .background(eclair.theme.accent)
         .padding(8),
     
     eclair.VStack([
-        VStack([        
-            View([
-                eclair.Button("Toggles").onClick(e => {selectTab(e, 0);}),
-                eclair.Button("Progress Bar").onClick(e => {selectTab(e, 1);}),
-                eclair.Button("Alert Box").onClick(e => {selectTab(e, 2);}),
-                eclair.Button("Check Box").onClick(e => {selectTab(e, 3);}),
-            ]),
+        VStack([     
+            eclair.Select()
+                .addOptions(["Toggles", "Progress Bar", "Alert Box", "Check Box"])
+                .selectedIndex(selectedTab)
+                .width("60%"),
             
             TabView(selectedTab, [
-                // Toggle button
-                group([
-                    Text("Toggle Switch").type(textHeadingStyle),
+                codeExample("Toggle Switch", `// Example Toggle Code
+let toggleOn = eclair.State(true)
+let toggleTick = eclair.State(false)
+let toggleEnabled = eclair.State(true)
 
-                    VStack([
-                        Toggle(toggleOn)
-                            .showTick(toggleShowLabel)
-                            .enabled(toggleEnabled)
-                    ]).width("100%"), // .align("center")
+// Create layout
+eclair.VStack([
+    // Attach states to toggle
+    eclair.VStack([
+        eclair.Toggle(toggleOn)
+            .showTick(toggleTick)
+            .enabled(toggleEnabled)
+    ]).width("100%"),
 
-                    eclair.HorizontalLine(),
-                    toggleLabels("Show tick", toggleShowLabel, c => {}),
-                    toggleLabels("Toggle Button", true, c => {toggleOn.value(!toggleOn.value())}),
-                    toggleLabels("Enabled", toggleEnabled, c => {})
-                ]),
+    eclair.HorizontalLine(),
+
+    // Tick mark toggle
+    eclair.Text("Tick Mark"),
+    eclair.Toggle(toggleTick),
+
+    // Toggle toggle
+    eclair.Text("Toggle"),
+    eclair.Toggle(true)
+        .onChange(e => {\n\t\ttoggleOn.toggle()\n\t}),
+
+    // Toggle enabled
+    eclair.Text("Enabled"),
+    eclair.Toggle(toggleEnabled)
+])
+    .alignment(eclair.Alignment().start())
+    .gap("8px")
+    .write()
+`, 220),
                 
-                // Progress Bar
-                group([
-                    Text("Progress Bar").type(textHeadingStyle),
+                codeExample("Progress Bar", `// Progress bar code
+let progressValue = eclair.State(0.5)
+let showProgressState = eclair.State(false)
+let progressBarStripped = eclair.State(false)
+let progressBarColor = eclair.Color()
 
-                    eclair.ProgressBar(progressValue)
-                        .striped(progressBarStripped)
-                        .color(progressBarColor)
-                        .showLabel(showProgressState)
-                        .width("100%"),
+eclair.VStack([
+    eclair.ProgressBar(progressValue)
+        .striped(progressBarStripped)
+        .color(progressBarColor)
+        .showLabel(showProgressState)
+        .width("100%"),
 
-                    eclair.HorizontalLine(),
+    eclair.HorizontalLine(),
 
-                    Text("Progress"),
-                    eclair.Slider(progressValue)
-                        .min(0).max(1).step(0.01)
-                        .width("100%"),
+    eclair.Text("Progress"),
+    eclair.Slider(progressValue)
+        .min(0).max(1).step(0.01)
+        .width("100%"),
 
-                    toggleLabels("Striped", progressBarStripped, c => {}),
-                    toggleLabels("Show Label", showProgressState, c => {})
-                ]),
+    eclair.Text("Striped"),
+    eclair.Toggle(progressBarStripped),
+
+    eclair.Text("Show Label"),
+    eclair.Toggle(showProgressState)
+])
+    .alignment(eclair.Alignment().start())
+    .gap("8px")
+    .write()
+                `, 210),
                 
-                // Alert Box
-                group([
-                    Text("Alert Box").type(textHeadingStyle),
+                codeExample("Alert Box", `// Alert Box
+let alertBoxTitle = eclair.State("Alert Box")
+let alertBoxText = eclair.State("You're learning Eclair")
+let alertBoxTheme = eclair.Color().success()
+let selectedAlertBoxColour = eclair.State()
 
-                    eclair.Alert(alertBoxText)
-                        .title(alertBoxTitle)
-                        .theme(alertBoxTheme),
+eclair.VStack([
+    eclair.Alert(alertBoxText)
+        .title(alertBoxTitle)
+        .theme(alertBoxTheme)
+        .width("100%")
+        .boxSizing("border-box"),
 
-                    eclair.HorizontalLine(),
+    eclair.HorizontalLine(),
 
-                    Text("Title"),
-                    TextBox(alertBoxTitle)
-                        .placeholder("Title..."),
+    eclair.Text("Title"),
+    eclair.TextBox(alertBoxTitle)
+        .placeholder("Title..."),
 
-                    Text("Message"),
-                    TextBox(alertBoxText).placeholder("Message..."),
+    eclair.Text("Message"),
+    eclair.TextBox(alertBoxText).placeholder("Message..."),
 
-                    Text("Line breaker"),
-                    eclair.Button("Add line break").onClick(c => {
-                        alertBoxText.value(alertBoxText.value() + "<hr/>A new line break can be added by typing &lt;hr/&gt;.")
-                    }),
+    eclair.Text("Line breaker"),
+    eclair.Button("Add line break").onClick(c => {
+        alertBoxText.value(alertBoxText.value() + "<hr/>A new line break can be added by typing &lt;hr/&gt;.")
+    }),
 
-                    Text("Preset"),
-                    eclair.Select()
-                        .addOptions(["Success", "Danger", "Warning", "Info", "Light", "Dark"])
-                        .onChange(s => {
-                            if (s.value() == "Success") {alertBoxTheme.success()}
-                            if (s.value() == "Danger") {alertBoxTheme.danger()}
-                            if (s.value() == "Warning") {alertBoxTheme.warning()}
-                            if (s.value() == "Info") {alertBoxTheme.info()}
-                            if (s.value() == "Light") {alertBoxTheme.light()}
-                            if (s.value() == "Dark") {alertBoxTheme.dark()}
-                        })
-                ]),
+    eclair.Text("Preset"),
+    eclair.Select(selectedAlertBoxColour)
+        .addOptions(["Success", "Danger", "Warning", "Info", "Light", "Dark"])
+        .onChange(s => {
+            if (selectedAlertBoxColour.value() == "Success") {alertBoxTheme.success()}
+            if (selectedAlertBoxColour.value() == "Danger") {alertBoxTheme.danger()}
+            if (selectedAlertBoxColour.value() == "Warning") {alertBoxTheme.warning()}
+            if (selectedAlertBoxColour.value() == "Info") {alertBoxTheme.info()}
+            if (selectedAlertBoxColour.value() == "Light") {alertBoxTheme.light()}
+            if (selectedAlertBoxColour.value() == "Dark") {alertBoxTheme.dark()}
+        })
+])
+    .alignment(eclair.Alignment().start())
+    .gap("8px")
+    .write()
+                `, 390),
                 
-                // Check box
-                group([
-                    Text("Check Box").type(textHeadingStyle),
-                    
-                    CheckBox(checkBoxState)
-                        .text(checkboxText)
-                        .enabled(checkboxEnabled),
+                codeExample("Alert Box", `// Check Box
+let checkboxText = eclair.State("Accept Cookies?")
+let checkBoxState = eclair.State(false)
+let checkboxEnabled = eclair.State(true)
 
-                    eclair.HorizontalLine(),
+eclair.VStack([
+    eclair.CheckBox(checkBoxState)
+        .text(checkboxText)
+        .enabled(checkboxEnabled),
 
-                    TextBox(checkboxText),
-                    TextBox(checkBoxState),
+    eclair.HorizontalLine(),
 
-                    toggleLabels("Enabled", checkboxEnabled, c => {}),
-                ]),
+    eclair.TextBox(checkboxText),
+    eclair.TextBox(checkBoxState),
+             
+    eclair.Text("Enabled"),
+    eclair.Toggle(checkboxEnabled)
+])
+    .alignment(eclair.Alignment().start())
+    .gap("8px")
+    .write()
+                `, 250),
             ]).width("100%"),
             
-            RadioButtons().addItems(["test", "testing", "tests"]),
-            RadioButtons().addItems(["also test", "also testing", "also tests"]),
+            eclair.TextBox(selectedRadio),
+            eclair.TextBox(selectedRadioIndex),
+            RadioButtons(selectedRadio)
+                .add("test")
+                .add("testing")
+                .add("tests")
+                .add("test")
+                .addItems(["test", "testing", "tests", "test"])
+                .width("100%")
+                .selectedIndex(selectedRadioIndex),
+            eclair.HorizontalLine(),
+            RadioButtons(selectedRadio).addItems(["tests", "test", "testing"]).width("100%"),
             
             eclair.TextArea(htmlCode),
-            eclair.TextArea(htmlCode).onKeyUp(e => {e.background("red")}),
             
             VStack([
                 Text("Try it yourself!").type(textHeadingStyle),
-                codeView,
+                eclair.SyntaxHighlighter(htmlCode),
                 eclair.Button("Run").onClick((self) => {
-                    let code = '<script src="eclair.js"></scrip'+'t><script>'+codeView.value()+'</sc'+'ript>'
-                    self.parent.children[3].source(code)
+                    let code = '<script src="eclair.js"></scrip'+'t><script>'+htmlCode.value()+'</sc'+'ript>'
+                    iframeHTMLCode.value(code)
                 }),
                 
                 eclair.IFrame()
                     .height("100%")
                     .width("100%")
+                    .source(iframeHTMLCode)
             ])
                 .background("#f6f6f6")
                 .borderRadius("3px")

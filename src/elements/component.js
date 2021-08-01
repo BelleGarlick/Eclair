@@ -14,6 +14,9 @@ class EclairComponent extends EclairStylableObject {
         this.sharedStyles = []
         this.attributes = {id: this.id()}
         this.stateBindings = {}
+        
+        this._hidden = false
+        this._hiddenStyle = "inline"
     }
     
     
@@ -100,6 +103,22 @@ class EclairComponent extends EclairStylableObject {
             this.setAttr("class", classesString)
         }
         return this;
+    }
+    
+    /// Warn test .hide
+    hide() {
+        if (!this._hidden) {
+            this._hidden = true
+            this.getElement(e => {
+                this._hiddenStyle = window.getComputedStyle(e, null).display
+            })
+            this.display("none")
+        }
+    }
+    
+    /// Warn test .show
+    show() {
+        this.display(this._hiddenStyle)
     }
     
     bindState(state, stateBindingID, onCallback, valueCallback) {

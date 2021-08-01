@@ -74,7 +74,7 @@ class EclairTextBox extends EclairCustomTagComponent {
     /// ```
     password(_password) {
         this.bindState(_password, "password", value => {
-            this.setAttr("type", _password.bool()? "password":'text')
+            this.setAttr("type", value? "password":'text')
         }, state => {return state.bool()})
         
         return this

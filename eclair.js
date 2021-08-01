@@ -9,6 +9,8 @@ let eclair = {
     _elements: {},
     _newID: function() {this._ids += 1; return this._ids - 1;},
     
+    performCallback: function(eID, event, param1) {this._elements[eID].performCallback(event, param1);},
+    
     Style: function() {return new EclairStyleComponent();},
     
     State: function(_val) {return new EclairState(_val);},    
@@ -21,29 +23,28 @@ let eclair = {
     HStack: function(_elements) {return new EclairHStack(_elements);},
     TabView: function(_tab, _elements) {return new EclairTabView(_tab, _elements);},
     
-    Button: function(text) {return new EclairButton(text);},
-    Form: function(elements) {return new EclairForm(elements);},
-    Image: function() {return new EclairImage();},
-    Text: function(text) {return new EclairText(text);},
-    
-    TextBox: function(text) {return new EclairTextBox(text);},
-    TextArea: function(_value) {return new EclairTextArea(_value);},
-    IFrame: function() {return new EclairIFrame();},
-    Select: function() {return new EclairSelect();},
-    Link: function(text) {return new EclairLink(text);},
-    Slider: function(_value) {return new EclairSlider(_value);},
-    HiddenInput: function(_value) {return new EclairHiddenInput(_value);},
-    Toggle: function(_value) {return new EclairToggle(_value);},
-    HorizontalLine: function() {return new EclairHorizontalLine();},
     CustomTagComponent: function(tag) {return new EclairCustomTagComponent(tag);},
-    SyntaxHighlighter: function() {return new EclairSyntaxHighlighter();},
-    RadioButtons: function() {return new EclairRadioButtons();},
+    
+    Button: function(text) {return new EclairButton(text);},
+    TextBox: function(text) {return new EclairTextBox(text);},
+    Form: function(elements) {return new EclairForm(elements);},
+    Select: function(_value) {return new EclairSelect(_value);},
+    Slider: function(_value) {return new EclairSlider(_value);},
+    Toggle: function(_value) {return new EclairToggle(_value);},
+    RadioButtons: function(_value) {return new EclairRadioButtons(_value);},
     CheckBox: function(text) {return new EclairCheckBox(text);},
+    TextArea: function(_value) {return new EclairTextArea(_value);},
+    HiddenInput: function(_value) {return new EclairHiddenInput(_value);},
     
-    ProgressBar: function(_progress) {return new EclairProgressBar(_progress);},
+    Image: function(_value) {return new EclairImage(_value);},
+    IFrame: function() {return new EclairIFrame();},
+    Text: function(text) {return new EclairText(text);},
+    Link: function(text) {return new EclairLink(text);},
+    HorizontalLine: function() {return new EclairHorizontalLine();},
+    
     Alert: function(_value) {return new EclairAlertBox(_value);},
-    
-    performCallback: function(eID, event, param1) {this._elements[eID].performCallback(event, param1);},
+    ProgressBar: function(_progress) {return new EclairProgressBar(_progress);},
+    SyntaxHighlighter: function(_value) {return new EclairSyntaxHighlighter(_value);},
     
     theme: {
         "accent": "#ee8800",
@@ -63,12 +64,14 @@ class EclairState {
         if (_value == undefined) {
             return this._value
         } else {
-            this._value = _value;
-            
-            let self = this
-            Object.keys(self.callbacks).forEach(function(key) {
-                self.callbacks[key](self)
-            })
+            if (_value != this._value){
+                this._value = _value;
+
+                let self = this
+                Object.keys(self.callbacks).forEach(function(key) {
+                    self.callbacks[key](self)
+                })
+            }
         }
         
         return this
@@ -91,25 +94,23 @@ class EclairState {
     
     number(_default) {
         try {
+            if (this._value == null) { 
+                return _default == null? 0 : _default
+            }
             return parseFloat(this._value)
         } catch (error) {
-            if (_default == null) {
-                return 0
-            } else {
-                return _default
-            }
+            return _default == null? 0 : _default
         }
     }
     
     int(_default) {
         try {
+            if (this._value == null) { 
+                return _default == null? 0 : _default
+            }
             return parseInt(this._value)
         } catch (error) {
-            if (_default == null) {
-                return 0
-            } else {
-                return _default
-            }
+            return _default == null? 0 : _default
         }
     }
     
@@ -368,11 +369,14 @@ class EclairStylableObject {
             let styleSheetCode = '';
             
             Object.keys(self._styles[selector]).forEach(function(key) {
-                let value = self._styles[selector][key]
-                if (value != null) {
-                    styleSheetCode += (key == "css")? value + ";" : `${key}:${value};` 
+                if (key != "css") {
+                    let value = self._styles[selector][key]
+                    styleSheetCode += `${key}:${value};` 
                 }
             });
+            if (self._styles[selector].hasOwnProperty("css")) {
+                styleSheetCode += self._styles[selector]['css']
+            }
             
             if (selector.length > 0) {
                 if (selector[0] != " ") {
@@ -463,12 +467,7 @@ class EclairStyleComponent extends EclairStylableObject {
         node.innerHTML = this.buildStyleCode(true)
         node.setAttribute("id", this.id() + "-css")
         
-        let headElements = document.head.children;
-        if (headElements.length == 0) {
-            document.head.appendChild(node)
-        } else {
-            document.head.insertBefore(node, headElements[0])
-        }
+        document.head.appendChild(node)
     }
     
     id() {
@@ -505,7 +504,13 @@ eclair.styles = {
         .background("#cccccc", "active"),
     
     Select: eclair.Style()
-        .font(eclair.theme.font),
+        .borderSize("0px")
+        .borderRadius("2px")
+        .padding("8px 16px")
+        .background("#eeeeee")
+        .font(eclair.theme.font)
+        .background("#dddddd", "hover")
+        .background("#cccccc", "active"),
     
     Slider: eclair.Style()
         .transition("0.2s all")
@@ -548,6 +553,7 @@ eclair.styles = {
         .background("#dddddd", "hover")
         .background("#cccccc", "active")
         .background("#bbbbbb", "focused"),
+    TextArea: eclair.Style(),
     
     HorizontalLine: eclair.Style()
         .borderSize("0px")
@@ -692,6 +698,9 @@ class EclairComponent extends EclairStylableObject {
         this.sharedStyles = []
         this.attributes = {id: this.id()}
         this.stateBindings = {}
+        
+        this._hidden = false
+        this._hiddenStyle = "inline"
     }
     
     
@@ -780,6 +789,20 @@ class EclairComponent extends EclairStylableObject {
         return this;
     }
     
+    hide() {
+        if (!this._hidden) {
+            this._hidden = true
+            this.getElement(e => {
+                this._hiddenStyle = window.getComputedStyle(e, null).display
+            })
+            this.display("none")
+        }
+    }
+    
+    show() {
+        this.display(this._hiddenStyle)
+    }
+    
     bindState(state, stateBindingID, onCallback, valueCallback) {
         if (state instanceof EclairState) {
             let objectBindingId = `${this.id()}-${stateBindingID}`
@@ -862,6 +885,7 @@ class EclairComponent extends EclairStylableObject {
 class EclairCustomTagComponent extends EclairComponent {
     constructor(tag) {
         super()
+        
         this.tag = tag;
         this._innerHTML = "";
     }
@@ -1018,6 +1042,8 @@ class EclairSyntaxHighlighter extends EclairComponent {
         } catch (error) {
             console.log("HLJS Not imported. Go to 'https://highlightjs.org/usage/' to import the stylesheet and the .js file.")
         }
+        
+        this._writtenCode = eclair.State()
 
         let self = this;
         this
@@ -1026,7 +1052,6 @@ class EclairSyntaxHighlighter extends EclairComponent {
             .height("400px")
         
         this._html = _html == null? eclair.State() : _html
-        this.highlightTimeout = null
 
         this._pre = eclair.CustomTagComponent("pre")
             .position("absolute")
@@ -1052,7 +1077,7 @@ class EclairSyntaxHighlighter extends EclairComponent {
             .setAttr("class", "javascript")
             .textAlign("left")
             .css("box-sizing: border-box;")
-            .innerHTML(this._html)
+            .innerHTML(this._writtenCode)
 
         this._textarea = eclair.TextArea(this._html)
             .setAttr("spellcheck", false)
@@ -1068,27 +1093,18 @@ class EclairSyntaxHighlighter extends EclairComponent {
             .margin("0px")
             .padding("10px 10px 10px 15px")
             .css("box-sizing: border-box;line-height: 1.05; caret-color: black;resize:none;white-space: pre;letter-spacing: -0.2px;")
-            .onKeyUp(e => {
-                var escape = document.createElement('textarea');
-                escape.textContent = e.getElement().value;
-                this._html.value(escape)
-                clearTimeout(this.highlightTimeout);
-                hljs.highlightAll()
-            })
-            .onKeyDown(e => {
-                var escape = document.createElement('textarea');
-                console.log(e)
-                console.log(e.getElement())
-                console.log(e.getElement().value)
-                escape.textContent = e.getElement().value;
-                this._html.value(escape)
-                clearTimeout(this.highlightTimeout);
-                hljs.highlightAll()
-            }) 
             .onScroll(e => {
                 let textarea = e.getElement()
                 self._code.getElement().scroll(textarea.scrollLeft, textarea.scrollTop)
             })
+        
+        this.bindState(this._html, "html", value => {
+            var escape = document.createElement('textarea');
+            escape.textContent = value;
+            this._writtenCode.value(escape.innerHTML)
+
+            hljs.highlightAll()
+        })
         
         this._pre.parent = this
         this._code.parent = this
@@ -1288,18 +1304,43 @@ class EclairHiddenInput extends EclairCustomTagComponent {
 
 // elements.form.radio-buttons
  class EclairRadioButtons extends EclairComponent {
-    constructor() {
+    constructor(selectedValue) {
         super()
         
         this._enabled = true
         
-        this._hiddenValue = eclair.State("")
-        this._hidden = eclair.HiddenInput(this._hiddenValue)
+        this._selectedValue = selectedValue instanceof EclairState? selectedValue : eclair.State(selectedValue) 
+        this._hidden = eclair.HiddenInput(this._selectedValue)
         
         this.itemStyle = eclair.Style()
         this.selectedItemStyle = eclair.Style()
         this.radioStyle = eclair.Style()
         this.selectedRadioStyle = eclair.Style()
+        
+        this.bindState(this._selectedValue, "value", value => {
+            this.performCallback("onChange")
+
+            this.getElement(e => {
+                var selectedIndex = 0
+                for (let n = 0; n < this.items.length; n++) {
+                    let buttons = e.children;
+                    let radioButton = buttons[n].children[0].children[0].children[0].children[0]
+                    
+                    if (value == this.items[n].value) {
+                        selectedIndex = n
+                        buttons[n].setAttribute("class", eclair.styles.RadioButtonsSelectedItem.id() + " " + this.selectedItemStyle.id())
+                        radioButton.setAttribute("class", eclair.styles.RadioButtonsSelectedRadio.id() + " " + this.selectedRadioStyle.id())
+                    } else {
+                        buttons[n].setAttribute("class", eclair.styles.RadioButtonsItem.id() + " " + this.itemStyle.id())
+                        radioButton.setAttribute("class", eclair.styles.RadioButtonsRadio.id() + " " + this.radioStyle.id())
+                    }
+                }
+                
+                if (this.stateBindings.hasOwnProperty("index")) {
+                    this.stateBindings["index"].value(selectedIndex)
+                }
+            })
+        })
         
         this.addStyle(eclair.styles.RadioButtons)
         
@@ -1308,45 +1349,42 @@ class EclairHiddenInput extends EclairCustomTagComponent {
         let self = this
         this._callbacks["selectRadioButton"] = function(object, selectedValue) {
             if (self._enabled) {   
-                self.value(selectedValue)
-                self.performCallback("onChange")
+                self._selectedValue.value(selectedValue)
             }
         }
     }
     
-    buildItem(_item, index) {
-        let style = `style='margin-top: 3px;'`
-        if (index == 0) {style = ""}
+    selectedIndex(_index) {
+        this.bindState(_index, "index", value => {
+            this._selectedValue.value(this.items[value].value)
+        }, state => {return state.int(0)})
         
-        let radioClass = `${eclair.styles.RadioButtonsItem.id()} ${this.itemStyle.id()}`
-        let divClass = `${eclair.styles.RadioButtonsRadio.id()} ${this.radioStyle.id()}`
-        
-        if (_item.value == this.value()) {
-            radioClass = `${eclair.styles.RadioButtonsSelectedItem.id()} ${this.selectedItemStyle.id()}`
-            divClass = `${eclair.styles.RadioButtonsSelectedRadio.id()} ${this.selectedRadioStyle.id()}`
-        }
-        
-        return `<table onclick='eclair.performCallback("${this.id()}", "selectRadioButton", "${_item.value}")' cellpadding=6 class='${radioClass}' ${style}><tbody><tr><td width=1><div class='${divClass}'></div></td><td>${_item.text}</td></tr></tbody></table>`
+        return this
     }
     
-    addItem(value, text) {
+    name(_name) {
+        this._hidden.name(_name)
+        return this;
+    }
+    
+    add(value, text) {
         text = text == null ? value : text
+        
         let item = {"value": value, "text": text}
-        
-        if (this.items.length == 0) {
-            this._hiddenValue.value(value)
-        }
-        
         this.items.push(item)
         
-        let self = this;
         this.getElement(e => {
-            var div = document.createElement('div');
-            div.innerHTML = self.buildItem(item, e.children.length)
-            e.appendChild(div.firstChild);
+            e.insertAdjacentHTML('beforeend', this.buildItem(item, this.items.length - 1))
         })
         
         return this;
+    }
+    
+    addItems(_items) { 
+        for (let n = 0; n < _items.length; n++) {
+            this.add(_items[n])
+        }
+        return this
     }
     
     removeItem(_value) {
@@ -1387,72 +1425,24 @@ class EclairHiddenInput extends EclairCustomTagComponent {
         return this;
     }
     
-    addItems(_items) { 
-        for (let n = 0; n < _items.length; n++) {
-            this.addItem(_items[n])
-        }
+    enabled(_enabled) {
+        this._enabled = _enabled;
         return this
     }
     
-    value(_val) {
-        this._hiddenValue.value(_val)
-        this.selectedIndex(this.selectedIndex())
-        return this;
-    }
-    
-    name(_name) {
-        this._hidden.name(_name)
-        return this;
-    }
-    
-    enabled(_enabled) {
-        if (_enabled == null) {
-            return this._enabled;
-        } else {
-            this._enabled = _enabled;
-            return this
-        }
-    }
-    
-    selectedIndex(_index) {
-        if (_index == null) {
-            let selectedIndex = -1;
-            let _val = this._hiddenValue.value()
-            for (let n = 0; n < this.items.length; n++) {
-                if (this.items[n].value == _val) {
-                    selectedIndex = n;
-                }
-            }
-            if (selectedIndex == -1) {
-                for (let n = 0; n < this.items.length; n++) {
-                    if (this.items[n].text == _val) {
-                        selectedIndex = n;
-                    }
-                }
-            }
-            return selectedIndex;
+    buildItem(_item, index) {
+        let style = `style='margin-top: 3px;'`
+        if (index == 0) {style = ""}
+        
+        let radioClass = `${eclair.styles.RadioButtonsItem.id()} ${this.itemStyle.id()}`
+        let divClass = `${eclair.styles.RadioButtonsRadio.id()} ${this.radioStyle.id()}`
+        
+        if (_item.value == this._selectedValue.value()) {
+            radioClass = `${eclair.styles.RadioButtonsSelectedItem.id()} ${this.selectedItemStyle.id()}`
+            divClass = `${eclair.styles.RadioButtonsSelectedRadio.id()} ${this.selectedRadioStyle.id()}`
         }
         
-        this._hiddenValue.value(this.items[_index].value)
-
-        let self = this
-        this.getElement(e => {
-            for (let n = 0; n < self.items.length; n++) {
-                let buttons = e.children;
-                if (n == _index) {
-                    buttons[n].setAttribute("class", eclair.styles.RadioButtonsSelectedItem.id() + " " + self.selectedItemStyle.id())
-                } else {
-                    buttons[n].setAttribute("class", eclair.styles.RadioButtonsItem.id() + " " + self.itemStyle.id())
-                }
-
-                let radioButton = buttons[n].children[0].children[0].children[0].children[0]
-                if (n == _index) {
-                    radioButton.setAttribute("class", eclair.styles.RadioButtonsSelectedRadio.id() + " " + self.selectedRadioStyle.id())
-                } else {
-                    radioButton.setAttribute("class", eclair.styles.RadioButtonsRadio.id() + " " + self.radioStyle.id())
-                }
-            }
-        })
+        return `<table onclick='eclair.performCallback("${this.id()}", "selectRadioButton", "${_item.value}", ${index})' cellpadding=6 class='${radioClass}' ${style}><tbody><tr><td width=1><div class='${divClass}'></div></td><td>${_item.text}</td></tr></tbody></table>`
     }
     
     build() {          
@@ -1460,54 +1450,75 @@ class EclairHiddenInput extends EclairCustomTagComponent {
         for (let i = 0; i < this.items.length; i++) {
             items += this.buildItem(this.items[i], i)
         }
-        return `<div>${items}</div>${this._hidden.compile()}`
+        return `<div>${items}${this._hidden.compile()}</div>`
     }
 }
 
 // elements.form.select
 class EclairSelect extends EclairComponent {
-    constructor() {
+    constructor(_selectedValue) {
         super()
+        
         this.options = []
+        this._enabled = true
+        
+        this.bindState(_selectedValue, "value", value => {
+            for (let n = 0; n < this.options.length; n++) {
+                this.options[n].selected = value == this.options[n].value;
+            }
+            
+            this.getElement(elem => {
+                elem.value = value
+                if (this.stateBindings.hasOwnProperty("index")) {
+                    this.stateBindings["index"].value(elem.selectedIndex)
+                }
+            })
+        })
+        
+        this.overrideOnChangeCallback = null
+        this._updateCallback("onChange", e => {
+            if (e._enabled) {
+                this.getElement(select => {
+                    if (_selectedValue instanceof EclairState) {
+                        _selectedValue.value(select.value)
+                    }
+                    
+                    if (this.stateBindings.hasOwnProperty("index")) {
+                        this.stateBindings["index"].value(select.selectedIndex)
+                    }
+                })
+                
+                if (this.overrideOnChangeCallback != null) {
+                    this.overrideOnChangeCallback(this)
+                }
+            }
+        })
+        
         this.addStyle(eclair.styles.Select)
     }
     
-    name(_name) {
-        return _name == null? this.getAttr("name") : this.setAttr("name", _name)
-    }
-    
-    value(newValue) {
-        if (newValue == null) {
-            return this.getElement().value;
-        } else {
-            for (let n = 0; n < this.options.length; n++) {
-                this.options[n].selected = newValue == this.options[n].value;
-            }
-            
-            this.getElement(elem => {elem.value = newValue})
-
-            return this;
-        }
-    }
-    
-    selectedIndex(index) {
-        if (index == null) {
-            return this.getElement().selectedIndex;
-        } else {
-            for (let n = 0; n < this.options.length; n++) {
-                this.options[n].selected = index == n;
-            }
-            this.getElement(elem => {elem.selectedIndex = `${index}`})
-            
-            return this;
-        }
-    }
-    
-    addOptions(items) {
-        for (let i = 0; i < items.length; i++) {
-            this.addOption(items[i]);
-        }
+    onChange(callback) {
+        this.overrideOnChangeCallback = callback
         return this;
+    }
+    
+    name(_name) {
+        this.bindState(_name, "name", value => {
+            this.setAttr("name", _name)
+        })
+        return this
+    }
+    
+    selectedIndex(_index) {
+        this.bindState(_index, "index", value => {
+            for (let n = 0; n < this.options.length; n++) {
+                this.options[n].selected = value == n;
+            }
+            
+            this.getElement(elem => {elem.selectedIndex = `${value}`})  
+        }, state => {return state.int(0)})
+        
+        return this
     }
     
     addOption(value, text, selected) {
@@ -1531,6 +1542,13 @@ class EclairSelect extends EclairComponent {
             elem.appendChild(this.buildOptionHTML(newOption))
         }
         
+        return this;
+    }
+    
+    addOptions(items) {
+        for (let i = 0; i < items.length; i++) {
+            this.addOption(items[i]);
+        }
         return this;
     }
     
@@ -1562,14 +1580,14 @@ class EclairSelect extends EclairComponent {
         return this;
     }
     
-    buildOptionHTML(newOption) {
-        return `<option value='${newOption.value}'${newOption.selected ? " selected": ""}>${newOption.text}</option>`
+    _buildOptionHTML(_option) {
+        return `<option value='${_option.value}'${_option.selected ? " selected": ""}>${_option.text}</option>`
     }
     
     build() {
         let options = ""
         for (let n = 0; n < this.options.length; n++) {
-            options += this.buildOptionHTML(this.options[n]);
+            options += this._buildOptionHTML(this.options[n]);
         }
         
         return `<select>${options}</select>`
@@ -1672,6 +1690,8 @@ class EclairTextArea extends EclairCustomTagComponent {
                 this._overrideOnKeyDown(e)
             } 
         })
+        
+        this.addStyle(eclair.styles.TextArea)
     }
     
     onKeyUp(callback) {
@@ -1734,7 +1754,7 @@ class EclairTextBox extends EclairCustomTagComponent {
     
     password(_password) {
         this.bindState(_password, "password", value => {
-            this.setAttr("type", _password.bool()? "password":'text')
+            this.setAttr("type", value? "password":'text')
         }, state => {return state.bool()})
         
         return this
@@ -2073,48 +2093,56 @@ class EclairIFrame extends EclairCustomTagComponent {
         this.bindState(_source, "src", value => {
             this.setAttr("src", value)
         })  
+        return this
     }
     
     source(_source) {
         this.bindState(_source, "srcdoc", value => {
             this.setAttr("srcdoc", value)
         })  
+        return this
     }
     
     allowFullScren(_allow) {
         this.bindState(_allow, "allowfullscreen", value => {
             this.setAttr("allowfullscreen", value)
         })  
+        return this
     }
     
     allowPaymentRequest(_allow) {
         this.bindState(_allow, "allowpaymentrequest", value => {
             this.setAttr("allowpaymentrequest", value)
         })  
+        return this
     }
     
     loading(_loading) {
         this.bindState(_loading, "loading", value => {
             this.setAttr("loading", value)
         })  
+        return this
     }
     
     name(_name) {
         this.bindState(_name, "name", value => {
             this.setAttr("name", value)
         })  
+        return this
     }
     
     referrerPolicy(_policy) {
         this.bindState(_policy, "referrerpolicy", value => {
             this.setAttr("referrerpolicy", value)
         })  
+        return this
     }
     
     sandbox(_sandbox) {
         this.bindState(_sandbox, "sandbox", value => {
             this.setAttr("sandbox", value)
         })  
+        return this
     }
 }
 
