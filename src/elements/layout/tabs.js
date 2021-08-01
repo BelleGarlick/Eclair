@@ -1,3 +1,4 @@
+// WARN TEST TAB VIEW BINDING TO ELEMENTS
 /// ## Eclair TabView
 /// Create a tab view capable of hiding and showing states.
 /// <br/>**args**:
@@ -51,7 +52,7 @@ class EclairTabView extends EclairView {
     ///     .addChild(eclair.View(eclair.Text("Tab 3")))
     /// ```
     // This function overrides the parent function to check that the child is of type eclair view.
-    addChild(_child) {
+    _addChild(_child) {
         if (_child instanceof EclairView) {
             this.children.push(_child)
             _child.parent = this

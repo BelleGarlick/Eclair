@@ -2087,7 +2087,6 @@ class EclairVStack extends EclairView {
         this.addStyle(eclair.styles.VStack)
     }
     
-    
     alignment(_alignment) {
         this.bindState(_alignment, "alignment", value => {
             if (value == "start") {
@@ -2165,7 +2164,7 @@ class EclairTabView extends EclairView {
         this.addStyle(eclair.styles.TabView)
     }
     
-    addChild(_child) {
+    _addChild(_child) {
         if (_child instanceof EclairView) {
             this.children.push(_child)
             _child.parent = this

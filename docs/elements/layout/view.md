@@ -9,15 +9,5 @@ eclair.View([
    "Or even just html"
 ])
 ```
-### .addChild
-Add a child element to this object.
-<br/>**args**:
-- child: Can be either raw html or an eclair element. 
-```javascript
-eclair.View()
-    .addChild(eclair.Text("Add an eclair object"))
-    .addChild("Add raw text")
-    .addChild("<p>Or even HTML</p>")
-```
 
 <br/>Source: [_elements.layout.view_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/layout/view.js)
