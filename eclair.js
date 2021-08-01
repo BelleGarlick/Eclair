@@ -70,11 +70,21 @@ class EclairState {
                 let self = this
                 Object.keys(self.callbacks).forEach(function(key) {
                     self.callbacks[key](self)
+                    self.updateCallbacks()
                 })
             }
         }
         
         return this
+    }
+    
+    
+    
+    updateCallbacks() {
+        let self = this
+        Object.keys(self.callbacks).forEach(function(key) {
+            self.callbacks[key](self)
+        })
     }
     
     addCallback(key, func, perform) {
@@ -87,6 +97,7 @@ class EclairState {
     removeCallback(key) {
         delete this.callbacks[key]
     }
+    
     
     string() {
         return `${this._value}`
@@ -129,10 +140,99 @@ class EclairState {
         this.value(false)
         return this
     }
-    
 
     toggle() {
         this.value(!this.bool())
+    }
+
+
+    isArray(_func) {
+        let correntType = this._value instanceof Array
+        
+        if (_func != null) {
+            if (correntType) {
+                let retValue = _func()
+                if (retValue != null) {
+                    return retValue
+                }
+            } else {
+                throw "State is not of type Array"
+            }
+            return this
+        }
+        
+        return correntType
+    }
+
+    length() {
+        return this.isArray(_ => {
+            return this._value.length()
+        })
+    }
+
+    add(_item) {
+        return this.isArray(_ => {
+            this._value.push(_item)
+            this.updateCallbacks()
+        })
+    }
+
+    addAll(_items) {
+        return this.isArray(_ => {
+            for (let i = 0; i < _items.length; i++) {
+                this._value.push(_items[i])
+            }
+            this.updateCallbacks()
+        })
+    }
+
+    insert(_item, _index) {
+        return this.isArray(_ => {
+            for (let i = 0; i < _items.length; i++) {
+                this._value.splice(_index, 0, _item)
+            }
+            this.updateCallbacks()
+        })
+    }
+
+    remove(_value) {
+        return this.isArray(_ => {
+            let removedValue = this._value.splice(this._value.indexOf(_value), 1)
+            this.updateCallbacks()
+            return removedValue;
+        })
+    }
+
+    removeAt(_index) {
+        return this.isArray(_ => {
+            let removedValue = this._value.splice(_index, 1)
+            this.updateCallbacks()
+            return removedValue;
+        })
+    }
+
+
+    get(_index, _toIndex) {
+        if (this.isArray() && this._value.length > 0) {
+            if (_toIndex == null) {
+                var start = _index
+                while (start < 0) {
+                    start += this._value.length;
+                }
+                return this._value[start]
+            } else {
+                if (_index < _toIndex) {
+                    console.log("TODO")
+                } else if (_index == _toIndex) {
+                    console.log("TODO")
+                } else {
+                    console.log("TODO")
+                }
+                
+            }
+        }
+        
+        return null
     }
 }
 
@@ -1303,7 +1403,7 @@ class EclairHiddenInput extends EclairCustomTagComponent {
 }
 
 // elements.form.radio-buttons
- class EclairRadioButtons extends EclairComponent {
+class EclairRadioButtons extends EclairComponent {
     constructor(selectedValue) {
         super()
         
@@ -1387,7 +1487,7 @@ class EclairHiddenInput extends EclairCustomTagComponent {
         return this
     }
     
-    removeItem(_value) {
+    remove(_value) {
         let selectedIndex = -1;
         for (let n = 0; n < this.items.length; n++) {
             if (this.items[n].value == _value) {
@@ -1913,23 +2013,36 @@ class EclairView extends EclairComponent {
     constructor(elements) {
         super()
         
-        if (elements != null) {
-            for (let i = 0; i < elements.length; i++) {
-                this.addChild(elements[i])
+        if (elements instanceof Array) {
+            if (elements != null) {
+                for (let i = 0; i < elements.length; i++) {
+                    this._addChild(elements[i])
+                }
             }
+        } else if (elements instanceof EclairState && elements.isArray()) {
+            this.bindState(elements, "element", array => {
+                let children = new Set(this.children)
+                for (let i = 0; i < array.length; i++) {
+                    let newChild = array[i]
+                    if (!children.has(newChild)) {
+                        this._addChild(newChild)
+                        children.add(newChild)
+                    }
+                } 
+            })
         }
         
         this.addStyle(eclair.styles.View)
     }
     
-    addChild(_child) {
+    _addChild(_child) {
         this.children.push(_child)
         if (_child instanceof EclairComponent) {
             _child.parent = this
         }
         
         this.getElement(e => {
-            let childHTML = child;
+            let childHTML = _child;
             if (_child instanceof EclairComponent) {
                 childHTML = _child.compile()
             }
@@ -1951,7 +2064,6 @@ class EclairView extends EclairComponent {
             } 
             
             else {
-                console.log(child)
                 throw `Unable to compile object type: ${typeof(child)}`
             }
         }

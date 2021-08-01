@@ -13,35 +13,36 @@ class EclairView extends EclairComponent {
     constructor(elements) {
         super()
         
-        if (elements != null) {
-            for (let i = 0; i < elements.length; i++) {
-                this.addChild(elements[i])
+        if (elements instanceof Array) {
+            if (elements != null) {
+                for (let i = 0; i < elements.length; i++) {
+                    this._addChild(elements[i])
+                }
             }
+        } else if (elements instanceof EclairState && elements.isArray()) {
+            this.bindState(elements, "element", array => {
+                let children = new Set(this.children)
+                for (let i = 0; i < array.length; i++) {
+                    let newChild = array[i]
+                    if (!children.has(newChild)) {
+                        this._addChild(newChild)
+                        children.add(newChild)
+                    }
+                } 
+            })
         }
         
         this.addStyle(eclair.styles.View)
     }
     
-    /// SHARED addChild eclair.View()
-    /// ### .addChild
-    /// Add a child element to this object.
-    /// <br/>**args**:
-    /// - child: Can be either raw html or an eclair element. 
-    /// ```javascript
-    /// WILDCARD
-    ///     .addChild(eclair.Text("Add an eclair object"))
-    ///     .addChild("Add raw text")
-    ///     .addChild("<p>Or even HTML</p>")
-    /// ```
-    /// END-SHARED
-    addChild(_child) {
+    _addChild(_child) {
         this.children.push(_child)
         if (_child instanceof EclairComponent) {
             _child.parent = this
         }
         
         this.getElement(e => {
-            let childHTML = child;
+            let childHTML = _child;
             if (_child instanceof EclairComponent) {
                 childHTML = _child.compile()
             }
@@ -63,7 +64,6 @@ class EclairView extends EclairComponent {
             } 
             
             else {
-                console.log(child)
                 throw `Unable to compile object type: ${typeof(child)}`
             }
         }

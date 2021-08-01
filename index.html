@@ -32,6 +32,8 @@ let htmlCode = eclair.State()
 let selectedRadio = eclair.State()
 let selectedRadioIndex = eclair.State()
 
+let vstackItems = eclair.State([])
+
 function codeExample(title, code, height) {
     let tab = eclair.State(0)
     
@@ -253,7 +255,12 @@ eclair.VStack([
             ])
                 .background("#f6f6f6")
                 .borderRadius("3px")
-                .padding("20px")
+                .padding("20px"),
+            
+            eclair.Button("Text").onClick(e => {
+                vstackItems.add(eclair.TextBox())
+            }),
+            HStack(vstackItems),
                 //.spacing(30)
         ])
 //            .spacing(25)

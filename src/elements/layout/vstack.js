@@ -25,8 +25,6 @@ class EclairVStack extends EclairView {
         this.addStyle(eclair.styles.VStack)
     }
     
-    /// INCLUDE elements.layout.view.addChild eclair.VStack()
-    
     /// SHARED alignment eclair.VStack()
     /// ### .alignment
     /// Set the alignment of child items.
