@@ -1,5 +1,6 @@
 // TODO Need to do this
 // TODO Child/Parent association
+// TODO This class is may need to inherrit from eclair view
 class EclairForm extends EclairComponent {
     constructor(elements) {
         super()
@@ -7,6 +8,8 @@ class EclairForm extends EclairComponent {
         this.elements = elements;
         this._method = "POST"
         this._action = null;
+        
+        // add style??
     }
     
     method(_method) {

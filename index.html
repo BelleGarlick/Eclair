@@ -13,7 +13,6 @@ let linkText = State("DuckDuckGo")
 let linkURL = State('https://duckduckgo.com/')
 let linkTarget = State("_blank")
 
-let selectedTab = State(0)
 
 let iframeHTMLCode = State("")
 
@@ -33,6 +32,9 @@ let selectedRadio = eclair.State()
 let selectedRadioIndex = eclair.State()
 
 let vstackItems = eclair.State([])
+
+let tabName = eclair.State(["Toggles", "Progress Bar", "Alert Box", "Check Box"])
+let selectedTab = State(0)
 
 function codeExample(title, code, height) {
     let tab = eclair.State(0)
@@ -86,8 +88,7 @@ VStack([
     
     eclair.VStack([
         VStack([     
-            eclair.Select()
-                .addOptions(["Toggles", "Progress Bar", "Alert Box", "Check Box"])
+            eclair.Select(tabName._value)
                 .selectedIndex(selectedTab)
                 .width("60%"),
             
@@ -185,8 +186,8 @@ eclair.VStack([
     }),
 
     eclair.Text("Preset"),
-    eclair.Select(selectedAlertBoxColour)
-        .addOptions(["Success", "Danger", "Warning", "Info", "Light", "Dark"])
+    eclair.Select(["Success", "Danger", "Warning", "Info", "Light", "Dark"])
+        .value(selectedAlertBoxColour)
         .onChange(s => {
             if (selectedAlertBoxColour.value() == "Success") {alertBoxTheme.success()}
             if (selectedAlertBoxColour.value() == "Danger") {alertBoxTheme.danger()}

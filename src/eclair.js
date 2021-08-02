@@ -6,7 +6,6 @@
 // PRINT Add margin, paddding, border: left, top, right bottom
 // PRINT Add deleting element
 // PRINT Add callback getters when accessing child element.
-// TODO Add default styles to everything
 // WARN Layout objects have no shared style
 // PRINT MAKE SURE ALL OBJECTS HAVE PARENT AssOCIATION
 // PRINT when building doc, clear current folder
@@ -16,10 +15,10 @@
 // TODO Add get/post stuff
 // TODO Add more style fucntions to remove the need for .getStyleSheet
 // TODO Make sure all args are declared in documentation
-// TODO Replace doc
+// TODO Replace doc by deleting folder
 // TODO Add enabled tag to all elements.
 // Check on change bindings
-// TODO Nested elements
+// TODO Nested elements like hstack of image and text within a button
 
 // Future custom objects
 //  - Cookies accept + ability to set

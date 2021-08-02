@@ -6,7 +6,6 @@
 /// let value = eclair.State(0.5)
 /// eclair.Slider(value)
 /// ```
-// TODO Have the selected vaule dome via this, not when adding items.
 class EclairSlider extends EclairCustomTagComponent {
     constructor(value) {
         super("input")

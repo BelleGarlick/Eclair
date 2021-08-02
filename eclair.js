@@ -1556,45 +1556,56 @@ class EclairRadioButtons extends EclairComponent {
 
 // elements.form.select
 class EclairSelect extends EclairComponent {
-    constructor(_selectedValue) {
+    constructor(_options) {
         super()
         
-        this.options = []
-        this._enabled = true
-        
-        this.bindState(_selectedValue, "value", value => {
-            for (let n = 0; n < this.options.length; n++) {
-                this.options[n].selected = value == this.options[n].value;
-            }
-            
-            this.getElement(elem => {
-                elem.value = value
-                if (this.stateBindings.hasOwnProperty("index")) {
-                    this.stateBindings["index"].value(elem.selectedIndex)
-                }
-            })
-        })
-        
+        this._items = []
+        this._selectedIndex = 0
+        this._bindOptions(_options)
+          
         this.overrideOnChangeCallback = null
         this._updateCallback("onChange", e => {
-            if (e._enabled) {
-                this.getElement(select => {
-                    if (_selectedValue instanceof EclairState) {
-                        _selectedValue.value(select.value)
-                    }
-                    
-                    if (this.stateBindings.hasOwnProperty("index")) {
-                        this.stateBindings["index"].value(select.selectedIndex)
-                    }
-                })
-                
-                if (this.overrideOnChangeCallback != null) {
-                    this.overrideOnChangeCallback(this)
+            this.getElement(select => {
+                if (this.stateBindings.hasOwnProperty("value")) {
+                    this.stateBindings["value"].value(select.value)
                 }
+
+                if (this.stateBindings.hasOwnProperty("index")) {
+                    this.stateBindings["index"].value(select.selectedIndex)
+                }
+            })
+
+            if (this.overrideOnChangeCallback != null) {
+                this.overrideOnChangeCallback(this)
             }
         })
         
         this.addStyle(eclair.styles.Select)
+    }
+    
+    _bindOptions(_options) {
+        if (_options instanceof Array) {
+            for (let i = 0; i < _options.length; i++) {
+                this._items.push(_options[i])
+            }
+        } else if (_options instanceof EclairState && _options.isArray()) {
+            this.bindState(_options, "options", array => {
+                let itemSet = new Set(this._items)
+                for (let i = 0; i < array.length; i++) {
+                    let newOption = array[i]
+                    if (!itemSet.has(newOption)) {
+                        this._items.push(newOption)
+                        itemSet.add(newOption)
+                        
+                        this.getElement(e => {
+                            let opt = document.createElement("option")
+                            opt.innerHTML = newOption
+                            e.appendChild(opt)
+                        })
+                    }
+                } 
+            })
+        }
     }
     
     onChange(callback) {
@@ -1609,85 +1620,47 @@ class EclairSelect extends EclairComponent {
         return this
     }
     
+    value(_value) {
+        this.bindState(_value, "value", value => {
+            for (let i = 0; i < this._items; i++) {
+                if (this._items[i] == value) {
+                    if (this._selectedIndex != i) {
+                        if (this.overrideOnChangeCallback != null) {
+                            this.overrideOnChangeCallback(this)
+                        }
+                    
+                        this._selectedIndex = i
+                        this.getElement(elem => {elem.selectedIndex = i})
+                    }
+                    
+                    break
+                }
+            }
+        })
+        
+        return this
+    }
+    
     selectedIndex(_index) {
         this.bindState(_index, "index", value => {
-            for (let n = 0; n < this.options.length; n++) {
-                this.options[n].selected = value == n;
+            if (this._selectedIndex != value) {
+                if (this.overrideOnChangeCallback != null) {
+                    this.overrideOnChangeCallback(this)
+                }
+            
+                this._selectedIndex = value
+                this.getElement(elem => {elem.selectedIndex = `${value}`}) 
             }
             
-            this.getElement(elem => {elem.selectedIndex = `${value}`})  
         }, state => {return state.int(0)})
         
         return this
     }
     
-    addOption(value, text, selected) {
-        if (typeof(text) == "boolean" && selected == null) {
-            selected = text;
-            text = null;
-        }
-        if (text == null) {text = value}
-        if (selected == null) {selected = false}
-        
-        let newOption = {
-            "value": value,
-            "text": text,
-            "selected": selected
-        }
-        
-        this.options.push(newOption)
-        
-        let elem = this.getElement();
-        if (elem != null) {
-            elem.appendChild(this.buildOptionHTML(newOption))
-        }
-        
-        return this;
-    }
-    
-    addOptions(items) {
-        for (let i = 0; i < items.length; i++) {
-            this.addOption(items[i]);
-        }
-        return this;
-    }
-    
-    removeOption(value) {
-        let nonRemovedOptions = []
-        for (let n = 0; n < this.options.length; n++) {
-            if (this.options[n].value != value) {
-                nonRemovedOptions.push(this.options[n]);
-            }
-        }
-        this.options = nonRemovedOptions;
-        
-        let elem = this.getElement()
-        if (elem != null) {
-            let ops = elem.children;
-            let removes = [];
-            
-            for (let o = 0; o < ops.length; o++) {
-                if (ops[o].value == value) {
-                    removes.push(ops[o]);
-                }
-            }
-            
-            for (let r = 0; r < removes.length; r++) {
-                elem.removeChild(removes[r]);
-            }
-        }
-        
-        return this;
-    }
-    
-    _buildOptionHTML(_option) {
-        return `<option value='${_option.value}'${_option.selected ? " selected": ""}>${_option.text}</option>`
-    }
-    
     build() {
         let options = ""
-        for (let n = 0; n < this.options.length; n++) {
-            options += this._buildOptionHTML(this.options[n]);
+        for (let n = 0; n < this._items.length; n++) {
+            options += `<option${this._selectedIndex == n? " selected" : ""}>${this._items[n]}</option>`;
         }
         
         return `<select>${options}</select>`

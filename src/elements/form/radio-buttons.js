@@ -1,3 +1,4 @@
+// TODO Change to eclair list
 // WARN RADIO BUTTONS NOT DONE
 class EclairRadioButtons extends EclairComponent {
     constructor(selectedValue) {
@@ -8,6 +9,7 @@ class EclairRadioButtons extends EclairComponent {
         this._selectedValue = selectedValue instanceof EclairState? selectedValue : eclair.State(selectedValue) 
         this._hidden = eclair.HiddenInput(this._selectedValue)
         
+        // TODO Make this easy to access
         this.itemStyle = eclair.Style()
         this.selectedItemStyle = eclair.Style()
         this.radioStyle = eclair.Style()

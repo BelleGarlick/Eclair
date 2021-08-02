@@ -20,6 +20,7 @@ class EclairSyntaxHighlighter extends EclairComponent {
         
         this._html = _html == null? eclair.State() : _html
 
+        // TODO Make into style
         this._pre = eclair.CustomTagComponent("pre")
             .position("absolute")
             .padding("0px")
@@ -31,6 +32,7 @@ class EclairSyntaxHighlighter extends EclairComponent {
             .background("white")
             .css("box-sizing: border-box;line-height: 1.05")
 
+        // TODO Make into style
         this._code = eclair.CustomTagComponent("code")
             .position("absolute")
             .top("0px")
@@ -46,6 +48,7 @@ class EclairSyntaxHighlighter extends EclairComponent {
             .css("box-sizing: border-box;")
             .innerHTML(this._writtenCode)
 
+        // TODO Make into style
         this._textarea = eclair.TextArea(this._html)
             .setAttr("spellcheck", false)
             .display("inline")

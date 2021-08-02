@@ -11,6 +11,8 @@ class EclairAlertBox extends EclairComponent {
     constructor(text) {
         super()
         
+        // TODO Need style tag
+        
         this._titleText = eclair.State(null)
         this._title = eclair.Text(this._titleText)
             .fontWeight(500)
