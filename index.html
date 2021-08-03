@@ -36,6 +36,7 @@ let vstackItems = eclair.State([])
 let tabName = eclair.State(["Toggles", "Progress Bar", "Alert Box", "Check Box"])
 let selectedTab = State(0)
 
+
 function codeExample(title, code, height) {
     let tab = eclair.State(0)
     
@@ -88,7 +89,7 @@ VStack([
     
     eclair.VStack([
         VStack([     
-            eclair.Select(tabName._value)
+            eclair.Select(tabName)
                 .selectedIndex(selectedTab)
                 .width("60%"),
             
@@ -228,16 +229,11 @@ eclair.VStack([
             
             eclair.TextBox(selectedRadio),
             eclair.TextBox(selectedRadioIndex),
-            RadioButtons(selectedRadio)
-                .add("test")
-                .add("testing")
-                .add("tests")
-                .add("test")
-                .addItems(["test", "testing", "tests", "test"])
+            RadioButtons(tabName)
                 .width("100%")
-                .selectedIndex(selectedRadioIndex),
+                .selectedIndex(selectedTab),
             eclair.HorizontalLine(),
-            RadioButtons(selectedRadio).addItems(["tests", "test", "testing"]).width("100%"),
+            RadioButtons(["tests", "test", "testing"]).width("100%"),
             
             eclair.TextArea(htmlCode),
             

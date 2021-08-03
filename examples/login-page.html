@@ -9,10 +9,12 @@
             eclair.TextBox()
                 .password(true)
                 .placeholder("Password"),
+            eclair.CheckBox(true)
+                .text("Remember me"),
             eclair.HorizontalLine(),
             eclair.Button("Sign In"),
         ])
-            .css("box-shadow: 0px 0px 0px 10000px rgba(0, 0, 0, 0.3) inset")
+            .boxShadow("0px 0px 0px 10000px rgba(0, 0, 0, 0.3) inset")
             .padding("24px")
             .gap("8px")
             .borderRadius("8px")

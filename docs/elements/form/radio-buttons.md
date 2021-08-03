@@ -1,21 +1,3 @@
-### .add
-Add an item to the options the user can choose.
-<br/>**args**:
-- value: The value of the item.
-- text: The text shown to the user.
-```javascript
-eclair.RadioButtons()
-    .add("Apple")
-    .add("Yellow Apple", "Banana")
-```
-### .addItems
-Add a list of items as values to the list.
-<br/>**args**:
-- items: Add a list of items the user can select.
-```javascript
-eclair.RadioButtons()
-    .addItems(["Apple", "Banana", "Orange"])
-```
 ### .removeItem
 Remove an item by value.
 <br/>**args**:

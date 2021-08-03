@@ -12,7 +12,7 @@ class EclairCheckBox extends EclairComponent {
         this._enabled = true        
         
         // Handle the states
-        this.checked = checked  // Parent one given by user
+        this.checked = checked instanceof EclairState? checked : eclair.State(checked)  // Parent one given by user
         this._hiddenValue = eclair.State(false)  // Private one which is updated in the .checked callback
         this._textValue = eclair.State("")  // Text value which is the message displayed alongside
         
@@ -35,7 +35,7 @@ class EclairCheckBox extends EclairComponent {
         })
         
         // Add binding for check box
-        this.bindState(checked, "checked", value => {
+        this.bindState(this.checked, "checked", value => {
             this._hiddenValue.value(value)
             
             // Call on change if available

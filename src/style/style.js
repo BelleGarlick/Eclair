@@ -84,8 +84,13 @@ class EclairStylableObject {
     borderColor(_color, selector) {return this._set(selector, "border-color", _color)}
     borderStyle(_style, selector) {return this._set(selector, "border-style", _style)}
     borderRadius(_radius, selector) {return this._set(selector, "border-radius", _radius)}
+    boxShadow(_radius, selector) {return this._set(selector, "box-shadow", _radius)}
     padding(_size, selector) {return this._set(selector, "padding", _size)}
     margin(_size, selector) {return this._set(selector, "margin", _size)}
+    marginTop(_size, selector) {return this._set(selector, "margin-top", _size)}
+    marginLeft(_size, selector) {return this._set(selector, "margin-left", _size)}
+    marginBottom(_size, selector) {return this._set(selector, "margin-bottom", _size)}
+    marginright(_size, selector) {return this._set(selector, "margin-right", _size)}
     gap(_size, selector) {return this._set(selector, "gap", _size)}
     font(_family, selector) {return this._set(selector, "font-family", _family)}
     fontSize(_size, selector) {return this._set(selector, "font-size", _size)}

@@ -43,10 +43,9 @@ class EclairSelect extends EclairComponent {
                 this._items.push(_options[i])
             }
         } else if (_options instanceof EclairState && _options.isArray()) {
-            // Add binding for the topions
+            // Add binding for the options
+            // TODO Insert at right position
             this.bindState(_options, "options", array => {
-                // TODO Deal with removing items
-                // TODO On change items, set the value and index function 
                 let itemSet = new Set(this._items)
                 for (let i = 0; i < array.length; i++) {
                     let newOption = array[i]
@@ -63,8 +62,26 @@ class EclairSelect extends EclairComponent {
                     }
                 } 
                 
+                // Removing items
+                let stateItems = new Set(array)
+                for (let i = this._items.length - 1; i >= 0; i--) {
+                    let cOption = this._items[i]
+                    if (!stateItems.has(cOption)) {
+                        this._items.splice(i, 1)
+                        stateItems.delete(cOption)
+                        
+                        // Add to ui if exists
+                        this.getElement(e => {
+                            e.removeChild(e.children[i])
+                        })
+                    }
+                } 
+                
                 // TODO alert the selected item maybe
+                // TODO On change items, set the value and index function 
             })
+        } else {
+            throw "Unknown select options type. Should be either a javascript Array or an EclairState Array"
         }
     }
     

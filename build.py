@@ -73,6 +73,10 @@ def parse_doc(breadcrumbs, documentation):
             SHARED_DOC[breadcrumbs + "." + shared["func"]] = shared["raw"]
             shared = create_default_shared_data()
             
+        elif line[:7] == "EXCLUDE":
+            lines = []
+            break
+            
         elif line[:7] == "INCLUDE":
             args = line.split(" ")
             func = args[1]

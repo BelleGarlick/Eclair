@@ -1,0 +1,1 @@
+<br/>Source: [_elements.custom.syntax-highlighter_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/custom/syntax-highlighter.js)

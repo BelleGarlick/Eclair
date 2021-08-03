@@ -9,6 +9,8 @@ class EclairHiddenInput extends EclairCustomTagComponent {
     constructor(_value) {
         super("input")
         this.setAttr("type", "hidden")
+        
+        this._buildStyle = false
 
         this.bindState(_value, "value", value => {
             this.setAttr("value", value)

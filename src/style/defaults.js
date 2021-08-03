@@ -84,7 +84,7 @@ eclair.styles = {
     RadioButtons: eclair.Style(),  // No default style
     RadioButtonsItem: eclair.Style()
         .cursor("pointer")
-        .css("box-shadow: 0px 0px 0px 100px rgba(0, 0, 0, 0.05) inset", "hover")
+        .boxShadow("0px 0px 0px 100px rgba(0, 0, 0, 0.05) inset", "hover")
         .padding("2px")
         .borderRadius("4px")
         .width("100%")
@@ -92,7 +92,7 @@ eclair.styles = {
         .font(eclair.theme.font),
     RadioButtonsSelectedItem: eclair.Style()
         .cursor("pointer")
-        .css("box-shadow: 0px 0px 0px 100px rgba(0, 0, 0, 0.05) inset", "hover")
+        .boxShadow("0px 0px 0px 100px rgba(0, 0, 0, 0.05) inset", "hover")
         .padding("2px")
         .borderRadius("4px")
         .userSelect("none")
@@ -118,7 +118,7 @@ eclair.styles = {
     
     CheckBox: eclair.Style()    
         .cursor("pointer")
-        .css("box-shadow: 0px 0px 0px 100px rgba(0, 0, 0, 0.05) inset", "hover")
+        .boxShadow("0px 0px 0px 100px rgba(0, 0, 0, 0.05) inset", "hover")
         .padding("2px")
         .borderRadius("4px")
         .width("100%")
@@ -199,5 +199,23 @@ eclair.styles = {
         .transform("translateX(-50%)")
         .fontWeight(700)
         .userSelect("none")
-        .opacity(0)
+        .opacity(0),
+    
+    AlertBox: eclair.Style()
+        .background(eclair.theme.accent)
+        .borderRadius(".25rem")
+        .padding(".75rem 1.25rem")
+        .boxShadow("0px 0px 0px 2px rgba(0, 0, 0, 0.2) inset")
+        .borderSize("1px 0px 0px 0px", " hr")
+        .margin(".75rem 0px", " hr")
+        .borderColor("rgba(0, 0, 0, 0.2)", " hr"),
+    AlertBoxTitle: eclair.Style()
+        .fontWeight(500)
+        .fontSize("1.5rem")
+        .display("none")
+        .fontColor("rgba(0, 0, 0, 0.6)")
+        .width("100%")
+        .marginBottom(".5rem"),
+    AlertBoxText: eclair.Style()
+        .fontColor("rgba(0, 0, 0, 0.6)"),
 }

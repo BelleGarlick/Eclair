@@ -17,6 +17,8 @@ class EclairComponent extends EclairStylableObject {
         
         this._hidden = false
         this._hiddenStyle = "inline"
+        
+        this._buildStyle = true
     }
     
     
@@ -168,7 +170,7 @@ class EclairComponent extends EclairStylableObject {
         });
         
         // Adding the style code
-        let html = this.buildStyleCode() + wrapperElement.innerHTML;
+        let html = (this._buildStyle? this.buildStyleCode() : "") + wrapperElement.innerHTML;
                 
         return html
     }
