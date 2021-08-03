@@ -121,3 +121,5 @@ There are three main ways to add a style to an element:
 ## Road Map
 ### Versioning
 Version will work based on the standard major.minor.patch. Any major update will be a large undertaking and is unlikely to happen. This be a large update that would break current development and is unlikely to be backwards compatable. Minor updates include element additions to the library which are unlikely to break backwards compatability. Patch is for bug fixes.
+
+/// - ![#{hex_col}](https://via.placeholder.com/15/{hex_col}/000000?text=+) `#{hex_col}`
