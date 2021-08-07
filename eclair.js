@@ -321,10 +321,12 @@ class EclairColor extends EclairState {
     
     rgba(r, g, b, a) {
         this.value(`rgb(${r}, ${g}, ${b}, ${a})`)
+        
         this._r = r
         this._g = g
         this._b = b
         this._a = a
+        
         return this;
     }   
     
@@ -642,11 +644,15 @@ class EclairStyleComponent extends EclairStylableObject {
 
 // style.defaults
 eclair.styles = {
-    View: eclair.Style(),
-    VStack: eclair.Style(),
-    HStack: eclair.Style(),
+    View: eclair.Style()
+        .boxSizing("border-box"),
+    VStack: eclair.Style()
+        .boxSizing("border-box"),
+    HStack: eclair.Style()
+        .boxSizing("border-box"),
     TabView: eclair.Style()
         .display("flex")
+        .boxSizing("border-box")
         .alignItems("center"),
     
     Text: eclair.Style()
@@ -846,6 +852,7 @@ eclair.styles = {
     
     AlertBox: eclair.Style()
         .background(eclair.theme.accent)
+        .boxSizing("border-box")
         .borderRadius(".25rem")
         .padding(".75rem 1.25rem")
         .boxShadow("0px 0px 0px 2px rgba(0, 0, 0, 0.2) inset")
@@ -2449,6 +2456,53 @@ class EclairText extends EclairComponent {
 
 
 
+
+
+
+// form.post
+
+class EclairPost {
+    constructor(url) {
+        this.url = url
+        this.form = null
+        this.onSuccess = null
+    }
+    
+    form(_form) {
+        this.form = _form
+        return this
+    }
+    
+    onSuccess(callback) {
+        this.onSuccess = callback
+    }
+    
+    send() {
+        if (this.form == null) {
+            throw "Content of .form() is null."
+        }
+        
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                alert(this.responseText)
+                
+            } else if (this.readyState == 4) {
+                
+            }
+        };
+        xhttp.open("POST", this.url, true);
+        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+        var formString = ""
+        Object.keys(this.form).forEach(function(key) {
+            formString += escape(key) + "="
+            formString += escape(form[key]) + "&"
+        })
+        alert(formString)
+        xhttp.send(formString);
+    }
+}
 
 
 

@@ -1,9 +1,13 @@
 eclair.styles = {
-    View: eclair.Style(),
-    VStack: eclair.Style(),
-    HStack: eclair.Style(),
+    View: eclair.Style()
+        .boxSizing("border-box"),
+    VStack: eclair.Style()
+        .boxSizing("border-box"),
+    HStack: eclair.Style()
+        .boxSizing("border-box"),
     TabView: eclair.Style()
         .display("flex")
+        .boxSizing("border-box")
         .alignItems("center"),
     
     Text: eclair.Style()
@@ -203,6 +207,7 @@ eclair.styles = {
     
     AlertBox: eclair.Style()
         .background(eclair.theme.accent)
+        .boxSizing("border-box")
         .borderRadius(".25rem")
         .padding(".75rem 1.25rem")
         .boxShadow("0px 0px 0px 2px rgba(0, 0, 0, 0.2) inset")

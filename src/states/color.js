@@ -70,10 +70,12 @@ class EclairColor extends EclairState {
     
     rgba(r, g, b, a) {
         this.value(`rgb(${r}, ${g}, ${b}, ${a})`)
+        
         this._r = r
         this._g = g
         this._b = b
         this._a = a
+        
         return this;
     }   
     
