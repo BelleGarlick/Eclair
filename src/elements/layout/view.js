@@ -22,11 +22,21 @@ class EclairView extends EclairComponent {
         } else if (elements instanceof EclairState && elements.isArray()) {
             this.bindState(elements, "element", array => {
                 let children = new Set(this.children)
+                
                 for (let i = 0; i < array.length; i++) {
                     let newChild = array[i]
                     if (!children.has(newChild)) {
                         this._addChild(newChild)
                         children.add(newChild)
+                    }
+                } 
+                
+                let elems = new Set(array)
+                for (let i = this.children.length - 1; i >= 0; i--) {
+                    let cChild = this.children[i]
+                    if (!elems.has(cChild)) {
+                        this._removeChild(i)
+                        elems.remove(newChild)
                     }
                 } 
             })
@@ -48,6 +58,19 @@ class EclairView extends EclairComponent {
             }
             e.insertAdjacentHTML('beforeend', childHTML)
         })
+    }
+    
+    
+    _removeChild(_index) {
+        // TODO Add .remove function to all elements
+        let child = this.children[_index]
+        child.parent = null
+        
+        this.getElement(e => {
+            e.removeChild(child.getElement())
+        })
+        
+        this.children.splice(_index, 1)
     }
     
     build () {                

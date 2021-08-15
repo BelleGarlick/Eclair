@@ -1,44 +1,51 @@
-// TODO Doc and add all functions stuff
-
 class EclairPost {
     constructor(url) {
         this.url = url
-        this.form = null
-        this.onSuccess = null
+
+        this._onLoad = function() {}
+<!--            this._onAbort = null-->
+<!--            this._onLoadEnd = null-->
+<!--            this._onLoadStart = null-->
+        this._onProgress = null
+<!--            this._onTimeOut = null-->
     }
-    
-    form(_form) {
-        this.form = _form
+
+    onSuccess(callback) {
+        this._onLoad = callback
         return this
     }
-    
-    onSuccess(callback) {
-        this.onSuccess = callback
+
+    onProgress(callback) {
+        this._onProgress = callback
+        return this
     }
-    
-    send() {
-        if (this.form == null) {
-            throw "Content of .form() is null."
-        }
-        
+
+    send(_form) {
         var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                alert(this.responseText)
-                
-            } else if (this.readyState == 4) {
-                
-            }
-        };
+
+        // Add callbacks
+        let self = this
+        xhttp.onload = function() {if (self._onLoad != null) {self._onLoad(xhttp.responseText)}}
+        xhttp.onprogress = function(evt) {
+            if (self._onProgress != null){self._onProgress(evt.loaded / evt.total)}
+        }
+
         xhttp.open("POST", this.url, true);
         xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
+        // Build form string
         var formString = ""
-        Object.keys(this.form).forEach(function(key) {
+        Object.keys(_form).forEach(function(key) {
+            let value = _form[key]
+            if (value instanceof EclairState) {
+                value = value.value()
+            }
             formString += escape(key) + "="
-            formString += escape(form[key]) + "&"
+            formString += escape(value) + "&"
         })
-        alert(formString)
+
         xhttp.send(formString);
+
+        return this
     }
 }

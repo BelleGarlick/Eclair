@@ -13,6 +13,8 @@ let eclair = {
     
     Style: function() {return new EclairStyleComponent();},
     
+    post: function(_url) {return new EclairPost(_url);},
+    
     State: function(_val) {return new EclairState(_val);},    
     Color: function(_col) {return new EclairColor(_col);},
     TextStyle: function() {return new EclairTextStyleState();},
@@ -166,7 +168,7 @@ class EclairState {
 
     length() {
         return this.isArray(_ => {
-            return this._value.length()
+            return this._value.length
         })
     }
 
@@ -329,6 +331,24 @@ class EclairColor extends EclairState {
         
         return this;
     }   
+    
+    lighten(_val) {
+        this._r = Math.min(255, this._r + _val)
+        this._g = Math.min(255, this._g + _val)
+        this._b = Math.min(255, this._b + _val)
+        this.value(`rgb(${this._r}, ${this._g}, ${this._b}, ${this._a})`)
+        
+        return this;
+    }
+    
+    darken(_val) {
+        this._r = Math.max(0, this._r - _val)
+        this._g = Math.max(0, this._g - _val)
+        this._b = Math.max(0, this._b - _val)
+        this.value(`rgb(${this._r}, ${this._g}, ${this._b}, ${this._a})`)
+        
+        return this;
+    }
     
 
     
@@ -714,10 +734,11 @@ eclair.styles = {
         .display("block"),
     
     TextBox: eclair.Style()
+        .fontSize("14px")
+        .padding("12px 16px")
         .width("100%")
         .borderSize("0px")
         .borderRadius("3px")
-        .padding("8px 16px")
         .background("#eeeeee")
         .font(eclair.theme.font)
         .background("#dddddd", "hover")
@@ -2112,11 +2133,21 @@ class EclairView extends EclairComponent {
         } else if (elements instanceof EclairState && elements.isArray()) {
             this.bindState(elements, "element", array => {
                 let children = new Set(this.children)
+                
                 for (let i = 0; i < array.length; i++) {
                     let newChild = array[i]
                     if (!children.has(newChild)) {
                         this._addChild(newChild)
                         children.add(newChild)
+                    }
+                } 
+                
+                let elems = new Set(array)
+                for (let i = this.children.length - 1; i >= 0; i--) {
+                    let cChild = this.children[i]
+                    if (!elems.has(cChild)) {
+                        this._removeChild(i)
+                        elems.remove(newChild)
                     }
                 } 
             })
@@ -2138,6 +2169,18 @@ class EclairView extends EclairComponent {
             }
             e.insertAdjacentHTML('beforeend', childHTML)
         })
+    }
+    
+    
+    _removeChild(_index) {
+        let child = this.children[_index]
+        child.parent = null
+        
+        this.getElement(e => {
+            e.removeChild(child.getElement())
+        })
+        
+        this.children.splice(_index, 1)
     }
     
     build () {                
@@ -2460,47 +2503,53 @@ class EclairText extends EclairComponent {
 
 
 // form.post
-
 class EclairPost {
     constructor(url) {
         this.url = url
-        this.form = null
-        this.onSuccess = null
+
+        this._onLoad = function() {}
+<!--            this._onAbort = null-->
+<!--            this._onLoadEnd = null-->
+<!--            this._onLoadStart = null-->
+        this._onProgress = null
+<!--            this._onTimeOut = null-->
     }
-    
-    form(_form) {
-        this.form = _form
+
+    onSuccess(callback) {
+        this._onLoad = callback
         return this
     }
-    
-    onSuccess(callback) {
-        this.onSuccess = callback
+
+    onProgress(callback) {
+        this._onProgress = callback
+        return this
     }
-    
-    send() {
-        if (this.form == null) {
-            throw "Content of .form() is null."
-        }
-        
+
+    send(_form) {
         var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                alert(this.responseText)
-                
-            } else if (this.readyState == 4) {
-                
-            }
-        };
+
+        let self = this
+        xhttp.onload = function() {if (self._onLoad != null) {self._onLoad(xhttp.responseText)}}
+        xhttp.onprogress = function(evt) {
+            if (self._onProgress != null){self._onProgress(evt.loaded / evt.total)}
+        }
+
         xhttp.open("POST", this.url, true);
         xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
         var formString = ""
-        Object.keys(this.form).forEach(function(key) {
+        Object.keys(_form).forEach(function(key) {
+            let value = _form[key]
+            if (value instanceof EclairState) {
+                value = value.value()
+            }
             formString += escape(key) + "="
-            formString += escape(form[key]) + "&"
+            formString += escape(value) + "&"
         })
-        alert(formString)
+
         xhttp.send(formString);
+
+        return this
     }
 }
 

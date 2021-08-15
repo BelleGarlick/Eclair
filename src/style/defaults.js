@@ -69,10 +69,11 @@ eclair.styles = {
         .display("block"),
     
     TextBox: eclair.Style()
+        .fontSize("14px")
+        .padding("12px 16px")
         .width("100%")
         .borderSize("0px")
         .borderRadius("3px")
-        .padding("8px 16px")
         .background("#eeeeee")
         .font(eclair.theme.font)
         .background("#dddddd", "hover")

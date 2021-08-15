@@ -113,7 +113,7 @@ class EclairState {
 
     length() {
         return this.isArray(_ => {
-            return this._value.length()
+            return this._value.length
         })
     }
 

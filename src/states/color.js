@@ -79,6 +79,24 @@ class EclairColor extends EclairState {
         return this;
     }   
     
+    lighten(_val) {
+        this._r = Math.min(255, this._r + _val)
+        this._g = Math.min(255, this._g + _val)
+        this._b = Math.min(255, this._b + _val)
+        this.value(`rgb(${this._r}, ${this._g}, ${this._b}, ${this._a})`)
+        
+        return this;
+    }
+    
+    darken(_val) {
+        this._r = Math.max(0, this._r - _val)
+        this._g = Math.max(0, this._g - _val)
+        this._b = Math.max(0, this._b - _val)
+        this.value(`rgb(${this._r}, ${this._g}, ${this._b}, ${this._a})`)
+        
+        return this;
+    }
+    
     /// - ![#f0f8ff](https://via.placeholder.com/15/f0f8ff/000000?text=+) `.aliceBlue()`
     /// - ![#faebd7](https://via.placeholder.com/15/faebd7/000000?text=+) `.antiqueWhite()`
     /// - ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) `.aqua()`

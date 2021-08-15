@@ -49,6 +49,8 @@ let eclair = {
     // Styling
     Style: function() {return new EclairStyleComponent();},
     
+    post: function(_url) {return new EclairPost(_url);},
+    
     // State based 
     State: function(_val) {return new EclairState(_val);},    
     Color: function(_col) {return new EclairColor(_col);},
