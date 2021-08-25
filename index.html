@@ -231,7 +231,10 @@ eclair.VStack([
             eclair.TextBox(selectedRadioIndex),
             RadioButtons(tabName)
                 .width("100%")
-                .selectedIndex(selectedTab),
+                .selectedIndex(selectedTab)
+                .onClick((el, ev) => {
+                    alert(ev)
+                }),
             eclair.HorizontalLine(),
             RadioButtons(["tests", "test", "testing"]).width("100%"),
             

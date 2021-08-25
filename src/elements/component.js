@@ -237,9 +237,9 @@ class EclairComponent extends EclairStylableObject {
     /// ```
     
     // Eclair calls
-    performCallback(event, param1) {
-        if (this._callbacks.hasOwnProperty(event)) {
-            this._callbacks[event](this, param1);
+    performCallback(eventID, event, param) {
+        if (this._callbacks.hasOwnProperty(eventID)) {
+            this._callbacks[eventID](this, event, param);
         }
     }
     
@@ -248,7 +248,7 @@ class EclairComponent extends EclairStylableObject {
         if (callback == null) {
             this.setAttr(callbackKey.toLowerCase(), null)
         } else {
-            this.setAttr(callbackKey.toLowerCase(), `eclair.performCallback("${this.id()}", "${callbackKey}")`)
+            this.setAttr(callbackKey.toLowerCase(), `eclair.performCallback("${this.id()}", "${callbackKey}", event)`)
         }
         return this;
     }

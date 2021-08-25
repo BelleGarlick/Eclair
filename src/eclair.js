@@ -44,7 +44,9 @@ let eclair = {
     _elements: {},
     _newID: function() {this._ids += 1; return this._ids - 1;},
     
-    performCallback: function(eID, event, param1) {this._elements[eID].performCallback(event, param1);},
+    performCallback: function(eID, eventID, event, param) {
+        this._elements[eID].performCallback(eventID, event, param);
+    },
     
     // Styling
     Style: function() {return new EclairStyleComponent();},

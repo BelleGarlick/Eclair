@@ -9,7 +9,9 @@ let eclair = {
     _elements: {},
     _newID: function() {this._ids += 1; return this._ids - 1;},
     
-    performCallback: function(eID, event, param1) {this._elements[eID].performCallback(event, param1);},
+    performCallback: function(eID, eventID, event, param) {
+        this._elements[eID].performCallback(eventID, event, param);
+    },
     
     Style: function() {return new EclairStyleComponent();},
     
@@ -1076,9 +1078,9 @@ class EclairComponent extends EclairStylableObject {
     onUnload(callback) {return this._updateCallback("onUnload", callback);}
     onResize(callback) {return this._updateCallback("onResize", callback);}
     
-    performCallback(event, param1) {
-        if (this._callbacks.hasOwnProperty(event)) {
-            this._callbacks[event](this, param1);
+    performCallback(eventID, event, param) {
+        if (this._callbacks.hasOwnProperty(eventID)) {
+            this._callbacks[eventID](this, event, param);
         }
     }
     
@@ -1087,7 +1089,7 @@ class EclairComponent extends EclairStylableObject {
         if (callback == null) {
             this.setAttr(callbackKey.toLowerCase(), null)
         } else {
-            this.setAttr(callbackKey.toLowerCase(), `eclair.performCallback("${this.id()}", "${callbackKey}")`)
+            this.setAttr(callbackKey.toLowerCase(), `eclair.performCallback("${this.id()}", "${callbackKey}", event)`)
         }
         return this;
     }
@@ -2147,7 +2149,7 @@ class EclairView extends EclairComponent {
                     let cChild = this.children[i]
                     if (!elems.has(cChild)) {
                         this._removeChild(i)
-                        elems.remove(newChild)
+                        elems.delete(cChild)
                     }
                 } 
             })

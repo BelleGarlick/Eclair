@@ -36,7 +36,7 @@ class EclairView extends EclairComponent {
                     let cChild = this.children[i]
                     if (!elems.has(cChild)) {
                         this._removeChild(i)
-                        elems.remove(newChild)
+                        elems.delete(cChild)
                     }
                 } 
             })
