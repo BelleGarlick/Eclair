@@ -170,7 +170,7 @@ class EclairRadioButtons extends EclairComponent {
             divClass = `${eclair.styles.RadioButtonsSelectedRadio.id()} ${this.selectedRadioStyle.id()}`
         }
         
-        return `<table onclick='eclair.performCallback("${this.id()}", "selectRadioButton", this)' cellpadding=6 class='${radioClass}'><tbody><tr><td width=1><div class='${divClass}'></div></td><td>${_item}</td></tr></tbody></table>`
+        return `<table onclick='eclair.performCallback("${this.id()}", "selectRadioButton", event, this)' cellpadding=6 class='${radioClass}'><tbody><tr><td width=1><div class='${divClass}'></div></td><td>${_item}</td></tr></tbody></table>`
     }
     
     // Overriden method, no need to doc
