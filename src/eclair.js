@@ -19,6 +19,8 @@
 // TODO Add enabled tag to all elements.
 // Check on change bindings
 // TODO Nested elements like hstack of image and text within a button
+// TODO NEed tutorials for everything. Geting to grips with eclair, making a custom object, specific object tutorials.
+
 
 // Future custom objects
 //  - Cookies accept + ability to set
