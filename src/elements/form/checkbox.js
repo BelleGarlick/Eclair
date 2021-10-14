@@ -7,7 +7,7 @@
 /// ```
 class EclairCheckBox extends EclairComponent {
     constructor(checked) {
-        super()
+        super("checkbox")
         
         this._enabled = true        
         

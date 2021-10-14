@@ -2,7 +2,7 @@
 // This class is experimental and should not be considered part of the library
 class EclairSyntaxHighlighter extends EclairComponent {
     constructor(_html) {
-        super()
+        super("syntax-highlighter")
 
         // Check if HLJS is imported, if not then let user know that it's not
         try {

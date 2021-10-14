@@ -3,7 +3,7 @@
 // TODO This class is may need to inherrit from eclair view
 class EclairForm extends EclairComponent {
     constructor(elements) {
-        super()
+        super("form")
         
         this.elements = elements;
         this._method = "POST"

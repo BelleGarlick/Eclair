@@ -11,7 +11,7 @@
 /// ```
 class EclairView extends EclairComponent {
     constructor(elements) {
-        super()
+        super("view")
         
         if (elements instanceof Array) {
             if (elements != null) {

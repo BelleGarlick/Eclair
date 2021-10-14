@@ -1,10 +1,10 @@
 // WARN Doc not finished yet
 // WARN EclairComponent is not finished.
 class EclairComponent extends EclairStylableObject {
-    constructor() {
+    constructor(componentName) {
         super()
         
-        this._id = eclair._newID();
+        this._id = eclair._newID(componentName);
         eclair._elements[this.id()] = this;
         
         this.parent = null
@@ -22,9 +22,7 @@ class EclairComponent extends EclairStylableObject {
     }
     
     
-    id() {
-        return "eclairElement" + this._id;
-    }
+    id() {return this._id;}
     
     write() {
         document.write(this.compile())
@@ -125,19 +123,16 @@ class EclairComponent extends EclairStylableObject {
     
     bindState(state, stateBindingID, onCallback, valueCallback) {
         if (state instanceof EclairState) {
-            // Create unique name for object binding
-            let objectBindingId = `${this.id()}-${stateBindingID}`
-            
             // Remove binding for old callback
             if (this.stateBindings.hasOwnProperty(stateBindingID)) {
-                state.removeCallback(objectBindingId)
+                this.stateBindings[stateBindingID].removeCallback(this.id())
             }
             
             // Set new binding in class
             this.stateBindings[stateBindingID] = state
             
             // Add Callback to the state
-            state.addCallback(objectBindingId, function(state) {
+            state.addCallback(this.id(), function(state) {
                 let value = (valueCallback == null)? state.value() : valueCallback(state)
                 onCallback(value)
             }, true)

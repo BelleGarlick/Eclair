@@ -12,7 +12,7 @@
 /// ```
 class EclairCustomTagComponent extends EclairComponent {
     constructor(tag) {
-        super()
+        super(tag)
         
         this.tag = tag;
         this._innerHTML = "";

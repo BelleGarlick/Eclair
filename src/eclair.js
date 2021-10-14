@@ -42,7 +42,10 @@
 let eclair = {
     _ids: 0,
     _elements: {},
-    _newID: function() {this._ids += 1; return this._ids - 1;},
+    _newID: function(compName) {
+        this._ids += 1; 
+        return "eclair-" + (compName == null? "" : compName + "-") + "e" + (this._ids - 1);
+    },
     
     performCallback: function(eID, eventID, event, param) {
         this._elements[eID].performCallback(eventID, event, param);
@@ -64,6 +67,7 @@ let eclair = {
     VStack: function(_elements) {return new EclairVStack(_elements);},
     HStack: function(_elements) {return new EclairHStack(_elements);},
     TabView: function(_tab, _elements) {return new EclairTabView(_tab, _elements);},
+    ForEach: function(_state, _func) {return new EclairForEach(_state, _func);},
     
     CustomTagComponent: function(tag) {return new EclairCustomTagComponent(tag);},
     

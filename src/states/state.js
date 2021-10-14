@@ -4,17 +4,21 @@ class EclairState {
         this.callbacks = {}
     }
     
-    value(_value) {
+    value(_value, component) {
         if (_value == undefined) {
             return this._value
         } else {
             if (_value != this._value){
                 this._value = _value;
+                
+                let ignoreID = (component instanceof EclairComponent)? component.id() : ""
 
                 let self = this
                 Object.keys(self.callbacks).forEach(function(key) {
-                    self.callbacks[key](self)
-                    self.updateCallbacks()
+                    if (key != ignoreID) {
+                        self.callbacks[key](self)
+                        self.updateCallbacks()
+                    }
                 })
             }
         }

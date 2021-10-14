@@ -1,7 +1,7 @@
 // WARN RADIO BUTTONS NOT DONE
 class EclairRadioButtons extends EclairComponent {
     constructor(_options) {
-        super()
+        super("radio-button")
         
         this._items = []
         this._selectedIndex = 0
@@ -110,7 +110,9 @@ class EclairRadioButtons extends EclairComponent {
     // TODO .value needs rewriting
     value(value) {
         this.bindState(this._selectedValue, "value", value => {
-            this.performCallback("onChange")
+            if (this.getElement() != null) {
+                this.performCallback("onChange")
+            }
 
             this.getElement(e => {
                 var selectedIndex = 0

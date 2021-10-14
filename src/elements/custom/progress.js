@@ -7,7 +7,7 @@
 /// ```
 class EclairProgressBar extends EclairComponent {
     constructor(_progress) {
-        super()
+        super("progress")
         
         this._labelText = eclair.State("0%")
         this._label = eclair.Text(this._labelText)

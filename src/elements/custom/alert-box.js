@@ -9,7 +9,7 @@
 /// ```
 class EclairAlertBox extends EclairComponent {
     constructor(text) {
-        super()
+        super("alert-box")
         
         // This acts as a placeholder which is pased to the title text. If the user
         // binds or sets some title text, then this state will be updated to update

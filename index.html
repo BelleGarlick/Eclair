@@ -87,6 +87,18 @@ VStack([
         .background(eclair.theme.accent)
         .padding(8),
     
+    
+    eclair.ForEach([
+        {"name": "Sam Garlick", "age": "23"},
+        {"name": "Katie Mitchell", "age": "22"},
+        {"name": "Isaac Jordan", "age": "23"},
+    ], (person) => {
+        return eclair.HStack([
+            eclair.Text(person.name),
+            eclair.Text(person.age),
+        ])
+    }),
+    
     eclair.VStack([
         VStack([     
             eclair.Select(tabName)

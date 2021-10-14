@@ -7,7 +7,7 @@
 /// ```
 class EclairSelect extends EclairComponent {
     constructor(_options) {
-        super()
+        super("select")
         
         this._items = []
         this._selectedIndex = 0
@@ -116,7 +116,7 @@ class EclairSelect extends EclairComponent {
     /// ```
     value(_value) {
         this.bindState(_value, "value", value => {
-            for (let i = 0; i < this._items; i++) {
+            for (let i = 0; i < this._items.length; i++) {
                 if (this._items[i] == value) {
                     // If value changes then call on change
                     if (this._selectedIndex != i) {
