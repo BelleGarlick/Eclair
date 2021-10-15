@@ -4,6 +4,7 @@
 
 
 
+
 let eclair = {
     _ids: 0,
     _elements: {},
@@ -930,6 +931,7 @@ class EclairComponent extends EclairStylableObject {
     
     write() {
         document.write(this.compile())
+        return this
     }
     
     to(elemID) {
@@ -2470,6 +2472,9 @@ class EclairLink extends EclairCustomTagComponent {
         return this
     }
 }
+
+
+
 
 // elements.standard.text
 class EclairText extends EclairComponent {

@@ -7,6 +7,7 @@ BUILD_ORDER_FILE = "build.txt"
 SOURCE_DIR = "src"
 DOC_DIR = "docs"
 OUTPUT = "eclair.js"
+OUTPUT_TEST = "test.html"
 
 
 SHARED_DOC = {}
@@ -15,7 +16,9 @@ SHARED_DOC = {}
 def parse_file(breadcrumbs_path, text):
     source_code = ""
     source_doc = ""
+    test_code = []
     
+    test_cases = False
     for line in text.split("\n"):
         if line.lstrip()[0:3] == "///":
             source_doc += line.lstrip()[4:] + "\n"
@@ -29,7 +32,10 @@ def parse_file(breadcrumbs_path, text):
             if line[:4] == "TODO":
                 print(f"\033[36m" + line[4:].lstrip(" "))
                     
-                
+        elif line[:3] == "***" or test_cases:
+            test_cases = True
+            test_code.append(line)
+        
         else:
             source_code += line + "\n"
              
@@ -38,8 +44,31 @@ def parse_file(breadcrumbs_path, text):
         
     for i in range(10):
         source_code.replace("\n\n", "\n")
+        
+    test_code = parse_tests(breadcrumbs_path, test_code)
                 
-    return source_code, source_doc
+    return source_code, source_doc, test_code 
+
+
+def parse_tests(breadcrumbs_path, lines):
+    test_cases = []
+    
+    test_index = 0
+    c_test = []
+    for line in lines:
+        if line[:8] == "*** TEST":
+            if len(c_test) > 0:
+                test_index += 1
+                test_cases += [{
+                    "name": breadcrumbs_path + ": " + str(test_index),
+                    "code": c_test
+                }]
+                c_test = []
+        else:
+            c_test += [line]
+            
+    return test_cases
+    
 
 
 def parse_doc(breadcrumbs, documentation):
@@ -96,7 +125,7 @@ def parse_doc(breadcrumbs, documentation):
                     
             else:
                 print(f"\033[31mUnknown doc include. Check your path: {func}")
-        
+                
         else:
             lines.append(line)
             
@@ -104,6 +133,7 @@ def parse_doc(breadcrumbs, documentation):
                 shared["raw"].append(line)
 
     lines.append(f"<br/>Source: [_{breadcrumbs}_]({DOC_SRC_LINK}{breadcrumbs.replace('.', '/')}.js)")
+    
     return "\n".join(lines)
 
 
@@ -124,7 +154,7 @@ def build_from_dir(directory, documentation_path, breadcrumbs=None):
                 
         subs = build_order
     
-    
+    test_cases = []
     for sub in subs:
         path = os.path.join(directory, sub)
         doc_path = os.path.join(documentation_path, sub)
@@ -134,7 +164,8 @@ def build_from_dir(directory, documentation_path, breadcrumbs=None):
                 breadcrumbs_path = '.'.join(breadcrumbs + [sub[:-3]])
                 print(f"\033[32m{breadcrumbs_path}")
                 with open(path) as file:
-                    source_code, source_doc = parse_file(breadcrumbs_path, file.read())
+                    source_code, source_doc, source_test = parse_file(breadcrumbs_path, file.read())
+                    test_cases += source_test
                     
                     dir_source += f"\n// {breadcrumbs_path}\n"
                     dir_source += source_code
@@ -148,10 +179,41 @@ def build_from_dir(directory, documentation_path, breadcrumbs=None):
 
             path = os.path.join(directory, path)
             if os.path.isdir(path):
-                dir_source += build_from_dir(path, doc_path, breadcrumbs + [sub]) + "\n"
+                sub_dir_source, sub_dir_test_cases = build_from_dir(path, doc_path, breadcrumbs + [sub])
+                dir_source += sub_dir_source + "\n"
+                test_cases += sub_dir_test_cases
                 
-    return f"{dir_source}\n"
+    return f"{dir_source}\n", test_cases
+
+
+
+def compile_test_cases(test_cases):
+    code = "<script src='eclair.js'></script>\n<script>"
+    code += """
+    function evaluate(test_name, evaluations, val_a, val_b) {
+        if (val_a == val_b) {
+            console.log(test_name + ": evaluation " +evaluations+ " - passed!")
+        } else {
+            console.log(test_name + ": evaluation " +evaluations+ " - failed!")
+        }
+    }
+    """
     
+    for test_case in test_cases:
+        code += f"console.log('{test_case['name']}')\n"
+        evaluations = 0
+        
+        for line in test_case["code"]:
+            if line[:7] == "**eval(":
+                evaluations += 1
+                code += f"evaluate('{test_case['name']}', {evaluations}, " + line[7:] + "\n"
+            else:
+                code += line + "\n"
+            
+            
+            
+    return code + "</script>"
+
 
 
 if __name__ == "__main__":
@@ -164,11 +226,13 @@ if __name__ == "__main__":
     doc_path = os.path.join(os.path.dirname(file_path), DOC_DIR)
     
     # Source code
-    eclair_source = build_from_dir(sources_path, doc_path)
-    
+    eclair_source, eclair_test_cases = build_from_dir(sources_path, doc_path)
     
     with open(OUTPUT, "w+") as file:
         file.write(eclair_source)
+        
+    with open(OUTPUT_TEST, "w+") as file:
+        file.write(compile_test_cases(eclair_test_cases))
         
 #    print(uglipyjs.compile(eclair_source, {'mangle':False}))
     

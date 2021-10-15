@@ -1,0 +1,36 @@
+<script src='eclair.js'></script>
+<script>
+    function evaluate(test_name, evaluations, val_a, val_b) {
+        if (val_a == val_b) {
+            console.log(test_name + ": evaluation " +evaluations+ " - passed!")
+        } else {
+            console.log(test_name + ": evaluation " +evaluations+ " - failed!")
+        }
+    }
+    console.log('elements.standard.link: 1')
+var object = eclair.Link("Test")
+                .url("www.w3schools.com")
+                .target("_blank")
+                .write()
+
+var element = object.getElement()
+
+evaluate('elements.standard.link: 1', 1, element.innerHTML, "Test")
+evaluate('elements.standard.link: 1', 2, element.getAttribute("href"), "www.w3schools.com")
+evaluate('elements.standard.link: 1', 3, element.getAttribute("target"), "_blank")
+
+
+console.log('elements.standard.link: 2')
+var object = eclair.Link(eclair.State("Test"))
+                .url(eclair.State("www.w3schools.com"))
+                .target(eclair.State("_blank"))
+                .write()
+
+var element = object.getElement()
+
+evaluate('elements.standard.link: 2', 1, element.innerHTML, "Test")
+evaluate('elements.standard.link: 2', 2, element.getAttribute("href"), "www.w3schools.com")
+evaluate('elements.standard.link: 2', 3, element.getAttribute("target"), "_blank")
+
+
+</script>

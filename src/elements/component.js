@@ -26,6 +26,7 @@ class EclairComponent extends EclairStylableObject {
     
     write() {
         document.write(this.compile())
+        return this
     }
     
     to(elemID) {

@@ -46,3 +46,55 @@ class EclairLink extends EclairCustomTagComponent {
         return this
     }
 }
+
+
+
+*** TEST 
+var object = eclair.Link("Test")
+                .url("www.w3schools.com")
+                .target("_blank")
+                .write()
+
+var element = object.getElement()
+
+**eval(element.innerHTML, "Test")
+**eval(element.getAttribute("href"), "www.w3schools.com")
+**eval(element.getAttribute("target"), "_blank")
+
+
+*** TEST 
+var object = eclair.Link(eclair.State("Test"))
+                .url(eclair.State("www.w3schools.com"))
+                .target(eclair.State("_blank"))
+                .write()
+
+var element = object.getElement()
+
+**eval(element.innerHTML, "Test")
+**eval(element.getAttribute("href"), "www.w3schools.com")
+**eval(element.getAttribute("target"), "_blank")
+
+
+*** TEST 
+var state1 = eclair.State("Test")
+var state2 = eclair.State("www.w3schools.com")
+let state3 = eclair.State("_blank")
+
+var object = eclair.Link(state1)
+                .url(state2)
+                .target(state3)
+                .write()
+
+var element = object.getElement()
+
+**eval(element.innerHTML, "Test")
+**eval(element.getAttribute("href"), "www.w3schools.com")
+**eval(element.getAttribute("target"), "_blank")
+
+state1.value("New Value")
+state2.value("New URL")
+state3.value("New Target")
+
+**eval(element.innerHTML, "New Value")
+**eval(element.getAttribute("href"), "New URL")
+**eval(element.getAttribute("target"), "Target")
