@@ -188,7 +188,7 @@ def build_from_dir(directory, documentation_path, breadcrumbs=None):
 
 
 def compile_test_cases(test_cases):
-    code = "<script src='eclair.js'></script>\n<script>"
+    code = "<!--This file is auto generated from source code.-->\n<script src='eclair.js'></script>\n<script>"
     code += """
     function evaluate(test_name, evaluations, val_a, val_b) {
         if (val_a == val_b) {

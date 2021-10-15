@@ -2254,16 +2254,16 @@ class EclairVStack extends EclairView {
 
 // elements.layout.foreach
 class EclairForEach extends EclairComponent {
-    constructor(state, objectFunction) {
+    constructor(items, objectFunction) {
         super("foreach")
         
         this.state = null
         this.objectFunction = objectFunction;
         
-        if (state instanceof EclairState) {
-            this.state = state
-        } else if (state instanceof Array) {
-            this.state = eclair.State(state)
+        if (staitemste instanceof EclairState) {
+            this.state = items
+        } else if (items instanceof Array) {
+            this.state = eclair.State(items)
         }
     }
     
@@ -2540,7 +2540,7 @@ class EclairText extends EclairComponent {
 
 
 
-// form.post
+// functional.post
 class EclairPost {
     constructor(url) {
         this.url = url
