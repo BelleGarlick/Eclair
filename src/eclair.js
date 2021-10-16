@@ -20,6 +20,7 @@
 // Check on change bindings
 // TODO Nested elements like hstack of image and text within a button
 // TODO NEed tutorials for everything. Geting to grips with eclair, making a custom object, specific object tutorials.
+// TODO Only add style if css has code. If css code is len(0) then remove css object.
 
 
 // Future custom objects
@@ -65,9 +66,9 @@ let eclair = {
     Alignment: function() {return new EclairAlignmentState();},
     
     // Layout 
-    View: function(_elements) {return new EclairView(_elements);},
-    VStack: function(_elements) {return new EclairVStack(_elements);},
-    HStack: function(_elements) {return new EclairHStack(_elements);},
+    View: function(_elements, _func) {return new EclairView(_elements, _func);},
+    VStack: function(_elements, _func) {return new EclairVStack(_elements, _func);},
+    HStack: function(_elements, _func) {return new EclairHStack(_elements, _func);},
     TabView: function(_tab, _elements) {return new EclairTabView(_tab, _elements);},
     ForEach: function(_state, _func) {return new EclairForEach(_state, _func);},
     

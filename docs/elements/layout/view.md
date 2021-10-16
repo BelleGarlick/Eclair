@@ -9,5 +9,6 @@ eclair.View([
    "Or even just html"
 ])
 ```
+TODO Added creatorFunc to doc and other view elements
 
 <br/>Source: [_elements.layout.view_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/layout/view.js)

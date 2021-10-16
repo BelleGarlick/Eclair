@@ -11,8 +11,8 @@
 ///     .gap("8px")
 /// ```
 class EclairVStack extends EclairView {
-    constructor(func) {
-        super(func)
+    constructor(elems, creatorFunc) {
+        super(elems, creatorFunc)
         
         this
             .display("flex")

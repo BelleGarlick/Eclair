@@ -164,11 +164,12 @@ class EclairComponent extends EclairStylableObject {
         Object.keys(this.attributes).forEach(function(key) {
             element.setAttribute(key, self.attributes[key])
         });
-        
-        // Adding the style code
-        let html = (this._buildStyle? this.buildStyleCode() : "") + wrapperElement.innerHTML;
                 
-        return html
+        if (this._buildStyle) {
+            document.head.appendChild(this.buildStyleObject())
+        }
+        
+        return wrapperElement.innerHTML
     }
     
     /// ### Event Handling

@@ -26,9 +26,9 @@ let eclair = {
     TextStyle: function() {return new EclairTextStyleState();},
     Alignment: function() {return new EclairAlignmentState();},
     
-    View: function(_elements) {return new EclairView(_elements);},
-    VStack: function(_elements) {return new EclairVStack(_elements);},
-    HStack: function(_elements) {return new EclairHStack(_elements);},
+    View: function(_elements, _func) {return new EclairView(_elements, _func);},
+    VStack: function(_elements, _func) {return new EclairVStack(_elements, _func);},
+    HStack: function(_elements, _func) {return new EclairHStack(_elements, _func);},
     TabView: function(_tab, _elements) {return new EclairTabView(_tab, _elements);},
     ForEach: function(_state, _func) {return new EclairForEach(_state, _func);},
     
@@ -548,7 +548,7 @@ class EclairStylableObject {
         return this._styles[selector];
     }
     
-    buildStyleCode(cssOnly) {
+    buildStyleObject(cssOnly) {
         if (cssOnly == null) {cssOnly = false}
         let self = this;
         let objectID = this.id()
@@ -582,7 +582,11 @@ class EclairStylableObject {
             return styleCode
         }
         
-        return `<style id='${objectID}-css'>${styleCode}</style>`;
+        let styleObject = document.createElement("style");
+        styleObject.setAttribute("id", `${objectID}-css`)
+        styleObject.innerHTML = styleCode
+        
+        return styleObject;
     }
     
     updateCSSStyle() {
@@ -590,7 +594,7 @@ class EclairStylableObject {
         let cssElement = document.getElementById(objectID);
         
         if (cssElement != null) {
-            cssElement.innerHTML = this.buildStyleCode(true)
+            cssElement.innerHTML = this.buildStyleObject(true)
         }
         
         return this;
@@ -657,14 +661,9 @@ class EclairStyleComponent extends EclairStylableObject {
     constructor() {
         super()
         this._id = eclair._newID()
-        
         this._stylePrefix = "."
         
-        let node = document.createElement("style")
-        node.innerHTML = this.buildStyleCode(true)
-        node.setAttribute("id", this.id() + "-css")
-        
-        document.head.appendChild(node)
+        document.head.appendChild(this.buildStyleObject())
     }
     
     id() {
@@ -1055,10 +1054,12 @@ class EclairComponent extends EclairStylableObject {
         Object.keys(this.attributes).forEach(function(key) {
             element.setAttribute(key, self.attributes[key])
         });
-        
-        let html = (this._buildStyle? this.buildStyleCode() : "") + wrapperElement.innerHTML;
                 
-        return html
+        if (this._buildStyle) {
+            document.head.appendChild(this.buildStyleObject())
+        }
+        
+        return wrapperElement.innerHTML
     }
     
     onBlur(callback) {return this._updateCallback("onBlur", callback);}
@@ -2131,13 +2132,15 @@ class EclairToggle extends EclairComponent {
 
 // elements.layout.view
 class EclairView extends EclairComponent {
-    constructor(elements) {
+    constructor(elements, creatorFunc) {
         super("view")
+        this.creatorFunc = (creatorFunc != null)? creatorFunc : (e) => {return e}
         
+        let self = this;
         if (elements instanceof Array) {
             if (elements != null) {
                 for (let i = 0; i < elements.length; i++) {
-                    this._addChild(elements[i])
+                    this._addChild(self.creatorFunc(elements[i]))
                 }
             }
         } else if (elements instanceof EclairState && elements.isArray()) {
@@ -2147,7 +2150,7 @@ class EclairView extends EclairComponent {
                 for (let i = 0; i < array.length; i++) {
                     let newChild = array[i]
                     if (!children.has(newChild)) {
-                        this._addChild(newChild)
+                        this._addChild(self.creatorFunc(newChild))
                         children.add(newChild)
                     }
                 } 
@@ -2217,8 +2220,8 @@ class EclairView extends EclairComponent {
 
 // elements.layout.vstack
 class EclairVStack extends EclairView {
-    constructor(func) {
-        super(func)
+    constructor(elems, creatorFunc) {
+        super(elems, creatorFunc)
         
         this
             .display("flex")
@@ -2279,8 +2282,8 @@ class EclairForEach extends EclairComponent {
 
 // elements.layout.hstack
 class EclairHStack extends EclairView {
-    constructor(elements) {
-        super(elements)
+    constructor(elements, creatorFunc) {
+        super(elements, creatorFunc)
         this
             .display("flex")
             .flexDirection("row")

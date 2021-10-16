@@ -88,7 +88,7 @@ VStack([
         .padding(8),
     
     
-    eclair.ForEach([
+    VStack([
         {"name": "Sam Garlick", "age": "23"},
         {"name": "Katie Mitchell", "age": "22"},
         {"name": "Isaac Jordan", "age": "23"},
@@ -97,6 +97,9 @@ VStack([
             eclair.Text(person.name),
             eclair.Text(person.age),
         ])
+            .background("blue")
+            .borderRadius("3px")
+            .padding("20px")
     }),
     
     eclair.VStack([

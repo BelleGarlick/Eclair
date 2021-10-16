@@ -13,7 +13,7 @@ class EclairStylableObject {
         return this._styles[selector];
     }
     
-    buildStyleCode(cssOnly) {
+    buildStyleObject(cssOnly) {
         if (cssOnly == null) {cssOnly = false}
         let self = this;
         let objectID = this.id()
@@ -47,7 +47,11 @@ class EclairStylableObject {
             return styleCode
         }
         
-        return `<style id='${objectID}-css'>${styleCode}</style>`;
+        let styleObject = document.createElement("style");
+        styleObject.setAttribute("id", `${objectID}-css`)
+        styleObject.innerHTML = styleCode
+        
+        return styleObject;
     }
     
     updateCSSStyle() {
@@ -55,7 +59,7 @@ class EclairStylableObject {
         let cssElement = document.getElementById(objectID);
         
         if (cssElement != null) {
-            cssElement.innerHTML = this.buildStyleCode(true)
+            cssElement.innerHTML = this.buildStyleObject(true)
         }
         
         return this;
@@ -124,14 +128,9 @@ class EclairStyleComponent extends EclairStylableObject {
     constructor() {
         super()
         this._id = eclair._newID()
-        
         this._stylePrefix = "."
         
-        let node = document.createElement("style")
-        node.innerHTML = this.buildStyleCode(true)
-        node.setAttribute("id", this.id() + "-css")
-        
-        document.head.appendChild(node)
+        document.head.appendChild(this.buildStyleObject())
     }
     
     id() {

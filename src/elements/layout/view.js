@@ -9,14 +9,17 @@
 ///    "Or even just html"
 /// ])
 /// ```
+/// TODO Added creatorFunc to doc and other view elements
 class EclairView extends EclairComponent {
-    constructor(elements) {
+    constructor(elements, creatorFunc) {
         super("view")
+        this.creatorFunc = (creatorFunc != null)? creatorFunc : (e) => {return e}
         
+        let self = this;
         if (elements instanceof Array) {
             if (elements != null) {
                 for (let i = 0; i < elements.length; i++) {
-                    this._addChild(elements[i])
+                    this._addChild(self.creatorFunc(elements[i]))
                 }
             }
         } else if (elements instanceof EclairState && elements.isArray()) {
@@ -26,7 +29,7 @@ class EclairView extends EclairComponent {
                 for (let i = 0; i < array.length; i++) {
                     let newChild = array[i]
                     if (!children.has(newChild)) {
-                        this._addChild(newChild)
+                        this._addChild(self.creatorFunc(newChild))
                         children.add(newChild)
                     }
                 } 
