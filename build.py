@@ -67,6 +67,15 @@ def parse_tests(breadcrumbs_path, lines):
         else:
             c_test += [line]
             
+    if len(c_test) > 0:
+        test_index += 1
+        test_cases += [{
+            "name": breadcrumbs_path + ": " + str(test_index),
+            "code": c_test
+        }]
+        c_test = []
+            
+            
     return test_cases
     
 

@@ -10,6 +10,22 @@
 /// ])
 ///     .gap("8px")
 /// ```
+///
+/// <br/>**args**:
+/// - elements: Elements within the view.
+/// - objectFunction: A function which returns the constructed object.
+/// ```javascript
+/// eclair.HStack([
+///     {'name': 'Joe Briggs', 'age': 28},
+///     {'name': 'Amy Wong', 'age': 24},
+///     {'name': 'Dustin James', 'age': 15}
+/// ], item => {
+///    return eclair.HStack([
+///        eclair.Text(item.name),
+///        eclair.Text(item.age)
+///    ])
+/// })
+/// ```
 class EclairHStack extends EclairView {
     constructor(elements, creatorFunc) {
         super(elements, creatorFunc)

@@ -18,17 +18,5 @@ eclair.TabView(selectedTab, [
     ]),
 ])
 ```
-### .addChild
-Add a child element to this object. The child element must be of type EclairView
-<br/>**args**:
-- child: Can be either raw html or an eclair element. 
-```javascript
-let selectedTab = State(0)
-
-eclair.TabView(selectedTab)
-    .addChild(eclair.View(eclair.Text("Tab 1")))
-    .addChild(eclair.View(eclair.Text("Tab 2")))
-    .addChild(eclair.View(eclair.Text("Tab 3")))
-```
 
 <br/>Source: [_elements.layout.tabs_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/layout/tabs.js)

@@ -2255,31 +2255,6 @@ class EclairVStack extends EclairView {
     }
 }
 
-// elements.layout.foreach
-class EclairForEach extends EclairComponent {
-    constructor(items, objectFunction) {
-        super("foreach")
-        
-        this.state = null
-        this.objectFunction = objectFunction;
-        
-        if (staitemste instanceof EclairState) {
-            this.state = items
-        } else if (items instanceof Array) {
-            this.state = eclair.State(items)
-        }
-    }
-    
-    build() {
-        let objectHTML = "<span>"
-        for (let i = 0; i < this.state.length(); i++) {
-            objectHTML += this.objectFunction(this.state.get(i)).compile()
-        }
-        
-        return objectHTML + "</span>"
-    }
-}
-
 // elements.layout.hstack
 class EclairHStack extends EclairView {
     constructor(elements, creatorFunc) {
@@ -2352,6 +2327,10 @@ class EclairTabView extends EclairView {
         }
     }
 }
+
+
+
+
 
 
 

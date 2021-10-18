@@ -1,4 +1,3 @@
-// WARN TEST TAB VIEW BINDING TO ELEMENTS
 /// ## Eclair TabView
 /// Create a tab view capable of hiding and showing states.
 /// <br/>**args**:
@@ -39,18 +38,6 @@ class EclairTabView extends EclairView {
         this.addStyle(eclair.styles.TabView)
     }
     
-    /// ### .addChild
-    /// Add a child element to this object. The child element must be of type EclairView
-    /// <br/>**args**:
-    /// - child: Can be either raw html or an eclair element. 
-    /// ```javascript
-    /// let selectedTab = State(0)
-    ///
-    /// eclair.TabView(selectedTab)
-    ///     .addChild(eclair.View(eclair.Text("Tab 1")))
-    ///     .addChild(eclair.View(eclair.Text("Tab 2")))
-    ///     .addChild(eclair.View(eclair.Text("Tab 3")))
-    /// ```
     // This function overrides the parent function to check that the child is of type eclair view.
     _addChild(_child) {
         if (_child instanceof EclairView) {
@@ -69,3 +56,31 @@ class EclairTabView extends EclairView {
         }
     }
 }
+
+
+
+
+*** TEST 
+var text1 = eclair.View([eclair.Text("Tab A")])
+var text2 = eclair.View([eclair.Text("Tab B")])
+
+eclair.TabView(eclair.State(0), [text1, text2]).write()
+
+**eval(window.getComputedStyle(text2.getElement(), null).display, "none")
+
+*** TEST 
+var text1 = eclair.View([eclair.Text("Tab A")])
+var text2 = eclair.View([eclair.Text("Tab B")])
+eclair.TabView(eclair.State(1), [text1, text2]).write()
+
+**eval(window.getComputedStyle(text1.getElement(), null).display, "none")
+
+*** TEST 
+var text1 = eclair.View([eclair.Text("Tab A")])
+var text2 = eclair.View([eclair.Text("Tab B")])
+var state1 = eclair.State(0)
+eclair.TabView(state1, [text1, text2]).write()
+
+**eval(window.getComputedStyle(text2.getElement(), null).display, "none")
+state1.value(1)
+**eval(window.getComputedStyle(text1.getElement(), null).display, "none")

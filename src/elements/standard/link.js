@@ -97,4 +97,4 @@ state3.value("New Target")
 
 **eval(element.innerHTML, "New Value")
 **eval(element.getAttribute("href"), "New URL")
-**eval(element.getAttribute("target"), "Target")
+**eval(element.getAttribute("target"), "New Target")

@@ -21,6 +21,7 @@
 // TODO Nested elements like hstack of image and text within a button
 // TODO NEed tutorials for everything. Geting to grips with eclair, making a custom object, specific object tutorials.
 // TODO Only add style if css has code. If css code is len(0) then remove css object.
+// TODO View ordering 
 
 
 // Future custom objects
