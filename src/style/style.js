@@ -118,6 +118,7 @@ class EclairStylableObject {
     userSelect(_value, selector) {return this._set(selector, "user-select", _value)}
     boxSizing(_value, selector) {return this._set(selector, "box-sizing", _value)}
     transform(_value, selector) {return this._set(selector, "transform", _value)}
+    justifyContent(_value, selector) {return this._set(selector, "justify-content", _value)}
     
     // Flex model relations
     flexDirection(_value, selector) {return this._set(selector, "flex-direction", _value)}

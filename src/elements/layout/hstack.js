@@ -20,7 +20,7 @@
 ///     {'name': 'Amy Wong', 'age': 24},
 ///     {'name': 'Dustin James', 'age': 15}
 /// ], item => {
-///    return eclair.HStack([
+///    return eclair.VStack([
 ///        eclair.Text(item.name),
 ///        eclair.Text(item.age)
 ///    ])
@@ -33,8 +33,7 @@ class EclairHStack extends EclairView {
             .display("flex")
             .flexDirection("row")
             .alignItems("center")
-        // TODO CSs for justyf content
-            .css("justify-content: space-around;")
+            .justifyContent("space-around")
         
         // Need to remove view as given by parent
         this.removeStyle(eclair.styles.View)

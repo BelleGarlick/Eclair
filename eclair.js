@@ -652,6 +652,7 @@ class EclairStylableObject {
     userSelect(_value, selector) {return this._set(selector, "user-select", _value)}
     boxSizing(_value, selector) {return this._set(selector, "box-sizing", _value)}
     transform(_value, selector) {return this._set(selector, "transform", _value)}
+    justifyContent(_value, selector) {return this._set(selector, "justify-content", _value)}
     
     flexDirection(_value, selector) {return this._set(selector, "flex-direction", _value)}
     alignItems(_value, selector) {return this._set(selector, "align-items", _value)}
@@ -2227,7 +2228,7 @@ class EclairVStack extends EclairView {
             .display("flex")
             .flexDirection("column")
             .alignItems("center")
-        this.css("justify-content: space-around;")
+            .justifyContent("space-around")
         
         this.removeStyle(eclair.styles.View)
         this.addStyle(eclair.styles.VStack)
@@ -2263,7 +2264,7 @@ class EclairHStack extends EclairView {
             .display("flex")
             .flexDirection("row")
             .alignItems("center")
-            .css("justify-content: space-around;")
+            .justifyContent("space-around")
         
         this.removeStyle(eclair.styles.View)
         this.addStyle(eclair.styles.HStack)
