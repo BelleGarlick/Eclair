@@ -48,7 +48,6 @@ class EclairLink extends EclairCustomTagComponent {
 }
 
 
-
 *** TEST 
 var object = eclair.Link("Test")
                 .url("www.w3schools.com")

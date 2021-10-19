@@ -20,7 +20,7 @@ eclair.HStack([
     {'name': 'Amy Wong', 'age': 24},
     {'name': 'Dustin James', 'age': 15}
 ], item => {
-   return eclair.HStack([
+   return eclair.VStack([
        eclair.Text(item.name),
        eclair.Text(item.age)
    ])

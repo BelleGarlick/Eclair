@@ -81,16 +81,6 @@ class EclairState {
             this._value == "YES" || this._value == true || this._value == 1
     }
 
-    true() {
-        this.value(true)
-        return this
-    }
-
-    false() {
-        this.value(false)
-        return this
-    }
-
     toggle() {
         this.value(!this.bool())
     }
@@ -187,5 +177,16 @@ class EclairState {
         }
         
         return null
+    }
+    
+    
+    true() {
+        this.value(true)
+        return this
+    }
+
+    false() {
+        this.value(false)
+        return this
     }
 }

@@ -144,16 +144,6 @@ class EclairState {
             this._value == "YES" || this._value == true || this._value == 1
     }
 
-    true() {
-        this.value(true)
-        return this
-    }
-
-    false() {
-        this.value(false)
-        return this
-    }
-
     toggle() {
         this.value(!this.bool())
     }
@@ -246,6 +236,17 @@ class EclairState {
         }
         
         return null
+    }
+    
+    
+    true() {
+        this.value(true)
+        return this
+    }
+
+    false() {
+        this.value(false)
+        return this
     }
 }
 
@@ -2138,51 +2139,72 @@ class EclairView extends EclairComponent {
         this.creatorFunc = (creatorFunc != null)? creatorFunc : (e) => {return e}
         
         let self = this;
-        if (elements instanceof Array) {
-            if (elements != null) {
-                for (let i = 0; i < elements.length; i++) {
-                    this._addChild(self.creatorFunc(elements[i]))
-                }
-            }
-        } else if (elements instanceof EclairState && elements.isArray()) {
+        let items = elements instanceof Array? eclair.State(elements) : elements
+        
+        let knownItems = []
+        
+        if (items instanceof EclairState && items.isArray()) {
             this.bindState(elements, "element", array => {
-                let children = new Set(this.children)
+                var itemChanges = self._itemChanges(knownItems, array)
+                console.log(itemChanges)
                 
-                for (let i = 0; i < array.length; i++) {
-                    let newChild = array[i]
-                    if (!children.has(newChild)) {
-                        this._addChild(self.creatorFunc(newChild))
-                        children.add(newChild)
-                    }
-                } 
+                let dummyParent = document.createElement("div")
                 
-                let elems = new Set(array)
-                for (let i = this.children.length - 1; i >= 0; i--) {
-                    let cChild = this.children[i]
-                    if (!elems.has(cChild)) {
-                        this._removeChild(i)
-                        elems.delete(cChild)
+                for (let i = 0; i < itemChanges.length; i++) {
+                    if (itemChanges[i] == -1) {
+                        let newItem = self.creatorFunc(array[i])
+                        this.children.push(newItem)
+                        newItem.parent = self
+                        
+                        let dummychild = document.createElement("div")
+                        dummychild.innerHTML = newItem.compile()
+                        dummyParent.appendChild(dummychild.childNodes[0])
+                    } else {
+                        let itemIndexValue = itemChanges[i]
+                        dummyParent.appendChild(
+                            self.getElement().childNodes[itemIndexValue]
+                        );
+                        itemChanges[i] = -1
+                        
+                        for (let j = 0; j < itemChanges.length; j++) {
+                            if (itemChanges[j] >= itemIndexValue) {
+                                itemChanges[j] -= 1
+                            }
+                        }
                     }
-                } 
+                }
+                
+                
+                self.getElement(e => {
+                    while (dummyParent.firstChild) {
+                        e.appendChild(dummyParent.childNodes[0])
+                    }
+                })
+                
+                knownItems = []
+                for (let i = 0; i < array.length; i++) {knownItems.push(array[i])}
             })
         }
         
         this.addStyle(eclair.styles.View)
     }
     
-    _addChild(_child) {
-        this.children.push(_child)
-        if (_child instanceof EclairComponent) {
-            _child.parent = this
-        }
-        
-        this.getElement(e => {
-            let childHTML = _child;
-            if (_child instanceof EclairComponent) {
-                childHTML = _child.compile()
+    
+    _itemChanges(oldItems, newItems) {
+        var resultantMap = []
+
+        for (let i = 0; i < newItems.length; i++) {
+            var positionChange = -1
+            for (let j = 0; j < oldItems.length; j++) {
+                if (oldItems[j] == newItems[i]) {
+                    positionChange = j
+                    break
+                }
             }
-            e.insertAdjacentHTML('beforeend', childHTML)
-        })
+            resultantMap.push(positionChange)
+        }
+
+        return resultantMap
     }
     
     
@@ -2196,6 +2218,7 @@ class EclairView extends EclairComponent {
         
         this.children.splice(_index, 1)
     }
+    
     
     build () {                
         let code = ""
@@ -2427,6 +2450,7 @@ class EclairImage extends EclairCustomTagComponent {
     }
 }
 
+
 // elements.standard.link
 class EclairLink extends EclairCustomTagComponent {
     constructor(_text) {
@@ -2455,7 +2479,6 @@ class EclairLink extends EclairCustomTagComponent {
         return this
     }
 }
-
 
 
 
