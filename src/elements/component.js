@@ -62,8 +62,8 @@ class EclairComponent extends EclairStylableObject {
     
     addStyle(sharedClass) {
         if (sharedClass != null) {
-            let className = typeof(sharedClass) == "string"? sharedClass:sharedClass.id();
-
+            let className = sharedClass instanceof EclairStyleComponent? sharedClass.id() : sharedClass;
+  
             let found = false;
             for (let n = 0; n < this.sharedStyles.length; n++) {
                 found = found || this.sharedStyles[n] == className;
@@ -79,7 +79,16 @@ class EclairComponent extends EclairStylableObject {
                 classesString += this.sharedStyles[n];
             }
             this.setAttr("class", classesString)
+            
+            // Create the style object if this object exists
+            let elem = this.getElement()
+            if (elem != null) {
+                if (eclair._styles.hasOwnProperty(className)) {
+                    eclair._styles[className].create()
+                }
+            }
         }
+        
         return this;
     }
     
@@ -159,6 +168,13 @@ class EclairComponent extends EclairStylableObject {
         let wrapperElement = document.createElement("div")
         wrapperElement.innerHTML = this.build();
         let element = wrapperElement.children[0]
+        
+        let classes = this.getAttr("class").split(" ")
+        for (let c = 0; c < classes.length; c++) {
+            if (eclair._styles.hasOwnProperty(classes[c])) {
+                eclair._styles[classes[c]].create()
+            }
+        }
         
         let self = this;
         Object.keys(this.attributes).forEach(function(key) {

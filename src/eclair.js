@@ -41,6 +41,7 @@
 let eclair = {
     _ids: 0,
     _elements: {},
+    _styles: {},
     _newID: function(compName) {
         this._ids += 1; 
         return "eclair-" + (compName == null? "" : compName + "-") + "e" + (this._ids - 1);
@@ -51,7 +52,7 @@ let eclair = {
     },
     
     // Styling
-    Style: function() {return new EclairStyleComponent();},
+    Style: function(_styleID) {return new EclairStyleComponent(_styleID);},
     
     post: function(_url) {return new EclairPost(_url);},
     

@@ -26,9 +26,6 @@ class EclairTabView extends EclairView {
         if (_selectedView instanceof EclairState) {
             this.bindState(_selectedView, "tab", value => {
                 for (let e = 0; e < this.children.length; e++) {
-                    if (value == e) {
-                        console.log(this.children[e])
-                    }
                     this.children[e].display(value == e? "flex": "none")
                 }
             }, state => {return state.int(0)})

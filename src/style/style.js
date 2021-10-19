@@ -62,9 +62,11 @@ class EclairStylableObject {
         
         if (css.length > 0) {
             if (cssElement == null) {
-                let newStyleObject = this.buildStyleObject()
-                if (newStyleObject != null) {
-                    document.head.appendChild(newStyleObject)
+                if (!(this instanceof EclairStyleComponent)) {
+                    let newStyleObject = this.buildStyleObject()
+                    if (newStyleObject != null) {
+                        document.head.appendChild(newStyleObject)
+                    }
                 }
             } else {
                 cssElement.innerHTML = css;
@@ -137,19 +139,28 @@ class EclairStylableObject {
     alignItems(_value, selector) {return this._set(selector, "align-items", _value)}
 }
 
+
 class EclairStyleComponent extends EclairStylableObject {
-    constructor() {
+    constructor(styleClassID) {
         super()
-        this._id = eclair._newID()
-        this._stylePrefix = "."
+        this._id = styleClassID != null? styleClassID : eclair._newID()
+        eclair._styles[this._id] = this
         
-        let newStyleObject = this.buildStyleObject()
-        if (newStyleObject != null) {
-            document.head.appendChild(newStyleObject)
-        }
+        this._stylePrefix = "."  // Use class not default id 
     }
     
     id() {
-        return "eclairStyle" + this._id;
+        return this._id;
+    }
+    
+    // Create is used to signal a difference between compile/build etc
+    create() {
+        let elem = document.getElementById(this.id() + "-css")
+        if (elem == null) {
+            let newStyleObject = this.buildStyleObject()
+            if (newStyleObject != null) {
+                document.head.appendChild(newStyleObject)
+            }
+        }
     }
 }

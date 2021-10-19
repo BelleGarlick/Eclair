@@ -64,7 +64,6 @@ class EclairColor extends EclairState {
     }
     
     rgb(r, g, b) {
-        console.log(`{return this.rgb(${r}, ${g}, ${b})}`)
         return this.rgba(r, g, b, 1)
     }
     
