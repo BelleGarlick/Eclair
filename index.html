@@ -33,8 +33,13 @@ let selectedRadioIndex = eclair.State()
 
 let vstackItems = eclair.State([])
 
-let tabName = eclair.State(["Toggles", "Progress Bar", "Alert Box", "Check Box"])
+let tabName = eclair.State(["Progress Bar", "Alert Box", "Check Box"])
 let selectedTab = State(0)
+
+
+let toggleOn = eclair.State(true)
+let toggleTick = eclair.State(false)
+let toggleEnabled = eclair.State(true)
 
 
 function codeExample(title, code, height) {
@@ -103,6 +108,34 @@ VStack([
             .padding("20px")
     }),
     
+            
+    eclair.VStack([
+        // Attach states to toggle
+        eclair.VStack([
+            eclair.Toggle(toggleOn)
+                .showTick(toggleTick)
+                .enabled(toggleEnabled)
+        ]).width("100%"),
+
+        eclair.HorizontalLine(),
+
+        // Tick mark toggle
+        eclair.Text("Tick Mark"),
+        eclair.Toggle(toggleTick),
+
+        // Toggle toggle
+        eclair.Text("Toggle"),
+        eclair.Toggle(true)
+            .onChange(e => {toggleOn.toggle()}),
+
+        // Toggle enabled
+        eclair.Text("Enabled"),
+        eclair.Toggle(toggleEnabled)
+    ])
+        .alignment(eclair.Alignment().start())
+        .gap("8px"),
+
+
     eclair.VStack([
         VStack([     
             eclair.Select(tabName)
@@ -110,40 +143,6 @@ VStack([
                 .width("60%"),
             
             TabView(selectedTab, [
-                codeExample("Toggle Switch", `// Example Toggle Code
-let toggleOn = eclair.State(true)
-let toggleTick = eclair.State(false)
-let toggleEnabled = eclair.State(true)
-
-// Create layout
-eclair.VStack([
-    // Attach states to toggle
-    eclair.VStack([
-        eclair.Toggle(toggleOn)
-            .showTick(toggleTick)
-            .enabled(toggleEnabled)
-    ]).width("100%"),
-
-    eclair.HorizontalLine(),
-
-    // Tick mark toggle
-    eclair.Text("Tick Mark"),
-    eclair.Toggle(toggleTick),
-
-    // Toggle toggle
-    eclair.Text("Toggle"),
-    eclair.Toggle(true)
-        .onChange(e => {\n\t\ttoggleOn.toggle()\n\t}),
-
-    // Toggle enabled
-    eclair.Text("Enabled"),
-    eclair.Toggle(toggleEnabled)
-])
-    .alignment(eclair.Alignment().start())
-    .gap("8px")
-    .write()
-`, 220),
-                
                 codeExample("Progress Bar", `// Progress bar code
 let progressValue = eclair.State(0.5)
 let showProgressState = eclair.State(false)

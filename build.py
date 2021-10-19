@@ -1,4 +1,5 @@
 import os
+import shutil
 import uglipyjs
 
 
@@ -228,6 +229,9 @@ def compile_test_cases(test_cases):
 if __name__ == "__main__":
     # Build eclair.
     print("=" * 20 + "\nBuilding eclair.\n" + "=" * 20)
+    
+    shutil.rmtree(DOC_DIR)
+    os.mkdir(DOC_DIR)
     
     # Get path to sources dir
     file_path = os.path.abspath(__file__)

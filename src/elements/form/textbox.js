@@ -1,8 +1,9 @@
 /// ## Eclair TextBox
 /// An eclair textbox element.
+/// <br/>**args**:
+/// - _text: The value of the text element.
 /// ```javascript
-/// let userInput = eclair.State("")
-/// eclair.Textbox(userInput)
+/// eclair.Textbox(eclair.State(""))
 ///     .placeholder("Enter your name here...")
 /// ```
 class EclairTextBox extends EclairCustomTagComponent {
@@ -13,8 +14,10 @@ class EclairTextBox extends EclairCustomTagComponent {
         
         let self = this
         
+        this.valueBinding = _text instanceof EclairState? _text : eclair.State(_text == null? "": _text)
+        
         // Binding
-        this.bindState(_text, "value", value => {
+        this.bindState(this.valueBinding, "value", value => {
             this.setAttr("value", value)
             this.getElement(elem => {elem.value = value});
         })
@@ -22,8 +25,8 @@ class EclairTextBox extends EclairCustomTagComponent {
         // Override on input to adapt the state to changes made to the text
         this.overrideOnInput = null
         this._updateCallback("onInput", e => {
-            if (_text instanceof EclairState) {
-                e.getElement(elem => {_text.value(elem.value)})
+            if (self.valueBinding instanceof EclairState) {
+                e.getElement(elem => {self.valueBinding.value(elem.value)})
             }
 
             if (this.overrideOnInput != null) {
@@ -40,6 +43,8 @@ class EclairTextBox extends EclairCustomTagComponent {
     
     /// ### .name
     /// Set the name attribute for a textbox (used in forms).
+    /// <br/>**args**:
+    /// - _name: Set the name attribute of the element.
     /// ```javascript
     /// eclair.TextBox("Sam")
     ///     .name("fname")
@@ -54,6 +59,8 @@ class EclairTextBox extends EclairCustomTagComponent {
     
     /// ### .placeholder
     /// Set a placeholder for a textbox.
+    /// <br/>**args**:
+    /// - _placeholder: Set the placeholder text to this value.
     /// ```javascript
     /// eclair.TextBox("")
     ///     .placeholder("First name...")
@@ -68,6 +75,8 @@ class EclairTextBox extends EclairCustomTagComponent {
     
     /// ### .password
     /// Set input as a password textbox.
+    /// <br/>**args**:
+    /// - _password: Set if the element to be of type password or not.
     /// ```javascript
     /// eclair.TextBox("Password123")
     ///     .password(true)
@@ -82,6 +91,8 @@ class EclairTextBox extends EclairCustomTagComponent {
     
     /// ### .maxLength
     /// Set a textbox's maximum number of characters.
+    /// <br/>**args**:
+    /// - _maxLength: Set the max number of characters.
     /// ```javascript
     /// eclair.TextBox("This textbox is has a maximum length")
     ///     .maxLength(280)
@@ -105,6 +116,8 @@ class EclairTextBox extends EclairCustomTagComponent {
     
     /// ### .required
     /// Set whether the textbox is required in a form.
+    /// <br/>**args**:
+    /// - _required: Set whether the element is required in a form.
     /// ```javascript
     /// eclair.TextBox("This textbox is required")
     ///     .required(true)
@@ -119,6 +132,8 @@ class EclairTextBox extends EclairCustomTagComponent {
     
     /// ### .autofocus
     /// Set whether the textbox is autofocused.
+    /// <br/>**args**:
+    /// - _autofocus: Set whether the element is automatically focused to.
     /// ```javascript
     /// eclair.TextBox("This textbox is autofocused")
     ///     .autofocus(true)

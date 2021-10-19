@@ -4,7 +4,6 @@
 
 
 
-
 let eclair = {
     _ids: 0,
     _elements: {},
@@ -591,9 +590,7 @@ class EclairStylableObject {
     }
     
     updateCSSStyle() {
-        let objectID = this.id() + "-css";
-        let cssElement = document.getElementById(objectID);
-        
+        let cssElement = document.getElementById(this.id() + "-css");
         if (cssElement != null) {
             cssElement.innerHTML = this.buildStyleObject(true)
         }
@@ -637,7 +634,6 @@ class EclairStylableObject {
     fontWeight(_weight, selector) {return this._set(selector, "font-weight", _weight)}
     width(_width, selector) {return this._set(selector, "width", _width)}
     height(_height, selector) {return this._set(selector, "height", _height)}
-    display(_display, selector) {return this._set(selector, "display", _display)}
     overflow(_overflow, selector) {return this._set(selector, "overflow", _overflow)}
     opacity(_opacity, selector) {return this._set(selector, "opacity", _opacity)}
     textAlign(_align, selector) {return this._set(selector, "text-align", _align)}
@@ -1058,7 +1054,10 @@ class EclairComponent extends EclairStylableObject {
         });
                 
         if (this._buildStyle) {
-            document.head.appendChild(this.buildStyleObject())
+            let buildStyle = this.buildStyleObject();
+            if (document.getElementById(buildStyle.getAttribute("id")) == null) {
+                document.head.appendChild(buildStyle)
+            }
         }
         
         return wrapperElement.innerHTML
@@ -1938,15 +1937,17 @@ class EclairTextBox extends EclairCustomTagComponent {
         
         let self = this
         
-        this.bindState(_text, "value", value => {
+        this.valueBinding = _text instanceof EclairState? _text : eclair.State(_text == null? "": _text)
+        
+        this.bindState(this.valueBinding, "value", value => {
             this.setAttr("value", value)
             this.getElement(elem => {elem.value = value});
         })
         
         this.overrideOnInput = null
         this._updateCallback("onInput", e => {
-            if (_text instanceof EclairState) {
-                e.getElement(elem => {_text.value(elem.value)})
+            if (self.valueBinding instanceof EclairState) {
+                e.getElement(elem => {self.valueBinding.value(elem.value)})
             }
 
             if (this.overrideOnInput != null) {
@@ -2160,6 +2161,7 @@ class EclairView extends EclairComponent {
                         dummyParent.appendChild(dummychild.childNodes[0])
                     } else {
                         let itemIndexValue = itemChanges[i]
+                        
                         dummyParent.appendChild(
                             self.getElement().childNodes[itemIndexValue]
                         );
@@ -2322,6 +2324,9 @@ class EclairTabView extends EclairView {
         if (_selectedView instanceof EclairState) {
             this.bindState(_selectedView, "tab", value => {
                 for (let e = 0; e < this.children.length; e++) {
+                    if (value == e) {
+                        console.log(this.children[e])
+                    }
                     this.children[e].display(value == e? "flex": "none")
                 }
             }, state => {return state.int(0)})

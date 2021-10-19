@@ -5,8 +5,7 @@
 /// ```javascript
 /// eclair.HStack([
 ///    eclair.Text("This is a view"),
-///    eclair.Button("Views can have multiple elements"),
-///    "Or even just html"
+///    eclair.Button("Views can have multiple elements")
 /// ])
 ///     .gap("8px")
 /// ```

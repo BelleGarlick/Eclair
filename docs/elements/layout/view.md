@@ -5,8 +5,7 @@ Create a generic eclair View.
 ```javascript
 eclair.View([
    eclair.Text("This is a view"),
-   eclair.Button("Views can have multiple elements"),
-   "Or even just html"
+   eclair.Button("Views can have multiple elements")
 ])
 ```
 

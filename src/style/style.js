@@ -55,9 +55,7 @@ class EclairStylableObject {
     }
     
     updateCSSStyle() {
-        let objectID = this.id() + "-css";
-        let cssElement = document.getElementById(objectID);
-        
+        let cssElement = document.getElementById(this.id() + "-css");
         if (cssElement != null) {
             cssElement.innerHTML = this.buildStyleObject(true)
         }
@@ -102,7 +100,6 @@ class EclairStylableObject {
     fontWeight(_weight, selector) {return this._set(selector, "font-weight", _weight)}
     width(_width, selector) {return this._set(selector, "width", _width)}
     height(_height, selector) {return this._set(selector, "height", _height)}
-    display(_display, selector) {return this._set(selector, "display", _display)}
     overflow(_overflow, selector) {return this._set(selector, "overflow", _overflow)}
     opacity(_opacity, selector) {return this._set(selector, "opacity", _opacity)}
     textAlign(_align, selector) {return this._set(selector, "text-align", _align)}

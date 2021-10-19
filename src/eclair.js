@@ -15,14 +15,11 @@
 // TODO Add get/post stuff
 // TODO Add more style fucntions to remove the need for .getStyleSheet
 // TODO Make sure all args are declared in documentation
-// TODO Replace doc by deleting folder
 // TODO Add enabled tag to all elements.
 // Check on change bindings
 // TODO Nested elements like hstack of image and text within a button
 // TODO NEed tutorials for everything. Geting to grips with eclair, making a custom object, specific object tutorials.
 // TODO Only add style if css has code. If css code is len(0) then remove css object.
-// TODO View ordering 
-
 
 // Future custom objects
 //  - Cookies accept + ability to set

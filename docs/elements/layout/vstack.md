@@ -5,8 +5,7 @@ Create a vertically stacked view in eclair.
 ```javascript
 eclair.VStack([
    eclair.Text("This is a view"),
-   eclair.Button("Views can have multiple elements"),
-   "Or even just html"
+   eclair.Button("Views can have multiple elements")
 ])
     .gap("8px")
 ```

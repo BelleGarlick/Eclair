@@ -5,8 +5,7 @@
 /// ```javascript
 /// eclair.View([
 ///    eclair.Text("This is a view"),
-///    eclair.Button("Views can have multiple elements"),
-///    "Or even just html"
+///    eclair.Button("Views can have multiple elements")
 /// ])
 /// ```
 ///
@@ -55,7 +54,7 @@ class EclairView extends EclairComponent {
                         dummyParent.appendChild(dummychild.childNodes[0])
                     } else {
                         let itemIndexValue = itemChanges[i]
-                        // TODO Need to sort out what happens when items move
+                        
                         dummyParent.appendChild(
                             self.getElement().childNodes[itemIndexValue]
                         );
