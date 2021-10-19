@@ -582,6 +582,8 @@ class EclairStylableObject {
             return styleCode
         }
         
+        if (styleCode.length == 0) {return null}
+        
         let styleObject = document.createElement("style");
         styleObject.setAttribute("id", `${objectID}-css`)
         styleObject.innerHTML = styleCode
@@ -591,8 +593,21 @@ class EclairStylableObject {
     
     updateCSSStyle() {
         let cssElement = document.getElementById(this.id() + "-css");
-        if (cssElement != null) {
-            cssElement.innerHTML = this.buildStyleObject(true)
+        let css = this.buildStyleObject(true);
+        
+        if (css.length > 0) {
+            if (cssElement == null) {
+                let newStyleObject = this.buildStyleObject()
+                if (newStyleObject != null) {
+                    document.head.appendChild(newStyleObject)
+                }
+            } else {
+                cssElement.innerHTML = css;
+            }
+        } else {
+            if (cssElement != null) {
+                cssElement.parentElement.removeChild(cssElement);
+            }
         }
         
         return this;
@@ -661,7 +676,10 @@ class EclairStyleComponent extends EclairStylableObject {
         this._id = eclair._newID()
         this._stylePrefix = "."
         
-        document.head.appendChild(this.buildStyleObject())
+        let newStyleObject = this.buildStyleObject()
+        if (newStyleObject != null) {
+            document.head.appendChild(newStyleObject)
+        }
     }
     
     id() {
@@ -1055,7 +1073,7 @@ class EclairComponent extends EclairStylableObject {
                 
         if (this._buildStyle) {
             let buildStyle = this.buildStyleObject();
-            if (document.getElementById(buildStyle.getAttribute("id")) == null) {
+            if (buildStyle != null && document.getElementById(buildStyle.getAttribute("id")) == null) {
                 document.head.appendChild(buildStyle)
             }
         }

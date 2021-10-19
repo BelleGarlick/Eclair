@@ -167,7 +167,7 @@ class EclairComponent extends EclairStylableObject {
                 
         if (this._buildStyle) {
             let buildStyle = this.buildStyleObject();
-            if (document.getElementById(buildStyle.getAttribute("id")) == null) {
+            if (buildStyle != null && document.getElementById(buildStyle.getAttribute("id")) == null) {
                 document.head.appendChild(buildStyle)
             }
         }
