@@ -89,7 +89,10 @@ class EclairView extends EclairComponent {
     }
     
     
-    // TODO Add explanation of wtf this function does. it's used for finding how positions in an array change when moved to another
+    // This function isn't in the docs as it doesn't need to be publically accessable. The function works
+    // by iterating through both the current items in the view and new items being added and finds where
+    // all old items have moved to. New items will be set to '-1' and will be newly added to the view, 
+    // whereas old items will be taken from their position (found in this function) and moved.
     _itemChanges(oldItems, newItems) {
         var resultantMap = []
 
@@ -105,19 +108,6 @@ class EclairView extends EclairComponent {
         }
 
         return resultantMap
-    }
-    
-    
-    _removeChild(_index) {
-        // TODO Add .remove function to all elements
-        let child = this.children[_index]
-        child.parent = null
-        
-        this.getElement(e => {
-            e.removeChild(child.getElement())
-        })
-        
-        this.children.splice(_index, 1)
     }
     
     

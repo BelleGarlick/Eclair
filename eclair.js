@@ -1844,7 +1844,6 @@ class EclairSlider extends EclairCustomTagComponent {
     }
     
     onInput(callback) {
-        console.log("on input called")
         this.overrideOnInput = callback;
         return this;
     }
@@ -2206,18 +2205,6 @@ class EclairView extends EclairComponent {
         }
 
         return resultantMap
-    }
-    
-    
-    _removeChild(_index) {
-        let child = this.children[_index]
-        child.parent = null
-        
-        this.getElement(e => {
-            e.removeChild(child.getElement())
-        })
-        
-        this.children.splice(_index, 1)
     }
     
     

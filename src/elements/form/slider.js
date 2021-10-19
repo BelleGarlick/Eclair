@@ -35,7 +35,6 @@ class EclairSlider extends EclairCustomTagComponent {
     
     // Override method no need for doc
     onInput(callback) {
-        console.log("on input called")
         this.overrideOnInput = callback;
         return this;
     }

@@ -11,7 +11,6 @@
 // PRINT when building doc, clear current folder
 // TODO State all the shared styles in docs for an object .e.g. alert box uses eclair.styles.AlertBox, ...
 // TODO Examples
-// TODO Tutorials
 // TODO Add get/post stuff
 // TODO Add more style fucntions to remove the need for .getStyleSheet
 // TODO Make sure all args are declared in documentation
@@ -28,7 +27,6 @@
 //  - Loading elements - spinenrs etc.
 //  - Upload file element
 //  - dropdown
-//  - eclair list state
 //  - List
 
 // When creating a new element make sure

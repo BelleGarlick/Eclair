@@ -77,7 +77,7 @@ def parse_tests(breadcrumbs_path, lines):
         c_test = []
             
             
-    return test_cases
+    return {"name": breadcrumbs_path, "tests": test_cases}
     
 
 
@@ -175,7 +175,7 @@ def build_from_dir(directory, documentation_path, breadcrumbs=None):
                 print(f"\033[32m{breadcrumbs_path}")
                 with open(path) as file:
                     source_code, source_doc, source_test = parse_file(breadcrumbs_path, file.read())
-                    test_cases += source_test
+                    test_cases += [source_test]
                     
                     dir_source += f"\n// {breadcrumbs_path}\n"
                     dir_source += source_code
@@ -199,7 +199,13 @@ def build_from_dir(directory, documentation_path, breadcrumbs=None):
 
 def compile_test_cases(test_cases):
     code = "<!--This file is auto generated from source code.-->\n<script src='eclair.js'></script>\n<script>"
-    code += """
+    ui_code = """
+        let headingStyle = eclair.Style()
+            .fontWeight(700)
+        eclair.VStack([
+            eclair.VStack([
+    """
+    test_code = """
     function evaluate(test_name, evaluations, val_a, val_b) {
         if (val_a == val_b) {
             console.log(test_name + ": evaluation " +evaluations+ " - passed!")
@@ -209,20 +215,28 @@ def compile_test_cases(test_cases):
     }
     """
     
-    for test_case in test_cases:
-        code += f"console.log('{test_case['name']}')\n"
-        evaluations = 0
-        
-        for line in test_case["code"]:
-            if line[:7] == "**eval(":
-                evaluations += 1
-                code += f"evaluate('{test_case['name']}', {evaluations}, " + line[7:] + "\n"
-            else:
-                code += line + "\n"
+    for test_element in test_cases:
+        if len(test_element["tests"]) > 0:
+            ui_code += f"eclair.Text('{test_element['name']}').addStyle(headingStyle), eclair.VStack(["
+            
+            for test_case in test_element["tests"]:
+                test_code += f"console.log('{test_case['name']}')\n"
+                evaluations = 0
+                
+                for line in test_case["code"]:
+                    if line[:7] == "**eval(":
+                        evaluations += 1
+                        ui_code += f"eclair.Text('{test_case['name']} - {evaluations}'),"
+                        test_code += f"evaluate('{test_case['name']}', {evaluations}, " + line[7:] + "\n"
+                    else:
+                        test_code += line + "\n"
+                    
+            ui_code += "]).padding('16px').gap('16px').width('100%').alignment(eclair.Alignment().start()).background('#eeeeee'),"
             
             
+    ui_code += "]).gap('16px').alignment(eclair.Alignment().start()).css('width:100%;max-width:400px')]).write()"
             
-    return code + "</script>"
+    return code + ui_code + test_code + "</script>"
 
 
 
