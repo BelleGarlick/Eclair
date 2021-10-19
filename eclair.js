@@ -2146,7 +2146,6 @@ class EclairView extends EclairComponent {
         if (items instanceof EclairState && items.isArray()) {
             this.bindState(elements, "element", array => {
                 var itemChanges = self._itemChanges(knownItems, array)
-                console.log(itemChanges)
                 
                 let dummyParent = document.createElement("div")
                 
