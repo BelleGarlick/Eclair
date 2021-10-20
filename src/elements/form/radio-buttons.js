@@ -5,7 +5,7 @@
 ///     .value("Option A")
 ///     .selectedIndex(0)
 /// ```
-// TODO Testing radio buttons styles and fully test trying to create a cycle with selected index and values.
+// TODO Test trying to create a cycle with selected index and values.
 class EclairRadioButtons extends EclairComponent {
     constructor(_options) {
         super("radio-button")
@@ -128,7 +128,7 @@ class EclairRadioButtons extends EclairComponent {
     }
     
     /// ### .itemStyle
-    /// Callback for modifying the item style
+    /// Callback for modifying the item style.
     /// <br/>**args**:
     /// - callback: Callback function with arg of the style object.
     /// ```javascript
@@ -139,12 +139,12 @@ class EclairRadioButtons extends EclairComponent {
     ///     })
     /// ```   
     itemStyle(callback) {
-        callack(this.customStyles.itemStyle)
+        callback(this.customStyles.itemStyle)
         return this           
     }
          
     /// ### .radioStyle
-    /// Callback for modifying the radio style
+    /// Callback for modifying the radio style.
     /// <br/>**args**:
     /// - callback: Callback function with arg of the style object.
     /// ```javascript
@@ -155,12 +155,12 @@ class EclairRadioButtons extends EclairComponent {
     ///     })
     /// ```          
     radioStyle(callback) {
-        callack(this.customStyles.radioStyle)
+        callback(this.customStyles.radioStyle)
         return this           
     }
      
     /// ### .labelStyle
-    /// Callback for modifying the label style
+    /// Callback for modifying the label style.
     /// <br/>**args**:
     /// - callback: Callback function with arg of the style object.
     /// ```javascript
@@ -171,12 +171,12 @@ class EclairRadioButtons extends EclairComponent {
     ///     })
     /// ```               
     labelStyle(callback) {
-        callack(this.customStyles.labelStyle)
+        callback(this.customStyles.labelStyle)
         return this           
     }
           
     /// ### .selectedItemStyle
-    /// Callback for modifying the selected item style
+    /// Callback for modifying the selected item style.
     /// <br/>**args**:
     /// - callback: Callback function with arg of the style object.
     /// ```javascript
@@ -187,12 +187,12 @@ class EclairRadioButtons extends EclairComponent {
     ///     })
     /// ```           
     selectedItemStyle(callback) {
-        callack(this.customStyles.selectedItemStyle)
+        callback(this.customStyles.selectedItemStyle)
         return this           
     }
     
     /// ### .selectedRadioStyle
-    /// Callback for modifying the selected radio style
+    /// Callback for modifying the selected radio style.
     /// <br/>**args**:
     /// - callback: Callback function with arg of the style object.
     /// ```javascript
@@ -203,12 +203,12 @@ class EclairRadioButtons extends EclairComponent {
     ///     })
     /// ```               
     selectedRadioStyle(callback) {
-        callack(this.customStyles.selectedRadioStyle)
+        callback(this.customStyles.selectedRadioStyle)
         return this           
     }
     
     /// ### .selectedLabelStyle
-    /// Callback for modifying the selected label style
+    /// Callback for modifying the selected label style.
     /// <br/>**args**:
     /// - callback: Callback function with arg of the style object.
     /// ```javascript
@@ -219,7 +219,7 @@ class EclairRadioButtons extends EclairComponent {
     ///     })
     /// ```            
     selectedLabelStyle(callback) {
-        callack(this.customStyles.selectedLabelStyle)
+        callback(this.customStyles.selectedLabelStyle)
         return this           
     }
     

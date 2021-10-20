@@ -5,7 +5,7 @@
 
 
 let eclair = {
-    version: "0.0.81",
+    version: "0.0.82",
     _ids: 0,
     _elements: {},
     _styles: {},
@@ -1423,7 +1423,7 @@ class EclairProgressBar extends EclairComponent {
         
         this._labelText = eclair.State("0%")
         this._label = eclair.Text(this._labelText)
-        this._indicator = this.addChild(eclair.HStack([this._label]))
+        this._indicator = this._addChild(eclair.HStack([this._label]))
         
         this.bindState(_progress, "progress", value => {
             _progress = Math.max(Math.min(value, 1), 0)
@@ -1837,32 +1837,32 @@ class EclairRadioButtons extends EclairComponent {
     }
     
     itemStyle(callback) {
-        callack(this.customStyles.itemStyle)
+        callback(this.customStyles.itemStyle)
         return this           
     }
          
     radioStyle(callback) {
-        callack(this.customStyles.radioStyle)
+        callback(this.customStyles.radioStyle)
         return this           
     }
      
     labelStyle(callback) {
-        callack(this.customStyles.labelStyle)
+        callback(this.customStyles.labelStyle)
         return this           
     }
           
     selectedItemStyle(callback) {
-        callack(this.customStyles.selectedItemStyle)
+        callback(this.customStyles.selectedItemStyle)
         return this           
     }
     
     selectedRadioStyle(callback) {
-        callack(this.customStyles.selectedRadioStyle)
+        callback(this.customStyles.selectedRadioStyle)
         return this           
     }
     
     selectedLabelStyle(callback) {
-        callack(this.customStyles.selectedLabelStyle)
+        callback(this.customStyles.selectedLabelStyle)
         return this           
     }
     

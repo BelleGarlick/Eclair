@@ -30,7 +30,7 @@ eclair.RadioButtons(["Option A", "Option B", "Option C"])
     .selectedIndex(2)
 ```   
 ### .itemStyle
-Callback for modifying the item style
+Callback for modifying the item style.
 <br/>**args**:
 - callback: Callback function with arg of the style object.
 ```javascript
@@ -41,7 +41,7 @@ eclair.RadioButtons(["Option A", "Option B", "Option C"])
     })
 ```   
 ### .radioStyle
-Callback for modifying the radio style
+Callback for modifying the radio style.
 <br/>**args**:
 - callback: Callback function with arg of the style object.
 ```javascript
@@ -52,7 +52,7 @@ eclair.RadioButtons(["Option A", "Option B", "Option C"])
     })
 ```          
 ### .labelStyle
-Callback for modifying the label style
+Callback for modifying the label style.
 <br/>**args**:
 - callback: Callback function with arg of the style object.
 ```javascript
@@ -63,7 +63,7 @@ eclair.RadioButtons(["Option A", "Option B", "Option C"])
     })
 ```               
 ### .selectedItemStyle
-Callback for modifying the selected item style
+Callback for modifying the selected item style.
 <br/>**args**:
 - callback: Callback function with arg of the style object.
 ```javascript
@@ -74,7 +74,7 @@ eclair.RadioButtons(["Option A", "Option B", "Option C"])
     })
 ```           
 ### .selectedRadioStyle
-Callback for modifying the selected radio style
+Callback for modifying the selected radio style.
 <br/>**args**:
 - callback: Callback function with arg of the style object.
 ```javascript
@@ -85,7 +85,7 @@ eclair.RadioButtons(["Option A", "Option B", "Option C"])
     })
 ```               
 ### .selectedLabelStyle
-Callback for modifying the selected label style
+Callback for modifying the selected label style.
 <br/>**args**:
 - callback: Callback function with arg of the style object.
 ```javascript

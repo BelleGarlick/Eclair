@@ -253,6 +253,16 @@ eclair.VStack([
                 }),
             eclair.HorizontalLine(),
             RadioButtons(["tests", "test", "testing"])
+                .radioStyle(style => {
+                    style.borderColor("green")
+                    style.borderRadius("4px")
+                    style.transform("rotate(45deg)")
+                    style.transition("all 0.2s ease")
+                })
+                .selectedRadioStyle(style => {
+                    style.background("green")
+                    style.transform("rotate(225deg)")
+                })
                 .width("100%"),
             
             eclair.TextArea(htmlCode),

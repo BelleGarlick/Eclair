@@ -11,7 +11,7 @@ class EclairProgressBar extends EclairComponent {
         
         this._labelText = eclair.State("0%")
         this._label = eclair.Text(this._labelText)
-        this._indicator = this.addChild(eclair.HStack([this._label]))
+        this._indicator = this._addChild(eclair.HStack([this._label]))
         
         // Add callback for progress changing state
         this.bindState(_progress, "progress", value => {

@@ -28,6 +28,10 @@ class EclairButton extends EclairComponent {
         if (text == null) {
             text = "Button"
         }
+        
+        if (text instanceof EclairComponent) {
+            text = text.compile()
+        } 
         return `<button>${this.text}</button>`
     }
 }
