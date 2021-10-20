@@ -30,7 +30,7 @@ class EclairView extends EclairComponent {
         this.creatorFunc = (creatorFunc != null)? creatorFunc : (e) => {return e}
         
         let self = this;
-        let items = elements instanceof Array? eclair.State(elements) : elements
+        let items = elements instanceof Array? Ø(elements) : elements
         
         let knownItems = []
         

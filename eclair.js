@@ -5,7 +5,7 @@
 
 
 let eclair = {
-    version: "0.0.82",
+    version: "0.0.83",
     _ids: 0,
     _elements: {},
     _styles: {},
@@ -60,6 +60,14 @@ let eclair = {
         "accent": "#ee8800",
         "font": '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"'
     }
+}
+
+function ø(value) {
+    return eclair.State(value)
+}
+
+function Ø(value) {
+    return eclair.State(value)
 }
 
 
@@ -1588,6 +1596,10 @@ class EclairButton extends EclairComponent {
         if (text == null) {
             text = "Button"
         }
+        
+        if (text instanceof EclairComponent) {
+            text = text.compile()
+        } 
         return `<button>${this.text}</button>`
     }
 }

@@ -11,7 +11,7 @@ class EclairRadioButtons extends EclairComponent {
         super("radio-button")
         
         // Internal states of values, options and selected index
-        this._options = _options instanceof EclairState? _options : eclair.State(_options)
+        this._options = _options instanceof EclairState? _options : Ø(_options)
         this._selectedIndex = -1
         this._selectedValue = State("")
         

@@ -14,7 +14,7 @@ class EclairAlertBox extends EclairComponent {
         // This acts as a placeholder which is pased to the title text. If the user
         // binds or sets some title text, then this state will be updated to update
         // the title
-        this._titleText = eclair.State(null)
+        this._titleText = Ø(null)
         
         // Create child objects
         this._text = this._addChild(eclair.Text(text))

@@ -12,9 +12,9 @@ class EclairCheckBox extends EclairComponent {
         this._enabled = true        
         
         // Handle the states
-        this.checked = checked instanceof EclairState? checked : eclair.State(checked)  // Parent one given by user
-        this._hiddenValue = eclair.State(false)  // Private one which is updated in the .checked callback
-        this._textValue = eclair.State("")  // Text value which is the message displayed alongside
+        this.checked = checked instanceof EclairState? checked : Ø(checked)  // Parent one given by user
+        this._hiddenValue = Ø(false)  // Private one which is updated in the .checked callback
+        this._textValue = Ø("")  // Text value which is the message displayed alongside
         
         // Build the hidden components
         this._label = this._addChild(eclair.Text(this._textValue))

@@ -19,31 +19,31 @@ let iframeHTMLCode = State("")
 let selectedTabStyle = eclair.Style()
     .backgroundColor("red")
 
-let selectedAlertBoxColour = eclair.State()
-let selectedAlertBoxColourIndex = eclair.State()
+let selectedAlertBoxColour = Ø()
+let selectedAlertBoxColourIndex = Ø()
     
 
 let backgroundColor = eclair.Color().hex("#f6f6f6")
 
-let htmlCode = eclair.State()
+let htmlCode = Ø()
 
 
-let selectedRadio = eclair.State()
-let selectedRadioIndex = eclair.State()
+let selectedRadio = Ø()
+let selectedRadioIndex = Ø()
 
-let vstackItems = eclair.State([])
+let vstackItems = Ø([])
 
-let tabName = eclair.State(["Progress Bar", "Alert Box", "Check Box"])
+let tabName = Ø(["Progress Bar", "Alert Box", "Check Box"])
 let selectedTab = State(0)
 
 
-let toggleOn = eclair.State(true)
-let toggleTick = eclair.State(false)
-let toggleEnabled = eclair.State(true)
+let toggleOn = Ø(true)
+let toggleTick = Ø(false)
+let toggleEnabled = Ø(true)
 
 
 function codeExample(title, code, height) {
-    let tab = eclair.State(0)
+    let tab = Ø(0)
     
     return VStack([
             HStack([
@@ -144,9 +144,9 @@ VStack([
             
             TabView(selectedTab, [
                 codeExample("Progress Bar", `// Progress bar code
-let progressValue = eclair.State(0.5)
-let showProgressState = eclair.State(false)
-let progressBarStripped = eclair.State(false)
+let progressValue = Ø(0.5)
+let showProgressState = Ø(false)
+let progressBarStripped = Ø(false)
 let progressBarColor = eclair.Color()
 
 eclair.VStack([

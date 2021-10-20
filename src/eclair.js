@@ -1,7 +1,6 @@
 // TODO Add events to callbacks (mousemove position etc)
 // TODO Prevent layered on click events
 // TODO Hide show elements
-// TODO Superscript/Subscript text
 // TODO Implement these: https://getbootstrap.com/docs/4.0/components/progress/
 // PRINT Add margin, paddding, border: left, top, right bottom
 // PRINT Add deleting element
@@ -16,7 +15,6 @@
 // TODO Make sure all args are declared in documentation
 // TODO Add enabled tag to all elements.
 // Check on change bindings
-// TODO Nested elements like hstack of image and text within a button
 // TODO NEed tutorials for everything. Geting to grips with eclair, making a custom object, specific object tutorials.
 // Use this_addChild for all child/parent assocs
 
@@ -40,7 +38,7 @@
 /// # Eclair
 /// The `eclair` object allows you to easily construct an eclair object and interact in the Eclair development kit.
 let eclair = {
-    version: "0.0.82",
+    version: "0.0.84",
     _ids: 0,
     _elements: {},
     _styles: {},
@@ -98,4 +96,14 @@ let eclair = {
         "accent": "#ee8800",
         "font": '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"'
     }
+}
+
+function ø(value) {
+    // Single char value for wrapping an varible in an elair state. Can be done with alt + o on macos
+    return eclair.State(value)
+}
+
+function Ø(value) {
+    // Single char value for wrapping an varible in an elair state. Can be done with alt + o on macos
+    return eclair.State(value)
 }
