@@ -17,9 +17,9 @@ class EclairCheckBox extends EclairComponent {
         this._textValue = eclair.State("")  // Text value which is the message displayed alongside
         
         // Build the hidden components
-        this._label = eclair.Text(this._textValue)
-        this._checkbox = eclair.CustomTagComponent("div")
-        this._hidden = eclair.HiddenInput(this._hiddenValue)
+        this._label = this._addChild(eclair.Text(this._textValue))
+        this._checkbox = this._addChild(eclair.CustomTagComponent("div"))
+        this._hidden = this._addChild(eclair.HiddenInput(this._hiddenValue))
         
         // Override on click function
         let self = this
@@ -54,12 +54,6 @@ class EclairCheckBox extends EclairComponent {
                     .innerHTML("")
             }
         }, state => {return state.bool()})
-        
-        // Configure parent/children relation
-        this._label.parent = this
-        this._checkbox.parent = this
-        this._hidden.parent = this
-        this.children = [this._label, this._checkbox, this._hidden]
         
         // set styles
         this.setAttr("cellpadding", 6)   

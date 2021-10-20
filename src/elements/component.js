@@ -243,6 +243,7 @@ class EclairComponent extends EclairStylableObject {
     onError(callback) {return this._updateCallback("onError", callback);}
     onUnload(callback) {return this._updateCallback("onUnload", callback);}
     onResize(callback) {return this._updateCallback("onResize", callback);}
+    // TODO Check event handing documentation as the events have been added in
     /// ```javascript
     /// eclair.Button("Hello There")
     ///     .onClick(e => {
@@ -267,6 +268,12 @@ class EclairComponent extends EclairStylableObject {
         this.children.push(item)
         item.parent = this
         return item
+    }
+    
+    child(n, callback) {
+        let item = n < this.children.length && n >= 0? this.children[n] : null
+        this.callback(item)
+        return this
     }
     
     _updateCallback(callbackKey, callback) {

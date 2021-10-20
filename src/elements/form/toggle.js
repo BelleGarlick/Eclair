@@ -14,8 +14,8 @@ class EclairToggle extends EclairComponent {
         let overrideOnClick = null;
         
         // Create internal elements
-        this._tickMark = eclair.Text("✓")
-        this._knob = eclair.View()
+        this._tickMark = this._addChild(eclair.Text("✓"))
+        this._knob = this._addChild(eclair.View())
         
         this._value = eclair.State((_value instanceof EclairState)? _value.bool() : _value)
         this._hiddenComponent = eclair.HiddenInput(this._value)
@@ -55,11 +55,6 @@ class EclairToggle extends EclairComponent {
         // Set default states
         this._showCheckMark = false
         this._enabled = true
-        
-        // Configure parent/children relation
-        this._tickMark.parent = this
-        this._knob.parent = this
-        this.children = [this._tickMark, this._knob]
         
         // Add styles
         this.addStyle(eclair.styles.Toggle)

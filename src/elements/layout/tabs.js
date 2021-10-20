@@ -33,27 +33,11 @@ class EclairTabView extends EclairView {
             throw "First parameter of Eclair TabView's must be an Eclair State"
         }
         
+        // TODO Make sure all children are of type TabPage (todo)
+        
         // Need to remove view as given by parent
         this.removeStyle(eclair.styles.View)
         this.addStyle(eclair.styles.TabView)
-    }
-    
-    // This function overrides the parent function to check that the child is of type eclair view.
-    _addChild(_child) {
-        if (_child instanceof EclairView) {
-            this.children.push(_child)
-            _child.parent = this
-
-            this.getElement(e => {
-                let childHTML = child;
-                if (_child instanceof EclairComponent) {
-                    childHTML = _child.compile()
-                }
-                e.insertAdjacentHTML('beforeend', childHTML)
-            })
-        } else {
-            throw "All children of Eclair's Tab View must inherit from an Eclair View"
-        }
     }
 }
 

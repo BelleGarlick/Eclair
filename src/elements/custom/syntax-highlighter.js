@@ -21,7 +21,7 @@ class EclairSyntaxHighlighter extends EclairComponent {
         
         this._html = _html == null? eclair.State() : _html
 
-        this._pre = eclair.CustomTagComponent("pre")
+        this._pre = this._addChild(eclair.CustomTagComponent("pre")
             .position("absolute")
             .padding("0px")
             .margin("0px")
@@ -30,9 +30,9 @@ class EclairSyntaxHighlighter extends EclairComponent {
             .top("0px")
             .left("0px")
             .background("white")
-            .css("box-sizing: border-box;line-height: 1.05")
+            .css("box-sizing: border-box;line-height: 1.05"))
 
-        this._code = eclair.CustomTagComponent("code")
+        this._code = this._addChild(eclair.CustomTagComponent("code")
             .position("absolute")
             .top("0px")
             .left("0px")
@@ -45,9 +45,9 @@ class EclairSyntaxHighlighter extends EclairComponent {
             .setAttr("class", "javascript")
             .textAlign("left")
             .css("box-sizing: border-box;")
-            .innerHTML(this._writtenCode)
+            .innerHTML(this._writtenCode))
 
-        this._textarea = eclair.TextArea(this._html)
+        this._textarea = this._addChild(eclair.TextArea(this._html)
             .setAttr("spellcheck", false)
             .display("inline")
             .position("absolute")
@@ -64,7 +64,7 @@ class EclairSyntaxHighlighter extends EclairComponent {
             .onScroll(e => {
                 let textarea = e.getElement()
                 self._code.getElement().scroll(textarea.scrollLeft, textarea.scrollTop)
-            })
+            }))
         
         this.bindState(this._html, "html", value => {
             var escape = document.createElement('textarea');
@@ -73,11 +73,6 @@ class EclairSyntaxHighlighter extends EclairComponent {
 
             hljs.highlightAll()
         })
-        
-        this._pre.parent = this
-        this._code.parent = this
-        this._textarea.parent = this
-        this.children = [this._pre, this._code, this._textarea]
     }
 
     build() {

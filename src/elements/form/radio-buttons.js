@@ -1,7 +1,11 @@
+/// ## Eclair Progress Bar
+/// An eclair progress bar object.
+/// ```javascript
+/// eclair.RadioButtons(["Option A", "Option B", "Option C"])
+///     .value("Option A")
+///     .selectedIndex(0)
+/// ```
 // TODO Testing radio buttons styles and fully test trying to create a cycle with selected index and values.
-
-
-
 class EclairRadioButtons extends EclairComponent {
     constructor(_options) {
         super("radio-button")
@@ -42,6 +46,8 @@ class EclairRadioButtons extends EclairComponent {
         this.addStyle(eclair.styles.RadioButtons)
     }
     
+    // Function to update the selected items from a given value.
+    // This function will also return the index of the item with the given value.
     _updateSelectedItemStyles(selectedValue) {
         let newIndex = -1;
         for (let i = 0; i < this._options.length(); i++) {
@@ -54,11 +60,27 @@ class EclairRadioButtons extends EclairComponent {
         return newIndex;
     }
     
+    /// ### .name
+    /// Set the name attribute for this element. (used in forms).
+    /// <br/>**args**:
+    /// - value: Selected value of the options.
+    /// ```javascript
+    /// eclair.RadioButtons(["Option A", "Option B", "Option C"])
+    ///     .name("value")
+    /// ```  
     name(_name) {
         this._hidden.name(_name)
         return this;
     }
     
+    /// ### .value
+    /// Bind a state to the value of the radio buttons or to set the value.
+    /// <br/>**args**:
+    /// - value: Selected value of the options.
+    /// ```javascript
+    /// eclair.RadioButtons(["Option A", "Option B", "Option C"])
+    ///     .value("Option A")
+    /// ```   
     value(_value) {
         this.bindState(_value, "value", value => {
             if (value != this._selectedValue.value()) {
@@ -75,6 +97,14 @@ class EclairRadioButtons extends EclairComponent {
         return this
     }
     
+    /// ### .selectedIndex
+    /// Bind a state to the selected index of the radio buttons or to set the selected index.
+    /// <br/>**args**:
+    /// - _index: Selected index of the options.
+    /// ```javascript
+    /// eclair.RadioButtons(["Option A", "Option B", "Option C"])
+    ///     .selectedIndex(2)
+    /// ```   
     selectedIndex(_index) {
         this.bindState(_index, "index", value => {
             if (value != this._selectedIndex) {
@@ -97,15 +127,114 @@ class EclairRadioButtons extends EclairComponent {
         return this
     }
     
-    // TODO Add getting methods with callback for styles
+    /// ### .itemStyle
+    /// Callback for modifying the item style
+    /// <br/>**args**:
+    /// - callback: Callback function with arg of the style object.
+    /// ```javascript
+    /// eclair.RadioButtons(["Option A", "Option B", "Option C"])
+    ///     .itemStyle(style => {
+    ///         style.background("red")
+    ///              .background("green", "hover")
+    ///     })
+    /// ```   
+    itemStyle(callback) {
+        callack(this.customStyles.itemStyle)
+        return this           
+    }
+         
+    /// ### .radioStyle
+    /// Callback for modifying the radio style
+    /// <br/>**args**:
+    /// - callback: Callback function with arg of the style object.
+    /// ```javascript
+    /// eclair.RadioButtons(["Option A", "Option B", "Option C"])
+    ///     .radioStyle(style => {
+    ///         style.background("red")
+    ///              .background("green", "hover")
+    ///     })
+    /// ```          
+    radioStyle(callback) {
+        callack(this.customStyles.radioStyle)
+        return this           
+    }
+     
+    /// ### .labelStyle
+    /// Callback for modifying the label style
+    /// <br/>**args**:
+    /// - callback: Callback function with arg of the style object.
+    /// ```javascript
+    /// eclair.RadioButtons(["Option A", "Option B", "Option C"])
+    ///     .labelStyle(style => {
+    ///         style.background("red")
+    ///              .background("green", "hover")
+    ///     })
+    /// ```               
+    labelStyle(callback) {
+        callack(this.customStyles.labelStyle)
+        return this           
+    }
+          
+    /// ### .selectedItemStyle
+    /// Callback for modifying the selected item style
+    /// <br/>**args**:
+    /// - callback: Callback function with arg of the style object.
+    /// ```javascript
+    /// eclair.RadioButtons(["Option A", "Option B", "Option C"])
+    ///     .selectedItemStyle(style => {
+    ///         style.background("red")
+    ///              .background("green", "hover")
+    ///     })
+    /// ```           
+    selectedItemStyle(callback) {
+        callack(this.customStyles.selectedItemStyle)
+        return this           
+    }
     
-    // Overriden method, no need to doc
+    /// ### .selectedRadioStyle
+    /// Callback for modifying the selected radio style
+    /// <br/>**args**:
+    /// - callback: Callback function with arg of the style object.
+    /// ```javascript
+    /// eclair.RadioButtons(["Option A", "Option B", "Option C"])
+    ///     .selectedRadioStyle(style => {
+    ///         style.background("red")
+    ///              .background("green", "hover")
+    ///     })
+    /// ```               
+    selectedRadioStyle(callback) {
+        callack(this.customStyles.selectedRadioStyle)
+        return this           
+    }
+    
+    /// ### .selectedLabelStyle
+    /// Callback for modifying the selected label style
+    /// <br/>**args**:
+    /// - callback: Callback function with arg of the style object.
+    /// ```javascript
+    /// eclair.RadioButtons(["Option A", "Option B", "Option C"])
+    ///     .selectedLabelStyle(style => {
+    ///         style.background("red")
+    ///              .background("green", "hover")
+    ///     })
+    /// ```            
+    selectedLabelStyle(callback) {
+        callack(this.customStyles.selectedLabelStyle)
+        return this           
+    }
+    
     build() {         
         return `<div>${this._hidden.compile()}${this._view.compile()}</div>`
     }
 }
 
 
+// ## Eclair Radio Item
+// This object is used internally by the radio button object only.
+// Args:
+//  - _text. The text to show next to the radio button dot.
+//  - customStyles. A dictionary of styles to give to the items for being selected or not.
+//        {itemStyle, radioStyle, labelStyle, selectedItemStyle, selectedRadioStyle, selectedLabelStyle}
 class EclairRatioItem extends EclairHStack {
     constructor(_text, customStyles) {
         super([
@@ -124,6 +253,9 @@ class EclairRatioItem extends EclairHStack {
         this.customStyles = customStyles
     }
     
+    // This function should only be used by the parent radio item object which calls this function with a 
+    // boolean. If true then all the selected styles should be applied, however, if false is called, then 
+    // all selected styles are removed.
     selected(value) {
         if (value) {
             this.addStyle(eclair.styles.RadioButtonsSelectedItem)

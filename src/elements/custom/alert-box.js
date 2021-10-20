@@ -17,13 +17,8 @@ class EclairAlertBox extends EclairComponent {
         this._titleText = eclair.State(null)
         
         // Create child objects
-        this._text = eclair.Text(text)
-        this._title = eclair.Text(this._titleText)
-            
-        // Configure parent/children relation
-        this._title.parent = this
-        this._text.parent = this
-        this.children = [this._title, this._text]
+        this._text = this._addChild(eclair.Text(text))
+        this._title = this._addChild(eclair.Text(this._titleText))
         
         // Add styles to the objects
         this.addStyle(eclair.styles.AlertBox)

@@ -5,6 +5,7 @@
 
 
 let eclair = {
+    version: "0.0.81",
     _ids: 0,
     _elements: {},
     _styles: {},
@@ -1147,6 +1148,12 @@ class EclairComponent extends EclairStylableObject {
         return item
     }
     
+    child(n, callback) {
+        let item = n < this.children.length && n >= 0? this.children[n] : null
+        this.callback(item)
+        return this
+    }
+    
     _updateCallback(callbackKey, callback) {
         this._callbacks[callbackKey] = callback;
         if (callback == null) {
@@ -1358,25 +1365,9 @@ class EclairTabView extends EclairView {
             throw "First parameter of Eclair TabView's must be an Eclair State"
         }
         
+        
         this.removeStyle(eclair.styles.View)
         this.addStyle(eclair.styles.TabView)
-    }
-    
-    _addChild(_child) {
-        if (_child instanceof EclairView) {
-            this.children.push(_child)
-            _child.parent = this
-
-            this.getElement(e => {
-                let childHTML = child;
-                if (_child instanceof EclairComponent) {
-                    childHTML = _child.compile()
-                }
-                e.insertAdjacentHTML('beforeend', childHTML)
-            })
-        } else {
-            throw "All children of Eclair's Tab View must inherit from an Eclair View"
-        }
     }
 }
 
@@ -1393,12 +1384,8 @@ class EclairAlertBox extends EclairComponent {
         
         this._titleText = eclair.State(null)
         
-        this._text = eclair.Text(text)
-        this._title = eclair.Text(this._titleText)
-            
-        this._title.parent = this
-        this._text.parent = this
-        this.children = [this._title, this._text]
+        this._text = this._addChild(eclair.Text(text))
+        this._title = this._addChild(eclair.Text(this._titleText))
         
         this.addStyle(eclair.styles.AlertBox)
         this._title.addStyle(eclair.styles.AlertBoxTitle)
@@ -1436,7 +1423,7 @@ class EclairProgressBar extends EclairComponent {
         
         this._labelText = eclair.State("0%")
         this._label = eclair.Text(this._labelText)
-        this._indicator = eclair.HStack([this._label])
+        this._indicator = this.addChild(eclair.HStack([this._label]))
         
         this.bindState(_progress, "progress", value => {
             _progress = Math.max(Math.min(value, 1), 0)
@@ -1445,8 +1432,6 @@ class EclairProgressBar extends EclairComponent {
             this._indicator.width((value * 100 + 0.0001) + "%")
         }, state => {return state.number(0.5)})
         
-        this._indicator.parent = this
-        this.children = [this._indicator]
         
         this._label.addStyle(eclair.styles.ProgressBarLabel)
         this._indicator.addStyle(eclair.styles.ProgressBarIndicator)
@@ -1517,7 +1502,7 @@ class EclairSyntaxHighlighter extends EclairComponent {
         
         this._html = _html == null? eclair.State() : _html
 
-        this._pre = eclair.CustomTagComponent("pre")
+        this._pre = this._addChild(eclair.CustomTagComponent("pre")
             .position("absolute")
             .padding("0px")
             .margin("0px")
@@ -1526,9 +1511,9 @@ class EclairSyntaxHighlighter extends EclairComponent {
             .top("0px")
             .left("0px")
             .background("white")
-            .css("box-sizing: border-box;line-height: 1.05")
+            .css("box-sizing: border-box;line-height: 1.05"))
 
-        this._code = eclair.CustomTagComponent("code")
+        this._code = this._addChild(eclair.CustomTagComponent("code")
             .position("absolute")
             .top("0px")
             .left("0px")
@@ -1541,9 +1526,9 @@ class EclairSyntaxHighlighter extends EclairComponent {
             .setAttr("class", "javascript")
             .textAlign("left")
             .css("box-sizing: border-box;")
-            .innerHTML(this._writtenCode)
+            .innerHTML(this._writtenCode))
 
-        this._textarea = eclair.TextArea(this._html)
+        this._textarea = this._addChild(eclair.TextArea(this._html)
             .setAttr("spellcheck", false)
             .display("inline")
             .position("absolute")
@@ -1560,7 +1545,7 @@ class EclairSyntaxHighlighter extends EclairComponent {
             .onScroll(e => {
                 let textarea = e.getElement()
                 self._code.getElement().scroll(textarea.scrollLeft, textarea.scrollTop)
-            })
+            }))
         
         this.bindState(this._html, "html", value => {
             var escape = document.createElement('textarea');
@@ -1569,11 +1554,6 @@ class EclairSyntaxHighlighter extends EclairComponent {
 
             hljs.highlightAll()
         })
-        
-        this._pre.parent = this
-        this._code.parent = this
-        this._textarea.parent = this
-        this.children = [this._pre, this._code, this._textarea]
     }
 
     build() {
@@ -1623,9 +1603,9 @@ class EclairCheckBox extends EclairComponent {
         this._hiddenValue = eclair.State(false)  // Private one which is updated in the .checked callback
         this._textValue = eclair.State("")  // Text value which is the message displayed alongside
         
-        this._label = eclair.Text(this._textValue)
-        this._checkbox = eclair.CustomTagComponent("div")
-        this._hidden = eclair.HiddenInput(this._hiddenValue)
+        this._label = this._addChild(eclair.Text(this._textValue))
+        this._checkbox = this._addChild(eclair.CustomTagComponent("div"))
+        this._hidden = this._addChild(eclair.HiddenInput(this._hiddenValue))
         
         let self = this
         this.overrideOnClick = null
@@ -1656,11 +1636,6 @@ class EclairCheckBox extends EclairComponent {
                     .innerHTML("")
             }
         }, state => {return state.bool()})
-        
-        this._label.parent = this
-        this._checkbox.parent = this
-        this._hidden.parent = this
-        this.children = [this._label, this._checkbox, this._hidden]
         
         this.setAttr("cellpadding", 6)   
         this.addStyle(eclair.styles.CheckBox)  
@@ -1770,9 +1745,6 @@ class EclairHiddenInput extends EclairCustomTagComponent {
 }
 
 // elements.form.radio-buttons
-
-
-
 class EclairRadioButtons extends EclairComponent {
     constructor(_options) {
         super("radio-button")
@@ -1864,6 +1836,35 @@ class EclairRadioButtons extends EclairComponent {
         return this
     }
     
+    itemStyle(callback) {
+        callack(this.customStyles.itemStyle)
+        return this           
+    }
+         
+    radioStyle(callback) {
+        callack(this.customStyles.radioStyle)
+        return this           
+    }
+     
+    labelStyle(callback) {
+        callack(this.customStyles.labelStyle)
+        return this           
+    }
+          
+    selectedItemStyle(callback) {
+        callack(this.customStyles.selectedItemStyle)
+        return this           
+    }
+    
+    selectedRadioStyle(callback) {
+        callack(this.customStyles.selectedRadioStyle)
+        return this           
+    }
+    
+    selectedLabelStyle(callback) {
+        callack(this.customStyles.selectedLabelStyle)
+        return this           
+    }
     
     build() {         
         return `<div>${this._hidden.compile()}${this._view.compile()}</div>`
@@ -2262,8 +2263,8 @@ class EclairToggle extends EclairComponent {
         
         let overrideOnClick = null;
         
-        this._tickMark = eclair.Text("✓")
-        this._knob = eclair.View()
+        this._tickMark = this._addChild(eclair.Text("✓"))
+        this._knob = this._addChild(eclair.View())
         
         this._value = eclair.State((_value instanceof EclairState)? _value.bool() : _value)
         this._hiddenComponent = eclair.HiddenInput(this._value)
@@ -2298,10 +2299,6 @@ class EclairToggle extends EclairComponent {
         
         this._showCheckMark = false
         this._enabled = true
-        
-        this._tickMark.parent = this
-        this._knob.parent = this
-        this.children = [this._tickMark, this._knob]
         
         this.addStyle(eclair.styles.Toggle)
         this._tickMark.addStyle(eclair.styles.ToggleTick)
