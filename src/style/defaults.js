@@ -3,10 +3,18 @@ eclair.styles = {
         .boxSizing("border-box"),
     
     VStack: eclair.Style("eclair-style-vstack")
-        .boxSizing("border-box"),
+        .boxSizing("border-box")
+        .display("flex")
+        .flexDirection("column")
+        .alignItems("center")
+        .justifyContent("space-around"),
     
     HStack: eclair.Style("eclair-style-hstack")
-        .boxSizing("border-box"),
+        .boxSizing("border-box")
+        .display("flex")
+        .flexDirection("row")
+        .alignItems("center")
+        .justifyContent("space-around"),
     
     TabView: eclair.Style("eclair-style-tab-view")
         .display("flex")
@@ -90,25 +98,19 @@ eclair.styles = {
         .width("100%")
         .css("border-top: 1px solid #999999"),
     
-    RadioButtons: eclair.Style("eclair-style-radio-button"),  // No default style
-    
-    RadioButtonsItem: eclair.Style("eclair-style-item")
+    RadioButtons: eclair.Style("eclair-style-radio-button"), 
+    RadioButtonsItem: eclair.Style("eclair-style-radio-buttons-item")
         .cursor("pointer")
-        .boxShadow("0px 0px 0px 100px rgba(0, 0, 0, 0.05) inset", "hover")
-        .padding("2px")
+        .boxShadow("0px 0px 0px 1000px rgba(0, 0, 0, 0.05) inset", "hover")
+        .padding("12px")
         .borderRadius("4px")
         .width("100%")
         .userSelect("none")
+        .justifyContent("flex-start")
+        .gap("12px")
         .font(eclair.theme.font),
-    RadioButtonsSelectedItem: eclair.Style("eclair-style-selected-item")
-        .cursor("pointer")
-        .boxShadow("0px 0px 0px 100px rgba(0, 0, 0, 0.05) inset", "hover")
-        .padding("2px")
-        .borderRadius("4px")
-        .userSelect("none")
-        .width("100%")
-        .font(eclair.theme.font),
-    RadioButtonsRadio: eclair.Style("eclair-style-dot")
+    RadioButtonsSelectedItem: eclair.Style("eclair-style-radio-buttons-selected-item"),
+    RadioButtonsRadio: eclair.Style("eclair-style-radio-buttons-dot")
         .width("14px")
         .height("14px")
         .userSelect("none")
@@ -116,15 +118,10 @@ eclair.styles = {
         .borderStyle("solid")
         .borderColor(eclair.theme.accent)
         .borderRadius("100%"),
-    RadioButtonsSelectedRadio: eclair.Style("eclair-style-selected-dot")
-        .width("14px")
-        .height("14px")
-        .userSelect("none")
-        .borderSize("2px")
-        .borderStyle("solid")
-        .borderColor(eclair.theme.accent)
-        .borderRadius("100%")
+    RadioButtonsSelectedRadio: eclair.Style("eclair-style-radio-buttons-selected-dot")
         .background(eclair.theme.accent),
+    RadioButtonsLabel: eclair.Style("eclair-style-label"),
+    RadioButtonsSelectedLabel: eclair.Style("eclair-style-radio-buttons-selected-label"),
     
     CheckBox: eclair.Style("eclair-style-checkbox")    
         .cursor("pointer")

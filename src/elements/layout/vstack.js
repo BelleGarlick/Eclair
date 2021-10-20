@@ -29,12 +29,6 @@ class EclairVStack extends EclairView {
     constructor(elems, creatorFunc) {
         super(elems, creatorFunc)
         
-        this
-            .display("flex")
-            .flexDirection("column")
-            .alignItems("center")
-            .justifyContent("space-around")
-        
         // Need to remove view as given by parent
         this.removeStyle(eclair.styles.View)
         this.addStyle(eclair.styles.VStack)

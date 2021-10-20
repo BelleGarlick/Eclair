@@ -18,7 +18,7 @@
 // Check on change bindings
 // TODO Nested elements like hstack of image and text within a button
 // TODO NEed tutorials for everything. Geting to grips with eclair, making a custom object, specific object tutorials.
-// TODO Only add style if css has code. If css code is len(0) then remove css object.
+// Use this_addChild for all child/parent assocs
 
 // Future custom objects
 //  - Cookies accept + ability to set
@@ -28,6 +28,7 @@
 //  - Upload file element
 //  - dropdown
 //  - List
+//  - Built in icons
 
 // When creating a new element make sure
 //  - Links to children objects and parent association

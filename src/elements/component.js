@@ -133,7 +133,7 @@ class EclairComponent extends EclairStylableObject {
     
     bindState(state, stateBindingID, onCallback, valueCallback) {
         if (state instanceof EclairState) {
-            // Remove binding for old callback
+            // Remove binding for old callback within old state
             if (this.stateBindings.hasOwnProperty(stateBindingID)) {
                 this.stateBindings[stateBindingID].removeCallback(this.id())
             }
@@ -169,10 +169,14 @@ class EclairComponent extends EclairStylableObject {
         wrapperElement.innerHTML = this.build();
         let element = wrapperElement.children[0]
         
-        let classes = this.getAttr("class").split(" ")
-        for (let c = 0; c < classes.length; c++) {
-            if (eclair._styles.hasOwnProperty(classes[c])) {
-                eclair._styles[classes[c]].create()
+        
+        let classes = this.getAttr("class")
+        if (classes != null) {
+            classes = classes.split(" ")
+            for (let c = 0; c < classes.length; c++) {
+                if (eclair._styles.hasOwnProperty(classes[c])) {
+                    eclair._styles[classes[c]].create()
+                }
             }
         }
         
@@ -257,6 +261,12 @@ class EclairComponent extends EclairStylableObject {
         if (this._callbacks.hasOwnProperty(eventID)) {
             this._callbacks[eventID](this, event, param);
         }
+    }
+    
+    _addChild(item) {
+        this.children.push(item)
+        item.parent = this
+        return item
     }
     
     _updateCallback(callbackKey, callback) {

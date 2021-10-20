@@ -1,105 +1,98 @@
-// WARN RADIO BUTTONS NOT DONE
+// TODO Testing radio buttons styles and fully test trying to create a cycle with selected index and values.
+class EclairRatioItem extends EclairHStack {
+    constructor(_text, customStyles) {
+        super([
+            eclair.CustomTagComponent("div")
+                .addStyle(eclair.styles.RadioButtonsRadio)
+                .addStyle(customStyles.radioStyle),
+            eclair.Text(_text)
+                .addStyle(eclair.styles.RadioButtonsLabel)
+                .addStyle(customStyles.labelStyle)
+        ])
+        
+        this.value = _text
+        this.addStyle(eclair.styles.RadioButtonsItem)
+            .addStyle(customStyles.itemStyle)
+    }
+    
+    selected(value) {
+        if (value) {
+            this.addStyle(eclair.styles.RadioButtonsSelectedItem)
+                .addStyle(customStyles.selectedItemStyle)
+            
+            this.children[0]
+                .addStyle(eclair.styles.RadioButtonsSelectedRadio)
+                .addStyle(customStyles.selectedRadioStyle)
+            
+            this.children[1]
+                .addStyle(eclair.styles.RadioButtonsSelectedLabel)
+                .addStyle(customStyles.selectedLabelStyle)
+        } else {
+            this.removeStyle(eclair.styles.RadioButtonsSelectedItem)
+                .removeStyle(customStyles.selectedItemStyle)
+            
+            this.children[0]
+                .removeStyle(eclair.styles.RadioButtonsSelectedRadio)
+                .removeStyle(customStyles.selectedRadioStyle)
+            
+            this.children[1]
+                .removeStyle(eclair.styles.RadioButtonsSelectedLabel)
+                .removeStyle(customStyles.selectedLabelStyle)
+        }
+    }
+}
+
+
 class EclairRadioButtons extends EclairComponent {
     constructor(_options) {
         super("radio-button")
         
-        this._items = []
-        this._selectedIndex = 0
-        
+        // Internal states of values, options and selected index
+        this._options = _options instanceof EclairState? _options : eclair.State(_options)
+        this._selectedIndex = -1
         this._selectedValue = State("")
-        this._hidden = eclair.HiddenInput(this._selectedValue)
         
-        this.bindOptions(_options)
-        
-        // TODO Make this easy to access
-        this.itemStyle = eclair.Style()
-        this.selectedItemStyle = eclair.Style()
-        this.radioStyle = eclair.Style()
-        this.selectedRadioStyle = eclair.Style()
-        
-        // Update callbacks on item selected
-        let self = this
-        this._callbacks["selectRadioButton"] = function(object, selectedElement) {
-            self.getElement(e => {
-                for (let i = 0; i < e.children.length; i++) {
-                    if (e.children[i] == selectedElement) {
-                        // Subtract 1 as first item is the hidden input
-                        self._selectedIndex = i - 1
-                        
-                        // Update the hidden input
-                        self._selectedValue.value(self._items[self._selectedIndex])
-                        
-                        // If a value binding exists, update it
-                        if (self.stateBindings.hasOwnProperty("value")) {
-                            self.stateBindings["value"].value(self._items[self._selectedIndex])
-                        }
-
-                        // If an index binding exists, update it
-                        if (self.stateBindings.hasOwnProperty("index")) {
-                            self.stateBindings["index"].value(self._selectedIndex)
-                        }
-                    }
-                }
-            })
+        // Custom styles for child elements
+        this.customStyles = {
+            "itemStyle": eclair.Style(),
+            "radioStyle": eclair.Style(),
+            "labelStyle": eclair.Style(),
+            "selectedItemStyle": eclair.Style(),
+            "selectedRadioStyle": eclair.Style(),
+            "selectedLabelStyle": eclair.Style(),
         }
         
-        this._hidden.parent = this
-        this.children = [this._hidden]
+        // Create elements
+        let self = this
+        this._hidden = this._addChild(eclair.HiddenInput(this._selectedValue))
+        this._view = this._addChild(eclair.VStack(_options, item => {
+            return new EclairRatioItem(item, this.customStyles)
+                .onClick(() => {
+                    let newIndex = this._updateSelectedItemStyles(item)
+                    
+                    this._selectedValue.value(item, self)
+                    this._selectedIndex = newIndex;
+                
+                    if (self.stateBindings.hasOwnProperty("index")) {self.stateBindings["index"].value(newIndex, self)}
+                    if (self.stateBindings.hasOwnProperty("value")) {self.stateBindings["value"].value(item, self)}
+                    if (self.getElement() != null) {self.performCallback("onChange")}
+                })
+        }))
         
+        // Add custom style to object
         this.addStyle(eclair.styles.RadioButtons)
     }
     
-    bindOptions(_options) {
-        if (_options instanceof Array) {
-            let itemSet = new Set()
-            for (let i = 0; i < _options.length; i++) {
-                let newOption = _options[i]
-                if (!itemSet.has(newOption)) {
-                    this._items.push(newOption)
-                    itemSet.add(newOption)
-                }
-            }
-        } else if (_options instanceof EclairState && _options.isArray()) {
-            // Add binding for the topions
-            this.bindState(_options, "options", array => {
-                // TODO Insert at right position
-                let itemSet = new Set(this._items)
-                for (let i = 0; i < array.length; i++) {
-                    let newOption = array[i]
-                    if (!itemSet.has(newOption)) {
-                        this._items.push(newOption)
-                        itemSet.add(newOption)
-                        
-                        // Add to ui if exists
-                        this.getElement(e => {
-                            e.insertAdjacentHTML('beforeend', this.buildItem(newOption))
-                        })
-                    }
-                } 
-                
-                // Removing items
-                let stateItems = new Set(array)
-                for (let i = this._items.length - 1; i >= 0; i--) {
-                    let cOption = this._items[i]
-                    if (!stateItems.has(cOption)) {
-                        this._items.splice(i, 1)
-                        stateItems.delete(cOption)
-                        
-                        // Add to ui if exists
-                        this.getElement(e => {
-                            console.log(e.children)
-                            console.log(e.children[i + 1])
-                            e.removeChild(e.children[i + 1])
-                        })
-                    }
-                } 
-                
-                // TODO alert the selected item maybe
-                // TODO On change items, set the value and index function 
-            })
-        } else {
-            throw "Unknown radio button options type. Should be either a javascript Array or an EclairState Array"
+    _updateSelectedItemStyles(selectedValue) {
+        let newIndex = -1;
+        for (let i = 0; i < this._options.length(); i++) {
+            let match = this._options.get(i) == selectedValue
+
+            this._view.children[i].selected(match)
+            if (match) {newIndex = i;}
         }
+        
+        return newIndex;
     }
     
     name(_name) {
@@ -107,80 +100,48 @@ class EclairRadioButtons extends EclairComponent {
         return this;
     }
     
-    // TODO .value needs rewriting
-    value(value) {
-        this.bindState(this._selectedValue, "value", value => {
-            if (this.getElement() != null) {
-                this.performCallback("onChange")
-            }
-
-            this.getElement(e => {
-                var selectedIndex = 0
-                for (let n = 0; n < this.items.length; n++) {
-                    let buttons = e.children;
-                    let radioButton = buttons[n].children[0].children[0].children[0].children[0]
-                    
-                    if (value == this.items[n].value) {
-                        selectedIndex = n
-                        buttons[n].setAttribute("class", eclair.styles.RadioButtonsSelectedItem.id() + " " + this.selectedItemStyle.id())
-                        radioButton.setAttribute("class", eclair.styles.RadioButtonsSelectedRadio.id() + " " + this.selectedRadioStyle.id())
-                    } else {
-                        buttons[n].setAttribute("class", eclair.styles.RadioButtonsItem.id() + " " + this.itemStyle.id())
-                        radioButton.setAttribute("class", eclair.styles.RadioButtonsRadio.id() + " " + this.radioStyle.id())
-                    }
-                }
+    value(_value) {
+        this.bindState(_value, "value", value => {
+            if (value != this._selectedValue.value()) {
+                let newIndex = this._updateSelectedItemStyles(item)
                 
-                if (this.stateBindings.hasOwnProperty("index")) {
-                    this.stateBindings["index"].value(selectedIndex)
-                }
-            })
+                this._selectedIndex = newIndex;
+                this._selectedValue.value(value, self)
+                
+                if (this.stateBindings.hasOwnProperty("index")) {this.stateBindings["index"].value(newIndex, sethislf)}
+                if (this.getElement() != null) {this.performCallback("onChange")}
+            }
         })
-    }
-    
-    selectedIndex(_index) {
-        this.bindState(_index, "index", value => {
-            this._selectedIndex = value
-            this._selectedValue.value(this._items[value])
-            
-            this.getElement(e => {
-                let buttons = e.children;
-                for (let n = 0; n < this._items.length; n++) {
-                    // Add 1 to n as child 1 is the hidden input box
-                    let radioButton = buttons[n + 1].children[0].children[0].children[0].children[0]
-
-                    if (value == n) {
-                        buttons[n].setAttribute("class", eclair.styles.RadioButtonsSelectedItem.id() + " " + this.selectedItemStyle.id())
-                        radioButton.setAttribute("class", eclair.styles.RadioButtonsSelectedRadio.id() + " " + this.selectedRadioStyle.id())
-                    } else {
-                        buttons[n].setAttribute("class", eclair.styles.RadioButtonsItem.id() + " " + this.itemStyle.id())
-                        radioButton.setAttribute("class", eclair.styles.RadioButtonsRadio.id() + " " + this.radioStyle.id())
-                    }
-                }
-            })
-        }, state => {return state.int(0)})
         
         return this
     }
     
-    // Used to build the html of the inner items.    
-    buildItem(_item, isSelected) {        
-        let radioClass = `${eclair.styles.RadioButtonsItem.id()} ${this.itemStyle.id()}`
-        let divClass = `${eclair.styles.RadioButtonsRadio.id()} ${this.radioStyle.id()}`
+    selectedIndex(_index) {
+        this.bindState(_index, "index", value => {
+            if (value != this._selectedIndex) {
+                let newValue = ""
+                for (let i = 0; i < this._options.length(); i++) {
+                    let match = i == value
+
+                    this._view.children[i].selected(match)
+                    if (match) {newValue = this._options.get(i);}
+                }
+
+                this._selectedIndex = value;
+                this._selectedValue.value(newValue, self)
+                
+                if (this.stateBindings.hasOwnProperty("value")) {this.stateBindings["value"].value(newValue, sethislf)}
+                if (this.getElement() != null) {this.performCallback("onChange")}
+            }
+        })
         
-        if (isSelected == true) {
-            radioClass = `${eclair.styles.RadioButtonsSelectedItem.id()} ${this.selectedItemStyle.id()}`
-            divClass = `${eclair.styles.RadioButtonsSelectedRadio.id()} ${this.selectedRadioStyle.id()}`
-        }
-        
-        return `<table onclick='eclair.performCallback("${this.id()}", "selectRadioButton", event, this)' cellpadding=6 class='${radioClass}'><tbody><tr><td width=1><div class='${divClass}'></div></td><td>${_item}</td></tr></tbody></table>`
+        return this
     }
     
+    // TODO Add getting methods with callback for styles
+    
     // Overriden method, no need to doc
-    build() {          
-        let items = ""
-        for (let i = 0; i < this._items.length; i++) {
-            items += this.buildItem(this._items[i], i==this._selectedIndex)
-        }
-        return `<div>${this._hidden.compile()}${items}</div>`
+    build() {         
+        return `<div>${this._hidden.compile()}${this._view.compile()}</div>`
     }
 }

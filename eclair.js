@@ -704,10 +704,18 @@ eclair.styles = {
         .boxSizing("border-box"),
     
     VStack: eclair.Style("eclair-style-vstack")
-        .boxSizing("border-box"),
+        .boxSizing("border-box")
+        .display("flex")
+        .flexDirection("column")
+        .alignItems("center")
+        .justifyContent("space-around"),
     
     HStack: eclair.Style("eclair-style-hstack")
-        .boxSizing("border-box"),
+        .boxSizing("border-box")
+        .display("flex")
+        .flexDirection("row")
+        .alignItems("center")
+        .justifyContent("space-around"),
     
     TabView: eclair.Style("eclair-style-tab-view")
         .display("flex")
@@ -791,25 +799,19 @@ eclair.styles = {
         .width("100%")
         .css("border-top: 1px solid #999999"),
     
-    RadioButtons: eclair.Style("eclair-style-radio-button"),  // No default style
-    
-    RadioButtonsItem: eclair.Style("eclair-style-item")
+    RadioButtons: eclair.Style("eclair-style-radio-button"), 
+    RadioButtonsItem: eclair.Style("eclair-style-radio-buttons-item")
         .cursor("pointer")
-        .boxShadow("0px 0px 0px 100px rgba(0, 0, 0, 0.05) inset", "hover")
-        .padding("2px")
+        .boxShadow("0px 0px 0px 1000px rgba(0, 0, 0, 0.05) inset", "hover")
+        .padding("12px")
         .borderRadius("4px")
         .width("100%")
         .userSelect("none")
+        .justifyContent("flex-start")
+        .gap("12px")
         .font(eclair.theme.font),
-    RadioButtonsSelectedItem: eclair.Style("eclair-style-selected-item")
-        .cursor("pointer")
-        .boxShadow("0px 0px 0px 100px rgba(0, 0, 0, 0.05) inset", "hover")
-        .padding("2px")
-        .borderRadius("4px")
-        .userSelect("none")
-        .width("100%")
-        .font(eclair.theme.font),
-    RadioButtonsRadio: eclair.Style("eclair-style-dot")
+    RadioButtonsSelectedItem: eclair.Style("eclair-style-radio-buttons-selected-item"),
+    RadioButtonsRadio: eclair.Style("eclair-style-radio-buttons-dot")
         .width("14px")
         .height("14px")
         .userSelect("none")
@@ -817,15 +819,10 @@ eclair.styles = {
         .borderStyle("solid")
         .borderColor(eclair.theme.accent)
         .borderRadius("100%"),
-    RadioButtonsSelectedRadio: eclair.Style("eclair-style-selected-dot")
-        .width("14px")
-        .height("14px")
-        .userSelect("none")
-        .borderSize("2px")
-        .borderStyle("solid")
-        .borderColor(eclair.theme.accent)
-        .borderRadius("100%")
+    RadioButtonsSelectedRadio: eclair.Style("eclair-style-radio-buttons-selected-dot")
         .background(eclair.theme.accent),
+    RadioButtonsLabel: eclair.Style("eclair-style-label"),
+    RadioButtonsSelectedLabel: eclair.Style("eclair-style-radio-buttons-selected-label"),
     
     CheckBox: eclair.Style("eclair-style-checkbox")    
         .cursor("pointer")
@@ -1089,10 +1086,14 @@ class EclairComponent extends EclairStylableObject {
         wrapperElement.innerHTML = this.build();
         let element = wrapperElement.children[0]
         
-        let classes = this.getAttr("class").split(" ")
-        for (let c = 0; c < classes.length; c++) {
-            if (eclair._styles.hasOwnProperty(classes[c])) {
-                eclair._styles[classes[c]].create()
+        
+        let classes = this.getAttr("class")
+        if (classes != null) {
+            classes = classes.split(" ")
+            for (let c = 0; c < classes.length; c++) {
+                if (eclair._styles.hasOwnProperty(classes[c])) {
+                    eclair._styles[classes[c]].create()
+                }
             }
         }
         
@@ -1140,6 +1141,12 @@ class EclairComponent extends EclairStylableObject {
         }
     }
     
+    _addChild(item) {
+        this.children.push(item)
+        item.parent = this
+        return item
+    }
+    
     _updateCallback(callbackKey, callback) {
         this._callbacks[callbackKey] = callback;
         if (callback == null) {
@@ -1174,6 +1181,209 @@ class EclairCustomTagComponent extends EclairComponent {
         return `<${this.tag}>${this._innerHTML}</${this.tag}>`
     }
 }
+
+
+// elements.layout.view
+class EclairView extends EclairComponent {
+    constructor(elements, creatorFunc) {
+        super("view")
+        this.creatorFunc = (creatorFunc != null)? creatorFunc : (e) => {return e}
+        
+        let self = this;
+        let items = elements instanceof Array? eclair.State(elements) : elements
+        
+        let knownItems = []
+        
+        if (items instanceof EclairState && items.isArray()) {
+            this.bindState(elements, "element", array => {
+                var itemChanges = self._itemChanges(knownItems, array)
+                
+                let dummyParent = document.createElement("div")
+                
+                for (let i = 0; i < itemChanges.length; i++) {
+                    if (itemChanges[i] == -1) {
+                        let newItem = self.creatorFunc(array[i])
+                        this.children.push(newItem)
+                        newItem.parent = self
+                        
+                        let dummychild = document.createElement("div")
+                        dummychild.innerHTML = newItem.compile()
+                        dummyParent.appendChild(dummychild.childNodes[0])
+                    } else {
+                        let itemIndexValue = itemChanges[i]
+                        
+                        dummyParent.appendChild(
+                            self.getElement().childNodes[itemIndexValue]
+                        );
+                        itemChanges[i] = -1
+                        
+                        for (let j = 0; j < itemChanges.length; j++) {
+                            if (itemChanges[j] >= itemIndexValue) {
+                                itemChanges[j] -= 1
+                            }
+                        }
+                    }
+                }
+                
+                
+                self.getElement(e => {
+                    while (dummyParent.firstChild) {
+                        e.appendChild(dummyParent.childNodes[0])
+                    }
+                })
+                
+                knownItems = []
+                for (let i = 0; i < array.length; i++) {knownItems.push(array[i])}
+            })
+        }
+        
+        this.addStyle(eclair.styles.View)
+    }
+    
+    
+    _itemChanges(oldItems, newItems) {
+        var resultantMap = []
+
+        for (let i = 0; i < newItems.length; i++) {
+            var positionChange = -1
+            for (let j = 0; j < oldItems.length; j++) {
+                if (oldItems[j] == newItems[i]) {
+                    positionChange = j
+                    break
+                }
+            }
+            resultantMap.push(positionChange)
+        }
+
+        return resultantMap
+    }
+    
+    
+    build () {                
+        let code = ""
+        for (let e = 0; e < this.children.length; e++) {
+            let child = this.children[e];
+            
+            if (child instanceof EclairComponent) {
+                code += child.compile();
+            }
+
+            else if (typeof(child) == "string") { 
+                code += child
+            } 
+            
+            else {
+                throw `Unable to compile object type: ${typeof(child)}`
+            }
+        }
+        
+        return "<div>" + code + "</div>";
+    }
+}
+
+// elements.layout.vstack
+class EclairVStack extends EclairView {
+    constructor(elems, creatorFunc) {
+        super(elems, creatorFunc)
+        
+        this.removeStyle(eclair.styles.View)
+        this.addStyle(eclair.styles.VStack)
+    }
+    
+    alignment(_alignment) {
+        this.bindState(_alignment, "alignment", value => {
+            if (value == "start") {
+                this.alignItems("flex-start")
+            } 
+            else if (value == "center") {
+                this.alignItems("center")
+            }
+            else if (value == "end") {
+                this.alignItems("flex-end")
+            }
+            else if (value == "stretch") {
+                this.alignItems("stretch")
+            } else {
+                throw "Unknown alignment"
+            }
+        })  
+        
+        return this
+    }
+}
+
+// elements.layout.hstack
+class EclairHStack extends EclairView {
+    constructor(elements, creatorFunc) {
+        super(elements, creatorFunc)
+        
+        this.removeStyle(eclair.styles.View)
+        this.addStyle(eclair.styles.HStack)
+    }
+    
+    alignment(_alignment) {
+        this.bindState(_alignment, "alignment", value => {
+            if (value == "start") {
+                this.alignItems("flex-start")
+            } 
+            else if (value == "center") {
+                this.alignItems("center")
+            }
+            else if (value == "end") {
+                this.alignItems("flex-end")
+            }
+            else if (value == "stretch") {
+                this.alignItems("stretch")
+            } else {
+                throw "Unknown alignment"
+            }
+        })  
+        
+        return this
+    }
+}
+
+// elements.layout.tabs
+class EclairTabView extends EclairView {
+    constructor(_selectedView, elements) {
+        super(elements)
+        
+        if (_selectedView instanceof EclairState) {
+            this.bindState(_selectedView, "tab", value => {
+                for (let e = 0; e < this.children.length; e++) {
+                    this.children[e].display(value == e? "flex": "none")
+                }
+            }, state => {return state.int(0)})
+        } else {
+            throw "First parameter of Eclair TabView's must be an Eclair State"
+        }
+        
+        this.removeStyle(eclair.styles.View)
+        this.addStyle(eclair.styles.TabView)
+    }
+    
+    _addChild(_child) {
+        if (_child instanceof EclairView) {
+            this.children.push(_child)
+            _child.parent = this
+
+            this.getElement(e => {
+                let childHTML = child;
+                if (_child instanceof EclairComponent) {
+                    childHTML = _child.compile()
+                }
+                e.insertAdjacentHTML('beforeend', childHTML)
+            })
+        } else {
+            throw "All children of Eclair's Tab View must inherit from an Eclair View"
+        }
+    }
+}
+
+
+
+
+
 
 
 // elements.custom.alert-box
@@ -1560,94 +1770,96 @@ class EclairHiddenInput extends EclairCustomTagComponent {
 }
 
 // elements.form.radio-buttons
+class EclairRatioItem extends EclairHStack {
+    constructor(_text, customStyles) {
+        super([
+            eclair.CustomTagComponent("div")
+                .addStyle(eclair.styles.RadioButtonsRadio)
+                .addStyle(customStyles.radioStyle),
+            eclair.Text(_text)
+                .addStyle(eclair.styles.RadioButtonsLabel)
+                .addStyle(customStyles.labelStyle)
+        ])
+        
+        this.value = _text
+        this.addStyle(eclair.styles.RadioButtonsItem)
+            .addStyle(customStyles.itemStyle)
+    }
+    
+    selected(value) {
+        if (value) {
+            this.addStyle(eclair.styles.RadioButtonsSelectedItem)
+                .addStyle(customStyles.selectedItemStyle)
+            
+            this.children[0]
+                .addStyle(eclair.styles.RadioButtonsSelectedRadio)
+                .addStyle(customStyles.selectedRadioStyle)
+            
+            this.children[1]
+                .addStyle(eclair.styles.RadioButtonsSelectedLabel)
+                .addStyle(customStyles.selectedLabelStyle)
+        } else {
+            this.removeStyle(eclair.styles.RadioButtonsSelectedItem)
+                .removeStyle(customStyles.selectedItemStyle)
+            
+            this.children[0]
+                .removeStyle(eclair.styles.RadioButtonsSelectedRadio)
+                .removeStyle(customStyles.selectedRadioStyle)
+            
+            this.children[1]
+                .removeStyle(eclair.styles.RadioButtonsSelectedLabel)
+                .removeStyle(customStyles.selectedLabelStyle)
+        }
+    }
+}
+
+
 class EclairRadioButtons extends EclairComponent {
     constructor(_options) {
         super("radio-button")
         
-        this._items = []
-        this._selectedIndex = 0
-        
+        this._options = _options instanceof EclairState? _options : eclair.State(_options)
+        this._selectedIndex = -1
         this._selectedValue = State("")
-        this._hidden = eclair.HiddenInput(this._selectedValue)
         
-        this.bindOptions(_options)
-        
-        this.itemStyle = eclair.Style()
-        this.selectedItemStyle = eclair.Style()
-        this.radioStyle = eclair.Style()
-        this.selectedRadioStyle = eclair.Style()
-        
-        let self = this
-        this._callbacks["selectRadioButton"] = function(object, selectedElement) {
-            self.getElement(e => {
-                for (let i = 0; i < e.children.length; i++) {
-                    if (e.children[i] == selectedElement) {
-                        self._selectedIndex = i - 1
-                        
-                        self._selectedValue.value(self._items[self._selectedIndex])
-                        
-                        if (self.stateBindings.hasOwnProperty("value")) {
-                            self.stateBindings["value"].value(self._items[self._selectedIndex])
-                        }
-
-                        if (self.stateBindings.hasOwnProperty("index")) {
-                            self.stateBindings["index"].value(self._selectedIndex)
-                        }
-                    }
-                }
-            })
+        this.customStyles = {
+            "itemStyle": eclair.Style(),
+            "radioStyle": eclair.Style(),
+            "labelStyle": eclair.Style(),
+            "selectedItemStyle": eclair.Style(),
+            "selectedRadioStyle": eclair.Style(),
+            "selectedLabelStyle": eclair.Style(),
         }
         
-        this._hidden.parent = this
-        this.children = [this._hidden]
+        let self = this
+        this._hidden = this._addChild(eclair.HiddenInput(this._selectedValue))
+        this._view = this._addChild(eclair.VStack(_options, item => {
+            return new EclairRatioItem(item, this.customStyles)
+                .onClick(() => {
+                    let newIndex = this._updateSelectedItemStyles(item)
+                    
+                    this._selectedValue.value(item, self)
+                    this._selectedIndex = newIndex;
+                
+                    if (self.stateBindings.hasOwnProperty("index")) {self.stateBindings["index"].value(newIndex, self)}
+                    if (self.stateBindings.hasOwnProperty("value")) {self.stateBindings["value"].value(item, self)}
+                    if (self.getElement() != null) {self.performCallback("onChange")}
+                })
+        }))
         
         this.addStyle(eclair.styles.RadioButtons)
     }
     
-    bindOptions(_options) {
-        if (_options instanceof Array) {
-            let itemSet = new Set()
-            for (let i = 0; i < _options.length; i++) {
-                let newOption = _options[i]
-                if (!itemSet.has(newOption)) {
-                    this._items.push(newOption)
-                    itemSet.add(newOption)
-                }
-            }
-        } else if (_options instanceof EclairState && _options.isArray()) {
-            this.bindState(_options, "options", array => {
-                let itemSet = new Set(this._items)
-                for (let i = 0; i < array.length; i++) {
-                    let newOption = array[i]
-                    if (!itemSet.has(newOption)) {
-                        this._items.push(newOption)
-                        itemSet.add(newOption)
-                        
-                        this.getElement(e => {
-                            e.insertAdjacentHTML('beforeend', this.buildItem(newOption))
-                        })
-                    }
-                } 
-                
-                let stateItems = new Set(array)
-                for (let i = this._items.length - 1; i >= 0; i--) {
-                    let cOption = this._items[i]
-                    if (!stateItems.has(cOption)) {
-                        this._items.splice(i, 1)
-                        stateItems.delete(cOption)
-                        
-                        this.getElement(e => {
-                            console.log(e.children)
-                            console.log(e.children[i + 1])
-                            e.removeChild(e.children[i + 1])
-                        })
-                    }
-                } 
-                
-            })
-        } else {
-            throw "Unknown radio button options type. Should be either a javascript Array or an EclairState Array"
+    _updateSelectedItemStyles(selectedValue) {
+        let newIndex = -1;
+        for (let i = 0; i < this._options.length(); i++) {
+            let match = this._options.get(i) == selectedValue
+
+            this._view.children[i].selected(match)
+            if (match) {newIndex = i;}
         }
+        
+        return newIndex;
     }
     
     name(_name) {
@@ -1655,77 +1867,47 @@ class EclairRadioButtons extends EclairComponent {
         return this;
     }
     
-    value(value) {
-        this.bindState(this._selectedValue, "value", value => {
-            if (this.getElement() != null) {
-                this.performCallback("onChange")
-            }
-
-            this.getElement(e => {
-                var selectedIndex = 0
-                for (let n = 0; n < this.items.length; n++) {
-                    let buttons = e.children;
-                    let radioButton = buttons[n].children[0].children[0].children[0].children[0]
-                    
-                    if (value == this.items[n].value) {
-                        selectedIndex = n
-                        buttons[n].setAttribute("class", eclair.styles.RadioButtonsSelectedItem.id() + " " + this.selectedItemStyle.id())
-                        radioButton.setAttribute("class", eclair.styles.RadioButtonsSelectedRadio.id() + " " + this.selectedRadioStyle.id())
-                    } else {
-                        buttons[n].setAttribute("class", eclair.styles.RadioButtonsItem.id() + " " + this.itemStyle.id())
-                        radioButton.setAttribute("class", eclair.styles.RadioButtonsRadio.id() + " " + this.radioStyle.id())
-                    }
-                }
+    value(_value) {
+        this.bindState(_value, "value", value => {
+            if (value != this._selectedValue.value()) {
+                let newIndex = this._updateSelectedItemStyles(item)
                 
-                if (this.stateBindings.hasOwnProperty("index")) {
-                    this.stateBindings["index"].value(selectedIndex)
-                }
-            })
+                this._selectedIndex = newIndex;
+                this._selectedValue.value(value, self)
+                
+                if (this.stateBindings.hasOwnProperty("index")) {this.stateBindings["index"].value(newIndex, sethislf)}
+                if (this.getElement() != null) {this.performCallback("onChange")}
+            }
         })
-    }
-    
-    selectedIndex(_index) {
-        this.bindState(_index, "index", value => {
-            this._selectedIndex = value
-            this._selectedValue.value(this._items[value])
-            
-            this.getElement(e => {
-                let buttons = e.children;
-                for (let n = 0; n < this._items.length; n++) {
-                    let radioButton = buttons[n + 1].children[0].children[0].children[0].children[0]
-
-                    if (value == n) {
-                        buttons[n].setAttribute("class", eclair.styles.RadioButtonsSelectedItem.id() + " " + this.selectedItemStyle.id())
-                        radioButton.setAttribute("class", eclair.styles.RadioButtonsSelectedRadio.id() + " " + this.selectedRadioStyle.id())
-                    } else {
-                        buttons[n].setAttribute("class", eclair.styles.RadioButtonsItem.id() + " " + this.itemStyle.id())
-                        radioButton.setAttribute("class", eclair.styles.RadioButtonsRadio.id() + " " + this.radioStyle.id())
-                    }
-                }
-            })
-        }, state => {return state.int(0)})
         
         return this
     }
     
-    buildItem(_item, isSelected) {        
-        let radioClass = `${eclair.styles.RadioButtonsItem.id()} ${this.itemStyle.id()}`
-        let divClass = `${eclair.styles.RadioButtonsRadio.id()} ${this.radioStyle.id()}`
+    selectedIndex(_index) {
+        this.bindState(_index, "index", value => {
+            if (value != this._selectedIndex) {
+                let newValue = ""
+                for (let i = 0; i < this._options.length(); i++) {
+                    let match = i == value
+
+                    this._view.children[i].selected(match)
+                    if (match) {newValue = this._options.get(i);}
+                }
+
+                this._selectedIndex = value;
+                this._selectedValue.value(newValue, self)
+                
+                if (this.stateBindings.hasOwnProperty("value")) {this.stateBindings["value"].value(newValue, sethislf)}
+                if (this.getElement() != null) {this.performCallback("onChange")}
+            }
+        })
         
-        if (isSelected == true) {
-            radioClass = `${eclair.styles.RadioButtonsSelectedItem.id()} ${this.selectedItemStyle.id()}`
-            divClass = `${eclair.styles.RadioButtonsSelectedRadio.id()} ${this.selectedRadioStyle.id()}`
-        }
-        
-        return `<table onclick='eclair.performCallback("${this.id()}", "selectRadioButton", event, this)' cellpadding=6 class='${radioClass}'><tbody><tr><td width=1><div class='${divClass}'></div></td><td>${_item}</td></tr></tbody></table>`
+        return this
     }
     
-    build() {          
-        let items = ""
-        for (let i = 0; i < this._items.length; i++) {
-            items += this.buildItem(this._items[i], i==this._selectedIndex)
-        }
-        return `<div>${this._hidden.compile()}${items}</div>`
+    
+    build() {         
+        return `<div>${this._hidden.compile()}${this._view.compile()}</div>`
     }
 }
 
@@ -2177,220 +2359,6 @@ class EclairToggle extends EclairComponent {
         return `<toggle>${this._tickMark.compile()}<div class='wrapper'>${this._knob.compile()}</div>${this._hiddenComponent.compile()}</toggle>`
     }
 }
-
-
-
-// elements.layout.view
-class EclairView extends EclairComponent {
-    constructor(elements, creatorFunc) {
-        super("view")
-        this.creatorFunc = (creatorFunc != null)? creatorFunc : (e) => {return e}
-        
-        let self = this;
-        let items = elements instanceof Array? eclair.State(elements) : elements
-        
-        let knownItems = []
-        
-        if (items instanceof EclairState && items.isArray()) {
-            this.bindState(elements, "element", array => {
-                var itemChanges = self._itemChanges(knownItems, array)
-                
-                let dummyParent = document.createElement("div")
-                
-                for (let i = 0; i < itemChanges.length; i++) {
-                    if (itemChanges[i] == -1) {
-                        let newItem = self.creatorFunc(array[i])
-                        this.children.push(newItem)
-                        newItem.parent = self
-                        
-                        let dummychild = document.createElement("div")
-                        dummychild.innerHTML = newItem.compile()
-                        dummyParent.appendChild(dummychild.childNodes[0])
-                    } else {
-                        let itemIndexValue = itemChanges[i]
-                        
-                        dummyParent.appendChild(
-                            self.getElement().childNodes[itemIndexValue]
-                        );
-                        itemChanges[i] = -1
-                        
-                        for (let j = 0; j < itemChanges.length; j++) {
-                            if (itemChanges[j] >= itemIndexValue) {
-                                itemChanges[j] -= 1
-                            }
-                        }
-                    }
-                }
-                
-                
-                self.getElement(e => {
-                    while (dummyParent.firstChild) {
-                        e.appendChild(dummyParent.childNodes[0])
-                    }
-                })
-                
-                knownItems = []
-                for (let i = 0; i < array.length; i++) {knownItems.push(array[i])}
-            })
-        }
-        
-        this.addStyle(eclair.styles.View)
-    }
-    
-    
-    _itemChanges(oldItems, newItems) {
-        var resultantMap = []
-
-        for (let i = 0; i < newItems.length; i++) {
-            var positionChange = -1
-            for (let j = 0; j < oldItems.length; j++) {
-                if (oldItems[j] == newItems[i]) {
-                    positionChange = j
-                    break
-                }
-            }
-            resultantMap.push(positionChange)
-        }
-
-        return resultantMap
-    }
-    
-    
-    build () {                
-        let code = ""
-        for (let e = 0; e < this.children.length; e++) {
-            let child = this.children[e];
-            
-            if (child instanceof EclairComponent) {
-                code += this.children[e].compile();
-            }
-
-            else if (typeof(child) == "string") { 
-                code += child
-            } 
-            
-            else {
-                throw `Unable to compile object type: ${typeof(child)}`
-            }
-        }
-        
-        return "<div>" + code + "</div>";
-    }
-}
-
-// elements.layout.vstack
-class EclairVStack extends EclairView {
-    constructor(elems, creatorFunc) {
-        super(elems, creatorFunc)
-        
-        this
-            .display("flex")
-            .flexDirection("column")
-            .alignItems("center")
-            .justifyContent("space-around")
-        
-        this.removeStyle(eclair.styles.View)
-        this.addStyle(eclair.styles.VStack)
-    }
-    
-    alignment(_alignment) {
-        this.bindState(_alignment, "alignment", value => {
-            if (value == "start") {
-                this.alignItems("flex-start")
-            } 
-            else if (value == "center") {
-                this.alignItems("center")
-            }
-            else if (value == "end") {
-                this.alignItems("flex-end")
-            }
-            else if (value == "stretch") {
-                this.alignItems("stretch")
-            } else {
-                throw "Unknown alignment"
-            }
-        })  
-        
-        return this
-    }
-}
-
-// elements.layout.hstack
-class EclairHStack extends EclairView {
-    constructor(elements, creatorFunc) {
-        super(elements, creatorFunc)
-        this
-            .display("flex")
-            .flexDirection("row")
-            .alignItems("center")
-            .justifyContent("space-around")
-        
-        this.removeStyle(eclair.styles.View)
-        this.addStyle(eclair.styles.HStack)
-    }
-    
-    alignment(_alignment) {
-        this.bindState(_alignment, "alignment", value => {
-            if (value == "start") {
-                this.alignItems("flex-start")
-            } 
-            else if (value == "center") {
-                this.alignItems("center")
-            }
-            else if (value == "end") {
-                this.alignItems("flex-end")
-            }
-            else if (value == "stretch") {
-                this.alignItems("stretch")
-            } else {
-                throw "Unknown alignment"
-            }
-        })  
-        
-        return this
-    }
-}
-
-// elements.layout.tabs
-class EclairTabView extends EclairView {
-    constructor(_selectedView, elements) {
-        super(elements)
-        
-        if (_selectedView instanceof EclairState) {
-            this.bindState(_selectedView, "tab", value => {
-                for (let e = 0; e < this.children.length; e++) {
-                    this.children[e].display(value == e? "flex": "none")
-                }
-            }, state => {return state.int(0)})
-        } else {
-            throw "First parameter of Eclair TabView's must be an Eclair State"
-        }
-        
-        this.removeStyle(eclair.styles.View)
-        this.addStyle(eclair.styles.TabView)
-    }
-    
-    _addChild(_child) {
-        if (_child instanceof EclairView) {
-            this.children.push(_child)
-            _child.parent = this
-
-            this.getElement(e => {
-                let childHTML = child;
-                if (_child instanceof EclairComponent) {
-                    childHTML = _child.compile()
-                }
-                e.insertAdjacentHTML('beforeend', childHTML)
-            })
-        } else {
-            throw "All children of Eclair's Tab View must inherit from an Eclair View"
-        }
-    }
-}
-
-
-
-
 
 
 

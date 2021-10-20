@@ -28,11 +28,6 @@
 class EclairHStack extends EclairView {
     constructor(elements, creatorFunc) {
         super(elements, creatorFunc)
-        this
-            .display("flex")
-            .flexDirection("row")
-            .alignItems("center")
-            .justifyContent("space-around")
         
         // Need to remove view as given by parent
         this.removeStyle(eclair.styles.View)

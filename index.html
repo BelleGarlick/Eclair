@@ -248,10 +248,12 @@ eclair.VStack([
                 .width("100%")
                 .selectedIndex(selectedTab)
                 .onClick((el, ev) => {
-                    alert(ev)
+//                    console.log(el)
+//                    console.log(ev)
                 }),
             eclair.HorizontalLine(),
-            RadioButtons(["tests", "test", "testing"]).width("100%"),
+            RadioButtons(["tests", "test", "testing"])
+                .width("100%"),
             
             eclair.TextArea(htmlCode),
             

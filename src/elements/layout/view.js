@@ -117,7 +117,7 @@ class EclairView extends EclairComponent {
             let child = this.children[e];
             
             if (child instanceof EclairComponent) {
-                code += this.children[e].compile();
+                code += child.compile();
             }
 
             else if (typeof(child) == "string") { 
