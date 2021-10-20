@@ -1770,48 +1770,7 @@ class EclairHiddenInput extends EclairCustomTagComponent {
 }
 
 // elements.form.radio-buttons
-class EclairRatioItem extends EclairHStack {
-    constructor(_text, customStyles) {
-        super([
-            eclair.CustomTagComponent("div")
-                .addStyle(eclair.styles.RadioButtonsRadio)
-                .addStyle(customStyles.radioStyle),
-            eclair.Text(_text)
-                .addStyle(eclair.styles.RadioButtonsLabel)
-                .addStyle(customStyles.labelStyle)
-        ])
-        
-        this.value = _text
-        this.addStyle(eclair.styles.RadioButtonsItem)
-            .addStyle(customStyles.itemStyle)
-    }
-    
-    selected(value) {
-        if (value) {
-            this.addStyle(eclair.styles.RadioButtonsSelectedItem)
-                .addStyle(customStyles.selectedItemStyle)
-            
-            this.children[0]
-                .addStyle(eclair.styles.RadioButtonsSelectedRadio)
-                .addStyle(customStyles.selectedRadioStyle)
-            
-            this.children[1]
-                .addStyle(eclair.styles.RadioButtonsSelectedLabel)
-                .addStyle(customStyles.selectedLabelStyle)
-        } else {
-            this.removeStyle(eclair.styles.RadioButtonsSelectedItem)
-                .removeStyle(customStyles.selectedItemStyle)
-            
-            this.children[0]
-                .removeStyle(eclair.styles.RadioButtonsSelectedRadio)
-                .removeStyle(customStyles.selectedRadioStyle)
-            
-            this.children[1]
-                .removeStyle(eclair.styles.RadioButtonsSelectedLabel)
-                .removeStyle(customStyles.selectedLabelStyle)
-        }
-    }
-}
+
 
 
 class EclairRadioButtons extends EclairComponent {
@@ -1910,6 +1869,53 @@ class EclairRadioButtons extends EclairComponent {
         return `<div>${this._hidden.compile()}${this._view.compile()}</div>`
     }
 }
+
+
+class EclairRatioItem extends EclairHStack {
+    constructor(_text, customStyles) {
+        super([
+            eclair.CustomTagComponent("div")
+                .addStyle(eclair.styles.RadioButtonsRadio)
+                .addStyle(customStyles.radioStyle),
+            eclair.Text(_text)
+                .addStyle(eclair.styles.RadioButtonsLabel)
+                .addStyle(customStyles.labelStyle)
+        ])
+        
+        this.value = _text
+        this.addStyle(eclair.styles.RadioButtonsItem)
+            .addStyle(customStyles.itemStyle)
+        
+        this.customStyles = customStyles
+    }
+    
+    selected(value) {
+        if (value) {
+            this.addStyle(eclair.styles.RadioButtonsSelectedItem)
+                .addStyle(this.customStyles.selectedItemStyle)
+            
+            this.children[0]
+                .addStyle(eclair.styles.RadioButtonsSelectedRadio)
+                .addStyle(this.customStyles.selectedRadioStyle)
+            
+            this.children[1]
+                .addStyle(eclair.styles.RadioButtonsSelectedLabel)
+                .addStyle(this.customStyles.selectedLabelStyle)
+        } else {
+            this.removeStyle(eclair.styles.RadioButtonsSelectedItem)
+                .removeStyle(this.customStyles.selectedItemStyle)
+            
+            this.children[0]
+                .removeStyle(eclair.styles.RadioButtonsSelectedRadio)
+                .removeStyle(this.customStyles.selectedRadioStyle)
+            
+            this.children[1]
+                .removeStyle(eclair.styles.RadioButtonsSelectedLabel)
+                .removeStyle(this.customStyles.selectedLabelStyle)
+        }
+    }
+}
+
 
 // elements.form.select
 class EclairSelect extends EclairComponent {
