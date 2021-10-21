@@ -2,29 +2,89 @@
 <html>
 <head>
 <title>Page Title</title>
+<script src="eclair.js"></script>
 </head>
 <body>
 
 <style>
-    .child {
-        position: absolute; 
-        top: 0px; 
-        left: 0px; 
-        width: 100%; 
-        height: 100%;
-        margin: 10px;
-        padding: 10px;
-        font-size: 14px;
-        font-family: monospace;
-        border: 0px
+    .code::-webkit-scrollbar {
+        display: none;
+    }
+    
+    .code {
+        -ms-overflow-style: none; 
+        scrollbar-width: none; 
     }
 </style>
     
-<div style="position: relative; width: 500px; height: 500px; overflow: hidden;">
-    <div class="child">
-        <code><pre style="margin: 0px; padding: 0px;" id='code-output'></pre></code>
-    </div>
-    <textarea class="child" style="background: transparent; color: rgb(1, 1, 1, 0.4)" id='code-box' cols=50 rows=0>// Example Toggle Code
+<script>
+    
+let sharedStyle = eclair.Style()
+    .position("relative")
+    .width("420px")
+    .height("360px")
+    .borderSize("1px")
+    .borderStyle("solid")
+    .borderColor("#999999")
+    .borderRadius("3px")
+
+let textAreaChild = eclair.Style()
+    .position("absolute")
+    .top("0px")
+    .left("0px")
+    .width("100%")
+    .height("100%")
+    .fontSize("14px")
+    .font("monospace")
+    .borderSize("0px")
+    .outline("none")
+    .caretColor("black")
+    .resize("none")
+    .whiteSpace("pre")
+    .boxSizing("border-box")
+    .padding("10px")
+    .overflowWrap("normal")
+    .overflowX("scroll")
+
+
+let syntaxHighlighterColors = {
+    "comment": "grey",
+    "keyword": "#0066ee",
+    "eclair": "#009900",
+    "string": "#dd9900",
+    "quote": "#dd9900"
+}
+    
+class SyntaxHighlighter extends EclairComponent {
+    constructor() {
+        super()
+        let highlighterRules = {
+            "seperators": [
+                "{", "(", " ", "}", ")", "[", "]", "\n", "\t", "."
+            ],
+            "special": [
+                "VStack", "HStack", "State", "Toggle", "Text", "HorizontalLine", "Alignment", "eclair", "Ø"
+            ],
+            "keywords": [
+                "let", "var", "if", "else", "true", "false", "const", "for", "while", "await", "break", "case", "catch", "class", "continue", "debugger", "default", "delete", 
+                "do", "enum", "export", "extends", "finally", "function", "implements", "import", 
+                "in", "instanceof", "interface", "new", "null", "package", "private", "protected", 
+                "public", "return", "super", "switch", "static", "this", "throw", "try", "typeof",
+                "void", "while", "with", "yield"
+            ]
+        }
+        
+        this.tokenSeperators = new Set(highlighterRules["seperators"])
+        this.eclairKeywords = new Set(highlighterRules["special"])
+        this.jsKeywords = new Set(highlighterRules["keywords"])
+         	 	 	 
+        this.theme = syntaxHighlighterColors;
+        
+        this.cachedLines = {}
+        
+        this.addStyle(sharedStyle)
+        
+        this.codeState = Ø(`// Example Toggle Code
 let toggleOn = Ø(true)
 let toggleTick = Ø(false)
 let toggleEnabled = Ø(true)
@@ -57,138 +117,132 @@ eclair.VStack([
 ])
     .alignment(eclair.Alignment().start())
     .gap("8px")
-    .write()</textarea>
-</div>
-
-<br/>
-    
-<script>
-let code = document.getElementById('code-box').value;
-
-var isComment = false
-var isString = false;
-var isQuote = false;
-
-var lastChar = null;
-var currentToken = "";
-
-let tokenSeperators = new Set([
-	"{", "(", " ", "}", ")", "[", "]", "\n", "\t", "."
-])
-let eclairKeywords = new Set([
-	"VStack", "HStack", "State", "Toggle", "Text", "HorizontalLine", "Alignment", "eclair", "Ø"
-])
-let jsKeywords = new Set([
-	"let", "var", "if", "true", "false", "const", "for", "while"
-])
-
-
-function tokeniseLine(line) {
-    let tokens = []
-    let token = ""
-    let state = ""
-    
-    function pushTokenState(_text, _state) {
-        if (state == "") {
-            if (jsKeywords.has(_text)) {_state = "keyword"}
-            if (eclairKeywords.has(_text)) {_state = "eclair"}
-        }
+    .write()`)
         
-        tokens.push({
-            "text": _text,
-            "type": _state
-        })
-        state = ""
-        token = ""
+        this.codeElement = eclair.CustomTagComponent("code")
+            .addStyle("child")
+            .addStyle("code")
+            .addStyle(textAreaChild)
+        this.textArea = eclair.TextArea(this.codeState)
+            .onScroll((e, ev) => {
+                let textarea = e.getElement()
+                this.codeElement.getElement().scroll(textarea.scrollLeft, textarea.scrollTop)
+            })
+            .onInput(_ => {
+                this.update()
+            })
+            .addStyle(textAreaChild)
+            .addStyle("child")
+            .setAttr("style", "background: transparent; color: rgb(1, 1, 1, 0); box-sizing: border-box")
+            .setAttr("spellcheck", "false")
+            
+    
     }
     
-    for (let c = 0; c < line.length; c++) {
-        if (state == "comment") {
-            token += line[c]
-        } 
+    update() {
+        let code = this.codeState.value();
         
-        else if (state != "comment" && c < code.length - 1 && line[c] == "/" && line[c + 1] == "/") {
-            pushTokenState(token, state)
-            
-            state = "comment"
-            token = line[c]
-        } 
         
-        else if (state != "quote" && state != "string" && line[c] == "'") {
-            pushTokenState(token, state)
-            
-            state = "quote"
-            token = line[c]
-        } 
-        
-        else if (state == "quote" && line[c] == "'") {
-            pushTokenState(token + "'", state)
-        } 
-        
-        else if (state == "string" && line[c] == '"') {
-            pushTokenState(token + '"', state)
-        } 
-        
-        else if (state != "string" && state != "quote" && line[c] == '"') {
-            pushTokenState(token, state)
-            
-            state = "string"
-            token = line[c]
-        } 
-        
-        else if (state != "string" && state != "quote" && tokenSeperators.has(line[c])) {
-            pushTokenState(token, state)
-            token = line[c]
-        }
-        
-        else {
-            if (tokenSeperators.has(token)) {
-                pushTokenState(token, state)
+
+        let output = "";
+        let tokenisedLines = []
+
+        let lines = code.split("\n")
+        let allLines = new Set(lines)
+        for (let l = 0; l < lines.length; l++) {
+            if (!this.cachedLines.hasOwnProperty(lines[l])) {
+                this.cachedLines[lines[l]] = this.tokeniseLine(lines[l])
             }
-            token += line[c]
+            tokenisedLines.push(this.cachedLines[lines[l]])
         }
+        
+        let cachedKeys = Object.keys(this.cachedLines)
+        for (let i = 0; i < cachedKeys.length; i++) {
+            if (!allLines.has(cachedKeys[i])) {
+                delete this.cachedLines[cachedKeys[i]]
+            }
+        }
+
+
+        let formattedCode = ""
+        for (let l = 0; l < tokenisedLines.length; l++) {
+            let cline = tokenisedLines[l];
+            for (let t = 0; t < cline.length; t++) {
+                formattedCode += "<span style='color:"+this.theme[cline[t].type]+"'>" + cline[t].text + "</span>"
+            }
+            formattedCode += "<br/>"
+        }
+
+        
+        this.codeElement.innerHTML(`<pre style="margin: 0px; padding: 0px;">${formattedCode}</pre>`)
+        
+        return this
     }
     
-    tokens.push({
-        "text": token,
-        "type": state
-    })
-    
-    console.log(tokens)
-    
-    return tokens
-}
+    tokeniseLine(line) {
+        let tokens = [], token = "", state = ""
 
-let output = "";
-let tokenisedLines = []
+        let self = this;
+        function pushTokenState(_text, _state) {
+            if (state == "") {
+                if (self.jsKeywords.has(_text)) {_state = "keyword"}
+                if (self.eclairKeywords.has(_text)) {_state = "eclair"}
+            }
 
-let lines = code.split("\n")
-for (let l = 0; l < lines.length; l++) {
-    tokenisedLines.push(
-        tokeniseLine(lines[l])
-    )
-}
-    
-    
-colors = {
-    "comment": "grey",
-    "keyword": "blue",
-    "eclair": "green",
-    "string": "orange",
-    "quote": "orange",
-}
-    
+            tokens.push({"text": _text, "type": _state})
+            state = "", token = ""
+        }
 
-let formattedCode = ""
-for (let l = 0; l < tokenisedLines.length; l++) {
-    let cline = tokenisedLines[l];
-    for (let t = 0; t < cline.length; t++) {
-        formattedCode += "<span style='color:"+colors[cline[t].type]+"'>" + cline[t].text + "</span>"
+        for (let c = 0; c < line.length; c++) {
+            if (state == "comment") {token += line[c]} 
+
+            else if (state != "comment" && c < line.length - 1 && line[c] == "/" && line[c + 1] == "/") {
+                pushTokenState(token, state); state = "comment"; token = line[c]
+            } 
+
+            else if (state != "quote" && state != "string" && line[c] == "'") {
+                pushTokenState(token, state)
+
+                state = "quote"; token = line[c]
+            } 
+
+            // If state is quote and char in ' then end the token state.
+            else if (state == "quote" && line[c] == "'") {pushTokenState(token + "'", state)} 
+
+            // If state is string and char in " then end the token state.
+            else if (state == "string" && line[c] == '"') {pushTokenState(token + '"', state)} 
+
+            // If not a string or quote, and the " is this then end the current token and start a string
+            else if (state != "string" && state != "quote" && line[c] == '"') {pushTokenState(token, state); state = "string"; token = line[c]} 
+
+            else if (state != "string" && state != "quote" && this.tokenSeperators.has(line[c])) {
+                pushTokenState(token, state)
+                token = line[c]
+            }
+
+            else {
+                if (this.tokenSeperators.has(token)) {
+                    pushTokenState(token, state)
+                }
+                token += line[c]
+            }
+        }
+
+        tokens.push({"text": token, "type": state})
+
+        return tokens
     }
-    formattedCode += "<br/>"
+    
+    build() {
+        return `<div>${this.codeElement.compile()}${this.textArea.compile()}</div>`
+    }
 }
+    
+    
+let highlighter = new SyntaxHighlighter()
+    .write()
 
-document.getElementById("code-output").innerHTML = formattedCode
+
 </script>
 
 </body>

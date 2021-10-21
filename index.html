@@ -47,6 +47,10 @@ VStack([
                 codeExampleTitle.value(item.name)
                 htmlCode.value(examples[item.id])
             })
+            .background("#ffffff")
+            .background("red", "hover")
+            .background("#000000", {"rule": "@media (prefers-color-scheme: dark)"})
+            .background("green", {"selector": "hover", "rule": "@media (prefers-color-scheme: dark)"})
     }),
     
     HStack([

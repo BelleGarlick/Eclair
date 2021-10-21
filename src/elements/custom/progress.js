@@ -39,11 +39,11 @@ class EclairProgressBar extends EclairComponent {
     striped(_on) {
         this.bindState(_on, "color", value => {
             if (value) {
-                this._indicator.getStyleSheet()["background-image"] = "linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent)";
-                this._indicator.getStyleSheet()["background-size"] = "1rem 1rem;";
+                this._indicator
+                    .css("background-size: 1rem 1rem; background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent)");
             } else {
-                this._indicator.getStyleSheet()["background-image"] = "";
-                this._indicator.getStyleSheet()["background-size"] = "1rem 1rem;";
+                this._indicator
+                    .css("background-size: 1rem 1rem; background-image: ;");
             }
             this._indicator.updateCSSStyle()
         }, state => {return state.bool()})

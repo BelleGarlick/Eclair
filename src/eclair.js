@@ -11,7 +11,6 @@
 // TODO State all the shared styles in docs for an object .e.g. alert box uses eclair.styles.AlertBox, ...
 // TODO Examples
 // TODO Add get/post stuff
-// TODO Add more style fucntions to remove the need for .getStyleSheet
 // TODO Make sure all args are declared in documentation
 // TODO Add enabled tag to all elements.
 // Check on change bindings
@@ -38,7 +37,7 @@
 /// # Eclair
 /// The `eclair` object allows you to easily construct an eclair object and interact in the Eclair development kit.
 let eclair = {
-    version: "0.0.84",
+    version: "0.0.85",
     _ids: 0,
     _elements: {},
     _styles: {},

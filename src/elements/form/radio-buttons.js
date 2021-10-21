@@ -5,7 +5,6 @@
 ///     .value("Option A")
 ///     .selectedIndex(0)
 /// ```
-// TODO Test trying to create a cycle with selected index and values.
 class EclairRadioButtons extends EclairComponent {
     constructor(_options) {
         super("radio-button")
