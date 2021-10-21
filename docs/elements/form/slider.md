@@ -3,7 +3,7 @@ An eclair slider allowing a user to scrub to a numeric value..
 <br/>**args**:
 - value: Value of the slider.
 ```javascript
-let value = eclair.State(0.5)
+let value = Ø(0.5)
 eclair.Slider(value)
 ```
 ### .name

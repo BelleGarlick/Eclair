@@ -9,7 +9,7 @@ class EclairProgressBar extends EclairComponent {
     constructor(_progress) {
         super("progress")
         
-        this._labelText = eclair.State("0%")
+        this._labelText = Ø("0%")
         this._label = eclair.Text(this._labelText)
         this._indicator = this._addChild(eclair.HStack([this._label]))
         

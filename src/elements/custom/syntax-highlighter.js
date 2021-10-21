@@ -11,7 +11,7 @@ class EclairSyntaxHighlighter extends EclairComponent {
             console.log("HLJS Not imported. Go to 'https://highlightjs.org/usage/' to import the stylesheet and the .js file.")
         }
         
-        this._writtenCode = eclair.State()
+        this._writtenCode = Ø()
 
         let self = this;
         this
@@ -19,7 +19,7 @@ class EclairSyntaxHighlighter extends EclairComponent {
             .width("400px")
             .height("400px")
         
-        this._html = _html == null? eclair.State() : _html
+        this._html = _html == null? Ø() : _html
 
         this._pre = this._addChild(eclair.CustomTagComponent("pre")
             .position("absolute")

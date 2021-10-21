@@ -1,7 +1,7 @@
 ## Eclair Check Box
 An eclair checkbox, similar to the toggle in the form of a traditional checkbox.
 ```javascript
-let checked = eclair.State(false)
+let checked = Ø(false)
 eclair.CheckBox(checked)
     .name("Over 18?")
 ```

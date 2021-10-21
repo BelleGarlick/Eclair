@@ -5,7 +5,7 @@
 
 
 let eclair = {
-    version: "0.0.83",
+    version: "0.0.84",
     _ids: 0,
     _elements: {},
     _styles: {},
@@ -726,6 +726,9 @@ eclair.styles = {
         .alignItems("center")
         .justifyContent("space-around"),
     
+    Form: eclair.Style("eclair-style-form")
+        .boxSizing("border-box"),
+    
     TabView: eclair.Style("eclair-style-tab-view")
         .display("flex")
         .boxSizing("border-box")
@@ -1202,10 +1205,13 @@ class EclairCustomTagComponent extends EclairComponent {
 class EclairView extends EclairComponent {
     constructor(elements, creatorFunc) {
         super("view")
+        
+        this._elementTag = "div"
+        
         this.creatorFunc = (creatorFunc != null)? creatorFunc : (e) => {return e}
         
         let self = this;
-        let items = elements instanceof Array? eclair.State(elements) : elements
+        let items = elements instanceof Array? Ø(elements) : elements
         
         let knownItems = []
         
@@ -1292,7 +1298,7 @@ class EclairView extends EclairComponent {
             }
         }
         
-        return "<div>" + code + "</div>";
+        return `<${this._elementTag}>` + code + `</${this._elementTag}>`;
     }
 }
 
@@ -1390,7 +1396,7 @@ class EclairAlertBox extends EclairComponent {
     constructor(text) {
         super("alert-box")
         
-        this._titleText = eclair.State(null)
+        this._titleText = Ø(null)
         
         this._text = this._addChild(eclair.Text(text))
         this._title = this._addChild(eclair.Text(this._titleText))
@@ -1429,7 +1435,7 @@ class EclairProgressBar extends EclairComponent {
     constructor(_progress) {
         super("progress")
         
-        this._labelText = eclair.State("0%")
+        this._labelText = Ø("0%")
         this._label = eclair.Text(this._labelText)
         this._indicator = this._addChild(eclair.HStack([this._label]))
         
@@ -1500,7 +1506,7 @@ class EclairSyntaxHighlighter extends EclairComponent {
             console.log("HLJS Not imported. Go to 'https://highlightjs.org/usage/' to import the stylesheet and the .js file.")
         }
         
-        this._writtenCode = eclair.State()
+        this._writtenCode = Ø()
 
         let self = this;
         this
@@ -1508,7 +1514,7 @@ class EclairSyntaxHighlighter extends EclairComponent {
             .width("400px")
             .height("400px")
         
-        this._html = _html == null? eclair.State() : _html
+        this._html = _html == null? Ø() : _html
 
         this._pre = this._addChild(eclair.CustomTagComponent("pre")
             .position("absolute")
@@ -1611,9 +1617,9 @@ class EclairCheckBox extends EclairComponent {
         
         this._enabled = true        
         
-        this.checked = checked instanceof EclairState? checked : eclair.State(checked)  // Parent one given by user
-        this._hiddenValue = eclair.State(false)  // Private one which is updated in the .checked callback
-        this._textValue = eclair.State("")  // Text value which is the message displayed alongside
+        this.checked = checked instanceof EclairState? checked : Ø(checked)  // Parent one given by user
+        this._hiddenValue = Ø(false)  // Private one which is updated in the .checked callback
+        this._textValue = Ø("")  // Text value which is the message displayed alongside
         
         this._label = this._addChild(eclair.Text(this._textValue))
         this._checkbox = this._addChild(eclair.CustomTagComponent("div"))
@@ -1697,38 +1703,38 @@ class EclairCheckBox extends EclairComponent {
 }
 
 // elements.form.form
-class EclairForm extends EclairComponent {
-    constructor(elements) {
-        super("form")
+class EclairForm extends EclairView {
+    constructor(elements, objectFunc) {
+        super(elements, objectFunc)
         
-        this.elements = elements;
-        this._method = "POST"
-        this._action = null;
+        this._elementTag = "form"
         
+        this.addStyle(eclair.styles.Form)
+            .removeStyle(eclair.styles.View)
+            .setAttr("method", "POST")
+            .setAttr("action", null)
     }
     
     method(_method) {
-        this._method = _method;
+        this.bindState(_method, "method", value => {
+            this.setAttr("method", value)
+        })
         return this;
     }
     
     action(_action) {
-        this._action = _action;
+        this.bindState(_action, "action", value => {
+            this.setAttr("action", value)
+        })
         return this;
     }
     
-    submit() {
-        alert("Submit called")
-    }
-    
-    build() {
-        let code = `<form>`
-        for (let n = 0; n < this.elements.length; n++) {
-            code += this.elements[n].compile();
-        }
-        code += "</form>"
-        
-        return code;
+    submit(state) {
+        this.bindState(state, "submit", value => {
+            this.getElement(e => {
+                e.submit();
+            })
+        }, state => {return state.bool()})
     }
 }
 
@@ -1761,7 +1767,7 @@ class EclairRadioButtons extends EclairComponent {
     constructor(_options) {
         super("radio-button")
         
-        this._options = _options instanceof EclairState? _options : eclair.State(_options)
+        this._options = _options instanceof EclairState? _options : Ø(_options)
         this._selectedIndex = -1
         this._selectedValue = State("")
         
@@ -1813,12 +1819,12 @@ class EclairRadioButtons extends EclairComponent {
     value(_value) {
         this.bindState(_value, "value", value => {
             if (value != this._selectedValue.value()) {
-                let newIndex = this._updateSelectedItemStyles(item)
+                let newIndex = this._updateSelectedItemStyles(value)
                 
                 this._selectedIndex = newIndex;
                 this._selectedValue.value(value, self)
                 
-                if (this.stateBindings.hasOwnProperty("index")) {this.stateBindings["index"].value(newIndex, sethislf)}
+                if (this.stateBindings.hasOwnProperty("index")) {this.stateBindings["index"].value(newIndex, this)}
                 if (this.getElement() != null) {this.performCallback("onChange")}
             }
         })
@@ -1836,14 +1842,14 @@ class EclairRadioButtons extends EclairComponent {
                     this._view.children[i].selected(match)
                     if (match) {newValue = this._options.get(i);}
                 }
-
+                
                 this._selectedIndex = value;
                 this._selectedValue.value(newValue, self)
                 
-                if (this.stateBindings.hasOwnProperty("value")) {this.stateBindings["value"].value(newValue, sethislf)}
+                if (this.stateBindings.hasOwnProperty("value")) {this.stateBindings["value"].value(newValue, this)}
                 if (this.getElement() != null) {this.performCallback("onChange")}
             }
-        })
+        }, state => {return state.int(0)})
         
         return this
     }
@@ -2185,7 +2191,7 @@ class EclairTextBox extends EclairCustomTagComponent {
         
         let self = this
         
-        this.valueBinding = _text instanceof EclairState? _text : eclair.State(_text == null? "": _text)
+        this.valueBinding = _text instanceof EclairState? _text : Ø(_text == null? "": _text)
         
         this.bindState(this.valueBinding, "value", value => {
             this.setAttr("value", value)
@@ -2278,7 +2284,7 @@ class EclairToggle extends EclairComponent {
         this._tickMark = this._addChild(eclair.Text("✓"))
         this._knob = this._addChild(eclair.View())
         
-        this._value = eclair.State((_value instanceof EclairState)? _value.bool() : _value)
+        this._value = Ø((_value instanceof EclairState)? _value.bool() : _value)
         this._hiddenComponent = eclair.HiddenInput(this._value)
     
         this.bindState(_value, "toggle", value => {

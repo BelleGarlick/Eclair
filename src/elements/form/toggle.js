@@ -1,7 +1,7 @@
 /// ## Eclair Toggle
 /// An eclair toggle element.
 /// ```javascript
-/// let on = eclair.State(true)
+/// let on = Ø(true)
 /// eclair.Toggle(on)
 /// ```
 class EclairToggle extends EclairComponent {
@@ -17,7 +17,7 @@ class EclairToggle extends EclairComponent {
         this._tickMark = this._addChild(eclair.Text("✓"))
         this._knob = this._addChild(eclair.View())
         
-        this._value = eclair.State((_value instanceof EclairState)? _value.bool() : _value)
+        this._value = Ø((_value instanceof EclairState)? _value.bool() : _value)
         this._hiddenComponent = eclair.HiddenInput(this._value)
     
         // Bind this object with the given eclair states

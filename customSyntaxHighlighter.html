@@ -5,13 +5,29 @@
 </head>
 <body>
 
-<div>
-    <code><pre id='code-output'></pre></code>
-</div>
-<textarea id='code-box' cols=50 rows=0>// Example Toggle Code
-let toggleOn = eclair.State(true)
-let toggleTick = eclair.State(false)
-let toggleEnabled = eclair.State(true)
+<style>
+    .child {
+        position: absolute; 
+        top: 0px; 
+        left: 0px; 
+        width: 100%; 
+        height: 100%;
+        margin: 10px;
+        padding: 10px;
+        font-size: 14px;
+        font-family: monospace;
+        border: 0px
+    }
+</style>
+    
+<div style="position: relative; width: 500px; height: 500px; overflow: hidden;">
+    <div class="child">
+        <code><pre style="margin: 0px; padding: 0px;" id='code-output'></pre></code>
+    </div>
+    <textarea class="child" style="background: transparent; color: rgb(1, 1, 1, 0.4)" id='code-box' cols=50 rows=0>// Example Toggle Code
+let toggleOn = Ø(true)
+let toggleTick = Ø(false)
+let toggleEnabled = Ø(true)
 
 // Create layout
 eclair.VStack([
@@ -41,7 +57,10 @@ eclair.VStack([
 ])
     .alignment(eclair.Alignment().start())
     .gap("8px")
-    .write()</textarea><br/>
+    .write()</textarea>
+</div>
+
+<br/>
     
 <script>
 let code = document.getElementById('code-box').value;
@@ -57,10 +76,10 @@ let tokenSeperators = new Set([
 	"{", "(", " ", "}", ")", "[", "]", "\n", "\t", "."
 ])
 let eclairKeywords = new Set([
-	"VStack", "HStack", "State", "Toggle", "Text", "HorizontalLine", "Alignment", "eclair"
+	"VStack", "HStack", "State", "Toggle", "Text", "HorizontalLine", "Alignment", "eclair", "Ø"
 ])
 let jsKeywords = new Set([
-	"let", "var", "if", "true", "false"
+	"let", "var", "if", "true", "false", "const", "for", "while"
 ])
 
 
@@ -87,7 +106,6 @@ function tokeniseLine(line) {
         if (state == "comment") {
             token += line[c]
         } 
-        
         
         else if (state != "comment" && c < code.length - 1 && line[c] == "/" && line[c + 1] == "/") {
             pushTokenState(token, state)
@@ -158,7 +176,6 @@ colors = {
     "eclair": "green",
     "string": "orange",
     "quote": "orange",
-    "quote": "black"
 }
     
 

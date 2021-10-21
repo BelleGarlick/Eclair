@@ -16,6 +16,9 @@ eclair.styles = {
         .alignItems("center")
         .justifyContent("space-around"),
     
+    Form: eclair.Style("eclair-style-form")
+        .boxSizing("border-box"),
+    
     TabView: eclair.Style("eclair-style-tab-view")
         .display("flex")
         .boxSizing("border-box")

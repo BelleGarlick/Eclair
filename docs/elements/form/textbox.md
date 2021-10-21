@@ -3,7 +3,7 @@ An eclair textbox element.
 <br/>**args**:
 - _text: The value of the text element.
 ```javascript
-eclair.Textbox(eclair.State(""))
+eclair.Textbox(Ø(""))
     .placeholder("Enter your name here...")
 ```
 ### .name

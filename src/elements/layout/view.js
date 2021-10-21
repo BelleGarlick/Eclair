@@ -27,6 +27,9 @@
 class EclairView extends EclairComponent {
     constructor(elements, creatorFunc) {
         super("view")
+        
+        this._elementTag = "div"
+        
         this.creatorFunc = (creatorFunc != null)? creatorFunc : (e) => {return e}
         
         let self = this;
@@ -129,6 +132,6 @@ class EclairView extends EclairComponent {
             }
         }
         
-        return "<div>" + code + "</div>";
+        return `<${this._elementTag}>` + code + `</${this._elementTag}>`;
     }
 }

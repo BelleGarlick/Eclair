@@ -17,21 +17,21 @@
 var text1 = eclair.View([eclair.Text("Tab A")])
 var text2 = eclair.View([eclair.Text("Tab B")])
 
-eclair.TabView(eclair.State(0), [text1, text2]).write()
+eclair.TabView(Ø(0), [text1, text2]).write()
 
 evaluate('elements.layout.tabs: 1', 1, window.getComputedStyle(text2.getElement(), null).display, "none")
 
 console.log('elements.layout.tabs: 2')
 var text1 = eclair.View([eclair.Text("Tab A")])
 var text2 = eclair.View([eclair.Text("Tab B")])
-eclair.TabView(eclair.State(1), [text1, text2]).write()
+eclair.TabView(Ø(1), [text1, text2]).write()
 
 evaluate('elements.layout.tabs: 2', 1, window.getComputedStyle(text1.getElement(), null).display, "none")
 
 console.log('elements.layout.tabs: 3')
 var text1 = eclair.View([eclair.Text("Tab A")])
 var text2 = eclair.View([eclair.Text("Tab B")])
-var state1 = eclair.State(0)
+var state1 = Ø(0)
 eclair.TabView(state1, [text1, text2]).write()
 
 evaluate('elements.layout.tabs: 3', 1, window.getComputedStyle(text2.getElement(), null).display, "none")
@@ -51,9 +51,9 @@ evaluate('elements.standard.link: 1', 3, element.getAttribute("target"), "_blank
 
 
 console.log('elements.standard.link: 2')
-var object = eclair.Link(eclair.State("Test"))
-                .url(eclair.State("www.w3schools.com"))
-                .target(eclair.State("_blank"))
+var object = eclair.Link(Ø("Test"))
+                .url(Ø("www.w3schools.com"))
+                .target(Ø("_blank"))
                 .write()
 
 var element = object.getElement()
@@ -64,9 +64,9 @@ evaluate('elements.standard.link: 2', 3, element.getAttribute("target"), "_blank
 
 
 console.log('elements.standard.link: 3')
-var state1 = eclair.State("Test")
-var state2 = eclair.State("www.w3schools.com")
-let state3 = eclair.State("_blank")
+var state1 = Ø("Test")
+var state2 = Ø("www.w3schools.com")
+let state3 = Ø("_blank")
 
 var object = eclair.Link(state1)
                 .url(state2)

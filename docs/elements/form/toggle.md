@@ -1,7 +1,7 @@
 ## Eclair Toggle
 An eclair toggle element.
 ```javascript
-let on = eclair.State(true)
+let on = Ø(true)
 eclair.Toggle(on)
 ```
 ### .knob

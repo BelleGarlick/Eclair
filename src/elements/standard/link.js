@@ -62,9 +62,9 @@ var element = object.getElement()
 
 
 *** TEST 
-var object = eclair.Link(eclair.State("Test"))
-                .url(eclair.State("www.w3schools.com"))
-                .target(eclair.State("_blank"))
+var object = eclair.Link(Ø("Test"))
+                .url(Ø("www.w3schools.com"))
+                .target(Ø("_blank"))
                 .write()
 
 var element = object.getElement()
@@ -75,9 +75,9 @@ var element = object.getElement()
 
 
 *** TEST 
-var state1 = eclair.State("Test")
-var state2 = eclair.State("www.w3schools.com")
-let state3 = eclair.State("_blank")
+var state1 = Ø("Test")
+var state2 = Ø("www.w3schools.com")
+let state3 = Ø("_blank")
 
 var object = eclair.Link(state1)
                 .url(state2)

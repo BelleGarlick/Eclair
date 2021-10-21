@@ -48,21 +48,21 @@ class EclairTabView extends EclairView {
 var text1 = eclair.View([eclair.Text("Tab A")])
 var text2 = eclair.View([eclair.Text("Tab B")])
 
-eclair.TabView(eclair.State(0), [text1, text2]).write()
+eclair.TabView(Ø(0), [text1, text2]).write()
 
 **eval(window.getComputedStyle(text2.getElement(), null).display, "none")
 
 *** TEST 
 var text1 = eclair.View([eclair.Text("Tab A")])
 var text2 = eclair.View([eclair.Text("Tab B")])
-eclair.TabView(eclair.State(1), [text1, text2]).write()
+eclair.TabView(Ø(1), [text1, text2]).write()
 
 **eval(window.getComputedStyle(text1.getElement(), null).display, "none")
 
 *** TEST 
 var text1 = eclair.View([eclair.Text("Tab A")])
 var text2 = eclair.View([eclair.Text("Tab B")])
-var state1 = eclair.State(0)
+var state1 = Ø(0)
 eclair.TabView(state1, [text1, text2]).write()
 
 **eval(window.getComputedStyle(text2.getElement(), null).display, "none")

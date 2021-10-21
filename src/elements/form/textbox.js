@@ -3,7 +3,7 @@
 /// <br/>**args**:
 /// - _text: The value of the text element.
 /// ```javascript
-/// eclair.Textbox(eclair.State(""))
+/// eclair.Textbox(Ø(""))
 ///     .placeholder("Enter your name here...")
 /// ```
 class EclairTextBox extends EclairCustomTagComponent {
@@ -14,7 +14,7 @@ class EclairTextBox extends EclairCustomTagComponent {
         
         let self = this
         
-        this.valueBinding = _text instanceof EclairState? _text : eclair.State(_text == null? "": _text)
+        this.valueBinding = _text instanceof EclairState? _text : Ø(_text == null? "": _text)
         
         // Binding
         this.bindState(this.valueBinding, "value", value => {

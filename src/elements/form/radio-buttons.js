@@ -84,12 +84,12 @@ class EclairRadioButtons extends EclairComponent {
     value(_value) {
         this.bindState(_value, "value", value => {
             if (value != this._selectedValue.value()) {
-                let newIndex = this._updateSelectedItemStyles(item)
+                let newIndex = this._updateSelectedItemStyles(value)
                 
                 this._selectedIndex = newIndex;
                 this._selectedValue.value(value, self)
                 
-                if (this.stateBindings.hasOwnProperty("index")) {this.stateBindings["index"].value(newIndex, sethislf)}
+                if (this.stateBindings.hasOwnProperty("index")) {this.stateBindings["index"].value(newIndex, this)}
                 if (this.getElement() != null) {this.performCallback("onChange")}
             }
         })
@@ -115,14 +115,14 @@ class EclairRadioButtons extends EclairComponent {
                     this._view.children[i].selected(match)
                     if (match) {newValue = this._options.get(i);}
                 }
-
+                
                 this._selectedIndex = value;
                 this._selectedValue.value(newValue, self)
                 
-                if (this.stateBindings.hasOwnProperty("value")) {this.stateBindings["value"].value(newValue, sethislf)}
+                if (this.stateBindings.hasOwnProperty("value")) {this.stateBindings["value"].value(newValue, this)}
                 if (this.getElement() != null) {this.performCallback("onChange")}
             }
-        })
+        }, state => {return state.int(0)})
         
         return this
     }
