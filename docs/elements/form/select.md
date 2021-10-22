@@ -5,14 +5,6 @@ An eclair Select object.
 ```javascript
 eclair.Select(["apple", "orange", "banana"])
 ```
-### .name
-Set the name attribute for this element (used in forms).
-<br/>**args**:
-- name: The name attribute name given to the element.
-```javascript
-eclair.Select(["apple", "orange", "banana"])
-    .name("fname")
-```
 ### .value
 A value which represents the selected item of the select box.
 <br/>**args**:

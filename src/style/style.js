@@ -43,6 +43,7 @@ class EclairStylableObject {
                 }
                 styleCode += `${self._stylePrefix}${objectID}${selector}{${styleSheetCode}}`;
             });
+            
             return styleCode
         }
         
@@ -99,7 +100,10 @@ class EclairStylableObject {
         if (_rule != null) {
             if (_rule.hasOwnProperty("selector") || _rule.hasOwnProperty("rule")) {
                 if (_rule.hasOwnProperty("selector")) {selector = _rule["selector"]}
-                if (_rule.hasOwnProperty("rule")) {rule = _rule["rule"]}
+                if (_rule.hasOwnProperty("rule")) {
+                    rule = _rule["rule"]
+                    if (rule == "darkmode") {rule = "@media (prefers-color-scheme: dark)"}
+                }
             } else {
                 selector = _rule
             }
@@ -123,6 +127,7 @@ class EclairStylableObject {
     display(_display, rule) {return this._set("display", _display, rule)}
     background(_background, rule) {return this._set("background", _background, rule)}
     backgroundColor(_color, rule) {return this._set("background-color", _color, rule)}
+    backgroundSize(_color, rule) {return this._set("background-size", _color, rule)}
     borderSize(_size, rule) {return this._set("border-width", _size, rule)}
     borderColor(_color, rule) {return this._set("border-color", _color, rule)}
     borderStyle(_style, rule) {return this._set("border-style", _style, rule)}
@@ -140,7 +145,11 @@ class EclairStylableObject {
     fontColor(_color, rule) {return this._set("color", _color, rule)}
     fontWeight(_weight, rule) {return this._set("font-weight", _weight, rule)}
     width(_width, rule) {return this._set("width", _width, rule)}
+    maxWidth(_width, rule) {return this._set("max-width", _width, rule)}
+    minWidth(_width, rule) {return this._set("min-width", _width, rule)}
     height(_height, rule) {return this._set("height", _height, rule)}
+    maxHeight(_height, rule) {return this._set("max-height", _height, rule)}
+    minHeight(_height, rule) {return this._set("min-height", _height, rule)}
     opacity(_opacity, rule) {return this._set("opacity", _opacity, rule)}
     textAlign(_align, rule) {return this._set("text-align", _align, rule)}
     verticalAlign(_align, rule) {return this._set("vertical-align", _align, rule)}
@@ -164,6 +173,8 @@ class EclairStylableObject {
     overflow(_value, rule) {return this._set("overflow", _value, rule)}
     overflowX(_value, rule) {return this._set("overflow-x", _value, rule)}
     overflowY(_value, rule) {return this._set("overflow-y", _value, rule)}
+    lineHeight(_value, rule) {return this._set("line-height", _value, rule)}
+    appearance(_value, rule) {return this._set("-webkit-appearance", _value, rule)._set("appearance", _value, rule)}
     
     // Flex model relations
     flexDirection(_value, selector) {return this._set("flex-direction", _value, selector)}

@@ -5,7 +5,7 @@
 
 
 let eclair = {
-    version: "0.0.85",
+    version: "0.0.86",
     _ids: 0,
     _elements: {},
     _styles: {},
@@ -31,7 +31,6 @@ let eclair = {
     VStack: function(_elements, _func) {return new EclairVStack(_elements, _func);},
     HStack: function(_elements, _func) {return new EclairHStack(_elements, _func);},
     TabView: function(_tab, _elements) {return new EclairTabView(_tab, _elements);},
-    ForEach: function(_state, _func) {return new EclairForEach(_state, _func);},
     
     CustomTagComponent: function(tag) {return new EclairCustomTagComponent(tag);},
     
@@ -587,6 +586,7 @@ class EclairStylableObject {
                 }
                 styleCode += `${self._stylePrefix}${objectID}${selector}{${styleSheetCode}}`;
             });
+            
             return styleCode
         }
         
@@ -643,7 +643,10 @@ class EclairStylableObject {
         if (_rule != null) {
             if (_rule.hasOwnProperty("selector") || _rule.hasOwnProperty("rule")) {
                 if (_rule.hasOwnProperty("selector")) {selector = _rule["selector"]}
-                if (_rule.hasOwnProperty("rule")) {rule = _rule["rule"]}
+                if (_rule.hasOwnProperty("rule")) {
+                    rule = _rule["rule"]
+                    if (rule == "darkmode") {rule = "@media (prefers-color-scheme: dark)"}
+                }
             } else {
                 selector = _rule
             }
@@ -666,6 +669,7 @@ class EclairStylableObject {
     display(_display, rule) {return this._set("display", _display, rule)}
     background(_background, rule) {return this._set("background", _background, rule)}
     backgroundColor(_color, rule) {return this._set("background-color", _color, rule)}
+    backgroundSize(_color, rule) {return this._set("background-size", _color, rule)}
     borderSize(_size, rule) {return this._set("border-width", _size, rule)}
     borderColor(_color, rule) {return this._set("border-color", _color, rule)}
     borderStyle(_style, rule) {return this._set("border-style", _style, rule)}
@@ -683,7 +687,11 @@ class EclairStylableObject {
     fontColor(_color, rule) {return this._set("color", _color, rule)}
     fontWeight(_weight, rule) {return this._set("font-weight", _weight, rule)}
     width(_width, rule) {return this._set("width", _width, rule)}
+    maxWidth(_width, rule) {return this._set("max-width", _width, rule)}
+    minWidth(_width, rule) {return this._set("min-width", _width, rule)}
     height(_height, rule) {return this._set("height", _height, rule)}
+    maxHeight(_height, rule) {return this._set("max-height", _height, rule)}
+    minHeight(_height, rule) {return this._set("min-height", _height, rule)}
     opacity(_opacity, rule) {return this._set("opacity", _opacity, rule)}
     textAlign(_align, rule) {return this._set("text-align", _align, rule)}
     verticalAlign(_align, rule) {return this._set("vertical-align", _align, rule)}
@@ -707,6 +715,8 @@ class EclairStylableObject {
     overflow(_value, rule) {return this._set("overflow", _value, rule)}
     overflowX(_value, rule) {return this._set("overflow-x", _value, rule)}
     overflowY(_value, rule) {return this._set("overflow-y", _value, rule)}
+    lineHeight(_value, rule) {return this._set("line-height", _value, rule)}
+    appearance(_value, rule) {return this._set("-webkit-appearance", _value, rule)._set("appearance", _value, rule)}
     
     flexDirection(_value, selector) {return this._set("flex-direction", _value, selector)}
     alignItems(_value, selector) {return this._set("align-items", _value, selector)}
@@ -795,8 +805,8 @@ eclair.styles = {
     Slider: eclair.Style("eclair-style-slider")
         .transition("0.2s all")
         .css("-webkit-appearance: none; box-sizing: border-box; outline: none;")
-        .css("-webkit-appearance: none; appearance: none;", ":-webkit-slider-thumb")
-        .css("-webkit-appearance: none; appearance: none;", ":-moz-slider-thumb")
+        .appearance("none", ":-webkit-slider-thumb")
+        .appearance("none", ":-moz-slider-thumb")
         .cursor("pointer", ":-webkit-slider-thumb")
         .cursor("pointer", ":-moz-slider-thumb")
         .background("#d3d3d3")
@@ -1286,6 +1296,8 @@ class EclairView extends EclairComponent {
                 
                 knownItems = []
                 for (let i = 0; i < array.length; i++) {knownItems.push(array[i])}
+                
+                this._onItemsChanged()
             })
         }
         
@@ -1309,6 +1321,8 @@ class EclairView extends EclairComponent {
 
         return resultantMap
     }
+    
+    _onItemsChanged() {}
     
     
     build () {                
@@ -1487,10 +1501,12 @@ class EclairProgressBar extends EclairComponent {
         this.bindState(_on, "color", value => {
             if (value) {
                 this._indicator
-                    .css("background-size: 1rem 1rem; background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent)");
+                    .backgroundSize("1rem 1rem")
+                    .css("background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent)");
             } else {
                 this._indicator
-                    .css("background-size: 1rem 1rem; background-image: ;");
+                    .backgroundSize("1rem 1rem")
+                    .css("background-image: ;");
             }
             this._indicator.updateCSSStyle()
         }, state => {return state.bool()})
@@ -1556,8 +1572,9 @@ class EclairSyntaxHighlighter extends EclairComponent {
             .top("0px")
             .left("0px")
             .background("white")
-            .css("box-sizing: border-box;line-height: 1.05"))
-
+            .boxSizing("border-box")
+            .lineHeight("1.05")
+                                   
         this._code = this._addChild(eclair.CustomTagComponent("code")
             .position("absolute")
             .top("0px")
@@ -1968,106 +1985,49 @@ class EclairRatioItem extends EclairHStack {
 
 
 // elements.form.select
-class EclairSelect extends EclairComponent {
-    constructor(_options) {
-        super("select")
+class EclairNewSelect extends EclairView {
+    constructor(elements) {
+        super(elements, item => {
+            return eclair.CustomTagComponent("option").innerHTML(item)
+        })
         
-        this._items = []
         this._selectedIndex = 0
-        this._bindOptions(_options)
-          
+        this._selectedValue = null
+        
         this.overrideOnChangeCallback = null
-        this._updateCallback("onChange", e => {
-            this.getElement(select => {
-                if (this.stateBindings.hasOwnProperty("value")) {
-                    this.stateBindings["value"].value(select.value)
-                }
-
-                if (this.stateBindings.hasOwnProperty("index")) {
-                    this.stateBindings["index"].value(select.selectedIndex)
-                }
-            })
-
-            if (this.overrideOnChangeCallback != null) {
-                this.overrideOnChangeCallback(this)
-            }
+        this._updateCallback("onChange", (select, ev) => {
+            this._updateSelected(select.selectedIndex, select.value)
         })
         
         this.addStyle(eclair.styles.Select)
+            .removeStyle(eclair.styles.View)
     }
     
-    _bindOptions(_options) {
-        if (_options instanceof Array) {
-            for (let i = 0; i < _options.length; i++) {
-                this._items.push(_options[i])
-            }
-        } else if (_options instanceof EclairState && _options.isArray()) {
-            this.bindState(_options, "options", array => {
-                let itemSet = new Set(this._items)
-                for (let i = 0; i < array.length; i++) {
-                    let newOption = array[i]
-                    if (!itemSet.has(newOption)) {
-                        this._items.push(newOption)
-                        itemSet.add(newOption)
-                        
-                        this.getElement(e => {
-                            let opt = document.createElement("option")
-                            opt.innerHTML = newOption
-                            e.appendChild(opt)
-                        })
-                    }
-                } 
-                
-                let stateItems = new Set(array)
-                for (let i = this._items.length - 1; i >= 0; i--) {
-                    let cOption = this._items[i]
-                    if (!stateItems.has(cOption)) {
-                        this._items.splice(i, 1)
-                        stateItems.delete(cOption)
-                        
-                        this.getElement(e => {
-                            e.removeChild(e.children[i])
-                        })
-                    }
-                } 
-                
-            })
-        } else {
-            throw "Unknown select options type. Should be either a javascript Array or an EclairState Array"
-        }
-    }
     
     onChange(callback) {
         this.overrideOnChangeCallback = callback
         return this;
     }
     
-    name(_name) {
-        this.bindState(_name, "name", value => {
-            this.setAttr("name", _name)
-        })
-        return this
-    }
-    
     value(_value) {
         this.bindState(_value, "value", value => {
-            for (let i = 0; i < this._items.length; i++) {
-                if (this._items[i] == value) {
-                    if (this._selectedIndex != i) {
-                        if (this.overrideOnChangeCallback != null) {
-                            this.overrideOnChangeCallback(this)
-                        }
-                    
-                        this._selectedIndex = i
-                        this.getElement(elem => {elem.selectedIndex = i})
-                        
-                        if (this.stateBindings.hasOwnProperty("index")) {
-                            this.stateBindings["index"].value(i)
-                        }
+            if (value != this._selectedValue) {
+                this._selectedValue = value
+                
+                let newIndex = -1
+                for (let i = 0; i < this.items.length(); i++) {
+                    if (this.items.get(i) == value) {
+                        newIndex = i; break
                     }
-                    
-                    break
                 }
+                if (newIndex != this.selectedIndex) {
+                    this.selectedIndex = newIndex
+                    if (this.stateBindings.hasOwnProperty("index")) {this.stateBindings["index"].value(i, this)}
+                }
+                
+                this.getElement(elem => {elem.value = value})
+                
+                if (this.overrideOnChangeCallback != null) {this.overrideOnChangeCallback(this, ev)}
             }
         })
         
@@ -2076,30 +2036,80 @@ class EclairSelect extends EclairComponent {
     
     selectedIndex(_index) {
         this.bindState(_index, "index", value => {
-            if (this._selectedIndex != value) {
-                if (this.overrideOnChangeCallback != null) {
-                    this.overrideOnChangeCallback(this)
-                }
-            
+            if (value != this._selectedIndex) {
                 this._selectedIndex = value
-                this.getElement(elem => {elem.selectedIndex = `${value}`}) 
                 
-                if (this.stateBindings.hasOwnProperty("value")) {
-                    this.stateBindings["value"].value(this._items[value])
+                let newValue = ""
+                if (value < this.items.length() && value >= 0) {
+                    newValue = this.itens.get(value)
                 }
+                
+                if (newValue != this._selectedValue) {
+                    this._selectedValue = newValue
+                    if (this.stateBindings.hasOwnProperty("value")) {this.stateBindings["value"].value(i, this)}
+                }
+                
+                this.getElement(elem => {elem.selectedIndex = value})
+                
+                if (this.overrideOnChangeCallback != null) {this.overrideOnChangeCallback(this, ev)}
             }
-        }, state => {return state.int(0)})
+        }, state => {return state.int()})
         
         return this
     }
     
-    build() {
-        let options = ""
-        for (let n = 0; n < this._items.length; n++) {
-            options += `<option${this._selectedIndex == n? " selected" : ""}>${this._items[n]}</option>`;
+    _updateSelected(_index, _value) {
+        if (_index != this._selectedIndex) {
+            this._selectedIndex = _index
+            
+            if (this.stateBindings.hasOwnProperty("index")) {
+                this.stateBindings["index"].value(select.selectedIndex, this)
+            }
+        }
+        if (_value != this._selectedValue) {
+            this._selectedValue= _value
+            
+            if (this.stateBindings.hasOwnProperty("value")) {
+                this.stateBindings["value"].value(select.value, this)
+            }
         }
         
-        return `<select>${options}</select>`
+        if (this.overrideOnChangeCallback != null) {this.overrideOnChangeCallback(this, ev)}
+    }
+    
+    _onItemsChanged() {
+        let newIndex = 0
+        let newValue = null
+        
+        if (this.items.length() > 0) {
+            newIndex = 0
+            newValue = this.items.get(0)
+            
+            this.getElement(e => {
+                for (let i = 1; i < this.items.length(); i++) {
+                    if (i == e.selectedIndex) {
+                        newIndex = i
+                        newValue = this.items.get(i)
+                    }
+                }
+            })
+        } 
+        
+        this._updateSelected(newIndex, newValue)
+    }
+    
+    build () {                
+        let code = ""
+        for (let e = 0; e < this.children.length; e++) {
+            let child = this.children[e]
+            if (e == this._selectedIndex) {
+                child.setAttr("selected", "true")
+            }
+                
+            code += child.compile()
+        }
+        
+        return `<select>` + code + `</select>`;
     }
 }
 

@@ -85,6 +85,9 @@ class EclairView extends EclairComponent {
                 // Add all elements to the known elements array so we known what changes when the array changes
                 knownItems = []
                 for (let i = 0; i < array.length; i++) {knownItems.push(array[i])}
+                
+                // Update and children elements calling this object.
+                this._onItemsChanged()
             })
         }
         
@@ -112,6 +115,9 @@ class EclairView extends EclairComponent {
 
         return resultantMap
     }
+    
+    // Overrideable method for child elements to know if items have been updated
+    _onItemsChanged() {}
     
     
     build () {                

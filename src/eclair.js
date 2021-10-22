@@ -1,4 +1,4 @@
-// TODO Add events to callbacks (mousemove position etc)
+// TODO Add events to callbacks (mousemove position etc) and make sure all overrides are correct
 // TODO Prevent layered on click events
 // TODO Hide show elements
 // TODO Implement these: https://getbootstrap.com/docs/4.0/components/progress/
@@ -11,6 +11,7 @@
 // TODO State all the shared styles in docs for an object .e.g. alert box uses eclair.styles.AlertBox, ...
 // TODO Examples
 // TODO Add get/post stuff
+// TODO Add on change callback to element changing
 // TODO Make sure all args are declared in documentation
 // TODO Add enabled tag to all elements.
 // Check on change bindings
@@ -37,7 +38,7 @@
 /// # Eclair
 /// The `eclair` object allows you to easily construct an eclair object and interact in the Eclair development kit.
 let eclair = {
-    version: "0.0.85",
+    version: "0.0.86",
     _ids: 0,
     _elements: {},
     _styles: {},
@@ -66,7 +67,6 @@ let eclair = {
     VStack: function(_elements, _func) {return new EclairVStack(_elements, _func);},
     HStack: function(_elements, _func) {return new EclairHStack(_elements, _func);},
     TabView: function(_tab, _elements) {return new EclairTabView(_tab, _elements);},
-    ForEach: function(_state, _func) {return new EclairForEach(_state, _func);},
     
     CustomTagComponent: function(tag) {return new EclairCustomTagComponent(tag);},
     

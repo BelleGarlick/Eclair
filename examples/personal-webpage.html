@@ -4,7 +4,7 @@
     
     let linkStyle = eclair.Style()
         .padding("10px 16px")
-        .css("text-decoration: none", "hover")  
+        .textDecoration("none", "hover")
         .fontColor("black")
         .background(eclair.Color().rgb(240, 240, 240))
         .background(eclair.Color().rgb(220, 220, 220), "hover")
@@ -37,7 +37,7 @@
             .height("200px")    
             .background("url('https://cdn.pixabay.com/photo/2020/05/15/14/03/lake-5173683_1280.jpg')")
             .justifyContent("space-between")
-            .css("background-size: cover;")
+            .backgroundSize("cover")
             .width("100%"),
         
         VStack([

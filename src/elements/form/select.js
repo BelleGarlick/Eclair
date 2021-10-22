@@ -5,105 +5,30 @@
 /// ```javascript
 /// eclair.Select(["apple", "orange", "banana"])
 /// ```
-class EclairSelect extends EclairComponent {
-    constructor(_options) {
-        super("select")
+class EclairNewSelect extends EclairView {
+    constructor(elements) {
+        super(elements, item => {
+            return eclair.CustomTagComponent("option").innerHTML(item)
+        })
         
-        this._items = []
         this._selectedIndex = 0
-        this._bindOptions(_options)
-          
+        this._selectedValue = null
+        
         // Add callback for when the user actively changes the selected value
         this.overrideOnChangeCallback = null
-        this._updateCallback("onChange", e => {
-            this.getElement(select => {
-                // If a value binding exists, update it
-                if (this.stateBindings.hasOwnProperty("value")) {
-                    this.stateBindings["value"].value(select.value)
-                }
-
-                // If an index binding exists, update it
-                if (this.stateBindings.hasOwnProperty("index")) {
-                    this.stateBindings["index"].value(select.selectedIndex)
-                }
-            })
-
-            // Call the override on change function
-            if (this.overrideOnChangeCallback != null) {
-                this.overrideOnChangeCallback(this)
-            }
+        this._updateCallback("onChange", (select, ev) => {
+            this._updateSelected(select.selectedIndex, select.value)
         })
         
         this.addStyle(eclair.styles.Select)
+            .removeStyle(eclair.styles.View)
     }
     
-    _bindOptions(_options) {
-        if (_options instanceof Array) {
-            for (let i = 0; i < _options.length; i++) {
-                this._items.push(_options[i])
-            }
-        } else if (_options instanceof EclairState && _options.isArray()) {
-            // Add binding for the options
-            // TODO Insert at right position
-            this.bindState(_options, "options", array => {
-                let itemSet = new Set(this._items)
-                for (let i = 0; i < array.length; i++) {
-                    let newOption = array[i]
-                    if (!itemSet.has(newOption)) {
-                        this._items.push(newOption)
-                        itemSet.add(newOption)
-                        
-                        // Add to ui if exists
-                        this.getElement(e => {
-                            let opt = document.createElement("option")
-                            opt.innerHTML = newOption
-                            e.appendChild(opt)
-                        })
-                    }
-                } 
-                
-                // Removing items
-                let stateItems = new Set(array)
-                for (let i = this._items.length - 1; i >= 0; i--) {
-                    let cOption = this._items[i]
-                    if (!stateItems.has(cOption)) {
-                        this._items.splice(i, 1)
-                        stateItems.delete(cOption)
-                        
-                        // Add to ui if exists
-                        this.getElement(e => {
-                            e.removeChild(e.children[i])
-                        })
-                    }
-                } 
-                
-                // TODO alert the selected item maybe
-                // TODO On change items, set the value and index function 
-            })
-        } else {
-            throw "Unknown select options type. Should be either a javascript Array or an EclairState Array"
-        }
-    }
     
-    // No need to doc, overriden method.
+    // Override onChange callback 
     onChange(callback) {
         this.overrideOnChangeCallback = callback
         return this;
-    }
-    
-    /// ### .name
-    /// Set the name attribute for this element (used in forms).
-    /// <br/>**args**:
-    /// - name: The name attribute name given to the element.
-    /// ```javascript
-    /// eclair.Select(["apple", "orange", "banana"])
-    ///     .name("fname")
-    /// ```
-    name(_name) {
-        this.bindState(_name, "name", value => {
-            this.setAttr("name", _name)
-        })
-        return this
     }
     
     /// ### .value
@@ -116,25 +41,23 @@ class EclairSelect extends EclairComponent {
     /// ```
     value(_value) {
         this.bindState(_value, "value", value => {
-            for (let i = 0; i < this._items.length; i++) {
-                if (this._items[i] == value) {
-                    // If value changes then call on change
-                    if (this._selectedIndex != i) {
-                        if (this.overrideOnChangeCallback != null) {
-                            this.overrideOnChangeCallback(this)
-                        }
-                    
-                        this._selectedIndex = i
-                        this.getElement(elem => {elem.selectedIndex = i})
-                        
-                        // Update the selected index
-                        if (this.stateBindings.hasOwnProperty("index")) {
-                            this.stateBindings["index"].value(i)
-                        }
+            if (value != this._selectedValue) {
+                this._selectedValue = value
+                
+                let newIndex = -1
+                for (let i = 0; i < this.items.length(); i++) {
+                    if (this.items.get(i) == value) {
+                        newIndex = i; break
                     }
-                    
-                    break
                 }
+                if (newIndex != this.selectedIndex) {
+                    this.selectedIndex = newIndex
+                    if (this.stateBindings.hasOwnProperty("index")) {this.stateBindings["index"].value(i, this)}
+                }
+                
+                this.getElement(elem => {elem.value = value})
+                
+                if (this.overrideOnChangeCallback != null) {this.overrideOnChangeCallback(this, ev)}
             }
         })
         
@@ -151,31 +74,82 @@ class EclairSelect extends EclairComponent {
     /// ```
     selectedIndex(_index) {
         this.bindState(_index, "index", value => {
-            // If value changes then call on change
-            if (this._selectedIndex != value) {
-                if (this.overrideOnChangeCallback != null) {
-                    this.overrideOnChangeCallback(this)
-                }
-            
+            if (value != this._selectedIndex) {
                 this._selectedIndex = value
-                this.getElement(elem => {elem.selectedIndex = `${value}`}) 
                 
-                // Update the value to the current selected value
-                if (this.stateBindings.hasOwnProperty("value")) {
-                    this.stateBindings["value"].value(this._items[value])
+                let newValue = ""
+                if (value < this.items.length() && value >= 0) {
+                    newValue = this.itens.get(value)
                 }
+                
+                if (newValue != this._selectedValue) {
+                    this._selectedValue = newValue
+                    if (this.stateBindings.hasOwnProperty("value")) {this.stateBindings["value"].value(i, this)}
+                }
+                
+                this.getElement(elem => {elem.selectedIndex = value})
+                
+                if (this.overrideOnChangeCallback != null) {this.overrideOnChangeCallback(this, ev)}
             }
-        }, state => {return state.int(0)})
+        }, state => {return state.int()})
         
         return this
     }
     
-    build() {
-        let options = ""
-        for (let n = 0; n < this._items.length; n++) {
-            options += `<option${this._selectedIndex == n? " selected" : ""}>${this._items[n]}</option>`;
+    _updateSelected(_index, _value) {
+        if (_index != this._selectedIndex) {
+            this._selectedIndex = _index
+            
+            // If an index binding exists, update it
+            if (this.stateBindings.hasOwnProperty("index")) {
+                this.stateBindings["index"].value(select.selectedIndex, this)
+            }
+        }
+        if (_value != this._selectedValue) {
+            this._selectedValue= _value
+            
+            if (this.stateBindings.hasOwnProperty("value")) {
+                this.stateBindings["value"].value(select.value, this)
+            }
         }
         
-        return `<select>${options}</select>`
+        // Call the override on change function
+        if (this.overrideOnChangeCallback != null) {this.overrideOnChangeCallback(this, ev)}
+    }
+    
+    // Override parent so that when items change we can reset the selected items and value
+    _onItemsChanged() {
+        let newIndex = 0
+        let newValue = null
+        
+        if (this.items.length() > 0) {
+            newIndex = 0
+            newValue = this.items.get(0)
+            
+            this.getElement(e => {
+                for (let i = 1; i < this.items.length(); i++) {
+                    if (i == e.selectedIndex) {
+                        newIndex = i
+                        newValue = this.items.get(i)
+                    }
+                }
+            })
+        } 
+        
+        this._updateSelected(newIndex, newValue)
+    }
+    
+    build () {                
+        let code = ""
+        for (let e = 0; e < this.children.length; e++) {
+            let child = this.children[e]
+            if (e == this._selectedIndex) {
+                child.setAttr("selected", "true")
+            }
+                
+            code += child.compile()
+        }
+        
+        return `<select>` + code + `</select>`;
     }
 }
