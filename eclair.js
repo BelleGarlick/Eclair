@@ -1252,11 +1252,11 @@ class EclairView extends EclairComponent {
         this.creatorFunc = (creatorFunc != null)? creatorFunc : (e) => {return e}
         
         let self = this;
-        let items = elements instanceof Array? Ø(elements) : elements
+        this.items = elements instanceof Array? Ø(elements) : elements
         
         let knownItems = []
         
-        if (items instanceof EclairState && items.isArray()) {
+        if (this.items instanceof EclairState && this.items.isArray()) {
             this.bindState(elements, "element", array => {
                 var itemChanges = self._itemChanges(knownItems, array)
                 
@@ -1573,7 +1573,7 @@ class EclairSyntaxHighlighter extends EclairComponent {
             .left("0px")
             .background("white")
             .boxSizing("border-box")
-            .lineHeight("1.05")
+            .lineHeight("1.05"))
                                    
         this._code = this._addChild(eclair.CustomTagComponent("code")
             .position("absolute")

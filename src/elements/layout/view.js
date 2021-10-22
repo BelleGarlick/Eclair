@@ -33,11 +33,11 @@ class EclairView extends EclairComponent {
         this.creatorFunc = (creatorFunc != null)? creatorFunc : (e) => {return e}
         
         let self = this;
-        let items = elements instanceof Array? Ø(elements) : elements
+        this.items = elements instanceof Array? Ø(elements) : elements
         
         let knownItems = []
         
-        if (items instanceof EclairState && items.isArray()) {
+        if (this.items instanceof EclairState && this.items.isArray()) {
             this.bindState(elements, "element", array => {
                 // Find the positional changes of all elements
                 var itemChanges = self._itemChanges(knownItems, array)

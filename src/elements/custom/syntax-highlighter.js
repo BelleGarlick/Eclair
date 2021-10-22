@@ -31,7 +31,7 @@ class EclairSyntaxHighlighter extends EclairComponent {
             .left("0px")
             .background("white")
             .boxSizing("border-box")
-            .lineHeight("1.05")
+            .lineHeight("1.05"))
                                    
         this._code = this._addChild(eclair.CustomTagComponent("code")
             .position("absolute")
