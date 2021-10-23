@@ -21,7 +21,6 @@ class EclairProgressBar extends EclairComponent {
             this._indicator.width((value * 100 + 0.0001) + "%")
         }, state => {return state.number(0.5)})
         
-        
         // Set styles
         this._label.addStyle(eclair.styles.ProgressBarLabel)
         this._indicator.addStyle(eclair.styles.ProgressBarIndicator)

@@ -29,7 +29,7 @@ class EclairRadioButtons extends EclairComponent {
         this._hidden = this._addChild(eclair.HiddenInput(this._selectedValue))
         this._view = this._addChild(eclair.VStack(_options, item => {
             return new EclairRatioItem(item, this.customStyles)
-                .onClick(() => {
+                .onClick((e, ev) => {
                     let newIndex = this._updateSelectedItemStyles(item)
                     
                     this._selectedValue.value(item, self)
@@ -37,7 +37,7 @@ class EclairRadioButtons extends EclairComponent {
                 
                     if (self.stateBindings.hasOwnProperty("index")) {self.stateBindings["index"].value(newIndex, self)}
                     if (self.stateBindings.hasOwnProperty("value")) {self.stateBindings["value"].value(item, self)}
-                    if (self.getElement() != null) {self.performCallback("onChange")}
+                    if (self.getElement() != null) {self.performCallback("onChange", ev)}
                 })
         }))
         
@@ -51,8 +51,9 @@ class EclairRadioButtons extends EclairComponent {
         let newIndex = -1;
         for (let i = 0; i < this._options.length(); i++) {
             let match = this._options.get(i) == selectedValue
-
-            this._view.children[i].selected(match)
+            this._view.child(i, el => {
+                el.selected(match)
+            })
             if (match) {newIndex = i;}
         }
         
@@ -89,7 +90,6 @@ class EclairRadioButtons extends EclairComponent {
                 this._selectedValue.value(value, self)
                 
                 if (this.stateBindings.hasOwnProperty("index")) {this.stateBindings["index"].value(newIndex, this)}
-                if (this.getElement() != null) {this.performCallback("onChange")}
             }
         })
         
@@ -119,7 +119,6 @@ class EclairRadioButtons extends EclairComponent {
                 this._selectedValue.value(newValue, self)
                 
                 if (this.stateBindings.hasOwnProperty("value")) {this.stateBindings["value"].value(newValue, this)}
-                if (this.getElement() != null) {this.performCallback("onChange")}
             }
         }, state => {return state.int(0)})
         
@@ -259,25 +258,26 @@ class EclairRatioItem extends EclairHStack {
         if (value) {
             this.addStyle(eclair.styles.RadioButtonsSelectedItem)
                 .addStyle(this.customStyles.selectedItemStyle)
-            
-            this.children[0]
-                .addStyle(eclair.styles.RadioButtonsSelectedRadio)
-                .addStyle(this.customStyles.selectedRadioStyle)
-            
-            this.children[1]
-                .addStyle(eclair.styles.RadioButtonsSelectedLabel)
-                .addStyle(this.customStyles.selectedLabelStyle)
+                .child(0, radio => {
+                    radio.addStyle(eclair.styles.RadioButtonsSelectedRadio)
+                        .addStyle(this.customStyles.selectedRadioStyle)
+                })
+                .child(1, label => {
+                    label.addStyle(eclair.styles.RadioButtonsSelectedLabel)
+                        .addStyle(this.customStyles.selectedLabelStyle)
+                })
         } else {
-            this.removeStyle(eclair.styles.RadioButtonsSelectedItem)
-                .removeStyle(this.customStyles.selectedItemStyle)
             
-            this.children[0]
-                .removeStyle(eclair.styles.RadioButtonsSelectedRadio)
-                .removeStyle(this.customStyles.selectedRadioStyle)
-            
-            this.children[1]
-                .removeStyle(eclair.styles.RadioButtonsSelectedLabel)
-                .removeStyle(this.customStyles.selectedLabelStyle)
+            this.addStyle(eclair.styles.RadioButtonsSelectedItem)
+                .addStyle(this.customStyles.selectedItemStyle)
+                .child(0, radio => {
+                    radio.addStyle(eclair.styles.RadioButtonsSelectedRadio)
+                        .addStyle(this.customStyles.selectedRadioStyle)
+                })
+                .child(1, label => {
+                    label.addStyle(eclair.styles.RadioButtonsSelectedLabel)
+                        .addStyle(this.customStyles.selectedLabelStyle)
+                })
         }
     }
 }

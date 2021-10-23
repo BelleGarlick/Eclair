@@ -17,38 +17,24 @@ class EclairToggle extends EclairComponent {
         this._tickMark = this._addChild(eclair.Text("✓"))
         this._knob = this._addChild(eclair.View())
         
-        this._value = Ø((_value instanceof EclairState)? _value.bool() : _value)
+        this._value = (_value instanceof EclairState)? _value : Ø(_value)
         this._hiddenComponent = eclair.HiddenInput(this._value)
     
         // Bind this object with the given eclair states
         this.bindState(_value, "toggle", value => {
-            let cVal = this._value.bool()
-            
-            this._value.value(value)
-            this._updateStyle()
-            
-            if (value != cVal) {
-                this.performCallback("onChange")  
-            }
+            this._updateStyle() 
         }, state => {return state.bool()})
         
         // Manually update the callback map as onClick
         // is void to prevent the user altering it.
         let self = this;
-        this._updateCallback("onClick", e => {
+        this._updateCallback("onClick", (e, ev) => {
             if (e._enabled) {
-                // Toggle the option and 
-                let cVal = this._value.bool()
-                if (_value instanceof EclairState) {
-                    _value.value(!cVal)
-                } else {
-                    this._value.value(!cVal)
-                }
+                this._value.value(!this._value.bool(), self)
                 this._updateStyle()
-                this.performCallback("onChange")  
             }
             if (self.overrideOnClick != null) {
-                overrideOnClick(self)
+                overrideOnClick(e, ev)
             }
         })
         

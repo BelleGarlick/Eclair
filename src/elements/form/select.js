@@ -5,7 +5,7 @@
 /// ```javascript
 /// eclair.Select(["apple", "orange", "banana"])
 /// ```
-class EclairNewSelect extends EclairView {
+class EclairSelect extends EclairView {
     constructor(elements) {
         super(elements, item => {
             return eclair.CustomTagComponent("option").innerHTML(item)
@@ -18,6 +18,7 @@ class EclairNewSelect extends EclairView {
         this.overrideOnChangeCallback = null
         this._updateCallback("onChange", (select, ev) => {
             this._updateSelected(select.selectedIndex, select.value)
+            if (this.overrideOnChangeCallback != null) {this.overrideOnChangeCallback(this, ev)}
         })
         
         this.addStyle(eclair.styles.Select)
@@ -57,7 +58,7 @@ class EclairNewSelect extends EclairView {
                 
                 this.getElement(elem => {elem.value = value})
                 
-                if (this.overrideOnChangeCallback != null) {this.overrideOnChangeCallback(this, ev)}
+                if (this.overrideOnChangeCallback != null) {this.overrideOnChangeCallback(this)}
             }
         })
         
@@ -89,7 +90,7 @@ class EclairNewSelect extends EclairView {
                 
                 this.getElement(elem => {elem.selectedIndex = value})
                 
-                if (this.overrideOnChangeCallback != null) {this.overrideOnChangeCallback(this, ev)}
+                if (this.overrideOnChangeCallback != null) {this.overrideOnChangeCallback(this)}
             }
         }, state => {return state.int()})
         
@@ -112,9 +113,6 @@ class EclairNewSelect extends EclairView {
                 this.stateBindings["value"].value(select.value, this)
             }
         }
-        
-        // Call the override on change function
-        if (this.overrideOnChangeCallback != null) {this.overrideOnChangeCallback(this, ev)}
     }
     
     // Override parent so that when items change we can reset the selected items and value
@@ -137,6 +135,9 @@ class EclairNewSelect extends EclairView {
         } 
         
         this._updateSelected(newIndex, newValue)
+        
+        // Call the override on change function
+        if (this.overrideOnChangeCallback != null) {this.overrideOnChangeCallback(this)}
     }
     
     build () {                

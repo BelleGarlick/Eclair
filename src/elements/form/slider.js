@@ -18,14 +18,9 @@ class EclairSlider extends EclairCustomTagComponent {
         
         // Override onInput callback
         let overrideOnInput = null;
-        this._updateCallback("onInput", e => {
-            if (value instanceof EclairState) {
-                e.getElement(elem => {value.value(elem.value)})
-            }
-            
-            if (this.overrideOnInput != null) {
-                this.overrideOnInput(this)
-            }
+        this._updateCallback("onInput", (e, ev) => {
+            if (value instanceof EclairState) {e.getElement(elem => {value.value(elem.value)})}
+            if (this.overrideOnInput != null) {this.overrideOnInput(this, ev)}
         })
         
         // Set attributes

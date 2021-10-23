@@ -21,7 +21,6 @@ class EclairButton extends EclairComponent {
         this.addStyle(eclair.styles.Button)
     }
     
-    // overriden, no need to document.
     build() {
         // Build the element
         let text = this.text;

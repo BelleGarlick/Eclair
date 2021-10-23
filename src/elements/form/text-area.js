@@ -15,40 +15,17 @@ class EclairTextArea extends EclairCustomTagComponent {
             this.getElement(e => {e.value = value})
         })
         
-        // Bind on key up
-        this._overrideOnKeyUp = null
-        this._updateCallback("onKeyUp", e => {
-            if (_value instanceof EclairState) {
-                _value.value(e.getElement().value)
-            }
-            
-            if (this._overrideOnKeyUp != null) {
-                this._overrideOnKeyUp(e)
-            } 
-        })
-        
-        // Bind on key down
-        this._overrideOnKeyDown = null
-        this._updateCallback("onKeyDown", e => {
-            if (_value instanceof EclairState) {
-                _value.value(e.getElement().value)
-            }
-            
-            if (this._overrideOnKeyDown != null) {
-                this._overrideOnKeyDown(e)
-            } 
+        this._overrideOnInput = null
+        this._updateCallback(keys[k], (e, ev) => {
+            if (_value instanceof EclairState) {_value.value(e.getElement().value)}
+            if (this._overrideOnInput != null) {this._overrideOnInput(e, ev)} 
         })
         
         this.addStyle(eclair.styles.TextArea)
     }
     
-    onKeyUp(callback) {
-        this._overrideOnKeyUp = callback
-        return this
-    }
-    
-    onKeyDown(callback) {
-        this._overrideOnKeyDown = callback
+    onInput(callback) {
+        this._overrideOnInput = callback
         return this
     }
 }

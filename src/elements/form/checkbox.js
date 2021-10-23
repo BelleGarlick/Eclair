@@ -24,23 +24,17 @@ class EclairCheckBox extends EclairComponent {
         // Override on click function
         let self = this
         this.overrideOnClick = null
-        this._updateCallback("onClick", () => {
-            if (this.overrideOnClick != null) {
-                this.overrideOnClick(this)
-            }
+        this._updateCallback("onClick", (e, ev) => {
             if (this._enabled) {   
                 this.checked.value(!this.checked.bool())
-                this.performCallback("onChange")
             }  
+            if (this.overrideOnClick != null) {this.overrideOnClick(this, ev)}
         })
         
         // Add binding for check box
         this.bindState(this.checked, "checked", value => {
             this._hiddenValue.value(value)
             
-            // Call on change if available
-            this.performCallback("onChange")    
-
             // Set styles
             if (value) {
                 this._checkbox

@@ -1,22 +1,18 @@
-// TODO Add events to callbacks (mousemove position etc) and make sure all overrides are correct
 // TODO Prevent layered on click events
 // TODO Hide show elements
 // TODO Implement these: https://getbootstrap.com/docs/4.0/components/progress/
 // PRINT Add margin, paddding, border: left, top, right bottom
 // PRINT Add deleting element
-// PRINT Add callback getters when accessing child element.
+// PRINT Add callback getters when accessing specific child elements.
 // WARN Layout objects have no shared style
-// PRINT MAKE SURE ALL OBJECTS HAVE PARENT AssOCIATION
-// PRINT when building doc, clear current folder
 // TODO State all the shared styles in docs for an object .e.g. alert box uses eclair.styles.AlertBox, ...
 // TODO Examples
 // TODO Add get/post stuff
-// TODO Add on change callback to element changing
 // TODO Make sure all args are declared in documentation
 // TODO Add enabled tag to all elements.
 // Check on change bindings
+// Add getting value from objects and altering lists. This should enable objects to be easier to work with.
 // TODO NEed tutorials for everything. Geting to grips with eclair, making a custom object, specific object tutorials.
-// Use this_addChild for all child/parent assocs
 
 // Future custom objects
 //  - Cookies accept + ability to set
@@ -33,12 +29,13 @@
 //  - Default styles
 //  - Documentation: states the shared styles. Add functions doc and class doc, args
 //  - All binding values call onChange
+//  - Tests
 
 
 /// # Eclair
 /// The `eclair` object allows you to easily construct an eclair object and interact in the Eclair development kit.
 let eclair = {
-    version: "0.0.87",
+    version: "0.0.88",
     _ids: 0,
     _elements: {},
     _styles: {},
@@ -47,8 +44,8 @@ let eclair = {
         return "eclair-" + (compName == null? "" : compName + "-") + "e" + (this._ids - 1);
     },
     
-    performCallback: function(eID, eventID, event, param) {
-        this._elements[eID].performCallback(eventID, event, param);
+    performCallback: function(eclairID, eventID, event, param) {
+        this._elements[eclairID].performCallback(eventID, event, param);
     },
     
     // Styling

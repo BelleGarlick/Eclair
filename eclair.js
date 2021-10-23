@@ -5,7 +5,7 @@
 
 
 let eclair = {
-    version: "0.0.86",
+    version: "0.0.88",
     _ids: 0,
     _elements: {},
     _styles: {},
@@ -14,8 +14,8 @@ let eclair = {
         return "eclair-" + (compName == null? "" : compName + "-") + "e" + (this._ids - 1);
     },
     
-    performCallback: function(eID, eventID, event, param) {
-        this._elements[eID].performCallback(eventID, event, param);
+    performCallback: function(eclairID, eventID, event, param) {
+        this._elements[eclairID].performCallback(eventID, event, param);
     },
     
     Style: function(_styleID) {return new EclairStyleComponent(_styleID);},
@@ -1208,6 +1208,7 @@ class EclairComponent extends EclairStylableObject {
     
     _updateCallback(callbackKey, callback) {
         this._callbacks[callbackKey] = callback;
+        
         if (callback == null) {
             this.setAttr(callbackKey.toLowerCase(), null)
         } else {
@@ -1264,9 +1265,7 @@ class EclairView extends EclairComponent {
                 
                 for (let i = 0; i < itemChanges.length; i++) {
                     if (itemChanges[i] == -1) {
-                        let newItem = self.creatorFunc(array[i])
-                        this.children.push(newItem)
-                        newItem.parent = self
+                        let newItem = self._addChild(self.creatorFunc(array[i]))
                         
                         let dummychild = document.createElement("div")
                         dummychild.innerHTML = newItem.compile()
@@ -1491,7 +1490,6 @@ class EclairProgressBar extends EclairComponent {
             this._indicator.width((value * 100 + 0.0001) + "%")
         }, state => {return state.number(0.5)})
         
-        
         this._label.addStyle(eclair.styles.ProgressBarLabel)
         this._indicator.addStyle(eclair.styles.ProgressBarIndicator)
         this.addStyle(eclair.styles.ProgressBar)
@@ -1675,21 +1673,16 @@ class EclairCheckBox extends EclairComponent {
         
         let self = this
         this.overrideOnClick = null
-        this._updateCallback("onClick", () => {
-            if (this.overrideOnClick != null) {
-                this.overrideOnClick(this)
-            }
+        this._updateCallback("onClick", (e, ev) => {
             if (this._enabled) {   
                 this.checked.value(!this.checked.bool())
-                this.performCallback("onChange")
             }  
+            if (this.overrideOnClick != null) {this.overrideOnClick(this, ev)}
         })
         
         this.bindState(this.checked, "checked", value => {
             this._hiddenValue.value(value)
             
-            this.performCallback("onChange")    
-
             if (value) {
                 this._checkbox
                     .addStyle(eclair.styles.CheckBoxActiveIcon)
@@ -1832,7 +1825,7 @@ class EclairRadioButtons extends EclairComponent {
         this._hidden = this._addChild(eclair.HiddenInput(this._selectedValue))
         this._view = this._addChild(eclair.VStack(_options, item => {
             return new EclairRatioItem(item, this.customStyles)
-                .onClick(() => {
+                .onClick((e, ev) => {
                     let newIndex = this._updateSelectedItemStyles(item)
                     
                     this._selectedValue.value(item, self)
@@ -1840,7 +1833,7 @@ class EclairRadioButtons extends EclairComponent {
                 
                     if (self.stateBindings.hasOwnProperty("index")) {self.stateBindings["index"].value(newIndex, self)}
                     if (self.stateBindings.hasOwnProperty("value")) {self.stateBindings["value"].value(item, self)}
-                    if (self.getElement() != null) {self.performCallback("onChange")}
+                    if (self.getElement() != null) {self.performCallback("onChange", ev)}
                 })
         }))
         
@@ -1851,8 +1844,9 @@ class EclairRadioButtons extends EclairComponent {
         let newIndex = -1;
         for (let i = 0; i < this._options.length(); i++) {
             let match = this._options.get(i) == selectedValue
-
-            this._view.children[i].selected(match)
+            this._view.child(i, el => {
+                el.selected(match)
+            })
             if (match) {newIndex = i;}
         }
         
@@ -1873,7 +1867,6 @@ class EclairRadioButtons extends EclairComponent {
                 this._selectedValue.value(value, self)
                 
                 if (this.stateBindings.hasOwnProperty("index")) {this.stateBindings["index"].value(newIndex, this)}
-                if (this.getElement() != null) {this.performCallback("onChange")}
             }
         })
         
@@ -1895,7 +1888,6 @@ class EclairRadioButtons extends EclairComponent {
                 this._selectedValue.value(newValue, self)
                 
                 if (this.stateBindings.hasOwnProperty("value")) {this.stateBindings["value"].value(newValue, this)}
-                if (this.getElement() != null) {this.performCallback("onChange")}
             }
         }, state => {return state.int(0)})
         
@@ -1960,32 +1952,33 @@ class EclairRatioItem extends EclairHStack {
         if (value) {
             this.addStyle(eclair.styles.RadioButtonsSelectedItem)
                 .addStyle(this.customStyles.selectedItemStyle)
-            
-            this.children[0]
-                .addStyle(eclair.styles.RadioButtonsSelectedRadio)
-                .addStyle(this.customStyles.selectedRadioStyle)
-            
-            this.children[1]
-                .addStyle(eclair.styles.RadioButtonsSelectedLabel)
-                .addStyle(this.customStyles.selectedLabelStyle)
+                .child(0, radio => {
+                    radio.addStyle(eclair.styles.RadioButtonsSelectedRadio)
+                        .addStyle(this.customStyles.selectedRadioStyle)
+                })
+                .child(1, label => {
+                    label.addStyle(eclair.styles.RadioButtonsSelectedLabel)
+                        .addStyle(this.customStyles.selectedLabelStyle)
+                })
         } else {
-            this.removeStyle(eclair.styles.RadioButtonsSelectedItem)
-                .removeStyle(this.customStyles.selectedItemStyle)
             
-            this.children[0]
-                .removeStyle(eclair.styles.RadioButtonsSelectedRadio)
-                .removeStyle(this.customStyles.selectedRadioStyle)
-            
-            this.children[1]
-                .removeStyle(eclair.styles.RadioButtonsSelectedLabel)
-                .removeStyle(this.customStyles.selectedLabelStyle)
+            this.addStyle(eclair.styles.RadioButtonsSelectedItem)
+                .addStyle(this.customStyles.selectedItemStyle)
+                .child(0, radio => {
+                    radio.addStyle(eclair.styles.RadioButtonsSelectedRadio)
+                        .addStyle(this.customStyles.selectedRadioStyle)
+                })
+                .child(1, label => {
+                    label.addStyle(eclair.styles.RadioButtonsSelectedLabel)
+                        .addStyle(this.customStyles.selectedLabelStyle)
+                })
         }
     }
 }
 
 
 // elements.form.select
-class EclairNewSelect extends EclairView {
+class EclairSelect extends EclairView {
     constructor(elements) {
         super(elements, item => {
             return eclair.CustomTagComponent("option").innerHTML(item)
@@ -1997,6 +1990,7 @@ class EclairNewSelect extends EclairView {
         this.overrideOnChangeCallback = null
         this._updateCallback("onChange", (select, ev) => {
             this._updateSelected(select.selectedIndex, select.value)
+            if (this.overrideOnChangeCallback != null) {this.overrideOnChangeCallback(this, ev)}
         })
         
         this.addStyle(eclair.styles.Select)
@@ -2027,7 +2021,7 @@ class EclairNewSelect extends EclairView {
                 
                 this.getElement(elem => {elem.value = value})
                 
-                if (this.overrideOnChangeCallback != null) {this.overrideOnChangeCallback(this, ev)}
+                if (this.overrideOnChangeCallback != null) {this.overrideOnChangeCallback(this)}
             }
         })
         
@@ -2051,7 +2045,7 @@ class EclairNewSelect extends EclairView {
                 
                 this.getElement(elem => {elem.selectedIndex = value})
                 
-                if (this.overrideOnChangeCallback != null) {this.overrideOnChangeCallback(this, ev)}
+                if (this.overrideOnChangeCallback != null) {this.overrideOnChangeCallback(this)}
             }
         }, state => {return state.int()})
         
@@ -2073,8 +2067,6 @@ class EclairNewSelect extends EclairView {
                 this.stateBindings["value"].value(select.value, this)
             }
         }
-        
-        if (this.overrideOnChangeCallback != null) {this.overrideOnChangeCallback(this, ev)}
     }
     
     _onItemsChanged() {
@@ -2096,6 +2088,8 @@ class EclairNewSelect extends EclairView {
         } 
         
         this._updateSelected(newIndex, newValue)
+        
+        if (this.overrideOnChangeCallback != null) {this.overrideOnChangeCallback(this)}
     }
     
     build () {                
@@ -2125,14 +2119,9 @@ class EclairSlider extends EclairCustomTagComponent {
         }, state => {return state.number()})
         
         let overrideOnInput = null;
-        this._updateCallback("onInput", e => {
-            if (value instanceof EclairState) {
-                e.getElement(elem => {value.value(elem.value)})
-            }
-            
-            if (this.overrideOnInput != null) {
-                this.overrideOnInput(this)
-            }
+        this._updateCallback("onInput", (e, ev) => {
+            if (value instanceof EclairState) {e.getElement(elem => {value.value(elem.value)})}
+            if (this.overrideOnInput != null) {this.overrideOnInput(this, ev)}
         })
         
         this.setAttr("type", "range")
@@ -2187,38 +2176,17 @@ class EclairTextArea extends EclairCustomTagComponent {
             this.getElement(e => {e.value = value})
         })
         
-        this._overrideOnKeyUp = null
-        this._updateCallback("onKeyUp", e => {
-            if (_value instanceof EclairState) {
-                _value.value(e.getElement().value)
-            }
-            
-            if (this._overrideOnKeyUp != null) {
-                this._overrideOnKeyUp(e)
-            } 
-        })
-        
-        this._overrideOnKeyDown = null
-        this._updateCallback("onKeyDown", e => {
-            if (_value instanceof EclairState) {
-                _value.value(e.getElement().value)
-            }
-            
-            if (this._overrideOnKeyDown != null) {
-                this._overrideOnKeyDown(e)
-            } 
+        this._overrideOnInput = null
+        this._updateCallback(keys[k], (e, ev) => {
+            if (_value instanceof EclairState) {_value.value(e.getElement().value)}
+            if (this._overrideOnInput != null) {this._overrideOnInput(e, ev)} 
         })
         
         this.addStyle(eclair.styles.TextArea)
     }
     
-    onKeyUp(callback) {
-        this._overrideOnKeyUp = callback
-        return this
-    }
-    
-    onKeyDown(callback) {
-        this._overrideOnKeyDown = callback
+    onInput(callback) {
+        this._overrideOnInput = callback
         return this
     }
 }
@@ -2240,14 +2208,9 @@ class EclairTextBox extends EclairCustomTagComponent {
         })
         
         this.overrideOnInput = null
-        this._updateCallback("onInput", e => {
-            if (self.valueBinding instanceof EclairState) {
-                e.getElement(elem => {self.valueBinding.value(elem.value)})
-            }
-
-            if (this.overrideOnInput != null) {
-                this.overrideOnInput(this)
-            }
+        this._updateCallback("onInput", (e, ev) => {
+            if (self.valueBinding instanceof EclairState) {e.getElement(elem => {self.valueBinding.value(elem.value)})}
+            if (this.overrideOnInput != null) {this.overrideOnInput(this, ev)}
         })
     }
     
@@ -2325,34 +2288,21 @@ class EclairToggle extends EclairComponent {
         this._tickMark = this._addChild(eclair.Text("✓"))
         this._knob = this._addChild(eclair.View())
         
-        this._value = Ø((_value instanceof EclairState)? _value.bool() : _value)
+        this._value = (_value instanceof EclairState)? _value : Ø(_value)
         this._hiddenComponent = eclair.HiddenInput(this._value)
     
         this.bindState(_value, "toggle", value => {
-            let cVal = this._value.bool()
-            
-            this._value.value(value)
-            this._updateStyle()
-            
-            if (value != cVal) {
-                this.performCallback("onChange")  
-            }
+            this._updateStyle() 
         }, state => {return state.bool()})
         
         let self = this;
-        this._updateCallback("onClick", e => {
+        this._updateCallback("onClick", (e, ev) => {
             if (e._enabled) {
-                let cVal = this._value.bool()
-                if (_value instanceof EclairState) {
-                    _value.value(!cVal)
-                } else {
-                    this._value.value(!cVal)
-                }
+                this._value.value(!this._value.bool(), self)
                 this._updateStyle()
-                this.performCallback("onChange")  
             }
             if (self.overrideOnClick != null) {
-                overrideOnClick(self)
+                overrideOnClick(e, ev)
             }
         })
         

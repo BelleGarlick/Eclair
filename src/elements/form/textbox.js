@@ -24,14 +24,9 @@ class EclairTextBox extends EclairCustomTagComponent {
         
         // Override on input to adapt the state to changes made to the text
         this.overrideOnInput = null
-        this._updateCallback("onInput", e => {
-            if (self.valueBinding instanceof EclairState) {
-                e.getElement(elem => {self.valueBinding.value(elem.value)})
-            }
-
-            if (this.overrideOnInput != null) {
-                this.overrideOnInput(this)
-            }
+        this._updateCallback("onInput", (e, ev) => {
+            if (self.valueBinding instanceof EclairState) {e.getElement(elem => {self.valueBinding.value(elem.value)})}
+            if (this.overrideOnInput != null) {this.overrideOnInput(this, ev)}
         })
     }
     

@@ -36,14 +36,14 @@ All eclair components have a range of built in event handing functions easily ac
 <br/>**onResize**: Invoked when object resizes.
 ```javascript
 eclair.Button("Hello There")
-    .onClick(e => {
+    .onClick((el, ev) => {
         alert("General Kenobi")
     })
-    .onMouseOver(e => {
-        e.backgorund("red")
+    .onMouseOver((el, ev) => {
+        el.backgorund("red")
     })
-    .onMouseOut(e => {
-        e.background("blue")
+    .onMouseOut((el, ev) => {
+        el.background("blue")
     })
 ```
 

@@ -48,9 +48,7 @@ class EclairView extends EclairComponent {
                 for (let i = 0; i < itemChanges.length; i++) {
                     if (itemChanges[i] == -1) {
                         // add new item to the dummy parent
-                        let newItem = self.creatorFunc(array[i])
-                        this.children.push(newItem)
-                        newItem.parent = self
+                        let newItem = self._addChild(self.creatorFunc(array[i]))
                         
                         let dummychild = document.createElement("div")
                         dummychild.innerHTML = newItem.compile()

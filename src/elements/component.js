@@ -246,14 +246,14 @@ class EclairComponent extends EclairStylableObject {
     // TODO Check event handing documentation as the events have been added in
     /// ```javascript
     /// eclair.Button("Hello There")
-    ///     .onClick(e => {
+    ///     .onClick((el, ev) => {
     ///         alert("General Kenobi")
     ///     })
-    ///     .onMouseOver(e => {
-    ///         e.backgorund("red")
+    ///     .onMouseOver((el, ev) => {
+    ///         el.backgorund("red")
     ///     })
-    ///     .onMouseOut(e => {
-    ///         e.background("blue")
+    ///     .onMouseOut((el, ev) => {
+    ///         el.background("blue")
     ///     })
     /// ```
     
@@ -278,6 +278,7 @@ class EclairComponent extends EclairStylableObject {
     
     _updateCallback(callbackKey, callback) {
         this._callbacks[callbackKey] = callback;
+        
         if (callback == null) {
             this.setAttr(callbackKey.toLowerCase(), null)
         } else {
