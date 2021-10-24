@@ -6,7 +6,7 @@
 /// ```
 class EclairToggle extends EclairComponent {
     constructor(_value) {
-        super("toggle")
+        super()
         
         // If the user want's onclicks then they need to be stored here as 
         // this class has it's own methods. So we need this alternative place to 

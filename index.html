@@ -12,12 +12,8 @@ let Toggle = eclair.Toggle, Text = eclair.Text, CheckBox = eclair.CheckBox,
 let textHeadingStyle = TextStyle().heading2()
 let backgroundColor = eclair.Color().hex("#f6f6f6")
 
-
-
 let selectedRadio = Ø()
 let selectedRadioIndex = Ø()
-
-
 
 let viewSourcePage = Ø(0)
 let codeExampleTitle = Ø("Progress Bar")
@@ -50,7 +46,7 @@ VStack([
             })
     }),
     
-    new EclairNewSelect([
+    eclair.Select([
         "Toggle Switch",
         "Progress Bar",
         "Alert Box",

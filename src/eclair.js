@@ -1,4 +1,3 @@
-// TODO Prevent layered on click events
 // TODO Hide show elements
 // TODO Implement these: https://getbootstrap.com/docs/4.0/components/progress/
 // PRINT Add margin, paddding, border: left, top, right bottom
@@ -35,13 +34,13 @@
 /// # Eclair
 /// The `eclair` object allows you to easily construct an eclair object and interact in the Eclair development kit.
 let eclair = {
-    version: "0.0.88",
+    version: "0.0.89",
     _ids: 0,
     _elements: {},
     _styles: {},
-    _newID: function(compName) {
+    _newID: function() {
         this._ids += 1; 
-        return "eclair-" + (compName == null? "" : compName + "-") + "e" + (this._ids - 1);
+        return "eclair-element-" + (this._ids - 1);
     },
     
     performCallback: function(eclairID, eventID, event, param) {

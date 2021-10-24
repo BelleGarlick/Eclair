@@ -16,7 +16,7 @@ class EclairTextArea extends EclairCustomTagComponent {
         })
         
         this._overrideOnInput = null
-        this._updateCallback(keys[k], (e, ev) => {
+        this._updateCallback("onInput", (e, ev) => {
             if (_value instanceof EclairState) {_value.value(e.getElement().value)}
             if (this._overrideOnInput != null) {this._overrideOnInput(e, ev)} 
         })

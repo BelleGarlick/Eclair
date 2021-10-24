@@ -6,7 +6,7 @@
 /// ```
 class EclairText extends EclairComponent {
     constructor(text) {
-        super("text")
+        super()
         
         this.bindState(text, "text", value => {
             this._text = value;

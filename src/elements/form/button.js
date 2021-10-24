@@ -10,7 +10,7 @@
 /// ```
 class EclairButton extends EclairComponent {
     constructor(text) {
-        super("button")
+        super()
         
         this.bindState(text, "text", value => {
             this.text = value;

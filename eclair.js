@@ -5,13 +5,13 @@
 
 
 let eclair = {
-    version: "0.0.88",
+    version: "0.0.89",
     _ids: 0,
     _elements: {},
     _styles: {},
-    _newID: function(compName) {
+    _newID: function() {
         this._ids += 1; 
-        return "eclair-" + (compName == null? "" : compName + "-") + "e" + (this._ids - 1);
+        return "eclair-element-" + (this._ids - 1);
     },
     
     performCallback: function(eclairID, eventID, event, param) {
@@ -962,6 +962,58 @@ eclair.styles = {
         .userSelect("none")
         .opacity(0),
     
+    SyntaxHighlighter: eclair.Style("eclair-syntax-highlighter")
+        .position("relative")
+        .width("420px")
+        .height("360px")
+        .borderSize("1px")
+        .borderStyle("solid")
+        .borderColor("#999999")
+        .borderRadius("3px"),
+    SyntaxHighlighterCodeElement: eclair.Style("eclair-syntax-highlighter-code")
+        .position("absolute")
+        .top("0px")
+        .left("0px")
+        .width("100%")
+        .height("100%")
+        .fontSize("14px")
+        .font("monospace")
+        .borderSize("0px")
+        .outline("none")
+        .caretColor("black")
+        .resize("none")
+        .whiteSpace("pre")
+        .boxSizing("border-box")
+        .padding("10px")
+        .overflowWrap("normal")
+        .display("none", ":-webkit-scrollbar")
+        .css("-ms-overflow-style: none; scrollbar-width: none;")
+        .overflowX("scroll"),
+    SyntaxHighlighterTextAreaElement: eclair.Style("eclair-syntax-highlighter-text-area")
+        .position("absolute")
+        .top("0px")
+        .left("0px")
+        .width("100%")
+        .height("100%")
+        .fontSize("14px")
+        .font("monospace")
+        .borderSize("0px")
+        .outline("none")
+        .caretColor("black")
+        .resize("none")
+        .whiteSpace("pre")
+        .boxSizing("border-box")
+        .background("transparent")
+        .fontColor("rgb(1, 1, 1, 0)")
+        .padding("10px")
+        .overflowWrap("normal")
+        .overflowX("scroll"),
+    SyntaxHighlighterCommentStyle: eclair.Style("eclair-syntax-highlighter-comment").fontColor("grey"),
+    SyntaxHighlighterKeywordStyle: eclair.Style("eclair-syntax-highlighter-keyword").fontColor("#0066ee"),
+    SyntaxHighlighterStringStyle: eclair.Style("eclair-syntax-highlighter-string").fontColor("#dd9900"),
+    SyntaxHighlighterQuoteStyle: eclair.Style("eclair-syntax-highlighter-quote").fontColor("#dd9900"),
+    SyntaxHighlighterEclairStyle: eclair.Style("eclair-syntax-highlighter-eclair").fontColor("#009900"),
+    
     AlertBox: eclair.Style("eclair-style-alert-box")
         .background(eclair.theme.accent)
         .boxSizing("border-box")
@@ -986,10 +1038,10 @@ eclair.styles = {
 
 // elements.component
 class EclairComponent extends EclairStylableObject {
-    constructor(componentName) {
+    constructor() {
         super()
         
-        this._id = eclair._newID(componentName);
+        this._id = eclair._newID();
         eclair._elements[this.id()] = this;
         
         this.parent = null
@@ -1202,7 +1254,7 @@ class EclairComponent extends EclairStylableObject {
     
     child(n, callback) {
         let item = n < this.children.length && n >= 0? this.children[n] : null
-        this.callback(item)
+        callback(item)
         return this
     }
     
@@ -1438,7 +1490,7 @@ class EclairTabView extends EclairView {
 // elements.custom.alert-box
 class EclairAlertBox extends EclairComponent {
     constructor(text) {
-        super("alert-box")
+        super()
         
         this._titleText = Ø(null)
         
@@ -1477,7 +1529,7 @@ class EclairAlertBox extends EclairComponent {
 // elements.custom.progress
 class EclairProgressBar extends EclairComponent {
     constructor(_progress) {
-        super("progress")
+        super()
         
         this._labelText = Ø("0%")
         this._label = eclair.Text(this._labelText)
@@ -1542,86 +1594,154 @@ class EclairProgressBar extends EclairComponent {
 
 // elements.custom.syntax-highlighter
 class EclairSyntaxHighlighter extends EclairComponent {
-    constructor(_html) {
-        super("syntax-highlighter")
-
-        try {
-            if (hljs) {}
-        } catch (error) {
-            console.log("HLJS Not imported. Go to 'https://highlightjs.org/usage/' to import the stylesheet and the .js file.")
+    constructor(_code) {
+        super()
+        
+        this.tokenSeperators = new Set([
+            "{", "(", " ", "}", ")", "[", "]", "\n", "\t", ".", ","
+        ])
+        this.eclairKeywords = new Set([
+            "VStack", "HStack", "State", "Toggle", "Text", "HorizontalLine", "Alignment", "eclair", 
+            "Ø", "Style", "Color", "TextStyle", "View", "TabView", "CustomTagComponent", "Button", 
+            "TextBox", "Form", "Select", "Slider", "RadioButtons", "CheckBox", "TextArea", 
+            "HiddenInput", "Image", "IFrame", "Text", "Link", "HorizontalLine", "Alert", 
+            "ProgressBar", "SyntaxHighlighter"
+        ])
+        this.jsKeywords = new Set([
+            "let", "var", "if", "else", "true", "false", "const", "for", "while", "await", "break", 
+            "case", "catch", "class", "continue", "debugger", "default", "delete", "do", "enum", 
+            "export", "extends", "finally", "function", "implements", "import", "in", "instanceof", 
+            "interface", "new", "null", "package", "private", "protected", "public", "return", 
+            "super", "switch", "static", "this", "throw", "try", "typeof", "void", "while", 
+            "with", "yield"
+        ])
+         	 	 	
+        this.theme = {
+            "comment": eclair.styles.SyntaxHighlighterCommentStyle,
+            "keyword": eclair.styles.SyntaxHighlighterKeywordStyle,
+            "eclair": eclair.styles.SyntaxHighlighterEclairStyle,
+            "string": eclair.styles.SyntaxHighlighterStringStyle, 
+            "quote": eclair.styles.SyntaxHighlighterQuoteStyle, 
+            "number": eclair.styles.SyntaxHighlighterKeywordStyle, 
         }
         
-        this._writtenCode = Ø()
-
-        let self = this;
-        this
-            .position("relative")
-            .width("400px")
-            .height("400px")
+        this._cachedLines = {}
+        this._codeState = (_code instanceof EclairState)? _code : Ø(_code)
         
-        this._html = _html == null? Ø() : _html
-
-        this._pre = this._addChild(eclair.CustomTagComponent("pre")
-            .position("absolute")
-            .padding("0px")
-            .margin("0px")
-            .height("100%")
-            .width("100%")
-            .top("0px")
-            .left("0px")
-            .background("white")
-            .boxSizing("border-box")
-            .lineHeight("1.05"))
-                                   
-        this._code = this._addChild(eclair.CustomTagComponent("code")
-            .position("absolute")
-            .top("0px")
-            .left("0px")
-            .background("white")
-            .width("100%")
-            .height("100%")
-            .margin("0px")
-            .padding("10px 10px 10px 15px")
-            .fontColor("black")
-            .setAttr("class", "javascript")
-            .textAlign("left")
-            .css("box-sizing: border-box;")
-            .innerHTML(this._writtenCode))
-
-        this._textarea = this._addChild(eclair.TextArea(this._html)
-            .setAttr("spellcheck", false)
-            .display("inline")
-            .position("absolute")
-            .top("0px")
-            .left("0px")
-            .width("100%")
-            .height("100%")
-            .background("transparent")
-            .fontColor("transparent")
-            .font("monospace")
-            .margin("0px")
-            .padding("10px 10px 10px 15px")
-            .css("box-sizing: border-box;line-height: 1.05; caret-color: black;resize:none;white-space: pre;letter-spacing: -0.2px;")
-            .onScroll(e => {
+        this.codeElement = this._addChild(eclair.CustomTagComponent("code")
+            .addStyle(eclair.styles.SyntaxHighlighterCodeElement)
+         )
+        
+        this.textArea = this._addChild(eclair.TextArea(this._codeState)
+            .addStyle(eclair.styles.SyntaxHighlighterTextAreaElement)
+            .setAttr("spellcheck", "false")
+            .onScroll((e, ev) => {
                 let textarea = e.getElement()
-                self._code.getElement().scroll(textarea.scrollLeft, textarea.scrollTop)
-            }))
+                this.codeElement.getElement().scroll(textarea.scrollLeft, textarea.scrollTop)
+            })
+        )
         
-        this.bindState(this._html, "html", value => {
-            var escape = document.createElement('textarea');
-            escape.textContent = value;
-            this._writtenCode.value(escape.innerHTML)
-
-            hljs.highlightAll()
+        this.addStyle(eclair.styles.SyntaxHighlighter)
+        
+        this.bindState(this._codeState, "code", value => {
+            this.update()
         })
     }
-
-    build() {
-        let postBuildScript = document.createElement("script")
-        postBuildScript.innerHTML += "hljs.highlightAll();"
+    
+    update() {
+        let code = this._codeState.value();
         
-        this._pre.innerHTML(this._code.compile())
-        return `<div>${this._pre.compile()}${this._textarea.compile()}</div>${postBuildScript.outerHTML}`
+        let output = "";
+        let tokenisedLines = []
+
+        let lines = code.split("\n")
+        let allLines = new Set(lines)
+        for (let l = 0; l < lines.length; l++) {
+            if (!this._cachedLines.hasOwnProperty(lines[l])) {
+                this._cachedLines[lines[l]] = this._tokeniseLine(lines[l])
+            }
+            tokenisedLines.push(this._cachedLines[lines[l]])
+        }
+        
+        let cachedKeys = Object.keys(this._cachedLines)
+        for (let i = 0; i < cachedKeys.length; i++) {
+            if (!allLines.has(cachedKeys[i])) {
+                delete this._cachedLines[cachedKeys[i]]
+            }
+        }
+
+        let formattedCode = ""
+        for (let l = 0; l < tokenisedLines.length; l++) {
+            let cline = tokenisedLines[l];
+            for (let t = 0; t < cline.length; t++) {
+                formattedCode += `<span class='${(cline[t].type != '')? this.theme[cline[t].type].id():""}'>${cline[t].text}</span>`
+            }
+            formattedCode += "<br/>"
+        }
+
+        
+        this.codeElement.innerHTML(`<pre style="margin: 0px; padding: 0px;">${formattedCode}</pre>`)
+        
+        return this
+    }
+    
+    _tokeniseLine(line) {
+        let tokens = [], token = "", state = ""
+
+        let self = this;
+        function pushTokenState(_text, _state) {
+            if (state == "") {
+                if (self.jsKeywords.has(_text)) {_state = "keyword"}
+                if (self.eclairKeywords.has(_text)) {_state = "eclair"}
+                if (!isNaN(parseFloat(_text))) {_state = "number"}
+            }
+
+            tokens.push({"text": _text, "type": _state})
+            state = "", token = ""
+        }
+
+        for (let c = 0; c < line.length; c++) {
+            if (state == "comment") {token += line[c]} 
+
+            else if (state != "comment" && c < line.length - 1 && line[c] == "/" && line[c + 1] == "/") {
+                pushTokenState(token, state); state = "comment"; token = line[c]
+            } 
+
+            else if (state != "quote" && state != "string" && line[c] == "'") {
+                pushTokenState(token, state)
+                state = "quote"; token = line[c]
+            } 
+
+            else if (state == "quote" && line[c] == "'") {pushTokenState(token + "'", state)} 
+
+            else if (state == "string" && line[c] == '"') {pushTokenState(token + '"', state)} 
+
+            else if (state != "string" && state != "quote" && line[c] == '"') {pushTokenState(token, state); state = "string"; token = line[c]} 
+
+            else if (state != "string" && state != "quote" && this.tokenSeperators.has(line[c])) {
+                pushTokenState(token, state)
+                token = line[c]
+            }
+
+            else {
+                if (this.tokenSeperators.has(token)) {
+                    pushTokenState(token, state)
+                }
+                token += line[c]
+            }
+        }
+        
+        pushTokenState(token, state)
+
+        return tokens
+    }
+    
+    build() {
+        let classes = Object.keys(this.theme);
+        for (let i = 0; i < classes.length; i++) {
+            this.theme[classes[i]].create()
+        }
+        return `<div>${this.codeElement.compile()}${this.textArea.compile()}</div>`
     }
 }
 
@@ -1632,7 +1752,7 @@ class EclairSyntaxHighlighter extends EclairComponent {
 // elements.form.button
 class EclairButton extends EclairComponent {
     constructor(text) {
-        super("button")
+        super()
         
         this.bindState(text, "text", value => {
             this.text = value;
@@ -1659,7 +1779,7 @@ class EclairButton extends EclairComponent {
 // elements.form.checkbox
 class EclairCheckBox extends EclairComponent {
     constructor(checked) {
-        super("checkbox")
+        super()
         
         this._enabled = true        
         
@@ -1806,7 +1926,7 @@ class EclairHiddenInput extends EclairCustomTagComponent {
 // elements.form.radio-buttons
 class EclairRadioButtons extends EclairComponent {
     constructor(_options) {
-        super("radio-button")
+        super()
         
         this._options = _options instanceof EclairState? _options : Ø(_options)
         this._selectedIndex = -1
@@ -1833,7 +1953,6 @@ class EclairRadioButtons extends EclairComponent {
                 
                     if (self.stateBindings.hasOwnProperty("index")) {self.stateBindings["index"].value(newIndex, self)}
                     if (self.stateBindings.hasOwnProperty("value")) {self.stateBindings["value"].value(item, self)}
-                    if (self.getElement() != null) {self.performCallback("onChange", ev)}
                 })
         }))
         
@@ -1961,16 +2080,15 @@ class EclairRatioItem extends EclairHStack {
                         .addStyle(this.customStyles.selectedLabelStyle)
                 })
         } else {
-            
-            this.addStyle(eclair.styles.RadioButtonsSelectedItem)
-                .addStyle(this.customStyles.selectedItemStyle)
+            this.removeStyle(eclair.styles.RadioButtonsSelectedItem)
+                .removeStyle(this.customStyles.selectedItemStyle)
                 .child(0, radio => {
-                    radio.addStyle(eclair.styles.RadioButtonsSelectedRadio)
-                        .addStyle(this.customStyles.selectedRadioStyle)
+                    radio.removeStyle(eclair.styles.RadioButtonsSelectedRadio)
+                        .removeStyle(this.customStyles.selectedRadioStyle)
                 })
                 .child(1, label => {
-                    label.addStyle(eclair.styles.RadioButtonsSelectedLabel)
-                        .addStyle(this.customStyles.selectedLabelStyle)
+                    label.removeStyle(eclair.styles.RadioButtonsSelectedLabel)
+                        .removeStyle(this.customStyles.selectedLabelStyle)
                 })
         }
     }
@@ -2177,7 +2295,7 @@ class EclairTextArea extends EclairCustomTagComponent {
         })
         
         this._overrideOnInput = null
-        this._updateCallback(keys[k], (e, ev) => {
+        this._updateCallback("onInput", (e, ev) => {
             if (_value instanceof EclairState) {_value.value(e.getElement().value)}
             if (this._overrideOnInput != null) {this._overrideOnInput(e, ev)} 
         })
@@ -2281,7 +2399,7 @@ class EclairTextBox extends EclairCustomTagComponent {
 // elements.form.toggle
 class EclairToggle extends EclairComponent {
     constructor(_value) {
-        super("toggle")
+        super()
         
         let overrideOnClick = null;
         
@@ -2501,7 +2619,7 @@ class EclairLink extends EclairCustomTagComponent {
 // elements.standard.text
 class EclairText extends EclairComponent {
     constructor(text) {
-        super("text")
+        super()
         
         this.bindState(text, "text", value => {
             this._text = value;

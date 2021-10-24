@@ -7,7 +7,7 @@
 /// ```
 class EclairRadioButtons extends EclairComponent {
     constructor(_options) {
-        super("radio-button")
+        super()
         
         // Internal states of values, options and selected index
         this._options = _options instanceof EclairState? _options : Ø(_options)
@@ -37,7 +37,6 @@ class EclairRadioButtons extends EclairComponent {
                 
                     if (self.stateBindings.hasOwnProperty("index")) {self.stateBindings["index"].value(newIndex, self)}
                     if (self.stateBindings.hasOwnProperty("value")) {self.stateBindings["value"].value(item, self)}
-                    if (self.getElement() != null) {self.performCallback("onChange", ev)}
                 })
         }))
         
@@ -267,16 +266,15 @@ class EclairRatioItem extends EclairHStack {
                         .addStyle(this.customStyles.selectedLabelStyle)
                 })
         } else {
-            
-            this.addStyle(eclair.styles.RadioButtonsSelectedItem)
-                .addStyle(this.customStyles.selectedItemStyle)
+            this.removeStyle(eclair.styles.RadioButtonsSelectedItem)
+                .removeStyle(this.customStyles.selectedItemStyle)
                 .child(0, radio => {
-                    radio.addStyle(eclair.styles.RadioButtonsSelectedRadio)
-                        .addStyle(this.customStyles.selectedRadioStyle)
+                    radio.removeStyle(eclair.styles.RadioButtonsSelectedRadio)
+                        .removeStyle(this.customStyles.selectedRadioStyle)
                 })
                 .child(1, label => {
-                    label.addStyle(eclair.styles.RadioButtonsSelectedLabel)
-                        .addStyle(this.customStyles.selectedLabelStyle)
+                    label.removeStyle(eclair.styles.RadioButtonsSelectedLabel)
+                        .removeStyle(this.customStyles.selectedLabelStyle)
                 })
         }
     }

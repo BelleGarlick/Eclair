@@ -211,6 +211,58 @@ eclair.styles = {
         .userSelect("none")
         .opacity(0),
     
+    SyntaxHighlighter: eclair.Style("eclair-syntax-highlighter")
+        .position("relative")
+        .width("420px")
+        .height("360px")
+        .borderSize("1px")
+        .borderStyle("solid")
+        .borderColor("#999999")
+        .borderRadius("3px"),
+    SyntaxHighlighterCodeElement: eclair.Style("eclair-syntax-highlighter-code")
+        .position("absolute")
+        .top("0px")
+        .left("0px")
+        .width("100%")
+        .height("100%")
+        .fontSize("14px")
+        .font("monospace")
+        .borderSize("0px")
+        .outline("none")
+        .caretColor("black")
+        .resize("none")
+        .whiteSpace("pre")
+        .boxSizing("border-box")
+        .padding("10px")
+        .overflowWrap("normal")
+        .display("none", ":-webkit-scrollbar")
+        .css("-ms-overflow-style: none; scrollbar-width: none;")
+        .overflowX("scroll"),
+    SyntaxHighlighterTextAreaElement: eclair.Style("eclair-syntax-highlighter-text-area")
+        .position("absolute")
+        .top("0px")
+        .left("0px")
+        .width("100%")
+        .height("100%")
+        .fontSize("14px")
+        .font("monospace")
+        .borderSize("0px")
+        .outline("none")
+        .caretColor("black")
+        .resize("none")
+        .whiteSpace("pre")
+        .boxSizing("border-box")
+        .background("transparent")
+        .fontColor("rgb(1, 1, 1, 0)")
+        .padding("10px")
+        .overflowWrap("normal")
+        .overflowX("scroll"),
+    SyntaxHighlighterCommentStyle: eclair.Style("eclair-syntax-highlighter-comment").fontColor("grey"),
+    SyntaxHighlighterKeywordStyle: eclair.Style("eclair-syntax-highlighter-keyword").fontColor("#0066ee"),
+    SyntaxHighlighterStringStyle: eclair.Style("eclair-syntax-highlighter-string").fontColor("#dd9900"),
+    SyntaxHighlighterQuoteStyle: eclair.Style("eclair-syntax-highlighter-quote").fontColor("#dd9900"),
+    SyntaxHighlighterEclairStyle: eclair.Style("eclair-syntax-highlighter-eclair").fontColor("#009900"),
+    
     AlertBox: eclair.Style("eclair-style-alert-box")
         .background(eclair.theme.accent)
         .boxSizing("border-box")

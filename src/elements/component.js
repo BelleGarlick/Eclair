@@ -1,10 +1,10 @@
 // WARN Doc not finished yet
 // WARN EclairComponent is not finished.
 class EclairComponent extends EclairStylableObject {
-    constructor(componentName) {
+    constructor() {
         super()
         
-        this._id = eclair._newID(componentName);
+        this._id = eclair._newID();
         eclair._elements[this.id()] = this;
         
         this.parent = null
@@ -272,7 +272,7 @@ class EclairComponent extends EclairStylableObject {
     
     child(n, callback) {
         let item = n < this.children.length && n >= 0? this.children[n] : null
-        this.callback(item)
+        callback(item)
         return this
     }
     
