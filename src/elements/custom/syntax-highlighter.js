@@ -45,6 +45,7 @@ class EclairSyntaxHighlighter extends EclairComponent {
          )
         
         this.textArea = this._addChild(eclair.TextArea(this._codeState)
+            .removeStyle(eclair.styles.TextArea)
             .addStyle(eclair.styles.SyntaxHighlighterTextAreaElement)
             .setAttr("spellcheck", "false")
             .onScroll((e, ev) => {
@@ -86,7 +87,7 @@ class EclairSyntaxHighlighter extends EclairComponent {
         for (let l = 0; l < tokenisedLines.length; l++) {
             let cline = tokenisedLines[l];
             for (let t = 0; t < cline.length; t++) {
-                formattedCode += `<span class='${(cline[t].type != '')? this.theme[cline[t].type].id():""}'>${cline[t].text}</span>`
+                formattedCode += `<span class='${(cline[t].type != '')? this.theme[cline[t].type].eID():""}'>${cline[t].text}</span>`
             }
             formattedCode += "<br/>"
         }

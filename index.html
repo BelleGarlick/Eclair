@@ -42,7 +42,7 @@ VStack([
         return eclair.Button(item.name)
             .onClick(_ => {
                 codeExampleTitle.value(item.name)
-                htmlCode.value(examples[item.id])
+                htmlCode.value(examples[item.eID])
             })
     }),
     
@@ -80,7 +80,6 @@ VStack([
 
     eclair.VStack([
         VStack([     
-            
             eclair.TextBox(selectedRadio),
             eclair.TextBox(selectedRadioIndex),
             

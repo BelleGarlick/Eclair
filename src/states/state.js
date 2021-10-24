@@ -11,7 +11,7 @@ class EclairState {
             if (_value != this._value){
                 this._value = _value;
                 
-                let ignoreID = (component instanceof EclairComponent)? component.id() : ""
+                let ignoreID = (component instanceof EclairComponent)? component.eID() : ""
 
                 let self = this
                 Object.keys(self.callbacks).forEach(function(key) {

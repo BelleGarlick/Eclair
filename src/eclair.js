@@ -9,6 +9,7 @@
 // TODO Add get/post stuff
 // TODO Make sure all args are declared in documentation
 // TODO Add enabled tag to all elements.
+// TODO Add small example of each object into each class documentation.
 // Check on change bindings
 // Add getting value from objects and altering lists. This should enable objects to be easier to work with.
 // TODO NEed tutorials for everything. Geting to grips with eclair, making a custom object, specific object tutorials.
@@ -34,7 +35,7 @@
 /// # Eclair
 /// The `eclair` object allows you to easily construct an eclair object and interact in the Eclair development kit.
 let eclair = {
-    version: "0.0.89",
+    version: "0.0.90",
     _ids: 0,
     _elements: {},
     _styles: {},

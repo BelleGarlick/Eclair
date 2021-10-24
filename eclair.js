@@ -5,7 +5,7 @@
 
 
 let eclair = {
-    version: "0.0.89",
+    version: "0.0.90",
     _ids: 0,
     _elements: {},
     _styles: {},
@@ -84,7 +84,7 @@ class EclairState {
             if (_value != this._value){
                 this._value = _value;
                 
-                let ignoreID = (component instanceof EclairComponent)? component.id() : ""
+                let ignoreID = (component instanceof EclairComponent)? component.eID() : ""
 
                 let self = this
                 Object.keys(self.callbacks).forEach(function(key) {
@@ -545,7 +545,6 @@ class EclairTextStyleState extends EclairState {
 class EclairStylableObject {
     constructor() {
         this._styles = {}
-        this._stylePrefix = "#"
     }
     
     _getStyleSheet(rule, selector) {
@@ -561,7 +560,7 @@ class EclairStylableObject {
     buildStyleObject(cssOnly) {
         if (cssOnly == null) {cssOnly = false}
         let self = this;
-        let objectID = this.id()
+        let objectID = this.eID()
         
         function jsonToCss(_json) {
             let styleCode = ""
@@ -584,7 +583,7 @@ class EclairStylableObject {
                         selector = ":" + selector;
                     }
                 }
-                styleCode += `${self._stylePrefix}${objectID}${selector}{${styleSheetCode}}`;
+                styleCode += `.${objectID}${selector}{${styleSheetCode}}`;
             });
             
             return styleCode
@@ -606,30 +605,27 @@ class EclairStylableObject {
         if (fullStyleCode.length == 0) {return null}
         
         let styleObject = document.createElement("style");
-        styleObject.setAttribute("id", `${objectID}-css`)
+        styleObject.setAttribute("class", `${objectID}-css`)
         styleObject.innerHTML = fullStyleCode
         
         return styleObject;
     }
     
     updateCSSStyle() {
-        let cssElement = document.getElementById(this.id() + "-css");
-        let css = this.buildStyleObject(true);
+        let curCSSElements = document.getElementsByClassName(this.eID() + "-css");
+        let newCSSElement = this.buildStyleObject();
         
-        if (css.length > 0) {
-            if (cssElement == null) {
+        if (newCSSElement != null) {
+            if (curCSSElements.length == 0) {
                 if (!(this instanceof EclairStyleComponent)) {
-                    let newStyleObject = this.buildStyleObject()
-                    if (newStyleObject != null) {
-                        document.head.appendChild(newStyleObject)
-                    }
+                    document.head.appendChild(newCSSElement)
                 }
             } else {
-                cssElement.innerHTML = css;
+                curCSSElements[0].innerHTML = newCSSElement.innerHTML;
             }
         } else {
-            if (cssElement != null) {
-                cssElement.parentElement.removeChild(cssElement);
+            if (curCSSElements.length > 0) {
+                curCSSElements[0].parentElement.removeChild(curCSSElements[0]);
             }
         }
         
@@ -656,7 +652,7 @@ class EclairStylableObject {
         
         if (_style instanceof EclairState) {
             let self = this
-            _style.addCallback(this.id() + `-style-{property}`, function(state) {
+            _style.addCallback(this.eID() + `-style-{property}`, function(state) {
                 self._getStyleSheet(rule, selector)[property] = _style.string(); 
                 self.updateCSSStyle()
             }, true)
@@ -732,13 +728,13 @@ class EclairStyleComponent extends EclairStylableObject {
         this._stylePrefix = "."  // Use class not default id 
     }
     
-    id() {
+    eID() {
         return this._id;
     }
     
     create() {
-        let elem = document.getElementById(this.id() + "-css")
-        if (elem == null) {
+        let elems = document.getElementsByClassName(this.eID() + "-css")
+        if (elems.length == 0) {
             let newStyleObject = this.buildStyleObject()
             if (newStyleObject != null) {
                 document.head.appendChild(newStyleObject)
@@ -1042,14 +1038,14 @@ class EclairComponent extends EclairStylableObject {
         super()
         
         this._id = eclair._newID();
-        eclair._elements[this.id()] = this;
+        eclair._elements[this.eID()] = this;
         
         this.parent = null
         this.children = []
         
         this._callbacks = {}
-        this.sharedStyles = []
-        this.attributes = {id: this.id()}
+        this.sharedStyles = [this.eID()]
+        this.attributes = {class: this.eID()}
         this.stateBindings = {}
         
         this._hidden = false
@@ -1058,8 +1054,15 @@ class EclairComponent extends EclairStylableObject {
         this._buildStyle = true
     }
     
+    eID() {return this._id;}
     
-    id() {return this._id;}
+    id(_value) {
+        if (_value == null) {
+            return this.getAttr("id")
+        } else {
+            return this.setAttr("id", _value)
+        }
+    }
     
     write() {
         document.write(this.compile())
@@ -1071,11 +1074,17 @@ class EclairComponent extends EclairStylableObject {
     }
     
     getElement(callback) {
-        let elem = document.getElementById(this.id());
-        if (callback != null && elem != null) {
-            callback(elem)
+        let elems = document.getElementsByClassName(this.eID());
+        
+        if (elems.length == 0) {
+            return null
+        } else {
+            if (callback != null) {
+                callback(elems[0]);
+            }
         }
-        return elem;
+        
+        return elems[0];
     }
     
     getAttr(key) {
@@ -1087,6 +1096,10 @@ class EclairComponent extends EclairStylableObject {
     }
     
     setAttr(key, value) {
+        if (key == "class") {
+            throw "Setting attribute 'class' is discouraged. Please use '.addStyle' and '.getStyle'."
+        }
+        
         if (value == null) {
             delete this.attributes[key];
             this.getElement(elem => {elem.removeAttribute(key)})
@@ -1097,9 +1110,10 @@ class EclairComponent extends EclairStylableObject {
         return this;
     }
     
+    
     addStyle(sharedClass) {
         if (sharedClass != null) {
-            let className = sharedClass instanceof EclairStyleComponent? sharedClass.id() : sharedClass;
+            let className = sharedClass instanceof EclairStyleComponent? sharedClass.eID() : sharedClass;
   
             let found = false;
             for (let n = 0; n < this.sharedStyles.length; n++) {
@@ -1115,7 +1129,8 @@ class EclairComponent extends EclairStylableObject {
                 if (n > 0) {classesString += " ";}
                 classesString += this.sharedStyles[n];
             }
-            this.setAttr("class", classesString)
+            this.attributes["class"] = classesString;
+            this.getElement(elem => {elem.setAttribute("class", classesString)})
             
             let elem = this.getElement()
             if (elem != null) {
@@ -1130,7 +1145,7 @@ class EclairComponent extends EclairStylableObject {
     
     removeStyle(sharedClass) {
         if (sharedClass != null) { 
-            let className = typeof(sharedClass) == "string"? sharedClass:sharedClass.id();
+            let className = typeof(sharedClass) == "string"? sharedClass:sharedClass.eID();
             
             let newStyles = []
             for (let n = 0; n < this.sharedStyles.length; n++) {
@@ -1146,7 +1161,8 @@ class EclairComponent extends EclairStylableObject {
                 if (n > 0) {classesString += " ";}
                 classesString += this.sharedStyles[n];
             }
-            this.setAttr("class", classesString)
+            this.attributes["class"] = classesString;
+            this.getElement(elem => {elem.setAttribute("class", classesString)})
         }
         return this;
     }
@@ -1168,12 +1184,12 @@ class EclairComponent extends EclairStylableObject {
     bindState(state, stateBindingID, onCallback, valueCallback) {
         if (state instanceof EclairState) {
             if (this.stateBindings.hasOwnProperty(stateBindingID)) {
-                this.stateBindings[stateBindingID].removeCallback(this.id())
+                this.stateBindings[stateBindingID].removeCallback(this.eID())
             }
             
             this.stateBindings[stateBindingID] = state
             
-            state.addCallback(this.id(), function(state) {
+            state.addCallback(this.eID(), function(state) {
                 let value = (valueCallback == null)? state.value() : valueCallback(state)
                 onCallback(value)
             }, true)
@@ -1208,9 +1224,9 @@ class EclairComponent extends EclairStylableObject {
         });
                 
         if (this._buildStyle) {
-            let buildStyle = this.buildStyleObject();
-            if (buildStyle != null && document.getElementById(buildStyle.getAttribute("id")) == null) {
-                document.head.appendChild(buildStyle)
+            let builtStyle = this.buildStyleObject();
+            if (builtStyle != null && document.getElementsByClassName(builtStyle.getAttribute("class")).length == 0) {
+                document.head.appendChild(builtStyle)
             }
         }
         
@@ -1264,7 +1280,7 @@ class EclairComponent extends EclairStylableObject {
         if (callback == null) {
             this.setAttr(callbackKey.toLowerCase(), null)
         } else {
-            this.setAttr(callbackKey.toLowerCase(), `eclair.performCallback("${this.id()}", "${callbackKey}", event)`)
+            this.setAttr(callbackKey.toLowerCase(), `eclair.performCallback("${this.eID()}", "${callbackKey}", event)`)
         }
         return this;
     }
@@ -1633,6 +1649,7 @@ class EclairSyntaxHighlighter extends EclairComponent {
          )
         
         this.textArea = this._addChild(eclair.TextArea(this._codeState)
+            .removeStyle(eclair.styles.TextArea)
             .addStyle(eclair.styles.SyntaxHighlighterTextAreaElement)
             .setAttr("spellcheck", "false")
             .onScroll((e, ev) => {
@@ -1674,7 +1691,7 @@ class EclairSyntaxHighlighter extends EclairComponent {
         for (let l = 0; l < tokenisedLines.length; l++) {
             let cline = tokenisedLines[l];
             for (let t = 0; t < cline.length; t++) {
-                formattedCode += `<span class='${(cline[t].type != '')? this.theme[cline[t].type].id():""}'>${cline[t].text}</span>`
+                formattedCode += `<span class='${(cline[t].type != '')? this.theme[cline[t].type].eID():""}'>${cline[t].text}</span>`
             }
             formattedCode += "<br/>"
         }

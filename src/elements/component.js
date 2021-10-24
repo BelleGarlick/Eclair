@@ -5,14 +5,14 @@ class EclairComponent extends EclairStylableObject {
         super()
         
         this._id = eclair._newID();
-        eclair._elements[this.id()] = this;
+        eclair._elements[this.eID()] = this;
         
         this.parent = null
         this.children = []
         
         this._callbacks = {}
-        this.sharedStyles = []
-        this.attributes = {id: this.id()}
+        this.sharedStyles = [this.eID()]
+        this.attributes = {class: this.eID()}
         this.stateBindings = {}
         
         this._hidden = false
@@ -21,8 +21,17 @@ class EclairComponent extends EclairStylableObject {
         this._buildStyle = true
     }
     
+    // Get the internal eclair ID
+    eID() {return this._id;}
     
-    id() {return this._id;}
+    // Set a id of an element 
+    id(_value) {
+        if (_value == null) {
+            return this.getAttr("id")
+        } else {
+            return this.setAttr("id", _value)
+        }
+    }
     
     write() {
         document.write(this.compile())
@@ -34,11 +43,17 @@ class EclairComponent extends EclairStylableObject {
     }
     
     getElement(callback) {
-        let elem = document.getElementById(this.id());
-        if (callback != null && elem != null) {
-            callback(elem)
+        let elems = document.getElementsByClassName(this.eID());
+        
+        if (elems.length == 0) {
+            return null
+        } else {
+            if (callback != null) {
+                callback(elems[0]);
+            }
         }
-        return elem;
+        
+        return elems[0];
     }
     
     getAttr(key) {
@@ -50,6 +65,10 @@ class EclairComponent extends EclairStylableObject {
     }
     
     setAttr(key, value) {
+        if (key == "class") {
+            throw "Setting attribute 'class' is discouraged. Please use '.addStyle' and '.getStyle'."
+        }
+        
         if (value == null) {
             delete this.attributes[key];
             this.getElement(elem => {elem.removeAttribute(key)})
@@ -60,9 +79,15 @@ class EclairComponent extends EclairStylableObject {
         return this;
     }
     
+//    id(newID) {
+//        if (newID == null) {
+//            return this.getAttr("id", "")
+//        }
+//    }
+    
     addStyle(sharedClass) {
         if (sharedClass != null) {
-            let className = sharedClass instanceof EclairStyleComponent? sharedClass.id() : sharedClass;
+            let className = sharedClass instanceof EclairStyleComponent? sharedClass.eID() : sharedClass;
   
             let found = false;
             for (let n = 0; n < this.sharedStyles.length; n++) {
@@ -78,7 +103,8 @@ class EclairComponent extends EclairStylableObject {
                 if (n > 0) {classesString += " ";}
                 classesString += this.sharedStyles[n];
             }
-            this.setAttr("class", classesString)
+            this.attributes["class"] = classesString;
+            this.getElement(elem => {elem.setAttribute("class", classesString)})
             
             // Create the style object if this object exists
             let elem = this.getElement()
@@ -94,7 +120,7 @@ class EclairComponent extends EclairStylableObject {
     
     removeStyle(sharedClass) {
         if (sharedClass != null) { 
-            let className = typeof(sharedClass) == "string"? sharedClass:sharedClass.id();
+            let className = typeof(sharedClass) == "string"? sharedClass:sharedClass.eID();
             
             let newStyles = []
             for (let n = 0; n < this.sharedStyles.length; n++) {
@@ -110,7 +136,8 @@ class EclairComponent extends EclairStylableObject {
                 if (n > 0) {classesString += " ";}
                 classesString += this.sharedStyles[n];
             }
-            this.setAttr("class", classesString)
+            this.attributes["class"] = classesString;
+            this.getElement(elem => {elem.setAttribute("class", classesString)})
         }
         return this;
     }
@@ -135,14 +162,14 @@ class EclairComponent extends EclairStylableObject {
         if (state instanceof EclairState) {
             // Remove binding for old callback within old state
             if (this.stateBindings.hasOwnProperty(stateBindingID)) {
-                this.stateBindings[stateBindingID].removeCallback(this.id())
+                this.stateBindings[stateBindingID].removeCallback(this.eID())
             }
             
             // Set new binding in class
             this.stateBindings[stateBindingID] = state
             
             // Add Callback to the state
-            state.addCallback(this.id(), function(state) {
+            state.addCallback(this.eID(), function(state) {
                 let value = (valueCallback == null)? state.value() : valueCallback(state)
                 onCallback(value)
             }, true)
@@ -186,9 +213,9 @@ class EclairComponent extends EclairStylableObject {
         });
                 
         if (this._buildStyle) {
-            let buildStyle = this.buildStyleObject();
-            if (buildStyle != null && document.getElementById(buildStyle.getAttribute("id")) == null) {
-                document.head.appendChild(buildStyle)
+            let builtStyle = this.buildStyleObject();
+            if (builtStyle != null && document.getElementsByClassName(builtStyle.getAttribute("class")).length == 0) {
+                document.head.appendChild(builtStyle)
             }
         }
         
@@ -282,7 +309,7 @@ class EclairComponent extends EclairStylableObject {
         if (callback == null) {
             this.setAttr(callbackKey.toLowerCase(), null)
         } else {
-            this.setAttr(callbackKey.toLowerCase(), `eclair.performCallback("${this.id()}", "${callbackKey}", event)`)
+            this.setAttr(callbackKey.toLowerCase(), `eclair.performCallback("${this.eID()}", "${callbackKey}", event)`)
         }
         return this;
     }

@@ -2,7 +2,6 @@
 class EclairStylableObject {
     constructor() {
         this._styles = {}
-        this._stylePrefix = "#"
     }
     
     _getStyleSheet(rule, selector) {
@@ -18,7 +17,7 @@ class EclairStylableObject {
     buildStyleObject(cssOnly) {
         if (cssOnly == null) {cssOnly = false}
         let self = this;
-        let objectID = this.id()
+        let objectID = this.eID()
         
         function jsonToCss(_json) {
             let styleCode = ""
@@ -41,7 +40,7 @@ class EclairStylableObject {
                         selector = ":" + selector;
                     }
                 }
-                styleCode += `${self._stylePrefix}${objectID}${selector}{${styleSheetCode}}`;
+                styleCode += `.${objectID}${selector}{${styleSheetCode}}`;
             });
             
             return styleCode
@@ -63,30 +62,27 @@ class EclairStylableObject {
         if (fullStyleCode.length == 0) {return null}
         
         let styleObject = document.createElement("style");
-        styleObject.setAttribute("id", `${objectID}-css`)
+        styleObject.setAttribute("class", `${objectID}-css`)
         styleObject.innerHTML = fullStyleCode
         
         return styleObject;
     }
     
     updateCSSStyle() {
-        let cssElement = document.getElementById(this.id() + "-css");
-        let css = this.buildStyleObject(true);
+        let curCSSElements = document.getElementsByClassName(this.eID() + "-css");
+        let newCSSElement = this.buildStyleObject();
         
-        if (css.length > 0) {
-            if (cssElement == null) {
+        if (newCSSElement != null) {
+            if (curCSSElements.length == 0) {
                 if (!(this instanceof EclairStyleComponent)) {
-                    let newStyleObject = this.buildStyleObject()
-                    if (newStyleObject != null) {
-                        document.head.appendChild(newStyleObject)
-                    }
+                    document.head.appendChild(newCSSElement)
                 }
             } else {
-                cssElement.innerHTML = css;
+                curCSSElements[0].innerHTML = newCSSElement.innerHTML;
             }
         } else {
-            if (cssElement != null) {
-                cssElement.parentElement.removeChild(cssElement);
+            if (curCSSElements.length > 0) {
+                curCSSElements[0].parentElement.removeChild(curCSSElements[0]);
             }
         }
         
@@ -114,7 +110,7 @@ class EclairStylableObject {
         // Support eclair states
         if (_style instanceof EclairState) {
             let self = this
-            _style.addCallback(this.id() + `-style-{property}`, function(state) {
+            _style.addCallback(this.eID() + `-style-{property}`, function(state) {
                 self._getStyleSheet(rule, selector)[property] = _style.string(); 
                 self.updateCSSStyle()
             }, true)
@@ -191,14 +187,14 @@ class EclairStyleComponent extends EclairStylableObject {
         this._stylePrefix = "."  // Use class not default id 
     }
     
-    id() {
+    eID() {
         return this._id;
     }
     
     // Create is used to signal a difference between compile/build etc
     create() {
-        let elem = document.getElementById(this.id() + "-css")
-        if (elem == null) {
+        let elems = document.getElementsByClassName(this.eID() + "-css")
+        if (elems.length == 0) {
             let newStyleObject = this.buildStyleObject()
             if (newStyleObject != null) {
                 document.head.appendChild(newStyleObject)
