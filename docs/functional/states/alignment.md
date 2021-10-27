@@ -23,4 +23,4 @@ eclair.VStack([...])
     .alignment(eclair.Alignment().end())
 ```
 
-<br/>Source: [_states.alignment_](https://github.com/SamGarlick/Eclair/tree/main/src/states/alignment.js)
+<br/>Source: [_functional.states.alignment_](https://github.com/SamGarlick/Eclair/tree/main/src/functional/states/alignment.js)

@@ -1,4 +1,4 @@
 eclair.js
-states
+functional
 style
 elements

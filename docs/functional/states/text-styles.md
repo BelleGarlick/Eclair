@@ -20,4 +20,4 @@ heading3
 heading4
 ```
 
-<br/>Source: [_states.text-styles_](https://github.com/SamGarlick/Eclair/tree/main/src/states/text-styles.js)
+<br/>Source: [_functional.states.text-styles_](https://github.com/SamGarlick/Eclair/tree/main/src/functional/states/text-styles.js)

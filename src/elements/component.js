@@ -40,20 +40,24 @@ class EclairComponent extends EclairStylableObject {
     
     to(elemID) {
         document.getElementById(elemID).innerHTML = this.compile();
+        return this
     }
     
     getElement(callback) {
         let elems = document.getElementsByClassName(this.eID());
         
-        if (elems.length == 0) {
-            return null
-        } else {
-            if (callback != null) {
+        if (callback != null) {
+            if (elems.length > 0) {
                 callback(elems[0]);
             }
+            return this
+        } else {
+            if (elems.length > 0) {
+                return elems[0]
+            } else {
+                return null
+            }
         }
-        
-        return elems[0];
     }
     
     getAttr(key) {
@@ -285,7 +289,7 @@ class EclairComponent extends EclairStylableObject {
     /// ```
     
     // Eclair calls
-    performCallback(eventID, event, param) {
+    triggerEvent(eventID, event, param) {
         if (this._callbacks.hasOwnProperty(eventID)) {
             this._callbacks[eventID](this, event, param);
         }
@@ -298,6 +302,7 @@ class EclairComponent extends EclairStylableObject {
     }
     
     child(n, callback) {
+        // TODO if no callback then return elem
         let item = n < this.children.length && n >= 0? this.children[n] : null
         callback(item)
         return this
@@ -309,7 +314,7 @@ class EclairComponent extends EclairStylableObject {
         if (callback == null) {
             this.setAttr(callbackKey.toLowerCase(), null)
         } else {
-            this.setAttr(callbackKey.toLowerCase(), `eclair.performCallback("${this.eID()}", "${callbackKey}", event)`)
+            this.setAttr(callbackKey.toLowerCase(), `eclair.triggerEvent("${this.eID()}", "${callbackKey}", event)`)
         }
         return this;
     }

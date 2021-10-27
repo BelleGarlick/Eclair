@@ -2,17 +2,22 @@
 // TODO Implement these: https://getbootstrap.com/docs/4.0/components/progress/
 // PRINT Add margin, paddding, border: left, top, right bottom
 // PRINT Add deleting element
-// PRINT Add callback getters when accessing specific child elements.
-// WARN Layout objects have no shared style
 // TODO State all the shared styles in docs for an object .e.g. alert box uses eclair.styles.AlertBox, ...
 // TODO Examples
-// TODO Add get/post stuff
 // TODO Make sure all args are declared in documentation
 // TODO Add enabled tag to all elements.
 // TODO Add small example of each object into each class documentation.
 // Check on change bindings
 // Add getting value from objects and altering lists. This should enable objects to be easier to work with.
 // TODO NEed tutorials for everything. Geting to grips with eclair, making a custom object, specific object tutorials.
+// TODO In documentation state what object it extends
+// TODO List inherited functions with link to the function in child documentation
+// Main documentation
+    // Inherits form 'element.dsads'
+    // .to
+    // .write
+    // Inherits from 'eclair.component...'
+    //....
 
 // Future custom objects
 //  - Cookies accept + ability to set
@@ -35,7 +40,7 @@
 /// # Eclair
 /// The `eclair` object allows you to easily construct an eclair object and interact in the Eclair development kit.
 let eclair = {
-    version: "0.0.90",
+    version: "0.0.91",
     _ids: 0,
     _elements: {},
     _styles: {},
@@ -44,14 +49,16 @@ let eclair = {
         return "eclair-element-" + (this._ids - 1);
     },
     
-    performCallback: function(eclairID, eventID, event, param) {
-        this._elements[eclairID].performCallback(eventID, event, param);
+    triggerEvent: function(eclairID, eventID, event, param) {
+        this._elements[eclairID].triggerEvent(eventID, event, param);
     },
     
     // Styling
     Style: function(_styleID) {return new EclairStyleComponent(_styleID);},
     
     post: function(_url) {return new EclairPost(_url);},
+    get: function(_url) {return new EclairGet(_url);},
+    httpRequest: function(_url, _method) {return new EclairHTTPRequest(_url, _method);},
     
     // State based 
     State: function(_val) {return new EclairState(_val);},    

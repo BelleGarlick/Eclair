@@ -147,4 +147,4 @@
 - ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) `.yellow()`
 - ![#9acd32](https://via.placeholder.com/15/9acd32/000000?text=+) `.yellowGreen()`
 
-<br/>Source: [_states.color_](https://github.com/SamGarlick/Eclair/tree/main/src/states/color.js)
+<br/>Source: [_functional.states.color_](https://github.com/SamGarlick/Eclair/tree/main/src/functional/states/color.js)

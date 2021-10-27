@@ -5,7 +5,7 @@
 
 
 let eclair = {
-    version: "0.0.90",
+    version: "0.0.91",
     _ids: 0,
     _elements: {},
     _styles: {},
@@ -14,13 +14,15 @@ let eclair = {
         return "eclair-element-" + (this._ids - 1);
     },
     
-    performCallback: function(eclairID, eventID, event, param) {
-        this._elements[eclairID].performCallback(eventID, event, param);
+    triggerEvent: function(eclairID, eventID, event, param) {
+        this._elements[eclairID].triggerEvent(eventID, event, param);
     },
     
     Style: function(_styleID) {return new EclairStyleComponent(_styleID);},
     
     post: function(_url) {return new EclairPost(_url);},
+    get: function(_url) {return new EclairGet(_url);},
+    httpRequest: function(_url, _method) {return new EclairHTTPRequest(_url, _method);},
     
     State: function(_val) {return new EclairState(_val);},    
     Color: function(_col) {return new EclairColor(_col);},
@@ -70,7 +72,7 @@ function Ø(value) {
 }
 
 
-// states.state
+// functional.states.state
 class EclairState {
     constructor(newValue) {
         this._value = newValue
@@ -259,7 +261,7 @@ class EclairState {
 }
 
 
-// states.alignment
+// functional.states.alignment
 class EclairAlignmentState extends EclairState {
     constructor() {
         super("center")
@@ -273,7 +275,7 @@ class EclairAlignmentState extends EclairState {
 }
 
 
-// states.color
+// functional.states.color
 
 class EclairColor extends EclairState {
     constructor(_col) {
@@ -529,7 +531,7 @@ class EclairColor extends EclairState {
     dark() {return this.hex("d5d8d9")}
 }
 
-// states.text-styles
+// functional.states.text-styles
 class EclairTextStyleState extends EclairState {
     title() {this.value("title"); return this;}
     subtitle() {this.value("subtitle"); return this;}
@@ -538,6 +540,181 @@ class EclairTextStyleState extends EclairState {
     heading3() {this.value("heading3"); return this;}
     heading4() {this.value("heading4"); return this;}
 }
+
+
+
+// functional.requests.request
+
+class EclairHTTPRequest {
+    constructor(url, method) {
+        this.url = url
+        this.method = method
+
+        this._responseType = ""
+        this._timeout = 10000  // 10s
+        this._headers = {}
+        this._async = true
+        this._widthCredentials = false
+        
+        this._onLoad = null
+        this._onError = null
+        this._onProgress = null
+        this._onLoadUpload = null
+        this._onErrorUpload = null
+        this._onProgressUpload = null
+        this._onReadyStateChange = null
+    }
+
+    onSuccess(callback) {
+        this._onLoad = callback
+        return this
+    }
+
+    onUploadSuccess(callback) {
+        this._onLoadUpload = callback
+        return this
+    }
+
+    onError(callback) {
+        this._onError = callback
+        return this
+    }
+
+    onUploadError(callback) {
+        this._onE_onErrorUploadrror = callback
+        return this
+    }
+
+    onProgress(callback) {
+        this._onProgress = callback
+        return this
+    }
+
+    onUploadProgress(callback) {
+        this._onProgressUpload = callback
+        return this
+    }
+
+    onReadyStateChanged(callback) {
+        this._onReadyStateChange = callback
+        return this
+    }
+    
+    setHeader(key, value) {
+        this._headers[key] = (value instanceof EclairState)? value.value() : value
+        return this
+    }
+    
+    setAsync(value) {
+        this._async = (value instanceof EclairState)? value.value() : value
+        return this
+    }
+    
+    responseType(value) {
+        this._responseType = (value instanceof EclairState)? _value.value() : value
+        return this
+    }
+    
+    timeout(value) {
+        this._timeout = (value instanceof EclairState)? value.value() : value
+        return this
+    }
+    
+    widthCredentials(value) {
+        this._widthCredentials = (value instanceof EclairState)? value.value() : value
+        return this
+    }
+    
+    _buildXTTPObject() {
+        var xhttp = (window.XMLHttpRequest)? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+
+        let self = this
+        xhttp.onload = function() {if (self._onLoad != null) {self._onLoad(xhttp.response)}}
+        xhttp.upload.onload = function() {if (self._onLoadUpload != null) {self._onLoadUpload()}}
+        
+        xhttp.onerror = function() {if (self._onError != null) {self._onError(xmlhttp.status)}}
+        xhttp.upload.onerror = function() {if (self._onErrorUpload != null) {self._onErrorUpload(xmlhttp.status)}}
+        
+        xhttp.onprogress = function(evt) {
+            if (self._onProgress != null) {self._onProgress(evt.loaded / evt.total)}
+        }
+        xhttp.upload.onprogress = function(evt) {
+            if (self._onProgressUpload != null) {self._onProgressUpload(evt.loaded / evt.total)}
+        }
+        
+        xhttp.onreadystatechange = function() {
+            if (self._onReadyStateChange != null) {
+                self._onReadyStateChange(xhttp)
+            }
+        };
+
+        xhttp.withCredentials = this._widthCredentials
+        xhttp.timeout = this._timeout
+        xhttp.responseType = this._responseType
+        
+        let keys = Object.keys(this._headers);
+        for (let k = 0; k < keys.length; k++) {
+            xhttp.setRequestHeader(keys[k], this._headers[k]);
+        }
+        
+        xhttp.open(this.method, this.url, this._async);
+        
+        return xhttp
+    }
+
+    send(_form) {
+        var xhttp = this._buildXTTPObject();
+        
+        var formData = new FormData;
+        if (_form instanceof HTMLElement && _form.tagName == "FORM") {
+            formData = new FormData(_form)
+            
+        } else if (_form instanceof EclairForm) {
+            _form.getElement(e => {
+                formData = new FormData(e)
+            })
+            
+        } else if (_form.constructor == Object) {
+            Object.keys(_form).forEach(function(key) {
+                let value = _form[key]
+                console.log()
+                if (value instanceof EclairState) {
+                    value = value.value()
+                    
+                } else if (value instanceof HTMLElement && value.tagName == "INPUT") {
+                    if (value.getAttribute("type") == "file") {
+                        value = value.files[0]
+                    } else {
+                        value = value.value;
+                    }
+                } 
+                
+                
+                formData.append(key, value)
+            })
+        }
+        
+        xhttp.send(formData);
+
+        return this
+    }
+}
+
+// functional.requests.get
+class EclairGet extends EclairHTTPRequest {
+    constructor(url) {
+        super(url, "GET")
+    }
+}
+
+// functional.requests.post
+class EclairPost extends EclairHTTPRequest {
+    constructor(url) {
+        super(url, "POST")
+    }
+}
+
+
 
 
 
@@ -1071,20 +1248,24 @@ class EclairComponent extends EclairStylableObject {
     
     to(elemID) {
         document.getElementById(elemID).innerHTML = this.compile();
+        return this
     }
     
     getElement(callback) {
         let elems = document.getElementsByClassName(this.eID());
         
-        if (elems.length == 0) {
-            return null
-        } else {
-            if (callback != null) {
+        if (callback != null) {
+            if (elems.length > 0) {
                 callback(elems[0]);
             }
+            return this
+        } else {
+            if (elems.length > 0) {
+                return elems[0]
+            } else {
+                return null
+            }
         }
-        
-        return elems[0];
     }
     
     getAttr(key) {
@@ -1256,7 +1437,7 @@ class EclairComponent extends EclairStylableObject {
     onUnload(callback) {return this._updateCallback("onUnload", callback);}
     onResize(callback) {return this._updateCallback("onResize", callback);}
     
-    performCallback(eventID, event, param) {
+    triggerEvent(eventID, event, param) {
         if (this._callbacks.hasOwnProperty(eventID)) {
             this._callbacks[eventID](this, event, param);
         }
@@ -1280,7 +1461,7 @@ class EclairComponent extends EclairStylableObject {
         if (callback == null) {
             this.setAttr(callbackKey.toLowerCase(), null)
         } else {
-            this.setAttr(callbackKey.toLowerCase(), `eclair.performCallback("${this.eID()}", "${callbackKey}", event)`)
+            this.setAttr(callbackKey.toLowerCase(), `eclair.triggerEvent("${this.eID()}", "${callbackKey}", event)`)
         }
         return this;
     }
@@ -2694,59 +2875,6 @@ class EclairText extends EclairComponent {
 
 
 
-
-
-
-// functional.post
-class EclairPost {
-    constructor(url) {
-        this.url = url
-
-        this._onLoad = function() {}
-<!--            this._onAbort = null-->
-<!--            this._onLoadEnd = null-->
-<!--            this._onLoadStart = null-->
-        this._onProgress = null
-<!--            this._onTimeOut = null-->
-    }
-
-    onSuccess(callback) {
-        this._onLoad = callback
-        return this
-    }
-
-    onProgress(callback) {
-        this._onProgress = callback
-        return this
-    }
-
-    send(_form) {
-        var xhttp = new XMLHttpRequest();
-
-        let self = this
-        xhttp.onload = function() {if (self._onLoad != null) {self._onLoad(xhttp.responseText)}}
-        xhttp.onprogress = function(evt) {
-            if (self._onProgress != null){self._onProgress(evt.loaded / evt.total)}
-        }
-
-        xhttp.open("POST", this.url, true);
-        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-
-        var formString = ""
-        Object.keys(_form).forEach(function(key) {
-            let value = _form[key]
-            if (value instanceof EclairState) {
-                value = value.value()
-            }
-            formString += escape(key) + "="
-            formString += escape(value) + "&"
-        })
-
-        xhttp.send(formString);
-
-        return this
-    }
-}
 
 
 
