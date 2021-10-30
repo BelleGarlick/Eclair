@@ -1,10 +1,10 @@
 # Eclair Select
-__extends [EclairView](https://github.com/SamGarlick/Eclair/tree/main/src/elements/layout/view.js)__
+__extends [EclairView](https://github.com/SamGarlick/Eclair/tree/main/src/elements/layout/view.js)__<br/>
 An eclair select element.
 Eclair.styles.Select: Select style.
 ```javascript
 Eclair.Select(["apple", "orange", "banana"])
-.selectedIndex(0)
+    .selectedIndex(0)
 ```
 ### constructor
 Construct an eclair Select object.
@@ -17,13 +17,13 @@ A value which represents the selected item of the select box.
 value: The value to set the select to.
 ```javascript
 Eclair.Select(["apple", "orange", "banana"])
-.value("banana")
+    .value("banana")
 ```
 ### .selectedIndex
 A value which represents the selected item of the select box.
 index: The index to select.
 ```javascript
 Eclair.Select(["apple", "orange", "banana"])
-.selectedIndex(1)
+    .selectedIndex(1)
 ```
 <br/>Source: [_elements.form.select_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/form/select.js)

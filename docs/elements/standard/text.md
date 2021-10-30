@@ -1,5 +1,5 @@
 # Eclair Text
-__extends [EclairComponent](https://github.com/SamGarlick/Eclair/tree/main/src/elements/component.js)__
+__extends [EclairComponent](https://github.com/SamGarlick/Eclair/tree/main/src/elements/component.js)__<br/>
 Create a eclair text object.
 Eclair.styles.Text: Default text style.
 Eclair.styles.TextTitleStyle: Modifiable text style which can be given to a text object using .type('title').
@@ -10,7 +10,7 @@ Eclair.styles.TextHeading3Style: Modifiable text style which can be given to a t
 Eclair.styles.TextHeading4Style: Modifiable text style which can be given to a text object using .type('heading4').
 ```javascript
 Eclair.Text('Welcome')
-.type("title")
+    .type("title")
 ```
 ### constructor
 Construct an Eclair text element with a predefined value.
@@ -23,6 +23,6 @@ Set the type of text this is to a predefined style from the list of following: `
 value: Predefined style.
 ```javascript
 Eclair.Text('Welcome')
-.type("subtitle")
+    .type("subtitle")
 ```
 <br/>Source: [_elements.standard.text_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/standard/text.js)

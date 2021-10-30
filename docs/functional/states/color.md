@@ -1,9 +1,9 @@
 # Eclair Color
-__extends [EclairState](https://github.com/SamGarlick/Eclair/tree/main/src/elements/states/state.js)__
+__extends [EclairState](https://github.com/SamGarlick/Eclair/tree/main/src/elements/states/state.js)__<br/>
 Create a color state object.
 ```javascript
 Eclair.Button("Example")
-.background(Eclair.Color().hex("#ff9900"))
+    .background(Eclair.Color().hex("#ff9900"))
 ```
 ### constructor
 Construct the Color component.
@@ -60,14 +60,14 @@ Lighten the colour by a given amount.
 value: A value from 0 - 255 which all the numbers will be lightened by.
 ```javascript
 Eclair.Color().hex("#ffffff")
-.lighten(50)
+    .lighten(50)
 ```  
 ### .darken
 Darken the colour by a given amount.
 value: A value from 0 - 255 which all the numbers will be darkened by.
 ```javascript
 Eclair.Color().hex("#ffffff")
-.darken(50)
+    .darken(50)
 ```  
 ### Themed Colours
 - ![#d4edd9](https://via.placeholder.com/15/d4edd9/000000?text=+) `.success()`

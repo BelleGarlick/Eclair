@@ -1,5 +1,5 @@
 # Eclair Component
-__extends [EclairStylableObject](https://github.com/SamGarlick/Eclair/tree/main/src/style/style.js)__
+__extends [EclairStylableObject](https://github.com/SamGarlick/Eclair/tree/main/src/style/style.js)__<br/>
 Warn test .hide
 Warn test .show
 ### .build
@@ -8,7 +8,7 @@ This function should be implemented in a subclass but not called. Only the paren
 This function should be called to create the object. This calls the `.build` function as implemented in the subclass then applies all attributes to the object then return the compiled HTML code.
 ```javascript
 Eclair.Text("Hello World")
-.compile()
+    .compile()
 ```
 ### Event Handling
 All eclair components have a range of built in event handing functions easily accessable using callback functions. You can assign these functions to any eclair object, however, if the HTML object cannot invoke the event then the event will never get called. For example onError invoked when an image element fails to load an image, but the button object would never invoke that function. The parameter given in the callback parameters is the object eclair object. Full list of events:
@@ -38,14 +38,14 @@ All eclair components have a range of built in event handing functions easily ac
 <br/>**onResize**: Invoked when object resizes.
 ```javascript
 Eclair.Button("Hello There")
-.onClick((el, ev) => {
-alert("General Kenobi")
-})
-.onMouseOver((el, ev) => {
-el.backgorund("red")
-})
-.onMouseOut((el, ev) => {
-el.background("blue")
-})
+    .onClick((el, ev) => {
+        alert("General Kenobi")
+    })
+    .onMouseOver((el, ev) => {
+        el.backgorund("red")
+    })
+    .onMouseOut((el, ev) => {
+        el.background("blue")
+    })
 ```
 <br/>Source: [_elements.component_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/component.js)

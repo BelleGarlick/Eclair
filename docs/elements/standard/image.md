@@ -1,5 +1,5 @@
 # Eclair Image
-__extends [EclairCustomTagComponent](https://github.com/SamGarlick/Eclair/tree/main/src/elements/custom-tag.js)__
+__extends [EclairCustomTagComponent](https://github.com/SamGarlick/Eclair/tree/main/src/elements/custom-tag.js)__<br/>
 An eclair image element.
 Eclair.styles.Image: Default Image style.
 ```javascript
@@ -16,8 +16,9 @@ Set alt text of the image for accessibility.
 alt: Alt text of the image.
 ```javascript
 Eclair.Image('image.png')
-.altText('An image of a goldfish jumping on a trampoline.')
+    .altText('An image of a goldfish jumping on a trampoline.')
 ```
-<br/>### Inherits from elements.custom-tag
- - .innerHTML()
+
+### Inherits from: elements.custom-tag
+ - [.innerHTML()](https://github.com/SamGarlick/Eclair/tree/main/docs/elements/custom-tag.md#innerHTML)
 <br/>Source: [_elements.standard.image_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/standard/image.js)

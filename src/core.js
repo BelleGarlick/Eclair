@@ -34,7 +34,7 @@
 /// # Eclair
 /// The `eclair` object allows you to easily construct an eclair object and interact in the Eclair development kit.
 let Eclair = {
-    version: "0.0.92",
+    version: "0.0.93",
     _ids: 0,
     _elements: {},
     _styles: {},

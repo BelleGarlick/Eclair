@@ -2,7 +2,7 @@ import os
 import shutil
 import uglipyjs
 
-
+DOC_DOC_LINK = "https://github.com/SamGarlick/Eclair/tree/main/docs/"
 DOC_SRC_LINK = "https://github.com/SamGarlick/Eclair/tree/main/src/"
 BUILD_ORDER_FILE = "build.txt"
 SOURCE_DIR = "src"
@@ -83,7 +83,7 @@ class DocumentationBuilder:
 
             if documentation_data["extends"] is not None:
                 extends_breadcrumbs, class_name = documentation_data["extends"].split(":")
-                documentation += [f"__extends [{class_name}]({DOC_SRC_LINK}{extends_breadcrumbs.replace('.', '/')}.js)__"]
+                documentation += [f"__extends [{class_name}]({DOC_SRC_LINK}{extends_breadcrumbs.replace('.', '/')}.js)__<br/>"]
 
             if documentation_data["description"] is not None:
                 documentation += [documentation_data["description"]]
@@ -114,12 +114,11 @@ class DocumentationBuilder:
                     inherits = []
                     for method in self.tree[parent_id]["methods"]:
                         if method not in current_methods:
-                            inherits += [" - " + method + "()"]
+                            inherits += [f" - [{method}()]({DOC_DOC_LINK}{parent_id.replace('.', '/')}.md#{method.replace('.', '')})"]
                             current_methods.add(method)
                             
                     if len(inherits) > 0:
-                        print(inherits)
-                        documentation += ["<br/>### Inherits from: " + parent_id] + inherits
+                        documentation += ["\n### Inherits from: " + parent_id] + inherits
                     parent_id = self.tree[parent_id]["extends"]
 
             documentation.append(f"<br/>Source: [_{breadcrumbs}_]({DOC_SRC_LINK}{breadcrumbs.replace('.', '/')}.js)")
@@ -137,7 +136,7 @@ def parse_file(breadcrumbs_path, text):
     test_cases = False
     for line in text.split("\n"):
         if line.lstrip()[0:3] == "///":
-            source_doc += [line.lstrip()[3:].lstrip()]
+            source_doc += [line.lstrip()[4:]]
             
         elif line.lstrip()[0:2] == "//":
             line = line.lstrip().lstrip("/").lstrip(" ")

@@ -1,5 +1,5 @@
 # Eclair Syntax Highlighter
-__extends [EclairComponent](https://github.com/SamGarlick/Eclair/tree/main/src/elements/component.js)__
+__extends [EclairComponent](https://github.com/SamGarlick/Eclair/tree/main/src/elements/component.js)__<br/>
 An eclair syntax highlighter object - primarly for eclair coding. Future work will be done to expand the capabilities to other languages.
 Eclair.styles.SyntaxHighlighter: Syntax highlighter style.
 Eclair.styles.SyntaxHighlighterCodeElement: Syntax highlighter code element style.
@@ -13,8 +13,8 @@ Eclair.styles.SyntaxHighlighterEclairStyle: Style of a highlighted eclair keywor
 let code = Ø("alert('Test')")
 
 Eclair.VStack([
-Eclair.SyntaxHighlighter(code),
-Eclair.TextBox(code),
+    Eclair.SyntaxHighlighter(code),
+    Eclair.TextBox(code),
 ])
 ```
 ### constructor
