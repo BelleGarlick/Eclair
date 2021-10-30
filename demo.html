@@ -16,26 +16,26 @@
             background: red;
         }
     </style>
-    <script src="eclair.js"></script>
+    <script src="Eclair.js"></script>
 </head>
 <body>
     <div id='test'></div>
     <script>
-        let synHigh = eclair.SyntaxHighlighter()
-                .value('eclair.Button("Test")\n    .onClick(() => {\n        alert("Hello World!")\n    })\n    .write()')
+        let synHigh = Eclair.SyntaxHighlighter()
+                .value('Eclair.Button("Test")\n    .onClick(() => {\n        alert("Hello World!")\n    })\n    .write()')
         
-        let frame = eclair.IFrame()
+        let frame = Eclair.IFrame()
                 .width("100%")
                 .height("100%")
         
-        eclair.HStack([
-            eclair.VStack([
+        Eclair.HStack([
+            Eclair.VStack([
                 eclair
                     .Button("Run")
                     .addStyle("customButton")
                     .onClick(() => {
                         let hljsImport = '<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/tomorrow.min.css"/><script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js"></scr'+'ipt>';
-                        let eclairImport = '<script src="eclair.js"></scrip'+'t>'
+                        let eclairImport = '<script src="Eclair.js"></scrip'+'t>'
                         let code = hljsImport + eclairImport + '<script>'+synHigh.value()+'</sc'+'ript>'
                         frame.source(code)
                     }),

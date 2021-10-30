@@ -1,30 +1,52 @@
-/// ## Eclair View
-/// Create a generic eclair View.
-/// <br/>**args**:
-/// - elements: Elements within the view.
+/// TITLE Eclair View
+/// EXTENDS elements.component:EclairComponent
+/// DESC Create a generic eclair View.
+
+Eclair.View = function(_elements, _func) {
+    return new EclairView(_elements, _func);
+}
+
+/// SHARED-STYLE Eclair.styles.View: Shared View style.
+Eclair.styles.View = Eclair.Style("eclair-style-view")
+    .boxSizing("border-box")
+
 /// ```javascript
-/// eclair.View([
-///    eclair.Text("This is a view"),
-///    eclair.Button("Views can have multiple elements")
+/// Eclair.View([
+///     Eclair.Text('...'),
+///     Eclair.Button('...')
+///         .onClick(...)
 /// ])
 /// ```
-///
-/// <br/>**args**:
-/// - elements: Elements within the view.
-/// - objectFunction: A function which returns the constructed object.
-/// ```javascript
-/// eclair.View([
-///     {'name': 'Joe Briggs', 'age': 28},
-///     {'name': 'Amy Wong', 'age': 24},
-///     {'name': 'Dustin James', 'age': 15}
-/// ], item => {
-///    return eclair.HStack([
-///        eclair.Text(item.name),
-///        eclair.Text(item.age)
-///    ])
-/// })
-/// ```
-class EclairView extends EclairComponent {
+class EclairView extends EclairComponent {    
+    
+    /// METHOD constructor
+    /// DESC Construct an eclair View element. 
+    /// ARG elements: **List** of child items.
+    /// ARG creatorFunc: A callback function called for each child object. This allows the child elements to be a dictionary or other type, then the view for that object can be dynamically build by this funciton. For example, a server could dynamically load json data from the server and uses it to directly update this view. This function can then build the appropriate object from the given json data. 
+    /// ```javascript
+    /// Eclair.View([
+    ///     Eclair.Text('...'),
+    ///     Eclair.Button('...')
+    ///         .onClick(...)
+    /// ])
+    /// ```
+    /// ```javascript
+    /// let users = Ø([
+    ///     {"name": "Sam"},
+    ///     {"name": "James"},
+    ///     {"name": "Alex"} 
+    /// ])
+    ///
+    /// Eclair.View([
+    ///     Eclair.View(users, e => {
+    ///         return Text(e.name)
+    ///     }),
+    ///     Eclair.Button("Add")
+    ///         .onClick(_ => {
+    ///             users.add({"name": "Isaac"})
+    ///         })
+    /// ])
+    /// ```
     constructor(elements, creatorFunc) {
         super("view")
         
@@ -48,11 +70,14 @@ class EclairView extends EclairComponent {
                 for (let i = 0; i < itemChanges.length; i++) {
                     if (itemChanges[i] == -1) {
                         // add new item to the dummy parent
-                        let newItem = self._addChild(self.creatorFunc(array[i]))
-                        
-                        let dummychild = document.createElement("div")
-                        dummychild.innerHTML = newItem.compile()
-                        dummyParent.appendChild(dummychild.childNodes[0])
+                        let newItem = self.creatorFunc(array[i])
+                        if (self._isValidChild(newItem)) {
+                            self._addChild(newItem)
+
+                            let dummychild = document.createElement("div")
+                            dummychild.innerHTML = newItem.compile()
+                            dummyParent.appendChild(dummychild.childNodes[0])
+                        }
                     } else {
                         let itemIndexValue = itemChanges[i]
                         
@@ -89,7 +114,7 @@ class EclairView extends EclairComponent {
             })
         }
         
-        this.addStyle(eclair.styles.View)
+        this.addStyle(Eclair.styles.View)
     }
     
     
@@ -114,8 +139,13 @@ class EclairView extends EclairComponent {
         return resultantMap
     }
     
-    // Overrideable method for child elements to know if items have been updated
+    // Overrideable method for child elements to know if items have been updated. E.g. Select Element uses this to then update the selected item.
     _onItemsChanged() {}
+    
+    // Overrideable method to check if the new child is valid. e.g. Tab Views check if child is of type TabPage
+    _isValidChild(child) {
+        return true
+    }
     
     
     build () {                

@@ -1,29 +1,47 @@
-/// ## Eclair Image
-/// An eclair image element.
+/// TITLE Eclair Image
+/// EXTENDS elements.custom-tag:EclairCustomTagComponent
+/// DESC An eclair image element.
+
+Eclair.Image = function(_value) {
+    return new EclairImage(_value);
+}
+
+/// SHARED-STYLE Eclair.styles.Image: Default Image style.
+Eclair.styles.Image = Eclair.Style("eclair-style-image")
+    .display("block")
+
 /// ```javascript
-/// eclair.Image('image.png')
+/// Eclair.Image('image.png')
 /// ```
 class EclairImage extends EclairCustomTagComponent {
-    constructor(_src) {
+    
+    /// METHOD constructor
+    /// DESC Construct an Eclair Image element with a predefined url.
+    /// ARG src: URL of the image.
+    /// ```javascript
+    /// Eclair.Image('image.png')
+    /// ```
+    constructor(src) {
         super("img")
         
         // Set the attribute with the image source.
-        this.bindState(_src, "src", value => {
+        this.bindState(src, "src", value => {
             this.setAttr("src", value)
         })  
         
         // Add a default style for images
-        this.addStyle(eclair.styles.Image)
+        this.addStyle(Eclair.styles.Image)
     }
-    
-    /// ### .altText
-    /// Set alt text of the image for accessibility.
+            
+    /// METHOD .altText
+    /// DESC Set alt text of the image for accessibility.
+    /// ARG alt: Alt text of the image.
     /// ```javascript
-    /// eclair.Image('image.png')
+    /// Eclair.Image('image.png')
     ///     .altText('An image of a goldfish jumping on a trampoline.')
     /// ```
-    altText(_alt) {
-        this.bindState(_alt, "alt", value => {
+    altText(alt) {
+        this.bindState(alt, "alt", value => {
             this.setAttr("alt", value)
         })  
     }

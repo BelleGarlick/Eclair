@@ -1,12 +1,17 @@
-## Eclair Button
-An eclair Button.
-<br/>**args**:
-- text: The text value within the button.
+# Eclair Button
+__extends [EclairComponent](https://github.com/SamGarlick/Eclair/tree/main/src/elements/component.js)__
+An eclair button element.
+Eclair.styles.Button: Default button style.
 ```javascript
-eclair.Button("Foo")
-    .onClick(e => {
-        alert("Bar")
-    })
+Eclair.Button("Hello there")
+.onClick(e => {
+alert("General Kenobi.")
+})
 ```
-
+### constructor
+Construct an eclair button with a given innerHTML.
+text: The text shown on the button.
+```javascript
+Eclair.Button("foo")
+```
 <br/>Source: [_elements.form.button_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/form/button.js)

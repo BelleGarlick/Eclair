@@ -1,26 +1,47 @@
-/// ## Eclair Hyperlink
-/// Create a eclair hyperlink object.
+/// TITLE Eclair Hyperlink
+/// EXTENDS elements.custom-tag:EclairCustomTagComponent
+/// DESC Create a eclair hyperlink object.
+
+Eclair.Link = function(text) {
+    return new EclairLink(text);
+}
+
+/// SHARED-STYLE Eclair.styles.Link: Default link style.
+Eclair.styles.Link = Eclair.Style("eclair-style-link")
+    .font(Eclair.theme.font)   
+    .fontColor(Eclair.theme.accent)
+    .textDecoration("none")
+    .textDecoration("underline", "hover")
+
 /// ```javascript
-/// eclair.Link('DuckDuckGo')
+/// Eclair.Link('DuckDuckGo')
 ///     .url('https://duckduckgo.com/')
 ///     .target('_blank')
 /// ```
 class EclairLink extends EclairCustomTagComponent {
-    constructor(_text) {
+        
+    /// METHOD constructor
+    /// DESC Construct an Eclair hyperlink object with a predefined text.
+    /// ARG text: The text displayed.
+    /// ```javascript
+    /// Eclair.Link('DuckDuckGo')
+    /// ```
+    constructor(text) {
         super("a")
         
         // Set inner html to text or bind with state.
-        this.bindState(_text, "html", value => {
+        this.bindState(text, "html", value => {
             this.innerHTML(value)
         })  
         
-        this.addStyle(eclair.styles.Link)
+        this.addStyle(Eclair.styles.Link)
     }
     
-    /// ### .url
-    /// Set target URL that the hyperlink references.
+    /// METHOD .url
+    /// DESC Set target URL that the hyperlink references.
+    /// ARG url: Hyperlink target.
     /// ```javascript
-    /// eclair.Link('DuckDuckGo')
+    /// Eclair.Link('DuckDuckGo')
     ///     .url('https://duckduckgo.com/')
     /// ```
     url(_location) {
@@ -31,16 +52,17 @@ class EclairLink extends EclairCustomTagComponent {
         return this
     }
     
-    /// ### .target
-    /// Set target for the hyperlink. This follows standard html targets for an 'a' element. E.g. '_blank'
+    /// METHOD .target
+    /// DESC Set target for the hyperlink. This follows standard html targets for an 'a' element. E.g. '_blank'
+    /// ARG value: Hyperlink target.
     /// ```javascript
-    /// eclair.Link('DuckDuckGo')
+    /// Eclair.Link('DuckDuckGo')
     ///     .url('https://duckduckgo.com/')
     ///     .target('_blank')
     /// ```
-    target(_target) {
-        this.bindState(_target, "target", value => {
-            this.setAttr("target", value)
+    target(value) {
+        this.bindState(_target, "target", v => {
+            this.setAttr("target", v)
         })  
         
         return this
@@ -49,7 +71,7 @@ class EclairLink extends EclairCustomTagComponent {
 
 
 *** TEST 
-var object = eclair.Link("Test")
+var object = Eclair.Link("Test")
                 .url("www.w3schools.com")
                 .target("_blank")
                 .write()
@@ -62,7 +84,7 @@ var element = object.getElement()
 
 
 *** TEST 
-var object = eclair.Link(Ø("Test"))
+var object = Eclair.Link(Ø("Test"))
                 .url(Ø("www.w3schools.com"))
                 .target(Ø("_blank"))
                 .write()
@@ -79,7 +101,7 @@ var state1 = Ø("Test")
 var state2 = Ø("www.w3schools.com")
 let state3 = Ø("_blank")
 
-var object = eclair.Link(state1)
+var object = Eclair.Link(state1)
                 .url(state2)
                 .target(state3)
                 .write()

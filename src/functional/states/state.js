@@ -1,3 +1,8 @@
+
+Eclair.State = function(_val) {
+    return new EclairState(_val);
+}  
+
 class EclairState {
     constructor(newValue) {
         this._value = newValue

@@ -1,11 +1,11 @@
 <!--This file is auto generated from source code.-->
-<script src='eclair.js'></script>
+<script src='Eclair.js'></script>
 <script>
-        let headingStyle = eclair.Style()
+        let headingStyle = Eclair.Style()
             .fontWeight(700)
-        eclair.VStack([
-            eclair.VStack([
-    eclair.Text('elements.layout.tabs').addStyle(headingStyle), eclair.VStack([eclair.Text('elements.layout.tabs: 1 - 1'),eclair.Text('elements.layout.tabs: 2 - 1'),eclair.Text('elements.layout.tabs: 3 - 1'),eclair.Text('elements.layout.tabs: 3 - 2'),]).padding('16px').gap('16px').width('100%').alignment(eclair.Alignment().start()).background('#eeeeee'),eclair.Text('elements.standard.link').addStyle(headingStyle), eclair.VStack([eclair.Text('elements.standard.link: 1 - 1'),eclair.Text('elements.standard.link: 1 - 2'),eclair.Text('elements.standard.link: 1 - 3'),eclair.Text('elements.standard.link: 2 - 1'),eclair.Text('elements.standard.link: 2 - 2'),eclair.Text('elements.standard.link: 2 - 3'),eclair.Text('elements.standard.link: 3 - 1'),eclair.Text('elements.standard.link: 3 - 2'),eclair.Text('elements.standard.link: 3 - 3'),eclair.Text('elements.standard.link: 3 - 4'),eclair.Text('elements.standard.link: 3 - 5'),eclair.Text('elements.standard.link: 3 - 6'),]).padding('16px').gap('16px').width('100%').alignment(eclair.Alignment().start()).background('#eeeeee'),]).gap('16px').alignment(eclair.Alignment().start()).css('width:100%;max-width:400px')]).write()
+        Eclair.VStack([
+            Eclair.VStack([
+    Eclair.Text('elements.layout.tabs.view').addStyle(headingStyle), Eclair.VStack([Eclair.Text('elements.layout.tabs.view: 1 - 1'),Eclair.Text('elements.layout.tabs.view: 2 - 1'),Eclair.Text('elements.layout.tabs.view: 3 - 1'),Eclair.Text('elements.layout.tabs.view: 3 - 2'),]).padding('16px').gap('16px').width('100%').alignment(Eclair.Alignment().start()).background('#eeeeee'),Eclair.Text('elements.standard.link').addStyle(headingStyle), Eclair.VStack([Eclair.Text('elements.standard.link: 1 - 1'),Eclair.Text('elements.standard.link: 1 - 2'),Eclair.Text('elements.standard.link: 1 - 3'),Eclair.Text('elements.standard.link: 2 - 1'),Eclair.Text('elements.standard.link: 2 - 2'),Eclair.Text('elements.standard.link: 2 - 3'),Eclair.Text('elements.standard.link: 3 - 1'),Eclair.Text('elements.standard.link: 3 - 2'),Eclair.Text('elements.standard.link: 3 - 3'),Eclair.Text('elements.standard.link: 3 - 4'),Eclair.Text('elements.standard.link: 3 - 5'),Eclair.Text('elements.standard.link: 3 - 6'),]).padding('16px').gap('16px').width('100%').alignment(Eclair.Alignment().start()).background('#eeeeee'),]).gap('16px').alignment(Eclair.Alignment().start()).css('width:100%;max-width:400px')]).write()
     function evaluate(test_name, evaluations, val_a, val_b) {
         if (val_a == val_b) {
             console.log(test_name + ": evaluation " +evaluations+ " - passed!")
@@ -13,32 +13,32 @@
             console.log(test_name + ": evaluation " +evaluations+ " - failed!")
         }
     }
-    console.log('elements.layout.tabs: 1')
-var text1 = eclair.View([eclair.Text("Tab A")])
-var text2 = eclair.View([eclair.Text("Tab B")])
+    console.log('elements.layout.tabs.view: 1')
+var text1 = Eclair.View([Eclair.Text("Tab A")])
+var text2 = Eclair.View([Eclair.Text("Tab B")])
 
-eclair.TabView(Ø(0), [text1, text2]).write()
+Eclair.TabView(Ø(0), [text1, text2]).write()
 
-evaluate('elements.layout.tabs: 1', 1, window.getComputedStyle(text2.getElement(), null).display, "none")
+evaluate('elements.layout.tabs.view: 1', 1, window.getComputedStyle(text2.getElement(), null).display, "none")
 
-console.log('elements.layout.tabs: 2')
-var text1 = eclair.View([eclair.Text("Tab A")])
-var text2 = eclair.View([eclair.Text("Tab B")])
-eclair.TabView(Ø(1), [text1, text2]).write()
+console.log('elements.layout.tabs.view: 2')
+var text1 = Eclair.View([Eclair.Text("Tab A")])
+var text2 = Eclair.View([Eclair.Text("Tab B")])
+Eclair.TabView(Ø(1), [text1, text2]).write()
 
-evaluate('elements.layout.tabs: 2', 1, window.getComputedStyle(text1.getElement(), null).display, "none")
+evaluate('elements.layout.tabs.view: 2', 1, window.getComputedStyle(text1.getElement(), null).display, "none")
 
-console.log('elements.layout.tabs: 3')
-var text1 = eclair.View([eclair.Text("Tab A")])
-var text2 = eclair.View([eclair.Text("Tab B")])
+console.log('elements.layout.tabs.view: 3')
+var text1 = Eclair.View([Eclair.Text("Tab A")])
+var text2 = Eclair.View([Eclair.Text("Tab B")])
 var state1 = Ø(0)
-eclair.TabView(state1, [text1, text2]).write()
+Eclair.TabView(state1, [text1, text2]).write()
 
-evaluate('elements.layout.tabs: 3', 1, window.getComputedStyle(text2.getElement(), null).display, "none")
+evaluate('elements.layout.tabs.view: 3', 1, window.getComputedStyle(text2.getElement(), null).display, "none")
 state1.value(1)
-evaluate('elements.layout.tabs: 3', 2, window.getComputedStyle(text1.getElement(), null).display, "none")
+evaluate('elements.layout.tabs.view: 3', 2, window.getComputedStyle(text1.getElement(), null).display, "none")
 console.log('elements.standard.link: 1')
-var object = eclair.Link("Test")
+var object = Eclair.Link("Test")
                 .url("www.w3schools.com")
                 .target("_blank")
                 .write()
@@ -51,7 +51,7 @@ evaluate('elements.standard.link: 1', 3, element.getAttribute("target"), "_blank
 
 
 console.log('elements.standard.link: 2')
-var object = eclair.Link(Ø("Test"))
+var object = Eclair.Link(Ø("Test"))
                 .url(Ø("www.w3schools.com"))
                 .target(Ø("_blank"))
                 .write()
@@ -68,7 +68,7 @@ var state1 = Ø("Test")
 var state2 = Ø("www.w3schools.com")
 let state3 = Ø("_blank")
 
-var object = eclair.Link(state1)
+var object = Eclair.Link(state1)
                 .url(state2)
                 .target(state3)
                 .write()

@@ -1,4 +1,4 @@
-eclair.js
+core.js
 functional
 style
 elements

@@ -1,11 +1,14 @@
+/// TITLE Eclair Component
+/// EXTENDS style.style:EclairStylableObject
 // WARN Doc not finished yet
 // WARN EclairComponent is not finished.
+
 class EclairComponent extends EclairStylableObject {
     constructor() {
         super()
         
-        this._id = eclair._newID();
-        eclair._elements[this.eID()] = this;
+        this._id = Eclair._newID();
+        Eclair._elements[this.eID()] = this;
         
         this.parent = null
         this.children = []
@@ -113,8 +116,8 @@ class EclairComponent extends EclairStylableObject {
             // Create the style object if this object exists
             let elem = this.getElement()
             if (elem != null) {
-                if (eclair._styles.hasOwnProperty(className)) {
-                    eclair._styles[className].create()
+                if (Eclair._styles.hasOwnProperty(className)) {
+                    Eclair._styles[className].create()
                 }
             }
         }
@@ -191,7 +194,7 @@ class EclairComponent extends EclairStylableObject {
     /// ### .compile
     /// This function should be called to create the object. This calls the `.build` function as implemented in the subclass then applies all attributes to the object then return the compiled HTML code.
     /// ```javascript
-    /// eclair.Text("Hello World")
+    /// Eclair.Text("Hello World")
     ///     .compile()
     /// ```
     compile() {       
@@ -205,8 +208,8 @@ class EclairComponent extends EclairStylableObject {
         if (classes != null) {
             classes = classes.split(" ")
             for (let c = 0; c < classes.length; c++) {
-                if (eclair._styles.hasOwnProperty(classes[c])) {
-                    eclair._styles[classes[c]].create()
+                if (Eclair._styles.hasOwnProperty(classes[c])) {
+                    Eclair._styles[classes[c]].create()
                 }
             }
         }
@@ -276,7 +279,7 @@ class EclairComponent extends EclairStylableObject {
     onResize(callback) {return this._updateCallback("onResize", callback);}
     // TODO Check event handing documentation as the events have been added in
     /// ```javascript
-    /// eclair.Button("Hello There")
+    /// Eclair.Button("Hello There")
     ///     .onClick((el, ev) => {
     ///         alert("General Kenobi")
     ///     })
@@ -314,7 +317,7 @@ class EclairComponent extends EclairStylableObject {
         if (callback == null) {
             this.setAttr(callbackKey.toLowerCase(), null)
         } else {
-            this.setAttr(callbackKey.toLowerCase(), `eclair.triggerEvent("${this.eID()}", "${callbackKey}", event)`)
+            this.setAttr(callbackKey.toLowerCase(), `Eclair.triggerEvent("${this.eID()}", "${callbackKey}", event)`)
         }
         return this;
     }

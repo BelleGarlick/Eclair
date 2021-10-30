@@ -1,11 +1,24 @@
-// TODO Store all colours as rgba to allow for darkening colours.
-// TODO Doc not done
+/// TITLE Eclair Color
+/// EXTENDS elements.states.state:EclairState
+/// DESC Create a color state object.
 
+Eclair.Color = function(_col) {
+    return new EclairColor(_col);
+}
+
+/// ```javascript
+/// Eclair.Button("Example")
+///     .background(Eclair.Color().hex("#ff9900"))
+/// ```
 class EclairColor extends EclairState {
-    constructor(_col) {
-        super(_col)
-        
-        // TODO Parse colour
+    
+    /// METHOD constructor
+    /// DESC Construct the Color component.
+    /// ```javascript
+    /// Eclair.Color()
+    /// ``` 
+    constructor() {
+        super("#000000")
         
         this._r = 0
         this._g = 0
@@ -13,6 +26,128 @@ class EclairColor extends EclairState {
         this._a = 0
     }
     
+    /// METHOD .RGBA
+    /// DESC Set the color based on given RGBA values.
+    /// ARG r: The Red component.
+    /// ARG g: The Green component.
+    /// ARG b: The Blue component.
+    /// ```javascript
+    /// Eclair.Color().RGBA(255, 150, 0)
+    /// ``` 
+    RGB(r, g, b) {
+        return this.RGBA(r, g, b, 1)
+    }
+    
+    /// METHOD .RGBA
+    /// DESC Set the color based on given RGBA values.
+    /// ARG r: The Red component.
+    /// ARG g: The Green component.
+    /// ARG b: The Blue component.
+    /// ARG a: The Alpha (opacity) component.
+    /// ```javascript
+    /// Eclair.Color().RGBA(255, 150, 0, 0.5)
+    /// ``` 
+    RGBA(r, g, b, a) {
+        this.value(`rgb(${r}, ${g}, ${b}, ${a})`)
+        
+        this._r = r
+        this._g = g
+        this._b = b
+        this._a = a
+        
+        return this;
+    }  
+    
+    /// METHOD .HSL
+    /// DESC Set the color based on given HSL values.
+    /// ARG h: The Hue component.
+    /// ARG s: The Saturation component.
+    /// ARG l: The Light component.
+    /// ```javascript
+    /// Eclair.Color().HSLA(0, 1, 0.5)
+    /// ``` 
+    HSLA(h, s, l){
+        return this.HSLA(h, s, l, 1)
+    }
+    
+    /// METHOD .HSLA
+    /// DESC Set the color based on given HSLA values.
+    /// ARG h: The Hue component.
+    /// ARG s: The Saturation component.
+    /// ARG l: The Light component.
+    /// ARG a: The Alpha (opacity) component.
+    /// ```javascript
+    /// Eclair.Color().HSLA(0, 1, 0.5, 0.5)
+    /// ``` 
+    HSLA(h, s, l, a){
+        // Cheers Mohsen and Martin: https://stackoverflow.com/questions/2353211/hsl-to-rgb-color-conversion
+        var r, g, b;
+
+        if  (s == 0){
+            r = g = b = l; // achromatic
+        } else {
+            var hue2rgb = function hue2rgb(p, q, t){
+                if(t < 0) t += 1;
+                if(t > 1) t -= 1;
+                if(t < 1/6) return p + (q - p) * 6 * t;
+                if(t < 1/2) return q;
+                if(t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                return p;
+            }
+
+            var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+            var p = 2 * l - q;
+            r = hue2rgb(p, q, h + 1/3);
+            g = hue2rgb(p, q, h);
+            b = hue2rgb(p, q, h - 1/3);
+        }
+
+        return this.RGBA(
+            Math.round(r * 255),
+            Math.round(g * 255),
+            Math.round(b * 255),
+            a
+        )
+        
+        return this;
+    }
+    
+    /// METHOD .toHSL
+    /// DESC Get the HLS color representation based on the current state's color.
+    /// ```javascript
+    /// let hsl = Eclair.Color().hex("#ffffff").toHSL()
+    /// ```  
+    toHSL() {
+        // Cheers Mohsen and Martin: https://stackoverflow.com/questions/2353211/hsl-to-rgb-color-conversion
+        let r = this._r / 255
+        let g = this._g / 255
+        let b = this._b / 255
+        
+        var max = Math.max(r, g, b), min = Math.min(r, g, b);
+        var h, s, l = (max + min) / 2;
+
+        if(max == min){
+            h = s = 0; // achromatic
+        } else {
+            var d = max - min;
+            s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+            switch(max){
+                case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                case g: h = (b - r) / d + 2; break;
+                case b: h = (r - g) / d + 4; break;
+            }
+            h /= 6;
+        }
+
+        return [h, s, l];
+    }
+    
+    /// METHOD .hex
+    /// DESC Set the color based on a given hexadecimal value.
+    /// ARG _hex: A string based hexadecimal color.
+    /// ```javascript
+    /// Eclair.Color().hex("#ffffff")
+    /// ```  
     hex(_hex) {
         let hex_map = {
             "0": 0, "1": 1, "2": 2, "3": 3, "4": 4, 
@@ -29,14 +164,14 @@ class EclairColor extends EclairState {
             let r = hex_map[value[0].toLowerCase()]
             let g = hex_map[value[1].toLowerCase()]
             let b = hex_map[value[2].toLowerCase()]
-            this.rgb(r * 17, g * 17, b * 17)
+            this.RGB(r * 17, g * 17, b * 17)
             
         } else if (value.length == 4) {
             let r = hex_map[value[0].toLowerCase()]
             let g = hex_map[value[1].toLowerCase()]
             let b = hex_map[value[2].toLowerCase()]
             let a = hex_map[value[3].toLowerCase()]
-            this.rgb(r * 17, g * 17, b * 17, a / 15)
+            this.RGB(r * 17, g * 17, b * 17, a / 15)
             
         } else if (value.length == 6) {
             let r1 = hex_map[value[0].toLowerCase()]
@@ -45,7 +180,7 @@ class EclairColor extends EclairState {
             let g2 = hex_map[value[3].toLowerCase()]
             let b1 = hex_map[value[4].toLowerCase()]
             let b2 = hex_map[value[5].toLowerCase()]
-            this.rgb(r1 * 16 + r2, g1 * 16 + g2, b1 * 16 + b2)
+            this.RGB(r1 * 16 + r2, g1 * 16 + g2, b1 * 16 + b2)
          
         } else if (value.length == 8) {
             let r1 = hex_map[value[0].toLowerCase()]
@@ -56,46 +191,60 @@ class EclairColor extends EclairState {
             let b2 = hex_map[value[5].toLowerCase()]
             let a1 = hex_map[value[6].toLowerCase()]
             let a2 = hex_map[value[7].toLowerCase()]
-            this.rgb(r1 * 16 + r2, g1 * 16 + g2, b1 * 16 + b2, (a1 * 16 + a1) / 255)
+            this.RGB(r1 * 16 + r2, g1 * 16 + g2, b1 * 16 + b2, (a1 * 16 + a1) / 255)
         }
         
         this.value(`#${value}`)
         return this;
-    }
+    } 
     
-    rgb(r, g, b) {
-        return this.rgba(r, g, b, 1)
-    }
-    
-    rgba(r, g, b, a) {
-        this.value(`rgb(${r}, ${g}, ${b}, ${a})`)
-        
-        this._r = r
-        this._g = g
-        this._b = b
-        this._a = a
-        
-        return this;
-    }   
-    
-    lighten(_val) {
-        this._r = Math.min(255, this._r + _val)
-        this._g = Math.min(255, this._g + _val)
-        this._b = Math.min(255, this._b + _val)
+    /// METHOD .lighten
+    /// DESC Lighten the colour by a given amount.
+    /// ARG value: A value from 0 - 255 which all the numbers will be lightened by.
+    /// ```javascript
+    /// Eclair.Color().hex("#ffffff")
+    ///     .lighten(50)
+    /// ```  
+    lighten(value) {
+        this._r = Math.min(255, this._r + value)
+        this._g = Math.min(255, this._g + value)
+        this._b = Math.min(255, this._b + value)
         this.value(`rgb(${this._r}, ${this._g}, ${this._b}, ${this._a})`)
         
         return this;
     }
     
-    darken(_val) {
-        this._r = Math.max(0, this._r - _val)
-        this._g = Math.max(0, this._g - _val)
-        this._b = Math.max(0, this._b - _val)
+    /// METHOD .darken
+    /// DESC Darken the colour by a given amount.
+    /// ARG value: A value from 0 - 255 which all the numbers will be darkened by.
+    /// ```javascript
+    /// Eclair.Color().hex("#ffffff")
+    ///     .darken(50)
+    /// ```  
+    darken(value) {
+        this._r = Math.max(0, this._r - value)
+        this._g = Math.max(0, this._g - value)
+        this._b = Math.max(0, this._b - value)
         this.value(`rgb(${this._r}, ${this._g}, ${this._b}, ${this._a})`)
         
         return this;
     }
     
+    /// ### Themed Colours
+    /// - ![#d4edd9](https://via.placeholder.com/15/d4edd9/000000?text=+) `.success()`
+    /// - ![#f8d7d9](https://via.placeholder.com/15/f8d7d9/000000?text=+) `.danger()`
+    /// - ![#fff3cd](https://via.placeholder.com/15/fff3cd/000000?text=+) `.warning()`
+    /// - ![#d1ecf1](https://via.placeholder.com/15/d1ecf1/000000?text=+) `.info()`
+    /// - ![#efefef](https://via.placeholder.com/15/efefef/000000?text=+) `.light()`
+    /// - ![#d5d8d9](https://via.placeholder.com/15/d5d8d9/000000?text=+) `.dark()`
+    success() {return this.hex("d4edd9")}
+    danger() {return this.hex("f8d7d9")}
+    warning() {return this.hex("fff3cd")}
+    info() {return this.hex("d1ecf1")}
+    light() {return this.hex("efefef")}
+    dark() {return this.hex("d5d8d9")}
+    
+    /// ### Color Presets
     /// - ![#f0f8ff](https://via.placeholder.com/15/f0f8ff/000000?text=+) `.aliceBlue()`
     /// - ![#faebd7](https://via.placeholder.com/15/faebd7/000000?text=+) `.antiqueWhite()`
     /// - ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) `.aqua()`
@@ -244,9 +393,6 @@ class EclairColor extends EclairState {
     /// - ![#f5f5f5](https://via.placeholder.com/15/f5f5f5/000000?text=+) `.whiteSmoke()`
     /// - ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) `.yellow()`
     /// - ![#9acd32](https://via.placeholder.com/15/9acd32/000000?text=+) `.yellowGreen()`
-
-    
-    // Standard colors.
     aliceBlue() {return this.rgb(240, 248, 255)}
     antiqueWhite() {return this.rgb(250, 235, 215)}
     aqua() {return this.rgb(0, 255, 255)}
@@ -396,12 +542,4 @@ class EclairColor extends EclairState {
     yellow() {return this.rgb(255, 255, 0)}
     yellowGreen() {return this.rgb(154, 205, 50)}
 
-    
-    // Themed colors
-    success() {return this.hex("d4edd9")}
-    danger() {return this.hex("f8d7d9")}
-    warning() {return this.hex("fff3cd")}
-    info() {return this.hex("d1ecf1")}
-    light() {return this.hex("efefef")}
-    dark() {return this.hex("d5d8d9")}
 }

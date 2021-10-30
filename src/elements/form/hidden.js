@@ -1,32 +1,48 @@
-/// ## Eclair Hidden Input
-/// An eclair hidden input element. The hidden input element binds to a value. To alter the value of the hidden input you must alter the state. You can pass a direct value, however, this value cannot be changed.
+/// TITLE Eclair Hidden Input
+/// EXTENDS elements.custom-tag:EclairCustomTagComponent
+/// DESC An eclair hidden input element. The hidden input element binds to a value. To alter the value of the hidden input you must alter the state. You can pass a direct value, however, this value cannot be changed.
+
+Eclair.HiddenInput = function(_value) {
+    return new EclairHiddenInput(_value);
+}
+
 /// ```javascript
-/// let hiddenValue = Ø("secret-input")
-/// eclair.HiddenInput(hiddenValue)
-///     .name("User secret key")
+/// Eclair.Form([
+///     Eclair.HiddenInput("secret-input")
+///         .name("User secret key")
+/// ])
 /// ```
 class EclairHiddenInput extends EclairCustomTagComponent {
-    constructor(_value) {
+    
+    /// METHOD constructor
+    /// DESC Construct an eclair hidden input.
+    /// ARG value: Value of the hidden input. 
+    /// ```javascript
+    /// Eclair.HiddenInput("secret-input")
+    /// ```
+    constructor(value) {
         super("input")
+        
         this.setAttr("type", "hidden")
         
         this._buildStyle = false
 
-        this.bindState(_value, "value", value => {
-            this.setAttr("value", value)
-            this.getElement(e => {e.value = value})
+        this.bindState(value, "value", v => {
+            this.setAttr("value", v)
+            this.getElement(e => {e.value = v})
         })
     }
     
-    /// ### .name
-    /// Set the name attribute for a element (used in forms).
+    /// METHOD .name
+    /// DESC Set the name attribute for a element (used in forms).
+    /// ARG value: Value of the name attribute. 
     /// ```javascript
-    /// eclair.EclairHiddenInput("Fixed")
-    ///     .name("hiddenElement")
+    //  Eclair.HiddenInput("Foo")
+    ///     .name("Bar")
     /// ```
-    name(_name) {
-        this.bindState(_name, "name", value => {
-            this.setAttr("name", value)
+    name(value) {
+        this.bindState(value, "name", v => {
+            this.setAttr("name", v)
         })
         
         return this

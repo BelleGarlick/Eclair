@@ -1,7 +1,12 @@
-/// ## Eclair HTTP Request
-/// Create a HTTP request such as a POST or GET request.
+/// TITLE Eclair HTTP Request
+/// DESC Create a HTTP request such as a POST or GET request.
+
+Eclair.request = function(_url, _method) {
+    return new EclairHTTPRequest(_url, _method);
+}
+
 /// ```javascript
-/// eclair.request("/get-user/", "GET")
+/// Eclair.request("/get-user/", "GET")
 ///     .onSuccess(data => {
 ///         location.href = `/user/${data}/`
 ///     })
@@ -12,16 +17,15 @@
 ///         "username": "Seymour_Buttz"
 ///     })
 /// ```
-
-/// ### constructor
-/// Initialise the element.
-/// <br/>**args**:
-/// - url: The request endpoint.
-/// - method: The method to use. E.g. "POST", "GET".
-/// ```javascript
-/// eclair.request("/login/", "GET")
-/// ```
 class EclairHTTPRequest {
+    
+    /// METHOD constructor
+    /// DESC Initialise the request.
+    /// ARG url: The request endpoint.
+    /// ARG method: The method to use. E.g. "POST", "GET".
+    /// ```javascript
+    /// Eclair.request("/login/", "GET")
+    /// ```
     constructor(url, method) {
         this.url = url
         this.method = method
@@ -41,13 +45,12 @@ class EclairHTTPRequest {
         this._onProgressUpload = null
         this._onReadyStateChange = null
     }
-
-    /// ### .onSuccess
-    /// A callback when the request returned successfully.
-    /// <br/>**args**:
-    /// - callback: The callback function called with the response passed as an argument.
+    
+    /// METHOD .onSuccess
+    /// DESC A callback when the request returned successfully.
+    /// ARG callback: The callback function called.
     /// ```javascript
-    /// eclair.request("/get-user/", "GET")
+    /// Eclair.request("/get-user/", "GET")
     ///     .onSuccess(data => {
     ///         location.href = `/user/${data}/`
     ///     })
@@ -56,13 +59,12 @@ class EclairHTTPRequest {
         this._onLoad = callback
         return this
     }
-
-    /// ### .onUploadSuccess
-    /// A callback when the requested data has been uploaded successfully.
-    /// <br/>**args**:
-    /// - callback: The callback function called.
+    
+    /// METHOD .onUploadSuccess
+    /// DESC A callback when the requested data has been uploaded successfully.
+    /// ARG callback: The callback function called.
     /// ```javascript
-    /// eclair.request("/new-profile-pic/", "POST")
+    /// Eclair.request("/new-profile-pic/", "POST")
     ///     .onUploadSuccess(_ => {
     ///         alert("Upload Complete.")
     ///     })
@@ -71,13 +73,12 @@ class EclairHTTPRequest {
         this._onLoadUpload = callback
         return this
     }
-
-    /// ### .onError
-    /// A callback when the request encountered an error.
-    /// <br/>**args**:
-    /// - callback: The callback function called.
+    
+    /// METHOD .onError
+    /// DESC A callback when the request encountered an error.
+    /// ARG callback: The callback function called.
     /// ```javascript
-    /// eclair.request("/get-user/", "GET")
+    /// Eclair.request("/get-user/", "GET")
     ///     .onError(_ => {
     ///         alert("Unable to get user.")
     ///     })
@@ -86,13 +87,12 @@ class EclairHTTPRequest {
         this._onError = callback
         return this
     }
-
-    /// ### .onUploadError
-    /// A callback when the request encountered an error uploading.
-    /// <br/>**args**:
-    /// - callback: The callback function called.
+    
+    /// METHOD .onUploadError
+    /// DESC A callback when the request encountered an error uploading.
+    /// ARG callback: The callback function called.
     /// ```javascript
-    /// eclair.request("/new-profile-picture/", "POST")
+    /// Eclair.request("/new-profile-picture/", "POST")
     ///     .onError(_ => {
     ///         alert("Unable to upload your beautiful new profile picture.")
     ///     })
@@ -101,13 +101,12 @@ class EclairHTTPRequest {
         this._onE_onErrorUploadrror = callback
         return this
     }
-
-    /// ### .onProgress
-    /// A callback when the progress for a request changes. The argument given to the callback is the percentage progress of the request.
-    /// <br/>**args**:
-    /// - callback: The callback function called.
+    
+    /// METHOD .onProgress
+    /// DESC A callback when the progress for a request changes. The argument given to the callback is the percentage progress of the request.
+    /// ARG callback: The callback function called.
     /// ```javascript
-    /// eclair.request("/get-image/", "GET")
+    /// Eclair.request("/get-image/", "GET")
     ///     .onProgress(progress => {
     ///         downloadProgress = progress
     ///     })
@@ -116,13 +115,12 @@ class EclairHTTPRequest {
         this._onProgress = callback
         return this
     }
-
-    /// ### .onUploadProgress
-    /// A callback when the upload progress for a request changes. The argument given to the callback is the percentage progress of the request.
-    /// <br/>**args**:
-    /// - callback: The callback function called.
+    
+    /// METHOD .onUploadProgress
+    /// DESC A callback when the upload progress for a request changes. The argument given to the callback is the percentage progress of the request.
+    /// ARG callback: The callback function called.
     /// ```javascript
-    /// eclair.request("/new-profile-picture/", "POST")
+    /// Eclair.request("/new-profile-picture/", "POST")
     ///     .onProgress(progress => {
     ///         uploadProgress = progress
     ///     })
@@ -131,13 +129,12 @@ class EclairHTTPRequest {
         this._onProgressUpload = callback
         return this
     }
-
-    /// ### .onReadyStateChange
-    /// A callback when the ready state of the request changed. The argument given is the XMLHTTP object.
-    /// <br/>**args**:
-    /// - callback: The callback function called.
+    
+    /// METHOD .onReadyStateChange
+    /// DESC A callback when the ready state of the request changed. The argument given is the XMLHTTP object.
+    /// ARG callback: The callback function called.
     /// ```javascript
-    /// eclair.request("/new-profile-picture/", "POST")
+    /// Eclair.request("/new-profile-picture/", "POST")
     ///     .onReadyStateChanged(xmlHTTP => {
     ///         // if (xmlHTTP.status = ...
     ///     })
@@ -147,13 +144,12 @@ class EclairHTTPRequest {
         return this
     }
     
-    /// ### .setHeader
-    /// Set headers of the request.
-    /// <br/>**args**:
-    /// - key: Header key.
-    /// - value: Header value. The given parameter can be an eclair state object.
+    /// METHOD .setHeader
+    /// DESC Set headers of the request.
+    /// ARG key: Header key.
+    /// ARG headers:Header value. The given parameter can be an eclair state object.
     /// ```javascript
-    /// eclair.request("/hello-world/", "GET")
+    /// Eclair.request("/hello-world/", "GET")
     ///     .setHeader("Content-Type", "application/xml")
     ///     .setHeader("foo", "bar")
     /// ```
@@ -162,51 +158,47 @@ class EclairHTTPRequest {
         return this
     }
     
-    /// ### .setAsync
-    /// Set whether the the request is performed asynchronously. (Default true)
-    /// <br/>**args**:
-    /// - value: boolean value - can be an eclair State.
+    /// METHOD .setAsync
+    /// DESC Set whether the the request is performed asynchronously. (Default true).
+    /// ARG value: boolean value - can be an eclair State.
     /// ```javascript
-    /// eclair.request("/hello-world/", "GET")
+    /// Eclair.request("/hello-world/", "GET")
     ///     .setAsync(true)
     /// ```
     setAsync(value) {
         this._async = (value instanceof EclairState)? value.value() : value
         return this
     }
-    
-    /// ### .setAsync
-    /// Sets the response type for the content. (Default "" = string).
-    /// <br/>**args**:
-    /// - value: Response type of the data - can be an eclair State.
+            
+    /// METHOD .setAsync
+    /// DESC Sets the response type for the content. (Default "" = string).
+    /// ARG value: Response type of the data - can be an eclair State.
     /// ```javascript
-    /// eclair.request("/hello-world/", "GET")
+    /// Eclair.request("/hello-world/", "GET")
     ///     .responseType("json")
     /// ```
     responseType(value) {
         this._responseType = (value instanceof EclairState)? _value.value() : value
         return this
     }
-    
-    /// ### .timeout
-    /// Sets the timeout for the request in milliseconds. Default: 10000 (10 seconds).
-    /// <br/>**args**:
-    /// - value: New timeout time in milliseconds - can be an eclair State.
+            
+    /// METHOD .timeout
+    /// DESC Sets the timeout for the request in milliseconds. Default: 10000 (10 seconds).
+    /// ARG value: New timeout time in milliseconds - can be an eclair State.
     /// ```javascript
-    /// eclair.request("/hello-world/", "GET")
+    /// Eclair.request("/hello-world/", "GET")
     ///     .timeout(5000)
     /// ```
     timeout(value) {
         this._timeout = (value instanceof EclairState)? value.value() : value
         return this
     }
-    
-    /// ### .withCredentials
-    /// Sets the request uses credentials. Detauls: false.
-    /// <br/>**args**:
-    /// - value: Boolean representing whether credentials are used - can be an eclair State.
+             
+    /// METHOD .withCredentials
+    /// DESC Sets the request uses credentials. Detauls: false.
+    /// ARG value: Boolean representing whether credentials are used - can be an eclair State.
     /// ```javascript
-    /// eclair.request("/hello-world/", "GET")
+    /// Eclair.request("/hello-world/", "GET")
     ///     .widthCredentials(true)
     /// ```
     widthCredentials(value) {
@@ -252,29 +244,27 @@ class EclairHTTPRequest {
         
         return xhttp
     }
-
-    /// ### .send
-    /// Send the form element. This function can be passed several types of data which are sent to the given endpoint. You can pass in a HTML Form element, an eclair Element of a JSON object. If using the JSON object the keys must be strings, but the values can be either: primative types (string, bool, etc...), eclair State, HTML Input[type=File] element, Input element. 
-    /// <br/>**args**:
-    /// - value: Data to send.
+    
+    /// METHOD .send
+    /// DESC Send the form element. This function can be passed several types of data which are sent to the given endpoint. You can pass in a HTML Form element, an eclair Element of a JSON object. If using the JSON object the keys must be strings, but the values can be either: primative types (string, bool, etc...), eclair State, HTML Input[type=File] element, Input element. Method and action attributes of a given form will be ignored. To set the method and action use .method and .action.
+    /// ARG data: Data sent to the target endpoint.
     /// ```javascript
-    /// eclair.request("/submit/", "POST")
+    /// Eclair.request("/submit/", "POST")
     ///     .send({
     ///         "a-string": "bar",
     ///         "an-eclair-state": Ø("bar"),,
-    ///         "an-eclair-object": eclair.TextBox("yo mama")
+    ///         "an-eclair-object": Eclair.TextBox("yo mama")
     ///         "a-html-input": document.getElementById("myInput"),
     ///         "a-html-file-file": document.getElementById("myFileInput"),
     ///         "a-file-object": document.getElementById("myFileInput").files[0]
     ///     })
     ///
-    /// eclair.request("/submit/", "POST")
+    /// Eclair.request("/submit/", "POST")
     ///     .send(document.forms.main)
     ///
-    /// eclair.request("/submit/", "POST")
-    ///     .send(eclair.Form([eclair.TextBox("bar").name("foo")]))
+    /// Eclair.request("/submit/", "POST")
+    ///     .send(Eclair.Form([Eclair.TextBox("bar").name("foo")]))
     /// ```
-    // if using form element post and methods attributes will be disregarded. Using .method and .action
     send(_form) {
         var xhttp = this._buildXTTPObject();
         

@@ -1,3 +1,82 @@
+# Eclair Color
+__extends [EclairState](https://github.com/SamGarlick/Eclair/tree/main/src/elements/states/state.js)__
+Create a color state object.
+```javascript
+Eclair.Button("Example")
+.background(Eclair.Color().hex("#ff9900"))
+```
+### constructor
+Construct the Color component.
+```javascript
+Eclair.Color()
+``` 
+### .RGBA
+Set the color based on given RGBA values.
+r: The Red component.
+g: The Green component.
+b: The Blue component.
+```javascript
+Eclair.Color().RGBA(255, 150, 0)
+``` 
+### .RGBA
+Set the color based on given RGBA values.
+r: The Red component.
+g: The Green component.
+b: The Blue component.
+a: The Alpha (opacity) component.
+```javascript
+Eclair.Color().RGBA(255, 150, 0, 0.5)
+``` 
+### .HSL
+Set the color based on given HSL values.
+h: The Hue component.
+s: The Saturation component.
+l: The Light component.
+```javascript
+Eclair.Color().HSLA(0, 1, 0.5)
+``` 
+### .HSLA
+Set the color based on given HSLA values.
+h: The Hue component.
+s: The Saturation component.
+l: The Light component.
+a: The Alpha (opacity) component.
+```javascript
+Eclair.Color().HSLA(0, 1, 0.5, 0.5)
+``` 
+### .toHSL
+Get the HLS color representation based on the current state's color.
+```javascript
+let hsl = Eclair.Color().hex("#ffffff").toHSL()
+```  
+### .hex
+Set the color based on a given hexadecimal value.
+_hex: A string based hexadecimal color.
+```javascript
+Eclair.Color().hex("#ffffff")
+```  
+### .lighten
+Lighten the colour by a given amount.
+value: A value from 0 - 255 which all the numbers will be lightened by.
+```javascript
+Eclair.Color().hex("#ffffff")
+.lighten(50)
+```  
+### .darken
+Darken the colour by a given amount.
+value: A value from 0 - 255 which all the numbers will be darkened by.
+```javascript
+Eclair.Color().hex("#ffffff")
+.darken(50)
+```  
+### Themed Colours
+- ![#d4edd9](https://via.placeholder.com/15/d4edd9/000000?text=+) `.success()`
+- ![#f8d7d9](https://via.placeholder.com/15/f8d7d9/000000?text=+) `.danger()`
+- ![#fff3cd](https://via.placeholder.com/15/fff3cd/000000?text=+) `.warning()`
+- ![#d1ecf1](https://via.placeholder.com/15/d1ecf1/000000?text=+) `.info()`
+- ![#efefef](https://via.placeholder.com/15/efefef/000000?text=+) `.light()`
+- ![#d5d8d9](https://via.placeholder.com/15/d5d8d9/000000?text=+) `.dark()`
+### Color Presets
 - ![#f0f8ff](https://via.placeholder.com/15/f0f8ff/000000?text=+) `.aliceBlue()`
 - ![#faebd7](https://via.placeholder.com/15/faebd7/000000?text=+) `.antiqueWhite()`
 - ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) `.aqua()`
@@ -146,5 +225,4 @@
 - ![#f5f5f5](https://via.placeholder.com/15/f5f5f5/000000?text=+) `.whiteSmoke()`
 - ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) `.yellow()`
 - ![#9acd32](https://via.placeholder.com/15/9acd32/000000?text=+) `.yellowGreen()`
-
 <br/>Source: [_functional.states.color_](https://github.com/SamGarlick/Eclair/tree/main/src/functional/states/color.js)

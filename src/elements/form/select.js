@@ -1,14 +1,36 @@
-/// ## Eclair Select
-/// An eclair Select object.
-/// <br/>**args**:
-/// - options: A list of options that the user can select from
+/// TITLE Eclair Select
+/// EXTENDS elements.layout.view:EclairView
+/// DESC An eclair select element.
+
+Eclair.Select = function(_value) {
+    return new EclairSelect(_value);
+}
+
+/// SHARED-STYLE Eclair.styles.Select: Select style.
+Eclair.styles.Select = Eclair.Style("eclair-style-select")
+    .borderSize("0px")
+    .borderRadius("2px")
+    .padding("8px 16px")
+    .background("#eeeeee")
+    .font(Eclair.theme.font)
+    .background("#dddddd", "hover")
+    .background("#cccccc", "active")
+
 /// ```javascript
-/// eclair.Select(["apple", "orange", "banana"])
+/// Eclair.Select(["apple", "orange", "banana"])
+///     .selectedIndex(0)
 /// ```
 class EclairSelect extends EclairView {
-    constructor(elements) {
-        super(elements, item => {
-            return eclair.CustomTagComponent("option").innerHTML(item)
+    
+    /// METHOD constructor
+    /// DESC Construct an eclair Select object.
+    /// ARG items: Text items listed in the element.
+    /// ```javascript
+    /// Eclair.Select(["apple", "orange", "banana"])
+    /// ```
+    constructor(items) {
+        super(items, item => {
+            return Eclair.CustomTagComponent("option").innerHTML(item)
         })
         
         this._selectedIndex = 0
@@ -21,8 +43,8 @@ class EclairSelect extends EclairView {
             if (this.overrideOnChangeCallback != null) {this.overrideOnChangeCallback(this, ev)}
         })
         
-        this.addStyle(eclair.styles.Select)
-            .removeStyle(eclair.styles.View)
+        this.addStyle(Eclair.styles.Select)
+            .removeStyle(Eclair.styles.View)
     }
     
     
@@ -32,12 +54,11 @@ class EclairSelect extends EclairView {
         return this;
     }
     
-    /// ### .value
-    /// A value which represents the selected item of the select box.
-    /// <br/>**args**:
-    /// - value: The value to set the select to.
+    /// METHOD .value
+    /// DESC A value which represents the selected item of the select box.
+    /// ARG value: The value to set the select to.
     /// ```javascript
-    /// eclair.Select(["apple", "orange", "banana"])
+    /// Eclair.Select(["apple", "orange", "banana"])
     ///     .value("banana")
     /// ```
     value(_value) {
@@ -65,12 +86,11 @@ class EclairSelect extends EclairView {
         return this
     }
     
-    /// ### .selectedIndex
-    /// A value which represents the selected item of the select box.
-    /// <br/>**args**:
-    /// - index: The index to select.
+    /// METHOD .selectedIndex
+    /// DESC A value which represents the selected item of the select box.
+    /// ARG index: The index to select.
     /// ```javascript
-    /// eclair.Select(["apple", "orange", "banana"])
+    /// Eclair.Select(["apple", "orange", "banana"])
     ///     .selectedIndex(1)
     /// ```
     selectedIndex(_index) {

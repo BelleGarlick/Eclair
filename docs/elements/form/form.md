@@ -1,59 +1,57 @@
-## Eclair Form Element
-A form element for eclair objects. This object extends the EclairView object 
-allowing dynamic creation of elements within the view.
-<br/>**args**:
-- elements: Elements within the view.
-- objectFunction: A function which returns the constructed object.
+# Eclair Form Box
+__extends [EclairView](https://github.com/SamGarlick/Eclair/tree/main/src/elements/layout/view.js)__
+A form element for eclair objects. This object extends the EclairView object allowing dynamic creation of elements within the view.
+Eclair.styles.Form: Default form style.
 ```javascript
-eclair.Form([
-    eclair.TextBox("")
-        .name("Username"),
-    eclair.TextBox("")
-        .name("name"),
-    eclair.Button("Submit")
-        .type("submit")
+Eclair.Form([
+Eclair.TextBox("")
+.name("Username"),
+Eclair.TextBox("")
+.name("name"),
+Eclair.Button("Submit")
+.type("submit")
 ])
-    .action("/new-user/")
-    .method("POST")
+.action("/new-user/")
+.method("POST")
+```
+### constructor
+Construct the form object with given elements.
+elements: List of items contained within the form.
+objectFunc: A function applied to each object. __(See Eclair.layout.view)__
+```javascript
+Eclair.Form([
+Eclair.TextBox("")
+.name("username"),
+Eclair.Checkbox(false)
+.name("over-18")
+])
 ```
 ### .method
-Set the method of the form.
-<br/>**args**:
-- _method: Set the new method of the form.
+Set the new method for the form.
+value: Method value.
 ```javascript
-eclair.Form([
-    eclair.TextBox("")
-        .name("Username")
-])
-    .method("POST")
+Eclair.Form([...])
+.method("POST")
 ```
 ### .action
-Set the action of the form.
-<br/>**args**:
-- _action: Set the new action of the form.
+Set the new action for the form.
+value: Action value.
 ```javascript
-eclair.Form([
-    eclair.TextBox("")
-        .name("Username")
-])
-    .action("/new-user/")
+Eclair.Form([...])
+.action("/new-user/")
 ```
 ### .submit
-Bind a state bool to the form such that when the bool becomes true
-the form will be submitted.
-<br/>**args**:
-- state: The state to bind to.
-```javascript
+Alternative method to submitting a form which allows you to bind a state bool to the form such that when the bool becomes true the form will be submitted. 
+state: Bound state.
 let submitted = Ø(false)
-eclair.Form([
-    eclair.TextBox("")
-        .name("Username"),
-    eclair.Button()
-        .onClick(_ => {
-            submitted.value(true)
-        })
+Eclair.Form([
+Eclair.TextBox("")
+.name("Username"),
+Eclair.Button()
+.onClick(_ => {
+submitted.value(true)
+})
 ])
-    .submit(submitted)
+.submit(submitted)
 ```
-
 <br/>Source: [_elements.form.form_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/form/form.js)

@@ -1,11 +1,86 @@
-/// ## Eclair Syntax Highlighter
-/// An eclair syntax highlighter object - primarly for eclair coding. Future work will be done to expand the capabilities to other languages.
-/// <br/>**args**:
-/// - code: The code to be highlighted by the object.
+/// TITLE Eclair Syntax Highlighter
+/// EXTENDS elements.component:EclairComponent
+/// DESC An eclair syntax highlighter object - primarly for eclair coding. Future work will be done to expand the capabilities to other languages.
+
+Eclair.SyntaxHighlighter = function(_value) {
+    return new EclairSyntaxHighlighter(_value);
+}
+
+/// SHARED-STYLE Eclair.styles.SyntaxHighlighter: Syntax highlighter style.
+/// SHARED-STYLE Eclair.styles.SyntaxHighlighterCodeElement: Syntax highlighter code element style.
+/// SHARED-STYLE Eclair.styles.SyntaxHighlighterTextAreaElement: Syntax highlighter text area element style.
+/// SHARED-STYLE Eclair.styles.SyntaxHighlighterCommentStyle: Style of a highlighted comment.
+/// SHARED-STYLE Eclair.styles.SyntaxHighlighterKeywordStyle: Style of a highlighted keyword.
+/// SHARED-STYLE Eclair.styles.SyntaxHighlighterStringStyle: Style of a highlighted string.
+/// SHARED-STYLE Eclair.styles.SyntaxHighlighterQuoteStyle: Style of a highlighted quote.
+/// SHARED-STYLE Eclair.styles.SyntaxHighlighterEclairStyle: Style of a highlighted eclair keyword.
+Eclair.styles.SyntaxHighlighter = Eclair.Style("eclair-syntax-highlighter")
+    .position("relative")
+    .width("420px")
+    .height("360px")
+    .borderSize("1px")
+    .borderStyle("solid")
+    .borderColor("#999999")
+    .borderRadius("3px")
+Eclair.styles.SyntaxHighlighterCodeElement = Eclair.Style("eclair-syntax-highlighter-code")
+    .position("absolute")
+    .top("0px")
+    .left("0px")
+    .width("100%")
+    .height("100%")
+    .fontSize("14px")
+    .font("monospace")
+    .borderSize("0px")
+    .outline("none")
+    .caretColor("black")
+    .resize("none")
+    .whiteSpace("pre")
+    .boxSizing("border-box")
+    .padding("10px")
+    .overflowWrap("normal")
+    .display("none", ":-webkit-scrollbar")
+    .css("-ms-overflow-style: none; scrollbar-width: none;")
+    .overflowX("scroll")
+Eclair.styles.SyntaxHighlighterTextAreaElement = Eclair.Style("eclair-syntax-highlighter-text-area")
+    .position("absolute")
+    .top("0px")
+    .left("0px")
+    .width("100%")
+    .height("100%")
+    .fontSize("14px")
+    .font("monospace")
+    .borderSize("0px")
+    .outline("none")
+    .caretColor("black")
+    .resize("none")
+    .whiteSpace("pre")
+    .boxSizing("border-box")
+    .background("transparent")
+    .fontColor("rgb(1, 1, 1, 0)")
+    .padding("10px")
+    .overflowWrap("normal")
+    .overflowX("scroll")
+Eclair.styles.SyntaxHighlighterCommentStyle = Eclair.Style("eclair-syntax-highlighter-comment").fontColor("grey")
+Eclair.styles.SyntaxHighlighterKeywordStyle = Eclair.Style("eclair-syntax-highlighter-keyword").fontColor("#0066ee")
+Eclair.styles.SyntaxHighlighterStringStyle = Eclair.Style("eclair-syntax-highlighter-string").fontColor("#dd9900")
+Eclair.styles.SyntaxHighlighterQuoteStyle = Eclair.Style("eclair-syntax-highlighter-quote").fontColor("#dd9900")
+Eclair.styles.SyntaxHighlighterEclairStyle = Eclair.Style("eclair-syntax-highlighter-eclair").fontColor("#009900")
+
 /// ```javascript
-/// eclair.SyntaxHighlighter("eclair.Button('testing').write()")
+/// let code = Ø("alert('Test')")
+/// 
+/// Eclair.VStack([
+///     Eclair.SyntaxHighlighter(code),
+///     Eclair.TextBox(code),
+/// ])
 /// ```
-class EclairSyntaxHighlighter extends EclairComponent {
+class EclairSyntaxHighlighter extends EclairComponent {    
+    /// METHOD constructor
+    /// DESC Construct an Eclair Syntax Highlighter with given code.
+    /// ARG _code: The code to be highlighted by the object.
+    /// ```javascript
+    /// Eclair.SyntaxHighlighter("Eclair.Button('testing').write()")
+    /// ```
     constructor(_code) {
         super()
         
@@ -13,8 +88,8 @@ class EclairSyntaxHighlighter extends EclairComponent {
             "{", "(", " ", "}", ")", "[", "]", "\n", "\t", ".", ","
         ])
         this.eclairKeywords = new Set([
-            "VStack", "HStack", "State", "Toggle", "Text", "HorizontalLine", "Alignment", "eclair", 
-            "Ø", "Style", "Color", "TextStyle", "View", "TabView", "CustomTagComponent", "Button", 
+            "VStack", "HStack", "State", "Toggle", "Text", "HorizontalLine", "Alignment", "Eclair", 
+            "Ø", "Style", "Color", "TextStyle", "View", "TabPage", "TabView", "CustomTagComponent", "Button", 
             "TextBox", "Form", "Select", "Slider", "RadioButtons", "CheckBox", "TextArea", 
             "HiddenInput", "Image", "IFrame", "Text", "Link", "HorizontalLine", "Alert", 
             "ProgressBar", "SyntaxHighlighter"
@@ -29,24 +104,24 @@ class EclairSyntaxHighlighter extends EclairComponent {
         ])
          	 	 	
         this.theme = {
-            "comment": eclair.styles.SyntaxHighlighterCommentStyle,
-            "keyword": eclair.styles.SyntaxHighlighterKeywordStyle,
-            "eclair": eclair.styles.SyntaxHighlighterEclairStyle,
-            "string": eclair.styles.SyntaxHighlighterStringStyle, 
-            "quote": eclair.styles.SyntaxHighlighterQuoteStyle, 
-            "number": eclair.styles.SyntaxHighlighterKeywordStyle, 
+            "comment": Eclair.styles.SyntaxHighlighterCommentStyle,
+            "keyword": Eclair.styles.SyntaxHighlighterKeywordStyle,
+            "eclair": Eclair.styles.SyntaxHighlighterEclairStyle,
+            "string": Eclair.styles.SyntaxHighlighterStringStyle, 
+            "quote": Eclair.styles.SyntaxHighlighterQuoteStyle, 
+            "number": Eclair.styles.SyntaxHighlighterKeywordStyle, 
         }
         
         this._cachedLines = {}
         this._codeState = (_code instanceof EclairState)? _code : Ø(_code)
         
-        this.codeElement = this._addChild(eclair.CustomTagComponent("code")
-            .addStyle(eclair.styles.SyntaxHighlighterCodeElement)
+        this.codeElement = this._addChild(Eclair.CustomTagComponent("code")
+            .addStyle(Eclair.styles.SyntaxHighlighterCodeElement)
          )
         
-        this.textArea = this._addChild(eclair.TextArea(this._codeState)
-            .removeStyle(eclair.styles.TextArea)
-            .addStyle(eclair.styles.SyntaxHighlighterTextAreaElement)
+        this.textArea = this._addChild(Eclair.TextArea(this._codeState)
+            .removeStyle(Eclair.styles.TextArea)
+            .addStyle(Eclair.styles.SyntaxHighlighterTextAreaElement)
             .setAttr("spellcheck", "false")
             .onScroll((e, ev) => {
                 let textarea = e.getElement()
@@ -54,14 +129,14 @@ class EclairSyntaxHighlighter extends EclairComponent {
             })
         )
         
-        this.addStyle(eclair.styles.SyntaxHighlighter)
+        this.addStyle(Eclair.styles.SyntaxHighlighter)
         
         this.bindState(this._codeState, "code", value => {
-            this.update()
+            this._update()
         })
     }
     
-    update() {
+    _update() {
         let code = this._codeState.value();
         
         let output = "";
@@ -161,4 +236,3 @@ class EclairSyntaxHighlighter extends EclairComponent {
         return `<div>${this.codeElement.compile()}${this.textArea.compile()}</div>`
     }
 }
-

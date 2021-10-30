@@ -1,11 +1,11 @@
 
-// eclair
+// core
 
 
 
 
-let eclair = {
-    version: "0.0.91",
+let Eclair = {
+    version: "0.0.92",
     _ids: 0,
     _elements: {},
     _styles: {},
@@ -13,66 +13,36 @@ let eclair = {
         this._ids += 1; 
         return "eclair-element-" + (this._ids - 1);
     },
+
+    theme: {},
+    styles: {},
     
     triggerEvent: function(eclairID, eventID, event, param) {
         this._elements[eclairID].triggerEvent(eventID, event, param);
-    },
-    
-    Style: function(_styleID) {return new EclairStyleComponent(_styleID);},
-    
-    post: function(_url) {return new EclairPost(_url);},
-    get: function(_url) {return new EclairGet(_url);},
-    httpRequest: function(_url, _method) {return new EclairHTTPRequest(_url, _method);},
-    
-    State: function(_val) {return new EclairState(_val);},    
-    Color: function(_col) {return new EclairColor(_col);},
-    TextStyle: function() {return new EclairTextStyleState();},
-    Alignment: function() {return new EclairAlignmentState();},
-    
-    View: function(_elements, _func) {return new EclairView(_elements, _func);},
-    VStack: function(_elements, _func) {return new EclairVStack(_elements, _func);},
-    HStack: function(_elements, _func) {return new EclairHStack(_elements, _func);},
-    TabView: function(_tab, _elements) {return new EclairTabView(_tab, _elements);},
-    
-    CustomTagComponent: function(tag) {return new EclairCustomTagComponent(tag);},
-    
-    Button: function(text) {return new EclairButton(text);},
-    TextBox: function(text) {return new EclairTextBox(text);},
-    Form: function(elements) {return new EclairForm(elements);},
-    Select: function(_value) {return new EclairSelect(_value);},
-    Slider: function(_value) {return new EclairSlider(_value);},
-    Toggle: function(_value) {return new EclairToggle(_value);},
-    RadioButtons: function(_value) {return new EclairRadioButtons(_value);},
-    CheckBox: function(text) {return new EclairCheckBox(text);},
-    TextArea: function(_value) {return new EclairTextArea(_value);},
-    HiddenInput: function(_value) {return new EclairHiddenInput(_value);},
-    
-    Image: function(_value) {return new EclairImage(_value);},
-    IFrame: function() {return new EclairIFrame();},
-    Text: function(text) {return new EclairText(text);},
-    Link: function(text) {return new EclairLink(text);},
-    HorizontalLine: function() {return new EclairHorizontalLine();},
-    
-    Alert: function(_value) {return new EclairAlertBox(_value);},
-    ProgressBar: function(_progress) {return new EclairProgressBar(_progress);},
-    SyntaxHighlighter: function(_value) {return new EclairSyntaxHighlighter(_value);},
-    
-    theme: {
-        "accent": "#ee8800",
-        "font": '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"'
     }
 }
 
-function ø(value) {
-    return eclair.State(value)
+
+try {
+    Ecalir.theme.accent = EclairThemeColor;
+    Ecalir.theme.font = EclairThemeFont;
+} catch(err) {
+    Eclair.theme.accent = "#ee8800"
+    Eclair.theme.font = '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"'
 }
 
+
 function Ø(value) {
-    return eclair.State(value)
+    return new EclairState(value)
 }
 
 
 // functional.states.state
+
+Eclair.State = function(_val) {
+    return new EclairState(_val);
+}  
+
 class EclairState {
     constructor(newValue) {
         this._value = newValue
@@ -262,7 +232,13 @@ class EclairState {
 
 
 // functional.states.alignment
+
+Eclair.Alignment = function() {
+    return new EclairAlignmentState();
+}
+
 class EclairAlignmentState extends EclairState {
+    
     constructor() {
         super("center")
     }
@@ -277,15 +253,94 @@ class EclairAlignmentState extends EclairState {
 
 // functional.states.color
 
+Eclair.Color = function(_col) {
+    return new EclairColor(_col);
+}
+
 class EclairColor extends EclairState {
-    constructor(_col) {
-        super(_col)
-        
+    
+    constructor() {
+        super("#000000")
         
         this._r = 0
         this._g = 0
         this._b = 0
         this._a = 0
+    }
+    
+    RGB(r, g, b) {
+        return this.RGBA(r, g, b, 1)
+    }
+    
+    RGBA(r, g, b, a) {
+        this.value(`rgb(${r}, ${g}, ${b}, ${a})`)
+        
+        this._r = r
+        this._g = g
+        this._b = b
+        this._a = a
+        
+        return this;
+    }  
+    
+    HSLA(h, s, l){
+        return this.HSLA(h, s, l, 1)
+    }
+    
+    HSLA(h, s, l, a){
+        var r, g, b;
+
+        if  (s == 0){
+            r = g = b = l; // achromatic
+        } else {
+            var hue2rgb = function hue2rgb(p, q, t){
+                if(t < 0) t += 1;
+                if(t > 1) t -= 1;
+                if(t < 1/6) return p + (q - p) * 6 * t;
+                if(t < 1/2) return q;
+                if(t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                return p;
+            }
+
+            var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+            var p = 2 * l - q;
+            r = hue2rgb(p, q, h + 1/3);
+            g = hue2rgb(p, q, h);
+            b = hue2rgb(p, q, h - 1/3);
+        }
+
+        return this.RGBA(
+            Math.round(r * 255),
+            Math.round(g * 255),
+            Math.round(b * 255),
+            a
+        )
+        
+        return this;
+    }
+    
+    toHSL() {
+        let r = this._r / 255
+        let g = this._g / 255
+        let b = this._b / 255
+        
+        var max = Math.max(r, g, b), min = Math.min(r, g, b);
+        var h, s, l = (max + min) / 2;
+
+        if(max == min){
+            h = s = 0; // achromatic
+        } else {
+            var d = max - min;
+            s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+            switch(max){
+                case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                case g: h = (b - r) / d + 2; break;
+                case b: h = (r - g) / d + 4; break;
+            }
+            h /= 6;
+        }
+
+        return [h, s, l];
     }
     
     hex(_hex) {
@@ -304,14 +359,14 @@ class EclairColor extends EclairState {
             let r = hex_map[value[0].toLowerCase()]
             let g = hex_map[value[1].toLowerCase()]
             let b = hex_map[value[2].toLowerCase()]
-            this.rgb(r * 17, g * 17, b * 17)
+            this.RGB(r * 17, g * 17, b * 17)
             
         } else if (value.length == 4) {
             let r = hex_map[value[0].toLowerCase()]
             let g = hex_map[value[1].toLowerCase()]
             let b = hex_map[value[2].toLowerCase()]
             let a = hex_map[value[3].toLowerCase()]
-            this.rgb(r * 17, g * 17, b * 17, a / 15)
+            this.RGB(r * 17, g * 17, b * 17, a / 15)
             
         } else if (value.length == 6) {
             let r1 = hex_map[value[0].toLowerCase()]
@@ -320,7 +375,7 @@ class EclairColor extends EclairState {
             let g2 = hex_map[value[3].toLowerCase()]
             let b1 = hex_map[value[4].toLowerCase()]
             let b2 = hex_map[value[5].toLowerCase()]
-            this.rgb(r1 * 16 + r2, g1 * 16 + g2, b1 * 16 + b2)
+            this.RGB(r1 * 16 + r2, g1 * 16 + g2, b1 * 16 + b2)
          
         } else if (value.length == 8) {
             let r1 = hex_map[value[0].toLowerCase()]
@@ -331,47 +386,37 @@ class EclairColor extends EclairState {
             let b2 = hex_map[value[5].toLowerCase()]
             let a1 = hex_map[value[6].toLowerCase()]
             let a2 = hex_map[value[7].toLowerCase()]
-            this.rgb(r1 * 16 + r2, g1 * 16 + g2, b1 * 16 + b2, (a1 * 16 + a1) / 255)
+            this.RGB(r1 * 16 + r2, g1 * 16 + g2, b1 * 16 + b2, (a1 * 16 + a1) / 255)
         }
         
         this.value(`#${value}`)
         return this;
-    }
+    } 
     
-    rgb(r, g, b) {
-        return this.rgba(r, g, b, 1)
-    }
-    
-    rgba(r, g, b, a) {
-        this.value(`rgb(${r}, ${g}, ${b}, ${a})`)
-        
-        this._r = r
-        this._g = g
-        this._b = b
-        this._a = a
-        
-        return this;
-    }   
-    
-    lighten(_val) {
-        this._r = Math.min(255, this._r + _val)
-        this._g = Math.min(255, this._g + _val)
-        this._b = Math.min(255, this._b + _val)
+    lighten(value) {
+        this._r = Math.min(255, this._r + value)
+        this._g = Math.min(255, this._g + value)
+        this._b = Math.min(255, this._b + value)
         this.value(`rgb(${this._r}, ${this._g}, ${this._b}, ${this._a})`)
         
         return this;
     }
     
-    darken(_val) {
-        this._r = Math.max(0, this._r - _val)
-        this._g = Math.max(0, this._g - _val)
-        this._b = Math.max(0, this._b - _val)
+    darken(value) {
+        this._r = Math.max(0, this._r - value)
+        this._g = Math.max(0, this._g - value)
+        this._b = Math.max(0, this._b - value)
         this.value(`rgb(${this._r}, ${this._g}, ${this._b}, ${this._a})`)
         
         return this;
     }
     
-
+    success() {return this.hex("d4edd9")}
+    danger() {return this.hex("f8d7d9")}
+    warning() {return this.hex("fff3cd")}
+    info() {return this.hex("d1ecf1")}
+    light() {return this.hex("efefef")}
+    dark() {return this.hex("d5d8d9")}
     
     aliceBlue() {return this.rgb(240, 248, 255)}
     antiqueWhite() {return this.rgb(250, 235, 215)}
@@ -522,30 +567,18 @@ class EclairColor extends EclairState {
     yellow() {return this.rgb(255, 255, 0)}
     yellowGreen() {return this.rgb(154, 205, 50)}
 
-    
-    success() {return this.hex("d4edd9")}
-    danger() {return this.hex("f8d7d9")}
-    warning() {return this.hex("fff3cd")}
-    info() {return this.hex("d1ecf1")}
-    light() {return this.hex("efefef")}
-    dark() {return this.hex("d5d8d9")}
-}
-
-// functional.states.text-styles
-class EclairTextStyleState extends EclairState {
-    title() {this.value("title"); return this;}
-    subtitle() {this.value("subtitle"); return this;}
-    heading1() {this.value("heading1"); return this;}
-    heading2() {this.value("heading2"); return this;}
-    heading3() {this.value("heading3"); return this;}
-    heading4() {this.value("heading4"); return this;}
 }
 
 
 
 // functional.requests.request
 
+Eclair.request = function(_url, _method) {
+    return new EclairHTTPRequest(_url, _method);
+}
+
 class EclairHTTPRequest {
+    
     constructor(url, method) {
         this.url = url
         this.method = method
@@ -564,37 +597,37 @@ class EclairHTTPRequest {
         this._onProgressUpload = null
         this._onReadyStateChange = null
     }
-
+    
     onSuccess(callback) {
         this._onLoad = callback
         return this
     }
-
+    
     onUploadSuccess(callback) {
         this._onLoadUpload = callback
         return this
     }
-
+    
     onError(callback) {
         this._onError = callback
         return this
     }
-
+    
     onUploadError(callback) {
         this._onE_onErrorUploadrror = callback
         return this
     }
-
+    
     onProgress(callback) {
         this._onProgress = callback
         return this
     }
-
+    
     onUploadProgress(callback) {
         this._onProgressUpload = callback
         return this
     }
-
+    
     onReadyStateChanged(callback) {
         this._onReadyStateChange = callback
         return this
@@ -609,17 +642,17 @@ class EclairHTTPRequest {
         this._async = (value instanceof EclairState)? value.value() : value
         return this
     }
-    
+            
     responseType(value) {
         this._responseType = (value instanceof EclairState)? _value.value() : value
         return this
     }
-    
+            
     timeout(value) {
         this._timeout = (value instanceof EclairState)? value.value() : value
         return this
     }
-    
+             
     widthCredentials(value) {
         this._widthCredentials = (value instanceof EclairState)? value.value() : value
         return this
@@ -661,7 +694,7 @@ class EclairHTTPRequest {
         
         return xhttp
     }
-
+    
     send(_form) {
         var xhttp = this._buildXTTPObject();
         
@@ -700,19 +733,34 @@ class EclairHTTPRequest {
     }
 }
 
+
 // functional.requests.get
+
+Eclair.get = function(_url) {
+    return new EclairGet(_url);
+}
+
 class EclairGet extends EclairHTTPRequest {
+            
     constructor(url) {
         super(url, "GET")
     }
 }
 
+
 // functional.requests.post
+
+Eclair.post = function(_url) {
+    return new EclairPost(_url);
+}
+
 class EclairPost extends EclairHTTPRequest {
+        
     constructor(url) {
         super(url, "POST")
     }
 }
+
 
 
 
@@ -896,11 +944,12 @@ class EclairStylableObject {
 }
 
 
+
 class EclairStyleComponent extends EclairStylableObject {
     constructor(styleClassID) {
         super()
-        this._id = styleClassID != null? styleClassID : eclair._newID()
-        eclair._styles[this._id] = this
+        this._id = styleClassID != null? styleClassID : Eclair._newID()
+        Eclair._styles[this._id] = this
         
         this._stylePrefix = "."  // Use class not default id 
     }
@@ -920,302 +969,21 @@ class EclairStyleComponent extends EclairStylableObject {
     }
 }
 
-
-// style.defaults
-eclair.styles = {
-    View: eclair.Style("eclair-style-view")
-        .boxSizing("border-box"),
-    
-    VStack: eclair.Style("eclair-style-vstack")
-        .boxSizing("border-box")
-        .display("flex")
-        .flexDirection("column")
-        .alignItems("center")
-        .justifyContent("space-around"),
-    
-    HStack: eclair.Style("eclair-style-hstack")
-        .boxSizing("border-box")
-        .display("flex")
-        .flexDirection("row")
-        .alignItems("center")
-        .justifyContent("space-around"),
-    
-    Form: eclair.Style("eclair-style-form")
-        .boxSizing("border-box"),
-    
-    TabView: eclair.Style("eclair-style-tab-view")
-        .display("flex")
-        .boxSizing("border-box")
-        .alignItems("center"),
-    
-    Text: eclair.Style("eclair-style-text")
-        .font(eclair.theme.font),
-    
-    IFrame: eclair.Style("eclair-style-iframe")
-        .borderColor("#333333")
-        .borderSize("1px")
-        .width("100%")
-        .height("100%"),
-    
-    Button: eclair.Style("eclair-style-button")
-        .borderSize("0px")
-        .borderRadius("2px")
-        .padding("8px 16px")
-        .background("#eeeeee")
-        .font(eclair.theme.font)
-        .background("#dddddd", "hover")
-        .background("#cccccc", "active"),
-    
-    Select: eclair.Style("eclair-style-select")
-        .borderSize("0px")
-        .borderRadius("2px")
-        .padding("8px 16px")
-        .background("#eeeeee")
-        .font(eclair.theme.font)
-        .background("#dddddd", "hover")
-        .background("#cccccc", "active"),
-    
-    Slider: eclair.Style("eclair-style-slider")
-        .transition("0.2s all")
-        .css("-webkit-appearance: none; box-sizing: border-box; outline: none;")
-        .appearance("none", ":-webkit-slider-thumb")
-        .appearance("none", ":-moz-slider-thumb")
-        .cursor("pointer", ":-webkit-slider-thumb")
-        .cursor("pointer", ":-moz-slider-thumb")
-        .background("#d3d3d3")
-        .background(eclair.theme.accent, ":-webkit-slider-thumb")
-        .background(eclair.theme.accent, ":-moz-slider-thumb")
-        .borderRadius("50%", ":-webkit-slider-thumb")
-        .borderRadius("50%", ":-moz-slider-thumb")
-        .height("25px", ":-webkit-slider-thumb")
-        .height("25px", ":-moz-slider-thumb")
-        .width("25px", ":-webkit-slider-thumb")
-        .width("25px", ":-moz-slider-thumb")
-        .width("100%")
-        .height("15px")
-        .borderRadius("5px")
-        .opacity(0.7)
-        .opacity(1, "hover"),
-    
-    Link: eclair.Style("eclair-style-link")
-        .font(eclair.theme.font)   
-        .fontColor(eclair.theme.accent)
-        .textDecoration("none")
-        .textDecoration("underline", "hover"),
-    
-    Image: eclair.Style("eclair-style-image")
-        .display("block"),
-    
-    TextBox: eclair.Style("eclair-style-text-box")
-        .fontSize("14px")
-        .padding("12px 16px")
-        .width("100%")
-        .borderSize("0px")
-        .borderRadius("3px")
-        .background("#eeeeee")
-        .font(eclair.theme.font)
-        .background("#dddddd", "hover")
-        .background("#cccccc", "active")
-        .background("#bbbbbb", "focused"),
-    
-    TextArea: eclair.Style("eclair-style-text-area"),
-    
-    HorizontalLine: eclair.Style("eclair-style-horz-line")
-        .borderSize("0px")
-        .width("100%")
-        .css("border-top: 1px solid #999999"),
-    
-    RadioButtons: eclair.Style("eclair-style-radio-button"), 
-    RadioButtonsItem: eclair.Style("eclair-style-radio-buttons-item")
-        .cursor("pointer")
-        .boxShadow("0px 0px 0px 1000px rgba(0, 0, 0, 0.05) inset", "hover")
-        .padding("12px")
-        .borderRadius("4px")
-        .width("100%")
-        .userSelect("none")
-        .justifyContent("flex-start")
-        .gap("12px")
-        .font(eclair.theme.font),
-    RadioButtonsSelectedItem: eclair.Style("eclair-style-radio-buttons-selected-item"),
-    RadioButtonsRadio: eclair.Style("eclair-style-radio-buttons-dot")
-        .width("14px")
-        .height("14px")
-        .userSelect("none")
-        .borderSize("2px")
-        .borderStyle("solid")
-        .borderColor(eclair.theme.accent)
-        .borderRadius("100%"),
-    RadioButtonsSelectedRadio: eclair.Style("eclair-style-radio-buttons-selected-dot")
-        .background(eclair.theme.accent),
-    RadioButtonsLabel: eclair.Style("eclair-style-label"),
-    RadioButtonsSelectedLabel: eclair.Style("eclair-style-radio-buttons-selected-label"),
-    
-    CheckBox: eclair.Style("eclair-style-checkbox")    
-        .cursor("pointer")
-        .boxShadow("0px 0px 0px 100px rgba(0, 0, 0, 0.05) inset", "hover")
-        .padding("2px")
-        .borderRadius("4px")
-        .width("100%")
-        .transition("0.2s all")
-        .userSelect("none")
-        .font(eclair.theme.font),
-    CheckBoxIcon: eclair.Style("eclair-style-checkbox-icon")
-        .borderSize("2px")
-        .borderRadius("4px")
-        .borderColor(eclair.theme.accent)
-        .borderStyle("solid")
-        .width("16px")
-        .height("16px")
-        .fontSize("0.85rem")
-        .userSelect("none")
-        .textAlign("center"),        
-    CheckBoxActiveIcon: eclair.Style("eclair-style-checkbox-active-icon")
-        .borderSize("2px")
-        .borderRadius("4px")
-        .borderColor(eclair.theme.accent)
-        .borderStyle("solid")
-        .width("16px")
-        .height("16px")
-        .userSelect("none")
-        .background(eclair.theme.accent)
-        .fontColor("white")
-        .fontSize("0.85rem")
-        .textAlign("center"),
-    CheckBoxLabel: eclair.Style("eclair-style-checkbox-label"),
-    
-    ProgressBar: eclair.Style("eclair-style-progress-bar")
-        .background("#d3d3d3")
-        .borderRadius("3px")
-        .height("16px")
-        .userSelect("none")
-        .overflow("hidden"),
-    ProgressBarIndicator: eclair.Style("eclair-style-progress-bar")
-        .display("flex")
-        .flexDirection("row")
-        .alignItems("center")
-        .background(eclair.theme.accent)
-        .height("100%")
-        .transition("0.3s all")
-        .userSelect("none")
-        .margin("0px auto 0px 0px"),
-    ProgressBarLabel: eclair.Style("eclair-style-progress-bar-label")
-        .fontColor("white")
-        .fontWeight(700)
-        .userSelect("none")
-        .fontSize("11px"),
-    
-    Toggle: eclair.Style("eclair-style-toggle")    
-        .display("flex")
-        .flexDirection("row")
-        .alignItems("center")
-        .position("relative")
-        .width("50px")
-        .background("#dddddd")
-        .padding("3px")
-        .cursor("pointer")
-        .userSelect("none")
-        .borderRadius("20px")
-        .transition("0.2s all")
-        .boxSizing("border-box"),
-    ToggleKnob: eclair.Style("eclair-style-toggle-knob")
-        .height("14px")
-        .width("14px")
-        .background("#ffffff")
-        .transform("translateX(0%)")
-        .transition("0.2s all")
-        .userSelect("none")
-        .borderRadius("20px"),
-    ToggleTick: eclair.Style("eclair-style-toggle-tick")
-        .position("absolute")
-        .fontColor("#ffffff")
-        .left("35%")
-        .transition("0.2s all")
-        .transform("translateX(-50%)")
-        .fontWeight(700)
-        .userSelect("none")
-        .opacity(0),
-    
-    SyntaxHighlighter: eclair.Style("eclair-syntax-highlighter")
-        .position("relative")
-        .width("420px")
-        .height("360px")
-        .borderSize("1px")
-        .borderStyle("solid")
-        .borderColor("#999999")
-        .borderRadius("3px"),
-    SyntaxHighlighterCodeElement: eclair.Style("eclair-syntax-highlighter-code")
-        .position("absolute")
-        .top("0px")
-        .left("0px")
-        .width("100%")
-        .height("100%")
-        .fontSize("14px")
-        .font("monospace")
-        .borderSize("0px")
-        .outline("none")
-        .caretColor("black")
-        .resize("none")
-        .whiteSpace("pre")
-        .boxSizing("border-box")
-        .padding("10px")
-        .overflowWrap("normal")
-        .display("none", ":-webkit-scrollbar")
-        .css("-ms-overflow-style: none; scrollbar-width: none;")
-        .overflowX("scroll"),
-    SyntaxHighlighterTextAreaElement: eclair.Style("eclair-syntax-highlighter-text-area")
-        .position("absolute")
-        .top("0px")
-        .left("0px")
-        .width("100%")
-        .height("100%")
-        .fontSize("14px")
-        .font("monospace")
-        .borderSize("0px")
-        .outline("none")
-        .caretColor("black")
-        .resize("none")
-        .whiteSpace("pre")
-        .boxSizing("border-box")
-        .background("transparent")
-        .fontColor("rgb(1, 1, 1, 0)")
-        .padding("10px")
-        .overflowWrap("normal")
-        .overflowX("scroll"),
-    SyntaxHighlighterCommentStyle: eclair.Style("eclair-syntax-highlighter-comment").fontColor("grey"),
-    SyntaxHighlighterKeywordStyle: eclair.Style("eclair-syntax-highlighter-keyword").fontColor("#0066ee"),
-    SyntaxHighlighterStringStyle: eclair.Style("eclair-syntax-highlighter-string").fontColor("#dd9900"),
-    SyntaxHighlighterQuoteStyle: eclair.Style("eclair-syntax-highlighter-quote").fontColor("#dd9900"),
-    SyntaxHighlighterEclairStyle: eclair.Style("eclair-syntax-highlighter-eclair").fontColor("#009900"),
-    
-    AlertBox: eclair.Style("eclair-style-alert-box")
-        .background(eclair.theme.accent)
-        .boxSizing("border-box")
-        .borderRadius(".25rem")
-        .padding(".75rem 1.25rem")
-        .boxShadow("0px 0px 0px 2px rgba(0, 0, 0, 0.2) inset")
-        .borderSize("1px 0px 0px 0px", " hr")
-        .margin(".75rem 0px", " hr")
-        .borderColor("rgba(0, 0, 0, 0.2)", " hr"),
-    AlertBoxTitle: eclair.Style("eclair-style-alert-title")
-        .fontWeight(500)
-        .fontSize("1.5rem")
-        .display("none")
-        .fontColor("rgba(0, 0, 0, 0.6)")
-        .width("100%")
-        .marginBottom(".5rem"),
-    AlertBoxText: eclair.Style("eclair-style-alert-text")
-        .fontColor("rgba(0, 0, 0, 0.6)"),
+Eclair.Style = function(_styleID) {
+    return new EclairStyleComponent(_styleID);
 }
 
 
 
+
 // elements.component
+
 class EclairComponent extends EclairStylableObject {
     constructor() {
         super()
         
-        this._id = eclair._newID();
-        eclair._elements[this.eID()] = this;
+        this._id = Eclair._newID();
+        Eclair._elements[this.eID()] = this;
         
         this.parent = null
         this.children = []
@@ -1315,8 +1083,8 @@ class EclairComponent extends EclairStylableObject {
             
             let elem = this.getElement()
             if (elem != null) {
-                if (eclair._styles.hasOwnProperty(className)) {
-                    eclair._styles[className].create()
+                if (Eclair._styles.hasOwnProperty(className)) {
+                    Eclair._styles[className].create()
                 }
             }
         }
@@ -1393,8 +1161,8 @@ class EclairComponent extends EclairStylableObject {
         if (classes != null) {
             classes = classes.split(" ")
             for (let c = 0; c < classes.length; c++) {
-                if (eclair._styles.hasOwnProperty(classes[c])) {
-                    eclair._styles[classes[c]].create()
+                if (Eclair._styles.hasOwnProperty(classes[c])) {
+                    Eclair._styles[classes[c]].create()
                 }
             }
         }
@@ -1461,13 +1229,19 @@ class EclairComponent extends EclairStylableObject {
         if (callback == null) {
             this.setAttr(callbackKey.toLowerCase(), null)
         } else {
-            this.setAttr(callbackKey.toLowerCase(), `eclair.triggerEvent("${this.eID()}", "${callbackKey}", event)`)
+            this.setAttr(callbackKey.toLowerCase(), `Eclair.triggerEvent("${this.eID()}", "${callbackKey}", event)`)
         }
         return this;
     }
 }
 
 // elements.custom-tag
+
+Eclair.CustomTagComponent = function(tag) {
+    return new EclairCustomTagComponent(tag);
+}
+
+
 class EclairCustomTagComponent extends EclairComponent {
     constructor(tag) {
         super(tag)
@@ -1493,7 +1267,16 @@ class EclairCustomTagComponent extends EclairComponent {
 
 
 // elements.layout.view
-class EclairView extends EclairComponent {
+
+Eclair.View = function(_elements, _func) {
+    return new EclairView(_elements, _func);
+}
+
+Eclair.styles.View = Eclair.Style("eclair-style-view")
+    .boxSizing("border-box")
+
+class EclairView extends EclairComponent {    
+    
     constructor(elements, creatorFunc) {
         super("view")
         
@@ -1514,11 +1297,14 @@ class EclairView extends EclairComponent {
                 
                 for (let i = 0; i < itemChanges.length; i++) {
                     if (itemChanges[i] == -1) {
-                        let newItem = self._addChild(self.creatorFunc(array[i]))
-                        
-                        let dummychild = document.createElement("div")
-                        dummychild.innerHTML = newItem.compile()
-                        dummyParent.appendChild(dummychild.childNodes[0])
+                        let newItem = self.creatorFunc(array[i])
+                        if (self._isValidChild(newItem)) {
+                            self._addChild(newItem)
+
+                            let dummychild = document.createElement("div")
+                            dummychild.innerHTML = newItem.compile()
+                            dummyParent.appendChild(dummychild.childNodes[0])
+                        }
                     } else {
                         let itemIndexValue = itemChanges[i]
                         
@@ -1549,7 +1335,7 @@ class EclairView extends EclairComponent {
             })
         }
         
-        this.addStyle(eclair.styles.View)
+        this.addStyle(Eclair.styles.View)
     }
     
     
@@ -1571,6 +1357,10 @@ class EclairView extends EclairComponent {
     }
     
     _onItemsChanged() {}
+    
+    _isValidChild(child) {
+        return true
+    }
     
     
     build () {                
@@ -1596,14 +1386,27 @@ class EclairView extends EclairComponent {
 }
 
 // elements.layout.vstack
-class EclairVStack extends EclairView {
+
+Eclair.VStack = function(_elements, _func) {
+    return new EclairVStack(_elements, _func);
+}
+
+Eclair.styles.VStack = Eclair.Style("eclair-style-vstack")
+    .boxSizing("border-box")
+    .display("flex")
+    .flexDirection("column")
+    .alignItems("center")
+    .justifyContent("space-around")
+
+class EclairVStack extends EclairView { 
+    
     constructor(elems, creatorFunc) {
         super(elems, creatorFunc)
         
-        this.removeStyle(eclair.styles.View)
-        this.addStyle(eclair.styles.VStack)
+        this.removeStyle(Eclair.styles.View)
+        this.addStyle(Eclair.styles.VStack)
     }
-    
+                
     alignment(_alignment) {
         this.bindState(_alignment, "alignment", value => {
             if (value == "start") {
@@ -1625,16 +1428,30 @@ class EclairVStack extends EclairView {
         return this
     }
 }
+
 
 // elements.layout.hstack
+
+Eclair.HStack = function(_elements, _func) {
+    return new EclairHStack(_elements, _func);
+}
+
+Eclair.styles.HStack = Eclair.Style("eclair-style-hstack")
+    .boxSizing("border-box")
+    .display("flex")
+    .flexDirection("row")
+    .alignItems("center")
+    .justifyContent("space-around")
+
 class EclairHStack extends EclairView {
-    constructor(elements, creatorFunc) {
-        super(elements, creatorFunc)
+       
+    constructor(elements, itemFunction) {
+        super(elements, itemFunction)
         
-        this.removeStyle(eclair.styles.View)
-        this.addStyle(eclair.styles.HStack)
+        this.removeStyle(Eclair.styles.View)
+        this.addStyle(Eclair.styles.HStack)
     }
-    
+                
     alignment(_alignment) {
         this.bindState(_alignment, "alignment", value => {
             if (value == "start") {
@@ -1657,10 +1474,42 @@ class EclairHStack extends EclairView {
     }
 }
 
-// elements.layout.tabs
+
+// elements.layout.tabs.page
+
+Eclair.TabPage = function(_elements, _func) {
+    return new EclairTabPage(_elements, _func);
+}
+
+Eclair.styles.TabPage = Eclair.Style("eclair-style-tab-page")
+
+class EclairTabPage extends EclairView {
+        
+    constructor(elements, func) {
+        super(elements, func)
+        
+        this.removeStyle(Eclair.styles.View)
+        this.addStyle(Eclair.styles.TabPage)
+    }
+}
+
+
+// elements.layout.tabs.view
+
+Eclair.TabView = function(_tab, _elements, _func) {
+    return new EclairTabView(_tab, _elements, _func);
+}
+
+Eclair.styles.TabView = Eclair.Style("eclair-style-tab-view")
+    .display("flex")
+    .boxSizing("border-box")
+    .alignItems("center")
+
 class EclairTabView extends EclairView {
-    constructor(_selectedView, elements) {
-        super(elements)
+    
+    
+    constructor(_selectedView, elements, func) {
+        super(elements, func)
         
         if (_selectedView instanceof EclairState) {
             this.bindState(_selectedView, "tab", value => {
@@ -1672,9 +1521,16 @@ class EclairTabView extends EclairView {
             throw "First parameter of Eclair TabView's must be an Eclair State"
         }
         
-        
-        this.removeStyle(eclair.styles.View)
-        this.addStyle(eclair.styles.TabView)
+        this.removeStyle(Eclair.styles.View)
+        this.addStyle(Eclair.styles.TabView)
+    }
+    
+    _isValidChild(child) {
+        let valid = child instanceof EclairTabPage
+        if (!valid) {
+            throw "All tab view children should be an eclair TabPage"
+        }
+        return valid
     }
 }
 
@@ -1684,271 +1540,28 @@ class EclairTabView extends EclairView {
 
 
 
-// elements.custom.alert-box
-class EclairAlertBox extends EclairComponent {
-    constructor(text) {
-        super()
-        
-        this._titleText = Ø(null)
-        
-        this._text = this._addChild(eclair.Text(text))
-        this._title = this._addChild(eclair.Text(this._titleText))
-        
-        this.addStyle(eclair.styles.AlertBox)
-        this._title.addStyle(eclair.styles.AlertBoxTitle)
-        this._text.addStyle(eclair.styles.AlertBoxText)
-    }
-    
-    theme(_color) {
-        this.bindState(_color, "color", value => {
-            this.background(value)
-        })
-        
-        return this
-    }
-        
-    title(_text) {        
-        this.bindState(_text, "title", value => {
-            this._titleText.value(value)
-            
-            let hideTitle = value == null || value.trim().length == 0
-            this._title.display(hideTitle? "none": "block")
-        })
-        
-        return this
-    }
-    
-    build() {
-        return `<div>${this._title.compile()}${this._text.compile()}</div>`
-    }
-}
-
-// elements.custom.progress
-class EclairProgressBar extends EclairComponent {
-    constructor(_progress) {
-        super()
-        
-        this._labelText = Ø("0%")
-        this._label = eclair.Text(this._labelText)
-        this._indicator = this._addChild(eclair.HStack([this._label]))
-        
-        this.bindState(_progress, "progress", value => {
-            _progress = Math.max(Math.min(value, 1), 0)
-            this._progress = value;
-            this._labelText.value(Math.round(value * 100) + "%")
-            this._indicator.width((value * 100 + 0.0001) + "%")
-        }, state => {return state.number(0.5)})
-        
-        this._label.addStyle(eclair.styles.ProgressBarLabel)
-        this._indicator.addStyle(eclair.styles.ProgressBarIndicator)
-        this.addStyle(eclair.styles.ProgressBar)
-    }
-    
-    striped(_on) {
-        this.bindState(_on, "color", value => {
-            if (value) {
-                this._indicator
-                    .backgroundSize("1rem 1rem")
-                    .css("background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent)");
-            } else {
-                this._indicator
-                    .backgroundSize("1rem 1rem")
-                    .css("background-image: ;");
-            }
-            this._indicator.updateCSSStyle()
-        }, state => {return state.bool()})
-        
-        return this;
-    }
-    
-    indicator(callback) {
-        callback(this._indicator)
-        return this;
-    }
-    
-    label(callback) {
-        callback(this._label)
-        return this;
-    }
-        
-    color(_color) {
-        this._indicator.backgroundColor(_color)
-        return this
-    }
-    
-    showLabel(_show) {
-        this.bindState(_show, "label", value => {
-            this._label.opacity(value? "1":"0")
-        }, state => {return state.bool()});
-        
-        return this
-    }
-    
-    build() {
-        return `<div>${this._indicator.compile()}</div>`
-    }
-}
-
-// elements.custom.syntax-highlighter
-class EclairSyntaxHighlighter extends EclairComponent {
-    constructor(_code) {
-        super()
-        
-        this.tokenSeperators = new Set([
-            "{", "(", " ", "}", ")", "[", "]", "\n", "\t", ".", ","
-        ])
-        this.eclairKeywords = new Set([
-            "VStack", "HStack", "State", "Toggle", "Text", "HorizontalLine", "Alignment", "eclair", 
-            "Ø", "Style", "Color", "TextStyle", "View", "TabView", "CustomTagComponent", "Button", 
-            "TextBox", "Form", "Select", "Slider", "RadioButtons", "CheckBox", "TextArea", 
-            "HiddenInput", "Image", "IFrame", "Text", "Link", "HorizontalLine", "Alert", 
-            "ProgressBar", "SyntaxHighlighter"
-        ])
-        this.jsKeywords = new Set([
-            "let", "var", "if", "else", "true", "false", "const", "for", "while", "await", "break", 
-            "case", "catch", "class", "continue", "debugger", "default", "delete", "do", "enum", 
-            "export", "extends", "finally", "function", "implements", "import", "in", "instanceof", 
-            "interface", "new", "null", "package", "private", "protected", "public", "return", 
-            "super", "switch", "static", "this", "throw", "try", "typeof", "void", "while", 
-            "with", "yield"
-        ])
-         	 	 	
-        this.theme = {
-            "comment": eclair.styles.SyntaxHighlighterCommentStyle,
-            "keyword": eclair.styles.SyntaxHighlighterKeywordStyle,
-            "eclair": eclair.styles.SyntaxHighlighterEclairStyle,
-            "string": eclair.styles.SyntaxHighlighterStringStyle, 
-            "quote": eclair.styles.SyntaxHighlighterQuoteStyle, 
-            "number": eclair.styles.SyntaxHighlighterKeywordStyle, 
-        }
-        
-        this._cachedLines = {}
-        this._codeState = (_code instanceof EclairState)? _code : Ø(_code)
-        
-        this.codeElement = this._addChild(eclair.CustomTagComponent("code")
-            .addStyle(eclair.styles.SyntaxHighlighterCodeElement)
-         )
-        
-        this.textArea = this._addChild(eclair.TextArea(this._codeState)
-            .removeStyle(eclair.styles.TextArea)
-            .addStyle(eclair.styles.SyntaxHighlighterTextAreaElement)
-            .setAttr("spellcheck", "false")
-            .onScroll((e, ev) => {
-                let textarea = e.getElement()
-                this.codeElement.getElement().scroll(textarea.scrollLeft, textarea.scrollTop)
-            })
-        )
-        
-        this.addStyle(eclair.styles.SyntaxHighlighter)
-        
-        this.bindState(this._codeState, "code", value => {
-            this.update()
-        })
-    }
-    
-    update() {
-        let code = this._codeState.value();
-        
-        let output = "";
-        let tokenisedLines = []
-
-        let lines = code.split("\n")
-        let allLines = new Set(lines)
-        for (let l = 0; l < lines.length; l++) {
-            if (!this._cachedLines.hasOwnProperty(lines[l])) {
-                this._cachedLines[lines[l]] = this._tokeniseLine(lines[l])
-            }
-            tokenisedLines.push(this._cachedLines[lines[l]])
-        }
-        
-        let cachedKeys = Object.keys(this._cachedLines)
-        for (let i = 0; i < cachedKeys.length; i++) {
-            if (!allLines.has(cachedKeys[i])) {
-                delete this._cachedLines[cachedKeys[i]]
-            }
-        }
-
-        let formattedCode = ""
-        for (let l = 0; l < tokenisedLines.length; l++) {
-            let cline = tokenisedLines[l];
-            for (let t = 0; t < cline.length; t++) {
-                formattedCode += `<span class='${(cline[t].type != '')? this.theme[cline[t].type].eID():""}'>${cline[t].text}</span>`
-            }
-            formattedCode += "<br/>"
-        }
-
-        
-        this.codeElement.innerHTML(`<pre style="margin: 0px; padding: 0px;">${formattedCode}</pre>`)
-        
-        return this
-    }
-    
-    _tokeniseLine(line) {
-        let tokens = [], token = "", state = ""
-
-        let self = this;
-        function pushTokenState(_text, _state) {
-            if (state == "") {
-                if (self.jsKeywords.has(_text)) {_state = "keyword"}
-                if (self.eclairKeywords.has(_text)) {_state = "eclair"}
-                if (!isNaN(parseFloat(_text))) {_state = "number"}
-            }
-
-            tokens.push({"text": _text, "type": _state})
-            state = "", token = ""
-        }
-
-        for (let c = 0; c < line.length; c++) {
-            if (state == "comment") {token += line[c]} 
-
-            else if (state != "comment" && c < line.length - 1 && line[c] == "/" && line[c + 1] == "/") {
-                pushTokenState(token, state); state = "comment"; token = line[c]
-            } 
-
-            else if (state != "quote" && state != "string" && line[c] == "'") {
-                pushTokenState(token, state)
-                state = "quote"; token = line[c]
-            } 
-
-            else if (state == "quote" && line[c] == "'") {pushTokenState(token + "'", state)} 
-
-            else if (state == "string" && line[c] == '"') {pushTokenState(token + '"', state)} 
-
-            else if (state != "string" && state != "quote" && line[c] == '"') {pushTokenState(token, state); state = "string"; token = line[c]} 
-
-            else if (state != "string" && state != "quote" && this.tokenSeperators.has(line[c])) {
-                pushTokenState(token, state)
-                token = line[c]
-            }
-
-            else {
-                if (this.tokenSeperators.has(token)) {
-                    pushTokenState(token, state)
-                }
-                token += line[c]
-            }
-        }
-        
-        pushTokenState(token, state)
-
-        return tokens
-    }
-    
-    build() {
-        let classes = Object.keys(this.theme);
-        for (let i = 0; i < classes.length; i++) {
-            this.theme[classes[i]].create()
-        }
-        return `<div>${this.codeElement.compile()}${this.textArea.compile()}</div>`
-    }
-}
 
 
 
 
 
 // elements.form.button
+
+Eclair.Button = function(text) {
+    return new EclairButton(text);
+}
+
+Eclair.styles.Button = Eclair.Style("eclair-style-button")
+    .borderSize("0px")
+    .borderRadius("2px")
+    .padding("8px 16px")
+    .background("#eeeeee")
+    .font(Eclair.theme.font)
+    .background("#dddddd", "hover")
+    .background("#cccccc", "active")
+
 class EclairButton extends EclairComponent {
+    
     constructor(text) {
         super()
         
@@ -1958,7 +1571,7 @@ class EclairButton extends EclairComponent {
         })
         
         this.setAttr("type", "button")
-        this.addStyle(eclair.styles.Button)
+        this.addStyle(Eclair.styles.Button)
     }
     
     build() {
@@ -1970,12 +1583,43 @@ class EclairButton extends EclairComponent {
         if (text instanceof EclairComponent) {
             text = text.compile()
         } 
+        
         return `<button>${this.text}</button>`
     }
 }
 
 // elements.form.checkbox
-class EclairCheckBox extends EclairComponent {
+
+Eclair.CheckBox = function(text) {
+    return new EclairCheckBox(text);
+}
+
+Eclair.styles.CheckBox = Eclair.Style("eclair-style-checkbox")    
+    .cursor("pointer")
+    .boxShadow("0px 0px 0px 100px rgba(0, 0, 0, 0.05) inset", "hover")
+    .padding("2px")
+    .borderRadius("4px")
+    .width("100%")
+    .transition("0.2s all")
+    .userSelect("none")
+    .font(Eclair.theme.font)
+Eclair.styles.CheckBoxIcon = Eclair.Style("eclair-style-checkbox-icon")
+    .borderSize("2px")
+    .borderRadius("4px")
+    .borderColor(Eclair.theme.accent)
+    .borderStyle("solid")
+    .width("16px")
+    .height("16px")
+    .fontSize("0.85rem")
+    .userSelect("none")
+    .textAlign("center")    
+Eclair.styles.CheckBoxActiveIcon = Eclair.Style("eclair-style-checkbox-active-icon")
+    .background(Eclair.theme.accent)
+    .fontColor("white")
+Eclair.styles.CheckBoxLabel = Eclair.Style("eclair-style-checkbox-label")
+
+class EclairCheckBox extends EclairComponent {   
+    
     constructor(checked) {
         super()
         
@@ -1985,9 +1629,9 @@ class EclairCheckBox extends EclairComponent {
         this._hiddenValue = Ø(false)  // Private one which is updated in the .checked callback
         this._textValue = Ø("")  // Text value which is the message displayed alongside
         
-        this._label = this._addChild(eclair.Text(this._textValue))
-        this._checkbox = this._addChild(eclair.CustomTagComponent("div"))
-        this._hidden = this._addChild(eclair.HiddenInput(this._hiddenValue))
+        this._label = this._addChild(Eclair.Text(this._textValue))
+        this._checkbox = this._addChild(Eclair.CustomTagComponent("div"))
+        this._hidden = this._addChild(Eclair.HiddenInput(this._hiddenValue))
         
         let self = this
         this.overrideOnClick = null
@@ -2003,21 +1647,19 @@ class EclairCheckBox extends EclairComponent {
             
             if (value) {
                 this._checkbox
-                    .addStyle(eclair.styles.CheckBoxActiveIcon)
-                    .removeStyle(eclair.styles.CheckBoxIcon)
+                    .addStyle(Eclair.styles.CheckBoxActiveIcon)
                     .innerHTML("✓")
             } else {
                 this._checkbox
-                    .addStyle(eclair.styles.CheckBoxIcon)
-                    .removeStyle(eclair.styles.CheckBoxActiveIcon)
+                    .removeStyle(Eclair.styles.CheckBoxActiveIcon)
                     .innerHTML("")
             }
         }, state => {return state.bool()})
         
         this.setAttr("cellpadding", 6)   
-        this.addStyle(eclair.styles.CheckBox)  
-        this._label.addStyle(eclair.styles.CheckBoxLabel)
-        this._checkbox.addStyle(eclair.styles.CheckBoxIcon)
+        this.addStyle(Eclair.styles.CheckBox)  
+        this._label.addStyle(Eclair.styles.CheckBoxLabel)
+        this._checkbox.addStyle(Eclair.styles.CheckBoxIcon)
     }
     
     checkbox(callback) {
@@ -2046,7 +1688,7 @@ class EclairCheckBox extends EclairComponent {
         this._hidden.name(_name)
         return this;
     }
-        
+    
     enabled(_enabled) {
         this.bindState(_enabled, "enabled", value => {
             this.opacity(value ? "1":"0.6")
@@ -2062,21 +1704,30 @@ class EclairCheckBox extends EclairComponent {
 }
 
 // elements.form.form
+
+Eclair.Form = function(elements) {
+    return new EclairForm(elements);
+}
+
+Eclair.styles.Form = Eclair.Style("eclair-style-form")
+    .boxSizing("border-box")
+
 class EclairForm extends EclairView {
+    
     constructor(elements, objectFunc) {
         super(elements, objectFunc)
         
         this._elementTag = "form"
         
-        this.addStyle(eclair.styles.Form)
-            .removeStyle(eclair.styles.View)
+        this.addStyle(Eclair.styles.Form)
+            .removeStyle(Eclair.styles.View)
             .setAttr("method", "POST")
             .setAttr("action", null)
     }
     
-    method(_method) {
-        this.bindState(_method, "method", value => {
-            this.setAttr("method", value)
+    method(value) {
+        this.bindState(value, "method", m => {
+            this.setAttr("method", m)
         })
         return this;
     }
@@ -2099,30 +1750,69 @@ class EclairForm extends EclairView {
 
 
 // elements.form.hidden
+
+Eclair.HiddenInput = function(_value) {
+    return new EclairHiddenInput(_value);
+}
+
 class EclairHiddenInput extends EclairCustomTagComponent {
-    constructor(_value) {
+    
+    constructor(value) {
         super("input")
+        
         this.setAttr("type", "hidden")
         
         this._buildStyle = false
 
-        this.bindState(_value, "value", value => {
-            this.setAttr("value", value)
-            this.getElement(e => {e.value = value})
+        this.bindState(value, "value", v => {
+            this.setAttr("value", v)
+            this.getElement(e => {e.value = v})
         })
     }
     
-    name(_name) {
-        this.bindState(_name, "name", value => {
-            this.setAttr("name", value)
+    name(value) {
+        this.bindState(value, "name", v => {
+            this.setAttr("name", v)
         })
         
         return this
     }
 }
 
+
 // elements.form.radio-buttons
+
+Eclair.RadioButtons = function(_value) {
+    return new EclairRadioButtons(_value);
+}
+
+Eclair.styles.RadioButtons = Eclair.Style("eclair-style-radio-button"),
+Eclair.styles.RadioButtonsItem = Eclair.Style("eclair-style-radio-buttons-item")
+    .cursor("pointer")
+    .boxShadow("0px 0px 0px 1000px rgba(0, 0, 0, 0.05) inset", "hover")
+    .padding("12px")
+    .borderRadius("4px")
+    .width("100%")
+    .userSelect("none")
+    .justifyContent("flex-start")
+    .gap("12px")
+    .font(Eclair.theme.font)
+Eclair.styles.RadioButtonsSelectedItem = Eclair.Style("eclair-style-radio-buttons-selected-item")
+Eclair.styles.RadioButtonsRadio = Eclair.Style("eclair-style-radio-buttons-dot")
+    .width("14px")
+    .height("14px")
+    .userSelect("none")
+    .borderSize("2px")
+    .borderStyle("solid")
+    .borderColor(Eclair.theme.accent)
+    .borderRadius("100%")
+Eclair.styles.RadioButtonsSelectedRadio = Eclair.Style("eclair-style-radio-buttons-selected-dot")
+    .background(Eclair.theme.accent)
+Eclair.styles.RadioButtonsLabel = Eclair.Style("eclair-style-label")
+Eclair.styles.RadioButtonsSelectedLabel = Eclair.Style("eclair-style-radio-buttons-selected-label")
+
 class EclairRadioButtons extends EclairComponent {
+    
     constructor(_options) {
         super()
         
@@ -2131,17 +1821,17 @@ class EclairRadioButtons extends EclairComponent {
         this._selectedValue = State("")
         
         this.customStyles = {
-            "itemStyle": eclair.Style(),
-            "radioStyle": eclair.Style(),
-            "labelStyle": eclair.Style(),
-            "selectedItemStyle": eclair.Style(),
-            "selectedRadioStyle": eclair.Style(),
-            "selectedLabelStyle": eclair.Style(),
+            "itemStyle": Eclair.Style(),
+            "radioStyle": Eclair.Style(),
+            "labelStyle": Eclair.Style(),
+            "selectedItemStyle": Eclair.Style(),
+            "selectedRadioStyle": Eclair.Style(),
+            "selectedLabelStyle": Eclair.Style(),
         }
         
         let self = this
-        this._hidden = this._addChild(eclair.HiddenInput(this._selectedValue))
-        this._view = this._addChild(eclair.VStack(_options, item => {
+        this._hidden = this._addChild(Eclair.HiddenInput(this._selectedValue))
+        this._view = this._addChild(Eclair.VStack(_options, item => {
             return new EclairRatioItem(item, this.customStyles)
                 .onClick((e, ev) => {
                     let newIndex = this._updateSelectedItemStyles(item)
@@ -2154,7 +1844,7 @@ class EclairRadioButtons extends EclairComponent {
                 })
         }))
         
-        this.addStyle(eclair.styles.RadioButtons)
+        this.addStyle(Eclair.styles.RadioButtons)
     }
     
     _updateSelectedItemStyles(selectedValue) {
@@ -2215,17 +1905,17 @@ class EclairRadioButtons extends EclairComponent {
         callback(this.customStyles.itemStyle)
         return this           
     }
-         
+    
     radioStyle(callback) {
         callback(this.customStyles.radioStyle)
         return this           
     }
-     
+    
     labelStyle(callback) {
         callback(this.customStyles.labelStyle)
         return this           
     }
-          
+    
     selectedItemStyle(callback) {
         callback(this.customStyles.selectedItemStyle)
         return this           
@@ -2250,16 +1940,16 @@ class EclairRadioButtons extends EclairComponent {
 class EclairRatioItem extends EclairHStack {
     constructor(_text, customStyles) {
         super([
-            eclair.CustomTagComponent("div")
-                .addStyle(eclair.styles.RadioButtonsRadio)
+            Eclair.CustomTagComponent("div")
+                .addStyle(Eclair.styles.RadioButtonsRadio)
                 .addStyle(customStyles.radioStyle),
-            eclair.Text(_text)
-                .addStyle(eclair.styles.RadioButtonsLabel)
+            Eclair.Text(_text)
+                .addStyle(Eclair.styles.RadioButtonsLabel)
                 .addStyle(customStyles.labelStyle)
         ])
         
         this.value = _text
-        this.addStyle(eclair.styles.RadioButtonsItem)
+        this.addStyle(Eclair.styles.RadioButtonsItem)
             .addStyle(customStyles.itemStyle)
         
         this.customStyles = customStyles
@@ -2267,25 +1957,25 @@ class EclairRatioItem extends EclairHStack {
     
     selected(value) {
         if (value) {
-            this.addStyle(eclair.styles.RadioButtonsSelectedItem)
+            this.addStyle(Eclair.styles.RadioButtonsSelectedItem)
                 .addStyle(this.customStyles.selectedItemStyle)
                 .child(0, radio => {
-                    radio.addStyle(eclair.styles.RadioButtonsSelectedRadio)
+                    radio.addStyle(Eclair.styles.RadioButtonsSelectedRadio)
                         .addStyle(this.customStyles.selectedRadioStyle)
                 })
                 .child(1, label => {
-                    label.addStyle(eclair.styles.RadioButtonsSelectedLabel)
+                    label.addStyle(Eclair.styles.RadioButtonsSelectedLabel)
                         .addStyle(this.customStyles.selectedLabelStyle)
                 })
         } else {
-            this.removeStyle(eclair.styles.RadioButtonsSelectedItem)
+            this.removeStyle(Eclair.styles.RadioButtonsSelectedItem)
                 .removeStyle(this.customStyles.selectedItemStyle)
                 .child(0, radio => {
-                    radio.removeStyle(eclair.styles.RadioButtonsSelectedRadio)
+                    radio.removeStyle(Eclair.styles.RadioButtonsSelectedRadio)
                         .removeStyle(this.customStyles.selectedRadioStyle)
                 })
                 .child(1, label => {
-                    label.removeStyle(eclair.styles.RadioButtonsSelectedLabel)
+                    label.removeStyle(Eclair.styles.RadioButtonsSelectedLabel)
                         .removeStyle(this.customStyles.selectedLabelStyle)
                 })
         }
@@ -2294,10 +1984,25 @@ class EclairRatioItem extends EclairHStack {
 
 
 // elements.form.select
+
+Eclair.Select = function(_value) {
+    return new EclairSelect(_value);
+}
+
+Eclair.styles.Select = Eclair.Style("eclair-style-select")
+    .borderSize("0px")
+    .borderRadius("2px")
+    .padding("8px 16px")
+    .background("#eeeeee")
+    .font(Eclair.theme.font)
+    .background("#dddddd", "hover")
+    .background("#cccccc", "active")
+
 class EclairSelect extends EclairView {
-    constructor(elements) {
-        super(elements, item => {
-            return eclair.CustomTagComponent("option").innerHTML(item)
+    
+    constructor(items) {
+        super(items, item => {
+            return Eclair.CustomTagComponent("option").innerHTML(item)
         })
         
         this._selectedIndex = 0
@@ -2309,8 +2014,8 @@ class EclairSelect extends EclairView {
             if (this.overrideOnChangeCallback != null) {this.overrideOnChangeCallback(this, ev)}
         })
         
-        this.addStyle(eclair.styles.Select)
-            .removeStyle(eclair.styles.View)
+        this.addStyle(Eclair.styles.Select)
+            .removeStyle(Eclair.styles.View)
     }
     
     
@@ -2423,9 +2128,36 @@ class EclairSelect extends EclairView {
     }
 }
 
-
 // elements.form.slider
-class EclairSlider extends EclairCustomTagComponent {
+
+Eclair.Slider = function(_value) {
+    return new EclairSlider(_value);
+}
+
+Eclair.styles.Slider = Eclair.Style("eclair-style-slider")
+    .transition("0.2s all")
+    .css("-webkit-appearance: none; box-sizing: border-box; outline: none;")
+    .appearance("none", ":-webkit-slider-thumb")
+    .appearance("none", ":-moz-slider-thumb")
+    .cursor("pointer", ":-webkit-slider-thumb")
+    .cursor("pointer", ":-moz-slider-thumb")
+    .background("#d3d3d3")
+    .background(Eclair.theme.accent, ":-webkit-slider-thumb")
+    .background(Eclair.theme.accent, ":-moz-slider-thumb")
+    .borderRadius("50%", ":-webkit-slider-thumb")
+    .borderRadius("50%", ":-moz-slider-thumb")
+    .height("25px", ":-webkit-slider-thumb")
+    .height("25px", ":-moz-slider-thumb")
+    .width("25px", ":-webkit-slider-thumb")
+    .width("25px", ":-moz-slider-thumb")
+    .width("100%")
+    .height("15px")
+    .borderRadius("5px")
+    .opacity(0.7)
+    .opacity(1, "hover")
+
+class EclairSlider extends EclairCustomTagComponent {    
+    
     constructor(value) {
         super("input")
         
@@ -2441,64 +2173,71 @@ class EclairSlider extends EclairCustomTagComponent {
         })
         
         this.setAttr("type", "range")
-        this.addStyle(eclair.styles.Slider)
+        this.addStyle(Eclair.styles.Slider)
     }
     
     onInput(callback) {
         this.overrideOnInput = callback;
         return this;
     }
-    
-    name(_name) {
-        this.bindState(_name, "name", value => {
-            this.setAttr("name", value)
+        
+    name(value) {
+        this.bindState(value, "name", v => {
+            this.setAttr("name", v)
         })
         return this;
     }
-    
-    min(_min) {
-        this.bindState(_min, "min", value => {
-            this.setAttr("min", value);
+        
+    min(value) {
+        this.bindState(value, "min", v => {
+            this.setAttr("min", v);
         }, state => {return state.number()})
         
         return this;
     }
-    
-    max(_max) {
-        this.bindState(_max, "max", value => {
-            this.setAttr("max", value);
+        
+    max(value) {
+        this.bindState(value, "max", v => {
+            this.setAttr("max", v);
         }, state => {return state.number()})
         
         return this;
     }
-    
-    step(_step) {
-        this.bindState(_step, "step", value => {
-            this.setAttr("step", value);
+        
+    step(value) {
+        this.bindState(value, "step", v => {
+            this.setAttr("step", v);
         }, state => {return state.number()})
         
         return this;
     }
-}
-   
+}   
 
 // elements.form.text-area
-class EclairTextArea extends EclairCustomTagComponent {
-    constructor(_value) {
+
+Eclair.TextArea = function(_value) {
+    return new EclairTextArea(_value);
+}
+
+Eclair.styles.TextArea = Eclair.Style("eclair-style-text-area")
+
+class EclairTextArea extends EclairCustomTagComponent { 
+    
+    constructor(value) {
         super("textarea")
         
-        this.bindState(_value, "value", value => {
-            this.innerHTML(value)
-            this.getElement(e => {e.value = value})
+        this.bindState(value, "value", v => {
+            this.innerHTML(v)
+            this.getElement(e => {e.value = v})
         })
         
         this._overrideOnInput = null
         this._updateCallback("onInput", (e, ev) => {
-            if (_value instanceof EclairState) {_value.value(e.getElement().value)}
+            if (value instanceof EclairState) {value.value(e.getElement().value)}
             if (this._overrideOnInput != null) {this._overrideOnInput(e, ev)} 
         })
         
-        this.addStyle(eclair.styles.TextArea)
+        this.addStyle(Eclair.styles.TextArea)
     }
     
     onInput(callback) {
@@ -2507,12 +2246,31 @@ class EclairTextArea extends EclairCustomTagComponent {
     }
 }
 
+
 // elements.form.textbox
+
+Eclair.TextBox = function(text) {
+    return new EclairTextBox(text);
+}
+
+Eclair.styles.TextBox = Eclair.Style("eclair-style-text-box")
+    .fontSize("14px")
+    .padding("12px 16px")
+    .width("100%")
+    .borderSize("0px")
+    .borderRadius("3px")
+    .background("#eeeeee")
+    .font(Eclair.theme.font)
+    .background("#dddddd", "hover")
+    .background("#cccccc", "active")
+    .background("#bbbbbb", "focused")
+
 class EclairTextBox extends EclairCustomTagComponent {
+    
     constructor(_text) {
         super("input")
         this.setAttr("type", "text")
-            .addStyle(eclair.styles.TextBox)
+            .addStyle(Eclair.styles.TextBox)
         
         let self = this
         
@@ -2535,33 +2293,33 @@ class EclairTextBox extends EclairCustomTagComponent {
         return this
     }
     
-    name(_name) {
-        this.bindState(_name, "name", value => {
-            this.setAttr("name", value)
+    name(value) {
+        this.bindState(value, "name", v => {
+            this.setAttr("name", v)
         })
         
         return this
     }
     
-    placeholder(_placeholder) {
-        this.bindState(_placeholder, "placeholder", value => {
-            this.setAttr("placeholder", value)
+    placeholder(value) {
+        this.bindState(value, "placeholder", v => {
+            this.setAttr("placeholder", v)
         })
         
         return this
     }
     
-    password(_password) {
-        this.bindState(_password, "password", value => {
-            this.setAttr("type", value? "password":'text')
+    password(value) {
+        this.bindState(value, "password", v => {
+            this.setAttr("type", v? "password":'text')
         }, state => {return state.bool()})
         
         return this
     }
     
-    maxLength(_maxLength) {
-        this.bindState(_maxLength, "maxlength", value => {
-            this.setAttr("maxlength", value)
+    maxLength(value) {
+        this.bindState(value, "maxlength", v => {
+            this.setAttr("maxlength", v)
         })
         
         return this
@@ -2574,18 +2332,18 @@ class EclairTextBox extends EclairCustomTagComponent {
         
         return this
     } 
-    
-    required(_required) {
-        this.bindState(_required, "required", value => {
-            this.setAttr("required", value ? "true" : "null")
+        
+    required(value) {
+        this.bindState(value, "required", v => {
+            this.setAttr("required", v ? "true" : "null")
         }, state => {return state.bool()})
         
         return this
     } 
-    
-    autofocus(_autofocus) {
-        this.bindState(_autofocus, "autofocus", value => {
-            this.setAttr("autofocus", value ? "true" : "null")
+        
+    autofocus(value) {
+        this.bindState(value, "autofocus", v => {
+            this.setAttr("autofocus", v ? "true" : "null")
         }, state => {return state.bool()})
         
         return this
@@ -2595,19 +2353,56 @@ class EclairTextBox extends EclairCustomTagComponent {
 
 
 // elements.form.toggle
+
+Eclair.Toggle = function(_value) {
+    return new EclairToggle(_value);
+}
+
+Eclair.styles.Toggle = Eclair.Style("eclair-style-toggle")    
+    .display("flex")
+    .flexDirection("row")
+    .alignItems("center")
+    .position("relative")
+    .width("50px")
+    .background("#dddddd")
+    .padding("3px")
+    .cursor("pointer")
+    .userSelect("none")
+    .borderRadius("20px")
+    .transition("0.2s all")
+    .boxSizing("border-box")
+Eclair.styles.ToggleKnob = Eclair.Style("eclair-style-toggle-knob")
+    .height("14px")
+    .width("14px")
+    .background("#ffffff")
+    .transform("translateX(0%)")
+    .transition("0.2s all")
+    .userSelect("none")
+    .borderRadius("20px")
+Eclair.styles.ToggleTick = Eclair.Style("eclair-style-toggle-tick")
+    .position("absolute")
+    .fontColor("#ffffff")
+    .left("35%")
+    .transition("0.2s all")
+    .transform("translateX(-50%)")
+    .fontWeight(700)
+    .userSelect("none")
+    .opacity(0)
+
 class EclairToggle extends EclairComponent {
-    constructor(_value) {
+            
+    constructor(value) {
         super()
         
         let overrideOnClick = null;
         
-        this._tickMark = this._addChild(eclair.Text("✓"))
-        this._knob = this._addChild(eclair.View())
+        this._tickMark = this._addChild(Eclair.Text("✓"))
+        this._knob = this._addChild(Eclair.View())
         
-        this._value = (_value instanceof EclairState)? _value : Ø(_value)
-        this._hiddenComponent = eclair.HiddenInput(this._value)
+        this._value = (value instanceof EclairState)? value : Ø(value)
+        this._hiddenComponent = Eclair.HiddenInput(this._value)
     
-        this.bindState(_value, "toggle", value => {
+        this.bindState(value, "toggle", value => {
             this._updateStyle() 
         }, state => {return state.bool()})
         
@@ -2625,9 +2420,9 @@ class EclairToggle extends EclairComponent {
         this._showCheckMark = false
         this._enabled = true
         
-        this.addStyle(eclair.styles.Toggle)
-        this._tickMark.addStyle(eclair.styles.ToggleTick)
-        this._knob.addStyle(eclair.styles.ToggleKnob)
+        this.addStyle(Eclair.styles.Toggle)
+        this._tickMark.addStyle(Eclair.styles.ToggleTick)
+        this._knob.addStyle(Eclair.styles.ToggleKnob)
         
         this.width("100%", " .wrapper")
             .transition("0.2s all", " .wrapper")
@@ -2642,9 +2437,9 @@ class EclairToggle extends EclairComponent {
         callback(this._knob)
         return this
     }
-    
-    name(_name) {
-        this._hiddenComponent.name(_name)
+        
+    name(value) {
+        this._hiddenComponent.name(value)
         return this;
     }
     
@@ -2657,10 +2452,11 @@ class EclairToggle extends EclairComponent {
         return this
     }
     
-    showTick(_bool) {
-        this.bindState(_bool, "showTick", value => {
-            this._showCheckMark = value
-            this._tickMark.opacity((value && (this._value.bool()))? 1:0)
+    
+    showTick(value) {
+        this.bindState(value, "showTick", v => {
+            this._showCheckMark = v
+            this._tickMark.opacity((v && (this._value.bool()))? 1:0)
         }, state => {return state.bool()})
         
         return this
@@ -2669,7 +2465,7 @@ class EclairToggle extends EclairComponent {
     _updateStyle() {
         if (this._value.bool()) {
             this._tickMark.opacity(this._showCheckMark ? 1 : 0)
-            this.background(eclair.theme.accent)
+            this.background(Eclair.theme.accent)
                 .transform("translateX(100%)", " .wrapper")
             this._knob
                 .transform("translateX(-100%)")
@@ -2690,71 +2486,461 @@ class EclairToggle extends EclairComponent {
 
 
 
-// elements.standard.hr
-class EclairHorizontalLine extends EclairCustomTagComponent {
-    constructor() {
-        super("hr")        
-        this.addStyle(eclair.styles.HorizontalLine)
+
+// elements.special.alert-box
+
+Eclair.AlertBox = function(_value) {
+    return new EclairAlertBox(_value);
+}
+
+Eclair.styles.AlertBox = Eclair.Style("eclair-style-alert-box")
+    .background(Eclair.theme.accent)
+    .boxSizing("border-box")
+    .borderRadius(".25rem")
+    .padding(".75rem 1.25rem")
+    .boxShadow("0px 0px 0px 2px rgba(0, 0, 0, 0.2) inset")
+    .borderSize("1px 0px 0px 0px", " hr")
+    .margin(".75rem 0px", " hr")
+    .borderColor("rgba(0, 0, 0, 0.2)", " hr")
+Eclair.styles.AlertBoxTitle = Eclair.Style("eclair-style-alert-title")
+    .fontWeight(500)
+    .fontSize("1.5rem")
+    .display("none")
+    .fontColor("rgba(0, 0, 0, 0.6)")
+    .width("100%")
+    .marginBottom(".5rem")
+Eclair.styles.AlertBoxText = Eclair.Style("eclair-style-alert-text")
+    .fontColor("rgba(0, 0, 0, 0.6)")
+
+class EclairAlertBox extends EclairComponent {
+    
+    constructor(text) {
+        super()
+        
+        this._titleText = Ø(null)
+        
+        this._text = this._addChild(Eclair.Text(text))
+        this._title = this._addChild(Eclair.Text(this._titleText))
+        
+        this.addStyle(Eclair.styles.AlertBox)
+        this._title.addStyle(Eclair.styles.AlertBoxTitle)
+        this._text.addStyle(Eclair.styles.AlertBoxText)
+    }
+    
+    theme(_color) {
+        this.bindState(_color, "color", value => {
+            this.background(value)
+        })
+        
+        return this
+    }
+        
+    title(_text) {        
+        this.bindState(_text, "title", value => {
+            this._titleText.value(value)
+            
+            let hideTitle = value == null || value.trim().length == 0
+            this._title.display(hideTitle? "none": "block")
+        })
+        
+        return this
+    }
+    
+    build() {
+        return `<div>${this._title.compile()}${this._text.compile()}</div>`
+    }
+}
+    
+
+// elements.special.progress
+
+Eclair.ProgressBar = function(_progress) {
+    return new EclairProgressBar(_progress);
+}
+
+Eclair.styles.ProgressBar = Eclair.Style("eclair-style-progress-bar")
+    .background("#d3d3d3")
+    .borderRadius("3px")
+    .height("16px")
+    .userSelect("none")
+    .overflow("hidden")
+Eclair.styles.ProgressBarIndicator = Eclair.Style("eclair-style-progress-bar")
+    .display("flex")
+    .flexDirection("row")
+    .alignItems("center")
+    .background(Eclair.theme.accent)
+    .height("100%")
+    .transition("0.3s all")
+    .userSelect("none")
+    .margin("0px auto 0px 0px")
+Eclair.styles.ProgressBarLabel = Eclair.Style("eclair-style-progress-bar-label")
+    .fontColor("white")
+    .fontWeight(700)
+    .userSelect("none")
+    .fontSize("11px")
+
+class EclairProgressBar extends EclairComponent {
+    
+    constructor(progress) {
+        super()
+        
+        this._labelText = Ø("0%")
+        this._label = Eclair.Text(this._labelText)
+        this._indicator = this._addChild(Eclair.HStack([this._label]))
+        
+        this.bindState(progress, "progress", value => {
+            progress = Math.max(Math.min(value, 1), 0)
+            this.progress = value;
+            this._labelText.value(Math.round(value * 100) + "%")
+            this._indicator.width((value * 100 + 0.0001) + "%")
+        }, state => {return state.number(0.5)})
+        
+        this.addStyle(Eclair.styles.ProgressBar)
+        this._label.addStyle(Eclair.styles.ProgressBarLabel)
+        this._indicator.addStyle(Eclair.styles.ProgressBarIndicator)
+    }
+    
+    striped(_on) {
+        this.bindState(_on, "color", value => {
+            if (value) {
+                this._indicator
+                    .backgroundSize("1rem 1rem")
+                    .css("background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent)");
+            } else {
+                this._indicator
+                    .backgroundSize("1rem 1rem")
+                    .css("background-image: ;");
+            }
+            this._indicator.updateCSSStyle()
+        }, state => {return state.bool()})
+        
+        return this;
+    }
+    
+    indicator(callback) {
+        callback(this._indicator)
+        return this;
+    }
+    
+    label(callback) {
+        callback(this._label)
+        return this;
+    }
+    
+    color(value) {
+        this._indicator.backgroundColor(value)
+        return this
+    }
+    
+    showLabel(show) {
+        this.bindState(show, "label", value => {
+            this._label.opacity(value? "1":"0")
+        }, state => {return state.bool()});
+        
+        return this
+    }
+    
+    build() {
+        return `<div>${this._indicator.compile()}</div>`
     }
 }
 
+// elements.special.syntax-highlighter
+
+Eclair.SyntaxHighlighter = function(_value) {
+    return new EclairSyntaxHighlighter(_value);
+}
+
+Eclair.styles.SyntaxHighlighter = Eclair.Style("eclair-syntax-highlighter")
+    .position("relative")
+    .width("420px")
+    .height("360px")
+    .borderSize("1px")
+    .borderStyle("solid")
+    .borderColor("#999999")
+    .borderRadius("3px")
+Eclair.styles.SyntaxHighlighterCodeElement = Eclair.Style("eclair-syntax-highlighter-code")
+    .position("absolute")
+    .top("0px")
+    .left("0px")
+    .width("100%")
+    .height("100%")
+    .fontSize("14px")
+    .font("monospace")
+    .borderSize("0px")
+    .outline("none")
+    .caretColor("black")
+    .resize("none")
+    .whiteSpace("pre")
+    .boxSizing("border-box")
+    .padding("10px")
+    .overflowWrap("normal")
+    .display("none", ":-webkit-scrollbar")
+    .css("-ms-overflow-style: none; scrollbar-width: none;")
+    .overflowX("scroll")
+Eclair.styles.SyntaxHighlighterTextAreaElement = Eclair.Style("eclair-syntax-highlighter-text-area")
+    .position("absolute")
+    .top("0px")
+    .left("0px")
+    .width("100%")
+    .height("100%")
+    .fontSize("14px")
+    .font("monospace")
+    .borderSize("0px")
+    .outline("none")
+    .caretColor("black")
+    .resize("none")
+    .whiteSpace("pre")
+    .boxSizing("border-box")
+    .background("transparent")
+    .fontColor("rgb(1, 1, 1, 0)")
+    .padding("10px")
+    .overflowWrap("normal")
+    .overflowX("scroll")
+Eclair.styles.SyntaxHighlighterCommentStyle = Eclair.Style("eclair-syntax-highlighter-comment").fontColor("grey")
+Eclair.styles.SyntaxHighlighterKeywordStyle = Eclair.Style("eclair-syntax-highlighter-keyword").fontColor("#0066ee")
+Eclair.styles.SyntaxHighlighterStringStyle = Eclair.Style("eclair-syntax-highlighter-string").fontColor("#dd9900")
+Eclair.styles.SyntaxHighlighterQuoteStyle = Eclair.Style("eclair-syntax-highlighter-quote").fontColor("#dd9900")
+Eclair.styles.SyntaxHighlighterEclairStyle = Eclair.Style("eclair-syntax-highlighter-eclair").fontColor("#009900")
+
+class EclairSyntaxHighlighter extends EclairComponent {    
+    constructor(_code) {
+        super()
+        
+        this.tokenSeperators = new Set([
+            "{", "(", " ", "}", ")", "[", "]", "\n", "\t", ".", ","
+        ])
+        this.eclairKeywords = new Set([
+            "VStack", "HStack", "State", "Toggle", "Text", "HorizontalLine", "Alignment", "Eclair", 
+            "Ø", "Style", "Color", "TextStyle", "View", "TabPage", "TabView", "CustomTagComponent", "Button", 
+            "TextBox", "Form", "Select", "Slider", "RadioButtons", "CheckBox", "TextArea", 
+            "HiddenInput", "Image", "IFrame", "Text", "Link", "HorizontalLine", "Alert", 
+            "ProgressBar", "SyntaxHighlighter"
+        ])
+        this.jsKeywords = new Set([
+            "let", "var", "if", "else", "true", "false", "const", "for", "while", "await", "break", 
+            "case", "catch", "class", "continue", "debugger", "default", "delete", "do", "enum", 
+            "export", "extends", "finally", "function", "implements", "import", "in", "instanceof", 
+            "interface", "new", "null", "package", "private", "protected", "public", "return", 
+            "super", "switch", "static", "this", "throw", "try", "typeof", "void", "while", 
+            "with", "yield"
+        ])
+         	 	 	
+        this.theme = {
+            "comment": Eclair.styles.SyntaxHighlighterCommentStyle,
+            "keyword": Eclair.styles.SyntaxHighlighterKeywordStyle,
+            "eclair": Eclair.styles.SyntaxHighlighterEclairStyle,
+            "string": Eclair.styles.SyntaxHighlighterStringStyle, 
+            "quote": Eclair.styles.SyntaxHighlighterQuoteStyle, 
+            "number": Eclair.styles.SyntaxHighlighterKeywordStyle, 
+        }
+        
+        this._cachedLines = {}
+        this._codeState = (_code instanceof EclairState)? _code : Ø(_code)
+        
+        this.codeElement = this._addChild(Eclair.CustomTagComponent("code")
+            .addStyle(Eclair.styles.SyntaxHighlighterCodeElement)
+         )
+        
+        this.textArea = this._addChild(Eclair.TextArea(this._codeState)
+            .removeStyle(Eclair.styles.TextArea)
+            .addStyle(Eclair.styles.SyntaxHighlighterTextAreaElement)
+            .setAttr("spellcheck", "false")
+            .onScroll((e, ev) => {
+                let textarea = e.getElement()
+                this.codeElement.getElement().scroll(textarea.scrollLeft, textarea.scrollTop)
+            })
+        )
+        
+        this.addStyle(Eclair.styles.SyntaxHighlighter)
+        
+        this.bindState(this._codeState, "code", value => {
+            this._update()
+        })
+    }
+    
+    _update() {
+        let code = this._codeState.value();
+        
+        let output = "";
+        let tokenisedLines = []
+
+        let lines = code.split("\n")
+        let allLines = new Set(lines)
+        for (let l = 0; l < lines.length; l++) {
+            if (!this._cachedLines.hasOwnProperty(lines[l])) {
+                this._cachedLines[lines[l]] = this._tokeniseLine(lines[l])
+            }
+            tokenisedLines.push(this._cachedLines[lines[l]])
+        }
+        
+        let cachedKeys = Object.keys(this._cachedLines)
+        for (let i = 0; i < cachedKeys.length; i++) {
+            if (!allLines.has(cachedKeys[i])) {
+                delete this._cachedLines[cachedKeys[i]]
+            }
+        }
+
+        let formattedCode = ""
+        for (let l = 0; l < tokenisedLines.length; l++) {
+            let cline = tokenisedLines[l];
+            for (let t = 0; t < cline.length; t++) {
+                formattedCode += `<span class='${(cline[t].type != '')? this.theme[cline[t].type].eID():""}'>${cline[t].text}</span>`
+            }
+            formattedCode += "<br/>"
+        }
+
+        
+        this.codeElement.innerHTML(`<pre style="margin: 0px; padding: 0px;">${formattedCode}</pre>`)
+        
+        return this
+    }
+    
+    _tokeniseLine(line) {
+        let tokens = [], token = "", state = ""
+
+        let self = this;
+        function pushTokenState(_text, _state) {
+            if (state == "") {
+                if (self.jsKeywords.has(_text)) {_state = "keyword"}
+                if (self.eclairKeywords.has(_text)) {_state = "eclair"}
+                if (!isNaN(parseFloat(_text))) {_state = "number"}
+            }
+
+            tokens.push({"text": _text, "type": _state})
+            state = "", token = ""
+        }
+
+        for (let c = 0; c < line.length; c++) {
+            if (state == "comment") {token += line[c]} 
+
+            else if (state != "comment" && c < line.length - 1 && line[c] == "/" && line[c + 1] == "/") {
+                pushTokenState(token, state); state = "comment"; token = line[c]
+            } 
+
+            else if (state != "quote" && state != "string" && line[c] == "'") {
+                pushTokenState(token, state)
+                state = "quote"; token = line[c]
+            } 
+
+            else if (state == "quote" && line[c] == "'") {pushTokenState(token + "'", state)} 
+
+            else if (state == "string" && line[c] == '"') {pushTokenState(token + '"', state)} 
+
+            else if (state != "string" && state != "quote" && line[c] == '"') {pushTokenState(token, state); state = "string"; token = line[c]} 
+
+            else if (state != "string" && state != "quote" && this.tokenSeperators.has(line[c])) {
+                pushTokenState(token, state)
+                token = line[c]
+            }
+
+            else {
+                if (this.tokenSeperators.has(token)) {
+                    pushTokenState(token, state)
+                }
+                token += line[c]
+            }
+        }
+        
+        pushTokenState(token, state)
+
+        return tokens
+    }
+    
+    build() {
+        let classes = Object.keys(this.theme);
+        for (let i = 0; i < classes.length; i++) {
+            this.theme[classes[i]].create()
+        }
+        return `<div>${this.codeElement.compile()}${this.textArea.compile()}</div>`
+    }
+}
+
+
+
+
+// elements.standard.hr
+
+Eclair.HorizontalLine = function() {
+    return new EclairHorizontalLine();
+}
+
+Eclair.styles.HorizontalLine = Eclair.Style("eclair-style-horz-line")
+    .borderSize("0px")
+    .width("100%")
+    .css("border-top: 1px solid #999999")
+
+class EclairHorizontalLine extends EclairCustomTagComponent {  
+    
+    constructor() {
+        super("hr")        
+        this.addStyle(Eclair.styles.HorizontalLine)
+    }
+}
+
+
 // elements.standard.iframe
-class EclairIFrame extends EclairCustomTagComponent {
+
+Eclair.IFrame = function() {
+    return new EclairIFrame();
+}
+
+Eclair.styles.IFrame= Eclair.Style("eclair-style-iframe")
+    .borderColor("#333333")
+    .borderSize("1px")
+    .width("100%")
+    .height("100%")
+
+class EclairIFrame extends EclairCustomTagComponent {    
+    
     constructor() {
         super("iframe")
         this.innerHTML("Your client does not support iframes.")
-        this.addStyle(eclair.styles.IFrame)
+        this.addStyle(Eclair.styles.IFrame)
     }
-    
+        
     url(_source) {
         this.bindState(_source, "src", value => {
             this.setAttr("src", value)
         })  
         return this
     }
-    
+        
     source(_source) {
         this.bindState(_source, "srcdoc", value => {
             this.setAttr("srcdoc", value)
         })  
         return this
     }
-    
+        
     allowFullScren(_allow) {
         this.bindState(_allow, "allowfullscreen", value => {
             this.setAttr("allowfullscreen", value)
         })  
         return this
     }
-    
+        
     allowPaymentRequest(_allow) {
         this.bindState(_allow, "allowpaymentrequest", value => {
             this.setAttr("allowpaymentrequest", value)
         })  
         return this
     }
-    
+        
     loading(_loading) {
         this.bindState(_loading, "loading", value => {
             this.setAttr("loading", value)
         })  
         return this
     }
-    
-    name(_name) {
-        this.bindState(_name, "name", value => {
-            this.setAttr("name", value)
-        })  
-        return this
-    }
-    
+        
     referrerPolicy(_policy) {
         this.bindState(_policy, "referrerpolicy", value => {
             this.setAttr("referrerpolicy", value)
         })  
         return this
     }
-    
+        
     sandbox(_sandbox) {
         this.bindState(_sandbox, "sandbox", value => {
             this.setAttr("sandbox", value)
@@ -2763,20 +2949,30 @@ class EclairIFrame extends EclairCustomTagComponent {
     }
 }
 
+
 // elements.standard.image
+
+Eclair.Image = function(_value) {
+    return new EclairImage(_value);
+}
+
+Eclair.styles.Image = Eclair.Style("eclair-style-image")
+    .display("block")
+
 class EclairImage extends EclairCustomTagComponent {
-    constructor(_src) {
+    
+    constructor(src) {
         super("img")
         
-        this.bindState(_src, "src", value => {
+        this.bindState(src, "src", value => {
             this.setAttr("src", value)
         })  
         
-        this.addStyle(eclair.styles.Image)
+        this.addStyle(Eclair.styles.Image)
     }
-    
-    altText(_alt) {
-        this.bindState(_alt, "alt", value => {
+            
+    altText(alt) {
+        this.bindState(alt, "alt", value => {
             this.setAttr("alt", value)
         })  
     }
@@ -2784,15 +2980,27 @@ class EclairImage extends EclairCustomTagComponent {
 
 
 // elements.standard.link
+
+Eclair.Link = function(text) {
+    return new EclairLink(text);
+}
+
+Eclair.styles.Link = Eclair.Style("eclair-style-link")
+    .font(Eclair.theme.font)   
+    .fontColor(Eclair.theme.accent)
+    .textDecoration("none")
+    .textDecoration("underline", "hover")
+
 class EclairLink extends EclairCustomTagComponent {
-    constructor(_text) {
+        
+    constructor(text) {
         super("a")
         
-        this.bindState(_text, "html", value => {
+        this.bindState(text, "html", value => {
             this.innerHTML(value)
         })  
         
-        this.addStyle(eclair.styles.Link)
+        this.addStyle(Eclair.styles.Link)
     }
     
     url(_location) {
@@ -2803,9 +3011,9 @@ class EclairLink extends EclairCustomTagComponent {
         return this
     }
     
-    target(_target) {
-        this.bindState(_target, "target", value => {
-            this.setAttr("target", value)
+    target(value) {
+        this.bindState(_target, "target", v => {
+            this.setAttr("target", v)
         })  
         
         return this
@@ -2815,7 +3023,33 @@ class EclairLink extends EclairCustomTagComponent {
 
 
 // elements.standard.text
+
+Eclair.Text = function(text) {
+    return new EclairText(text);
+}
+
+Eclair.styles.Text = Eclair.Style("eclair-style-text")
+    .font(Eclair.theme.font)
+Eclair.styles.TextTitleStyle = Eclair.Style("eclair-style-text-title")
+    .fontSize("40px")
+    .fontWeight(700)
+Eclair.styles.TextSubtitleStyle = Eclair.Style("eclair-style-text-subtitle")
+    .fontSize("25px")
+Eclair.styles.TextHeading1Style = Eclair.Style("eclair-style-text-heading1")
+    .fontSize("30px")
+    .fontWeight(700)
+Eclair.styles.TextHeading2Style = Eclair.Style("eclair-style-text-heading2")
+    .fontSize("25px")
+    .fontWeight(700)
+Eclair.styles.TextHeading3Style = Eclair.Style("eclair-style-text-heading3")
+    .fontSize("20px")
+    .fontWeight(700)
+Eclair.styles.TextHeading4Style = Eclair.Style("eclair-style-text-heading4")
+    .fontSize("15px")
+    .fontWeight(700)
+
 class EclairText extends EclairComponent {
+    
     constructor(text) {
         super()
         
@@ -2824,44 +3058,31 @@ class EclairText extends EclairComponent {
             this.getElement(elem => {elem.innerHTML = value});
         })  
         
-        this.addStyle(eclair.styles.Text)
+        this.addStyle(Eclair.styles.Text)
     }
-    
-    type(_state) {
-        this.bindState(_state, "type", newType => {
-            if (newType == "title") {
-                this.fontSize("40px")
-                    .fontWeight(700)
-                    .margin("20px 10px 10px 10px")
+        
+    type(state) {
+        this.bindState(state, "type", newType => {
+            let textStyles = [
+                Eclair.styles.TextTitleStyle, Eclair.styles.TextSubtitleStyle, Eclair.styles.TextHeading1Style, 
+                Eclair.styles.TextHeading2Style, Eclair.styles.TextHeading3Style, Eclair.styles.TextHeading4Style
+            ]
+            
+            let typeStyles = {
+                "title": Eclair.styles.TextTitleStyle,
+                "subtitle": Eclair.styles.TextSubtitleStyle,
+                "heading1": Eclair.styles.TextHeading1Style,
+                "heading2": Eclair.styles.TextHeading2Style,
+                "heading3": Eclair.styles.TextHeading3Style,
+                "heading4": Eclair.styles.TextHeading4Style
             }
-
-            if (newType == "subtitle") {
-                this.fontSize("25px")
-                    .margin("20px 10px 10px 10px")
+            
+            for (let t = 0; t < textStyles.length; t++) {
+                this.removeStyle(textStyles[t])
             }
-
-            if (newType == "heading1") {
-                this.fontSize("30px")
-                    .fontWeight(700)
-                    .margin("20px 10px 10px 10px")
-            }
-
-            if (newType == "heading2") {
-                this.fontSize("25px")
-                    .fontWeight(700)
-                    .margin("20px 10px 10px 10px")
-            }
-
-            if (newType == "heading3") {
-                this.fontSize("20px")
-                    .fontWeight(700)
-                    .margin("20px 10px 10px 10px")
-            }
-
-            if (newType == "heading4") {
-                this.fontSize("15px")
-                    .fontWeight(700)
-                    .margin("20px 10px 10px 10px")
+            
+            if (typeStyles.hasOwnProperty(newType)) {
+                this.addStyle(typeStyles[newType])
             }
         })  
         

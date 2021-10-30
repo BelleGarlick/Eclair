@@ -1,22 +1,41 @@
-/// ## Eclair Form Element
-/// A form element for eclair objects. This object extends the EclairView object 
-/// allowing dynamic creation of elements within the view.
-/// <br/>**args**:
-/// - elements: Elements within the view.
-/// - objectFunction: A function which returns the constructed object.
+/// TITLE Eclair Form Box
+/// EXTENDS elements.layout.view:EclairView
+/// DESC A form element for eclair objects. This object extends the EclairView object allowing dynamic creation of elements within the view.
+
+Eclair.Form = function(elements) {
+    return new EclairForm(elements);
+}
+
+/// SHARED-STYLE Eclair.styles.Form: Default form style.
+Eclair.styles.Form = Eclair.Style("eclair-style-form")
+    .boxSizing("border-box")
+
 /// ```javascript
-/// eclair.Form([
-///     eclair.TextBox("")
+/// Eclair.Form([
+///     Eclair.TextBox("")
 ///         .name("Username"),
-///     eclair.TextBox("")
+///     Eclair.TextBox("")
 ///         .name("name"),
-///     eclair.Button("Submit")
+///     Eclair.Button("Submit")
 ///         .type("submit")
 /// ])
 ///     .action("/new-user/")
 ///     .method("POST")
 /// ```
 class EclairForm extends EclairView {
+    
+    /// METHOD constructor
+    /// DESC Construct the form object with given elements.
+    /// ARG elements: List of items contained within the form.
+    /// ARG objectFunc: A function applied to each object. __(See Eclair.layout.view)__
+    /// ```javascript
+    /// Eclair.Form([
+    ///     Eclair.TextBox("")
+    ///         .name("username"),
+    ///     Eclair.Checkbox(false)
+    ///         .name("over-18")
+    /// ])
+    /// ```
     constructor(elements, objectFunc) {
         super(elements, objectFunc)
         
@@ -25,39 +44,31 @@ class EclairForm extends EclairView {
         // the element is a form.
         this._elementTag = "form"
         
-        this.addStyle(eclair.styles.Form)
-            .removeStyle(eclair.styles.View)
+        this.addStyle(Eclair.styles.Form)
+            .removeStyle(Eclair.styles.View)
             .setAttr("method", "POST")
             .setAttr("action", null)
     }
     
-    /// ### .method
-    /// Set the method of the form.
-    /// <br/>**args**:
-    /// - _method: Set the new method of the form.
+    /// METHOD .method
+    /// DESC Set the new method for the form.
+    /// ARG value: Method value.
     /// ```javascript
-    /// eclair.Form([
-    ///     eclair.TextBox("")
-    ///         .name("Username")
-    /// ])
+    /// Eclair.Form([...])
     ///     .method("POST")
     /// ```
-    method(_method) {
-        this.bindState(_method, "method", value => {
-            this.setAttr("method", value)
+    method(value) {
+        this.bindState(value, "method", m => {
+            this.setAttr("method", m)
         })
         return this;
     }
     
-    /// ### .action
-    /// Set the action of the form.
-    /// <br/>**args**:
-    /// - _action: Set the new action of the form.
+    /// METHOD .action
+    /// DESC Set the new action for the form.
+    /// ARG value: Action value.
     /// ```javascript
-    /// eclair.Form([
-    ///     eclair.TextBox("")
-    ///         .name("Username")
-    /// ])
+    /// Eclair.Form([...])
     ///     .action("/new-user/")
     /// ```
     action(_action) {
@@ -67,17 +78,14 @@ class EclairForm extends EclairView {
         return this;
     }
     
-    /// ### .submit
-    /// Bind a state bool to the form such that when the bool becomes true
-    /// the form will be submitted.
-    /// <br/>**args**:
-    /// - state: The state to bind to.
-    /// ```javascript
+    /// METHOD .submit
+    /// DESC Alternative method to submitting a form which allows you to bind a state bool to the form such that when the bool becomes true the form will be submitted. 
+    /// ARG state: Bound state.
     /// let submitted = Ø(false)
-    /// eclair.Form([
-    ///     eclair.TextBox("")
+    /// Eclair.Form([
+    ///     Eclair.TextBox("")
     ///         .name("Username"),
-    ///     eclair.Button()
+    ///     Eclair.Button()
     ///         .onClick(_ => {
     ///             submitted.value(true)
     ///         })

@@ -1,11 +1,56 @@
-/// ## Eclair Check Box
-/// An eclair checkbox, similar to the toggle in the form of a traditional checkbox.
+/// TITLE Eclair Check Box
+/// EXTENDS elements.component:EclairComponent
+/// DESC An eclair checkbox, similar to the toggle in the form of a traditional checkbox.
+
+Eclair.CheckBox = function(text) {
+    return new EclairCheckBox(text);
+}
+
+/// SHARED-STYLE Eclair.styles.CheckBox: Default Checkbox object style.
+/// SHARED-STYLE Eclair.styles.CheckBoxLabel: Default Checkbox Label object style.
+/// SHARED-STYLE Eclair.styles.CheckBoxIcon: Default Checkbox icon object style.
+/// SHARED-STYLE Eclair.styles.CheckBoxActiveIcon: Default Active Checkbox style.
+Eclair.styles.CheckBox = Eclair.Style("eclair-style-checkbox")    
+    .cursor("pointer")
+    .boxShadow("0px 0px 0px 100px rgba(0, 0, 0, 0.05) inset", "hover")
+    .padding("2px")
+    .borderRadius("4px")
+    .width("100%")
+    .transition("0.2s all")
+    .userSelect("none")
+    .font(Eclair.theme.font)
+Eclair.styles.CheckBoxIcon = Eclair.Style("eclair-style-checkbox-icon")
+    .borderSize("2px")
+    .borderRadius("4px")
+    .borderColor(Eclair.theme.accent)
+    .borderStyle("solid")
+    .width("16px")
+    .height("16px")
+    .fontSize("0.85rem")
+    .userSelect("none")
+    .textAlign("center")    
+Eclair.styles.CheckBoxActiveIcon = Eclair.Style("eclair-style-checkbox-active-icon")
+    .background(Eclair.theme.accent)
+    .fontColor("white")
+Eclair.styles.CheckBoxLabel = Eclair.Style("eclair-style-checkbox-label")
+
 /// ```javascript
 /// let checked = Ø(false)
-/// eclair.CheckBox(checked)
+///
+/// Eclair.CheckBox(checked)
 ///     .name("Over 18?")
+///     .onClick(_ => {
+///         alert(checked.value())
+///     })
 /// ```
-class EclairCheckBox extends EclairComponent {
+class EclairCheckBox extends EclairComponent {   
+    
+    /// METHOD constructor
+    /// DESC Construct an eclair checkbox.
+    /// ARG checked: State whether the checkbox is checked.
+    /// ```javascript
+    /// Eclair.CheckBox(true)
+    /// ```
     constructor(checked) {
         super()
         
@@ -17,9 +62,9 @@ class EclairCheckBox extends EclairComponent {
         this._textValue = Ø("")  // Text value which is the message displayed alongside
         
         // Build the hidden components
-        this._label = this._addChild(eclair.Text(this._textValue))
-        this._checkbox = this._addChild(eclair.CustomTagComponent("div"))
-        this._hidden = this._addChild(eclair.HiddenInput(this._hiddenValue))
+        this._label = this._addChild(Eclair.Text(this._textValue))
+        this._checkbox = this._addChild(Eclair.CustomTagComponent("div"))
+        this._hidden = this._addChild(Eclair.HiddenInput(this._hiddenValue))
         
         // Override on click function
         let self = this
@@ -38,30 +83,27 @@ class EclairCheckBox extends EclairComponent {
             // Set styles
             if (value) {
                 this._checkbox
-                    .addStyle(eclair.styles.CheckBoxActiveIcon)
-                    .removeStyle(eclair.styles.CheckBoxIcon)
+                    .addStyle(Eclair.styles.CheckBoxActiveIcon)
                     .innerHTML("✓")
             } else {
                 this._checkbox
-                    .addStyle(eclair.styles.CheckBoxIcon)
-                    .removeStyle(eclair.styles.CheckBoxActiveIcon)
+                    .removeStyle(Eclair.styles.CheckBoxActiveIcon)
                     .innerHTML("")
             }
         }, state => {return state.bool()})
         
         // set styles
         this.setAttr("cellpadding", 6)   
-        this.addStyle(eclair.styles.CheckBox)  
-        this._label.addStyle(eclair.styles.CheckBoxLabel)
-        this._checkbox.addStyle(eclair.styles.CheckBoxIcon)
+        this.addStyle(Eclair.styles.CheckBox)  
+        this._label.addStyle(Eclair.styles.CheckBoxLabel)
+        this._checkbox.addStyle(Eclair.styles.CheckBoxIcon)
     }
     
-    /// ### .checkbox
-    /// This function allows you to access this object's check box as a means modify it.
-    /// <br/>**args**:
-    /// - callback: Call back function which passes the checkbox element as a parameter.
+    /// METHOD .checkbox
+    /// DESC This function allows you to access this object's check box as a means modify it.
+    /// ARG callback: Call back function which passes the checkbox element as a parameter.
     /// ```javascript
-    /// eclair.CheckBox(false)
+    /// Eclair.CheckBox(false)
     ///     .checkbox((element) => {
     ///         element.background("red")
     ///     })
@@ -71,12 +113,11 @@ class EclairCheckBox extends EclairComponent {
         return this;
     }
     
-    /// ### .label
-    /// This function allows you to access this object's label as a means modify it.
-    /// <br/>**args**:
-    /// - callback: Call back function which passes the label element as a parameter.
+    /// METHOD .label
+    /// DESC This function allows you to access this object's label as a means modify it.
+    /// ARG callback: Call back function which passes the label element as a parameter.
     /// ```javascript
-    /// eclair.CheckBox(false)
+    /// Eclair.CheckBox(false)
     ///     .label((element) => {
     ///         element.opacity("0.5")
     ///     })
@@ -86,12 +127,11 @@ class EclairCheckBox extends EclairComponent {
         return this;
     }
     
-    /// ### .text
-    /// Set the visible text shown with the check box.
-    /// <br/>**args**:
-    /// - text: The text given to the checkbox.
+    /// METHOD .text
+    /// DESC Set the visible text shown with the check box.
+    /// ARG callback: The text given to the checkbox.
     /// ```javascript
-    /// eclair.CheckBox(false)
+    /// Eclair.CheckBox(false)
     ///     .text("Over 18?")
     /// ```
     text(_text) {
@@ -107,12 +147,11 @@ class EclairCheckBox extends EclairComponent {
         return this;
     }
     
-    /// ### .name
-    /// Set the name attribute for this element (used in forms).
-    /// <br/>**args**:
-    /// - name: The name attribute name given to the element.
+    /// METHOD .name
+    /// DESC Set the name attribute for this element (used in forms).
+    /// ARG name: The name attribute name given to the element.
     /// ```javascript
-    /// eclair.CheckBox(false)
+    /// Eclair.CheckBox(false)
     ///     .name("fname")
     /// ```
     name(_name) {
@@ -120,17 +159,14 @@ class EclairCheckBox extends EclairComponent {
         this._hidden.name(_name)
         return this;
     }
-        
-    /// SHARED enabled eclair.CheckBox(false)
-    /// ### .enabled
-    /// Enable / Disable the element.
-    /// <br/>**args**:
-    /// - enabled: If true, the user can modify this element.
+    
+    /// METHOD .enabled
+    /// DESC Enable / Disable the element.
+    /// ARG enabled: If true, the user can modify this element.
     /// ```javascript
-    /// WILDCARD
+    /// Eclair.CheckBox(false)
     ///     .enabled(true)
     /// ```
-    /// END-SHARED
     enabled(_enabled) {
         this.bindState(_enabled, "enabled", value => {
             this.opacity(value ? "1":"0.6")

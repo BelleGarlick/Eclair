@@ -4,30 +4,30 @@ let toggleOn = Ø(true)
 let toggleTick = Ø(false)
 let toggleEnabled = Ø(true)
 
-eclair.VStack([
+Eclair.VStack([
     // Attach states to toggle
-    eclair.VStack([
-        eclair.Toggle(toggleOn)
+    Eclair.VStack([
+        Eclair.Toggle(toggleOn)
             .showTick(toggleTick)
             .enabled(toggleEnabled)
     ]).width("100%"),
 
-    eclair.HorizontalLine(),
+    Eclair.HorizontalLine(),
 
     // Tick mark toggle
-    eclair.Text("Tick Mark"),
-    eclair.Toggle(toggleTick),
+    Eclair.Text("Tick Mark"),
+    Eclair.Toggle(toggleTick),
 
     // Toggle toggle
-    eclair.Text("Toggle"),
-    eclair.Toggle(true)
+    Eclair.Text("Toggle"),
+    Eclair.Toggle(true)
         .onChange(e => {toggleOn.toggle()}),
 
     // Toggle enabled
-    eclair.Text("Enabled"),
-    eclair.Toggle(toggleEnabled)
+    Eclair.Text("Enabled"),
+    Eclair.Toggle(toggleEnabled)
 ])
-    .alignment(eclair.Alignment().start())
+    .alignment(Eclair.Alignment().start())
     .gap("8px")
     .write()
     `,
@@ -36,29 +36,29 @@ eclair.VStack([
 let progressValue = Ø(0.5)
 let showProgressState = Ø(false)
 let progressBarStripped = Ø(false)
-let progressBarColor = eclair.Color()
+let progressBarColor = Eclair.Color()
 
-eclair.VStack([
-    eclair.ProgressBar(progressValue)
+Eclair.VStack([
+    Eclair.ProgressBar(progressValue)
         .striped(progressBarStripped)
         .color(progressBarColor)
         .showLabel(showProgressState)
         .width("100%"),
 
-    eclair.HorizontalLine(),
+    Eclair.HorizontalLine(),
 
-    eclair.Text("Progress"),
-    eclair.Slider(progressValue)
+    Eclair.Text("Progress"),
+    Eclair.Slider(progressValue)
         .min(0).max(1).step(0.01)
         .width("100%"),
 
-    eclair.Text("Striped"),
-    eclair.Toggle(progressBarStripped),
+    Eclair.Text("Striped"),
+    Eclair.Toggle(progressBarStripped),
 
-    eclair.Text("Show Label"),
-    eclair.Toggle(showProgressState)
+    Eclair.Text("Show Label"),
+    Eclair.Toggle(showProgressState)
 ])
-    .alignment(eclair.Alignment().start())
+    .alignment(Eclair.Alignment().start())
     .gap("8px")
     .write()
     `,
@@ -66,32 +66,32 @@ eclair.VStack([
     "alert_box": `// Alert Box
 let alertBoxTitle = Ø("Alert Box")
 let alertBoxText = Ø("You're learning Eclair")
-let alertBoxTheme = eclair.Color().success()
+let alertBoxTheme = Eclair.Color().success()
 let selectedAlertBoxColour = Ø()
 
-eclair.VStack([
-    eclair.Alert(alertBoxText)
+Eclair.VStack([
+    Eclair.Alert(alertBoxText)
         .title(alertBoxTitle)
         .theme(alertBoxTheme)
         .width("100%")
         .boxSizing("border-box"),
 
-    eclair.HorizontalLine(),
+    Eclair.HorizontalLine(),
 
-    eclair.Text("Title"),
-    eclair.TextBox(alertBoxTitle)
+    Eclair.Text("Title"),
+    Eclair.TextBox(alertBoxTitle)
         .placeholder("Title..."),
 
-    eclair.Text("Message"),
-    eclair.TextBox(alertBoxText).placeholder("Message..."),
+    Eclair.Text("Message"),
+    Eclair.TextBox(alertBoxText).placeholder("Message..."),
 
-    eclair.Text("Line breaker"),
-    eclair.Button("Add line break").onClick(c => {
+    Eclair.Text("Line breaker"),
+    Eclair.Button("Add line break").onClick(c => {
         alertBoxText.value(alertBoxText.value() + "<hr/>A new line break can be added by typing &lt;hr/&gt;.")
     }),
 
-    eclair.Text("Preset"),
-    eclair.Select(["Success", "Danger", "Warning", "Info", "Light", "Dark"])
+    Eclair.Text("Preset"),
+    Eclair.Select(["Success", "Danger", "Warning", "Info", "Light", "Dark"])
         .value(selectedAlertBoxColour)
         .onChange(s => {
             if (selectedAlertBoxColour.value() == "Success") {alertBoxTheme.success()}
@@ -102,7 +102,7 @@ eclair.VStack([
             if (selectedAlertBoxColour.value() == "Dark") {alertBoxTheme.dark()}
         })
 ])
-    .alignment(eclair.Alignment().start())
+    .alignment(Eclair.Alignment().start())
     .gap("8px")
     .write()
     `,
@@ -112,20 +112,20 @@ let checkboxText = Ø("Accept Cookies?")
 let checkBoxState = Ø(false)
 let checkboxEnabled = Ø(true)
 
-eclair.VStack([
-    eclair.CheckBox(checkBoxState)
+Eclair.VStack([
+    Eclair.CheckBox(checkBoxState)
         .text(checkboxText)
         .enabled(checkboxEnabled),
 
-    eclair.HorizontalLine(),
+    Eclair.HorizontalLine(),
 
-    eclair.TextBox(checkboxText),
-    eclair.TextBox(checkBoxState),
+    Eclair.TextBox(checkboxText),
+    Eclair.TextBox(checkBoxState),
              
-    eclair.Text("Enabled"),
-    eclair.Toggle(checkboxEnabled)
+    Eclair.Text("Enabled"),
+    Eclair.Toggle(checkboxEnabled)
 ])
-    .alignment(eclair.Alignment().start())
+    .alignment(Eclair.Alignment().start())
     .gap("8px")
     .write()
     `

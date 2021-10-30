@@ -1,14 +1,35 @@
-/// ## Eclair Button
-/// An eclair Button.
-/// <br/>**args**:
-/// - text: The text value within the button.
+/// TITLE Eclair Button
+/// EXTENDS elements.component:EclairComponent
+/// DESC An eclair button element.
+
+Eclair.Button = function(text) {
+    return new EclairButton(text);
+}
+
+/// SHARED-STYLE Eclair.styles.Button: Default button style.
+Eclair.styles.Button = Eclair.Style("eclair-style-button")
+    .borderSize("0px")
+    .borderRadius("2px")
+    .padding("8px 16px")
+    .background("#eeeeee")
+    .font(Eclair.theme.font)
+    .background("#dddddd", "hover")
+    .background("#cccccc", "active")
+
 /// ```javascript
-/// eclair.Button("Foo")
+/// Eclair.Button("Hello there")
 ///     .onClick(e => {
-///         alert("Bar")
+///         alert("General Kenobi.")
 ///     })
 /// ```
 class EclairButton extends EclairComponent {
+    
+    /// METHOD constructor
+    /// DESC Construct an eclair button with a given innerHTML.
+    /// ARG text: The text shown on the button.
+    /// ```javascript
+    /// Eclair.Button("foo")
+    /// ```
     constructor(text) {
         super()
         
@@ -18,7 +39,7 @@ class EclairButton extends EclairComponent {
         })
         
         this.setAttr("type", "button")
-        this.addStyle(eclair.styles.Button)
+        this.addStyle(Eclair.styles.Button)
     }
     
     build() {
@@ -31,6 +52,7 @@ class EclairButton extends EclairComponent {
         if (text instanceof EclairComponent) {
             text = text.compile()
         } 
+        
         return `<button>${this.text}</button>`
     }
 }

@@ -1,7 +1,13 @@
-/// ## Eclair POST Request
-/// Create a POST HTTP request.
+/// TITLE Eclair POST Request
+/// EXTENDS functional.requests.request:EclairHTTPRequest
+/// DESC Create a POST HTTP request.
+
+Eclair.post = function(_url) {
+    return new EclairPost(_url);
+}
+
 /// ```javascript
-/// eclair.post("/new-username/")
+/// Eclair.post("/new-username/")
 ///     .onSuccess(data => {
 ///         location.href = '/profile/'
 ///     })
@@ -14,6 +20,13 @@
 ///     })
 /// ```
 class EclairPost extends EclairHTTPRequest {
+        
+    /// METHOD constructor
+    /// DESC Construct an POST object.
+    /// ARG url: Endpoint url to POST the request to.
+    /// ```javascript
+    /// Eclair.post("/new-username/")
+    /// ```
     constructor(url) {
         super(url, "POST")
     }

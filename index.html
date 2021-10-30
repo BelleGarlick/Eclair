@@ -3,14 +3,13 @@
 <script src="eclair.js"></script>
 <script src="test_examples.js"></script>
 <script>    
-let Toggle = eclair.Toggle, Text = eclair.Text, CheckBox = eclair.CheckBox, 
-    RadioButtons = eclair.RadioButtons, TextBox = eclair.TextBox, State = eclair.State, 
-    AlertState = eclair.AlertState, TextStyle = eclair.TextStyle, VStack = eclair.VStack,
-    HStack = eclair.HStack, View = eclair.View, TabView = eclair.TabView, Button = eclair.Button;
+let Toggle = Eclair.Toggle, Text = Eclair.Text, CheckBox = Eclair.CheckBox, 
+    RadioButtons = Eclair.RadioButtons, TextBox = Eclair.TextBox, State = Eclair.State, 
+    AlertState = Eclair.AlertState, TextStyle = Eclair.TextStyle, VStack = Eclair.VStack,
+    HStack = Eclair.HStack, View = Eclair.View, TabView = Eclair.TabView, Button = Eclair.Button;
 
 
-let textHeadingStyle = TextStyle().heading2()
-let backgroundColor = eclair.Color().hex("#f6f6f6")
+let backgroundColor = Eclair.Color().hex("#f6f6f6")
 
 let selectedRadio = Ø()
 let selectedRadioIndex = Ø()
@@ -24,12 +23,12 @@ let iframeHTMLCode = State("")
 VStack([   
     HStack([
         Text("Eclair Playground")  
-            .type(textHeadingStyle)
+            .type("heading2")
             .fontColor("#ffffff")
             .fontColor("black", {"rule": "darkmode"})
     ])
         .width("100%")
-        .background(eclair.theme.accent)
+        .background(Eclair.theme.accent)
         .padding(8),
     
     
@@ -39,14 +38,14 @@ VStack([
         {"name": "Alert Box", "id": "alert_box"},
         {"name": "Check Box", "id": "check_box"},
     ], item => {
-        return eclair.Button(item.name)
+        return Eclair.Button(item.name)
             .onClick(_ => {
                 codeExampleTitle.value(item.name)
                 htmlCode.value(examples[item.eID])
             })
     }),
     
-    eclair.Select([
+    Eclair.Select([
         "Toggle Switch",
         "Progress Bar",
         "Alert Box",
@@ -59,18 +58,18 @@ VStack([
         HStack([
             Button("Source").onClick(_ => {viewSourcePage.value(0)}),
             Button("Result").onClick(_ => {
-                iframeHTMLCode.value('<script src="eclair.js"></scrip'+'t><script>'+htmlCode.value()+'</sc'+'ript>')
+                iframeHTMLCode.value('<script src="Eclair.js"></scrip'+'t><script>'+htmlCode.value()+'</sc'+'ript>')
                 viewSourcePage.value(1)
             })
         ])
     ]),
     
-    eclair.TabView(viewSourcePage, [
-        eclair.View([
-            eclair.SyntaxHighlighter(htmlCode)
+    Eclair.TabView(viewSourcePage, [
+        Eclair.TabPage([
+            Eclair.SyntaxHighlighter(htmlCode)
         ]),
-        eclair.View([
-            eclair.IFrame()
+        Eclair.TabPage([
+            Eclair.IFrame()
                 .height("100%")
                 .width("100%")
                 .source(iframeHTMLCode)
@@ -78,12 +77,12 @@ VStack([
     ]),
 
 
-    eclair.VStack([
+    Eclair.VStack([
         VStack([     
-            eclair.TextBox(selectedRadio),
-            eclair.TextBox(selectedRadioIndex),
+            Eclair.TextBox(selectedRadio),
+            Eclair.TextBox(selectedRadioIndex),
             
-            eclair.HorizontalLine(),
+            Eclair.HorizontalLine(),
             RadioButtons(["tests", "test", "testing"])
                 .radioStyle(style => {
                     style.borderColor("green")

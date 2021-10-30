@@ -1,66 +1,69 @@
-## Eclair TextBox
+# Eclair TextBox
+__extends [EclairCustomTagComponent](https://github.com/SamGarlick/Eclair/tree/main/src/elements/custom-tag.js)__
 An eclair textbox element.
-<br/>**args**:
-- _text: The value of the text element.
+Eclair.styles.TextBox: TextBox style.
 ```javascript
-eclair.Textbox(Ø(""))
-    .placeholder("Enter your name here...")
+let username = Ø("")
+
+Eclair.Textbox(username)
+.maxLength(16)
+.placeholder("Enter your username here...")
+```
+### constructor
+Construct the TextBox element with a predefined text value.
+text: The value of the text element.
+```javascript
+Eclair.TextBox("Sam")
 ```
 ### .name
 Set the name attribute for a textbox (used in forms).
-<br/>**args**:
-- _name: Set the name attribute of the element.
+value: Set the name attribute of the element.
 ```javascript
-eclair.TextBox("Sam")
-    .name("fname")
+Eclair.TextBox("Sam")
+.name("fname")
 ```
 ### .placeholder
 Set a placeholder for a textbox.
-<br/>**args**:
-- _placeholder: Set the placeholder text to this value.
+value: Set the placeholder text to this value.
 ```javascript
-eclair.TextBox("")
-    .placeholder("First name...")
+Eclair.TextBox("")
+.placeholder("First name...")
 ```
 ### .password
 Set input as a password textbox.
-<br/>**args**:
-- _password: Set if the element to be of type password or not.
+value: Set if the element to be of type password or not.
 ```javascript
-eclair.TextBox("Password123")
-    .password(true)
+Eclair.TextBox("Password123")
+.password(true)
 ```
 ### .maxLength
 Set a textbox's maximum number of characters.
-<br/>**args**:
-- _maxLength: Set the max number of characters.
+value: Set the max number of characters.
 ```javascript
-eclair.TextBox("This textbox is has a maximum length")
-    .maxLength(280)
+Eclair.TextBox("This textbox is has a maximum length")
+.maxLength(280)
 ```
 ### .enabled
 Enable / Disable the element.
-<br/>**args**:
-- enabled: If true, the user can modify this element.
+enabled: If true, the user can modify this element.
 ```javascript
-eclair.TextBox("Hello World")
-    .enabled(true)
+Eclair.TextBox("Hello World")
+.enabled(true)
 ```
 ### .required
 Set whether the textbox is required in a form.
-<br/>**args**:
-- _required: Set whether the element is required in a form.
+value: Set whether the element is required in a form
 ```javascript
-eclair.TextBox("This textbox is required")
-    .required(true)
+Eclair.TextBox("This textbox is required")
+.required(true)
 ```
 ### .autofocus
 Set whether the textbox is autofocused.
-<br/>**args**:
-- _autofocus: Set whether the element is automatically focused to.
+value: Set whether the element is automatically focused to.
 ```javascript
-eclair.TextBox("This textbox is autofocused")
-    .autofocus(true)
+Eclair.TextBox("This textbox is autofocused")
+.autofocus(true)
 ```
-
+<br/>### Inherits from elements.custom-tag
+ - .innerHTML()
 <br/>Source: [_elements.form.textbox_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/form/textbox.js)

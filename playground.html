@@ -1,18 +1,18 @@
-<script src="eclair.js"></script>
+<script src="Eclair.js"></script>
 <script>
 let name = Ø("John")
 let surname = Ø("Smith")
     
-eclair.VStack([
-    eclair.Form([
-        eclair.TextBox(name),
-        eclair.TextBox(surname),
-        eclair.CustomTagComponent("input").id("file").setAttr("name", "file").setAttr("type", "file"),
+Eclair.VStack([
+    Eclair.Form([
+        Eclair.TextBox(name),
+        Eclair.TextBox(surname),
+        Eclair.CustomTagComponent("input").id("file").setAttr("name", "file").setAttr("type", "file"),
     ]),
-    eclair.Button("Test")
+    Eclair.Button("Test")
         .onClick((el, ev) => {  
             
-        eclair.post("http://127.0.0.1:5000/test/")
+        Eclair.post("http://127.0.0.1:5000/test/")
             .onSuccess(e => {console.log(e)})
             .send({
                 "name": name,

@@ -178,11 +178,12 @@ class EclairStylableObject {
 }
 
 
+
 class EclairStyleComponent extends EclairStylableObject {
     constructor(styleClassID) {
         super()
-        this._id = styleClassID != null? styleClassID : eclair._newID()
-        eclair._styles[this._id] = this
+        this._id = styleClassID != null? styleClassID : Eclair._newID()
+        Eclair._styles[this._id] = this
         
         this._stylePrefix = "."  // Use class not default id 
     }
@@ -201,4 +202,8 @@ class EclairStyleComponent extends EclairStylableObject {
             }
         }
     }
+}
+
+Eclair.Style = function(_styleID) {
+    return new EclairStyleComponent(_styleID);
 }

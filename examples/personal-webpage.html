@@ -1,17 +1,17 @@
-<script src="../eclair.js"></script>
+<script src="../Eclair.js"></script>
 <script>
-    let VStack = eclair.VStack, HStack = eclair.HStack, Text = eclair.Text;
+    let VStack = Eclair.VStack, HStack = Eclair.HStack, Text = Eclair.Text;
     
-    let linkStyle = eclair.Style()
+    let linkStyle = Eclair.Style()
         .padding("10px 16px")
         .textDecoration("none", "hover")
         .fontColor("black")
-        .background(eclair.Color().rgb(240, 240, 240))
-        .background(eclair.Color().rgb(220, 220, 220), "hover")
+        .background(Eclair.Color().rgb(240, 240, 240))
+        .background(Eclair.Color().rgb(220, 220, 220), "hover")
     
     
     function navLink(text, url) {
-        return eclair.Link(text)
+        return Eclair.Link(text)
             .url(url)
             .addStyle(linkStyle)
     }
@@ -41,7 +41,7 @@
             .width("100%"),
         
         VStack([
-            eclair.TextBox("hello")
+            Eclair.TextBox("hello")
         ])
     ])
         .position("absolute")

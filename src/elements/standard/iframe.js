@@ -1,22 +1,42 @@
-/// ## Eclair IFrame
-/// An eclair IFrame object
+/// TITLE Eclair IFrame
+/// EXTENDS elements.custom-tag:EclairCustomTagComponent
+/// DESC An eclair IFrame object.
+
+Eclair.IFrame = function() {
+    return new EclairIFrame();
+}
+
+/// SHARED-STYLE Eclair.styles.IFrame: Default iFrame style.
+Eclair.styles.IFrame= Eclair.Style("eclair-style-iframe")
+    .borderColor("#333333")
+    .borderSize("1px")
+    .width("100%")
+    .height("100%")
+
 /// ```javascript
-/// eclair.IFrame()
-///     .source("<p>Hello World</p>")
+/// Eclair.IFrame()
+///     .url("https://www.w3schools.com")
+///     .allowFullScren(true)
+///     .referrerPolicy("no-referrer")
 /// ```
-class EclairIFrame extends EclairCustomTagComponent {
+class EclairIFrame extends EclairCustomTagComponent {    
+    
+    /// METHOD constructor
+    /// DESC Construct an Eclair iFrame element.
+    /// ```javascript
+    /// Eclair.IFrame()
+    /// ```
     constructor() {
         super("iframe")
         this.innerHTML("Your client does not support iframes.")
-        this.addStyle(eclair.styles.IFrame)
+        this.addStyle(Eclair.styles.IFrame)
     }
-    
-    /// ### .url
-    /// Set the URL for the webpage you want the IFrame to display.
-    /// <br/>**args**:
-    /// - source: URL source for the IFrame to load
+        
+    /// METHOD .url
+    /// DESC Set the URL for the webpage you want the IFrame to display.
+    /// ARG source: URL source for the IFrame to load.
     /// ```javascript
-    /// eclair.IFrame()
+    /// Eclair.IFrame()
     ///     .url("http://www.w3schools.com")
     /// ```
     url(_source) {
@@ -25,13 +45,12 @@ class EclairIFrame extends EclairCustomTagComponent {
         })  
         return this
     }
-    
-    /// ### .source
-    /// Set the webpage source code you want the IFrame to display.
-    /// <br/>**args**:
-    /// - source: HTML source for the IFrame to load
+        
+    /// METHOD .source
+    /// DESC Set the webpage source code you want the IFrame to display.
+    /// ARG source: HTML source for the IFrame to load.
     /// ```javascript
-    /// eclair.IFrame()
+    /// Eclair.IFrame()
     ///     .source("<p>Hello World</p>")
     /// ```
     source(_source) {
@@ -40,13 +59,12 @@ class EclairIFrame extends EclairCustomTagComponent {
         })  
         return this
     }
-    
-    /// ### .source
-    /// Set if the frame can activate fullscreen mode by calling the requestFullscreen() method.
-    /// <br/>**args**:
-    /// - allow: If true it will be allowed.
+        
+    /// METHOD .allowFullScren
+    /// DESC Set if the frame can activate fullscreen mode by calling the requestFullscreen() method.
+    /// ARG allow: If true it will be allowed.
     /// ```javascript
-    /// eclair.IFrame()
+    /// Eclair.IFrame()
     ///     .allowFullScren(true)
     /// ```
     allowFullScren(_allow) {
@@ -55,13 +73,12 @@ class EclairIFrame extends EclairCustomTagComponent {
         })  
         return this
     }
-    
-    /// ### .allowPaymentRequest
-    /// If true the iframe will be allowed to invoke the Payment Request API
-    /// <br/>**args**:
-    /// - allow: If true the iframe can invoke the Payment Request API.
+        
+    /// METHOD .allowPaymentRequest
+    /// DESC If true the iframe will be allowed to invoke the Payment Request API
+    /// ARG allow: If true the iframe can invoke the Payment Request API.
     /// ```javascript
-    /// eclair.IFrame()
+    /// Eclair.IFrame()
     ///     .allowPaymentRequest(true)
     /// ```
     allowPaymentRequest(_allow) {
@@ -70,13 +87,12 @@ class EclairIFrame extends EclairCustomTagComponent {
         })  
         return this
     }
-    
-    /// ### .loading
-    /// Specifies how the iframe should be loaded - immediately or deferred.
-    /// <br/>**args**:
-    /// - loading: Can be either "eager" or "lazy"
+        
+    /// METHOD .loading
+    /// DESC Specifies how the iframe should be loaded - immediately or deferred.
+    /// ARG loading: Can be either "eager" or "lazy".
     /// ```javascript
-    /// eclair.IFrame()
+    /// Eclair.IFrame()
     ///     .loading("eager")
     /// ```
     loading(_loading) {
@@ -85,28 +101,12 @@ class EclairIFrame extends EclairCustomTagComponent {
         })  
         return this
     }
-    
-    /// ### .name
-    /// Specify the name of the iframe.
-    /// <br/>**args**:
-    /// - name: The name to give to the iframe.
+        
+    /// METHOD .referrerPolicy
+    /// DESC Specify the referrer policy of the iframe. See [w3schools](https://www.w3schools.com/tags/att_iframe_referrerpolicy.asp) for details.
+    /// ARG policy: The refferer policy to use.
     /// ```javascript
-    /// eclair.IFrame()
-    ///     .name("John")
-    /// ```
-    name(_name) {
-        this.bindState(_name, "name", value => {
-            this.setAttr("name", value)
-        })  
-        return this
-    }
-    
-    /// ### .referrerPolicy
-    /// Specify the referrer policy of the iframe. See [w3schools](https://www.w3schools.com/tags/att_iframe_referrerpolicy.asp) for details.
-    /// <br/>**args**:
-    /// - policy: The refferer policy to use
-    /// ```javascript
-    /// eclair.IFrame()
+    /// Eclair.IFrame()
     ///     .referrerPolicy("no-referrer")
     /// ```
     referrerPolicy(_policy) {
@@ -115,13 +115,12 @@ class EclairIFrame extends EclairCustomTagComponent {
         })  
         return this
     }
-    
-    /// ### .sandbox
-    /// Specify additional restrictions for the iframe. See [w3schools](https://www.w3schools.com/tags/att_iframe_sandbox.asp) for details.
-    /// <br/>**args**:
-    /// - policy: The refferer policy to use
+        
+    /// METHOD .sandbox
+    /// DESC Specify additional restrictions for the iframe. See [w3schools](https://www.w3schools.com/tags/att_iframe_sandbox.asp) for details.
+    /// ARG sandbox: The sandbox rule to use.
     /// ```javascript
-    /// eclair.IFrame()
+    /// Eclair.IFrame()
     ///     .sandbox("allow-forms")
     /// ```
     sandbox(_sandbox) {

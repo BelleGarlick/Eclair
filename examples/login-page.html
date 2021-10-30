@@ -1,18 +1,18 @@
-<script src="../eclair.js"></script>
+<script src="../Eclair.js"></script>
 <script>
-    eclair.VStack([
-        eclair.VStack([
-            eclair.Text("Log in.").type("heading1").fontColor("white"),
+    Eclair.VStack([
+        Eclair.VStack([
+            Eclair.Text("Log in.").type("heading1").fontColor("white"),
                 
-            eclair.TextBox()
+            Eclair.TextBox()
                 .placeholder("Email Address"),
-            eclair.TextBox()
+            Eclair.TextBox()
                 .password(true)
                 .placeholder("Password"),
-            eclair.CheckBox(true)
+            Eclair.CheckBox(true)
                 .text("Remember me"),
-            eclair.HorizontalLine(),
-            eclair.Button("Sign In"),
+            Eclair.HorizontalLine(),
+            Eclair.Button("Sign In"),
         ])
             .boxShadow("0px 0px 0px 10000px rgba(0, 0, 0, 0.3) inset")
             .padding("24px")

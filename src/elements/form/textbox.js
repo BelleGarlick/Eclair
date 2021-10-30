@@ -1,16 +1,43 @@
-/// ## Eclair TextBox
-/// An eclair textbox element.
-/// <br/>**args**:
-/// - _text: The value of the text element.
+/// TITLE Eclair TextBox
+/// EXTENDS elements.custom-tag:EclairCustomTagComponent
+/// DESC An eclair textbox element.
+
+Eclair.TextBox = function(text) {
+    return new EclairTextBox(text);
+}
+
+/// SHARED-STYLE Eclair.styles.TextBox: TextBox style.
+Eclair.styles.TextBox = Eclair.Style("eclair-style-text-box")
+    .fontSize("14px")
+    .padding("12px 16px")
+    .width("100%")
+    .borderSize("0px")
+    .borderRadius("3px")
+    .background("#eeeeee")
+    .font(Eclair.theme.font)
+    .background("#dddddd", "hover")
+    .background("#cccccc", "active")
+    .background("#bbbbbb", "focused")
+
 /// ```javascript
-/// eclair.Textbox(Ø(""))
-///     .placeholder("Enter your name here...")
+/// let username = Ø("")
+///
+/// Eclair.Textbox(username)
+///     .maxLength(16)
+///     .placeholder("Enter your username here...")
 /// ```
 class EclairTextBox extends EclairCustomTagComponent {
+    
+    /// METHOD constructor
+    /// DESC Construct the TextBox element with a predefined text value.
+    /// ARG text: The value of the text element.
+    /// ```javascript
+    /// Eclair.TextBox("Sam")
+    /// ```
     constructor(_text) {
         super("input")
         this.setAttr("type", "text")
-            .addStyle(eclair.styles.TextBox)
+            .addStyle(Eclair.styles.TextBox)
         
         let self = this
         
@@ -36,71 +63,73 @@ class EclairTextBox extends EclairCustomTagComponent {
         return this
     }
     
-    /// ### .name
-    /// Set the name attribute for a textbox (used in forms).
-    /// <br/>**args**:
-    /// - _name: Set the name attribute of the element.
+    /// METHOD .name
+    /// DESC Set the name attribute for a textbox (used in forms).
+    /// ARG value: Set the name attribute of the element.
     /// ```javascript
-    /// eclair.TextBox("Sam")
+    /// Eclair.TextBox("Sam")
     ///     .name("fname")
     /// ```
-    name(_name) {
-        this.bindState(_name, "name", value => {
-            this.setAttr("name", value)
+    name(value) {
+        this.bindState(value, "name", v => {
+            this.setAttr("name", v)
         })
         
         return this
     }
     
-    /// ### .placeholder
-    /// Set a placeholder for a textbox.
-    /// <br/>**args**:
-    /// - _placeholder: Set the placeholder text to this value.
+    /// METHOD .placeholder
+    /// DESC Set a placeholder for a textbox.
+    /// ARG value: Set the placeholder text to this value.
     /// ```javascript
-    /// eclair.TextBox("")
+    /// Eclair.TextBox("")
     ///     .placeholder("First name...")
     /// ```
-    placeholder(_placeholder) {
-        this.bindState(_placeholder, "placeholder", value => {
-            this.setAttr("placeholder", value)
+    placeholder(value) {
+        this.bindState(value, "placeholder", v => {
+            this.setAttr("placeholder", v)
         })
         
         return this
     }
     
-    /// ### .password
-    /// Set input as a password textbox.
-    /// <br/>**args**:
-    /// - _password: Set if the element to be of type password or not.
+    /// METHOD .password
+    /// DESC Set input as a password textbox.
+    /// ARG value: Set if the element to be of type password or not.
     /// ```javascript
-    /// eclair.TextBox("Password123")
+    /// Eclair.TextBox("Password123")
     ///     .password(true)
     /// ```
-    password(_password) {
-        this.bindState(_password, "password", value => {
-            this.setAttr("type", value? "password":'text')
+    password(value) {
+        this.bindState(value, "password", v => {
+            this.setAttr("type", v? "password":'text')
         }, state => {return state.bool()})
         
         return this
     }
     
-    /// ### .maxLength
-    /// Set a textbox's maximum number of characters.
-    /// <br/>**args**:
-    /// - _maxLength: Set the max number of characters.
+    /// METHOD .maxLength
+    /// DESC Set a textbox's maximum number of characters.
+    /// ARG value: Set the max number of characters.
     /// ```javascript
-    /// eclair.TextBox("This textbox is has a maximum length")
+    /// Eclair.TextBox("This textbox is has a maximum length")
     ///     .maxLength(280)
     /// ```
-    maxLength(_maxLength) {
-        this.bindState(_maxLength, "maxlength", value => {
-            this.setAttr("maxlength", value)
+    maxLength(value) {
+        this.bindState(value, "maxlength", v => {
+            this.setAttr("maxlength", v)
         })
         
         return this
     } 
     
-    /// INCLUDE elements.form.checkbox.enabled eclair.TextBox("Hello World")
+    /// METHOD .enabled
+    /// DESC Enable / Disable the element.
+    /// ARG enabled: If true, the user can modify this element.
+    /// ```javascript
+    /// Eclair.TextBox("Hello World")
+    ///     .enabled(true)
+    /// ```
     enabled(_enabled) {
         this.bindState(_enabled, "enabled", value => {
             this.setAttr("enabled", value ? "true" : "null")
@@ -108,34 +137,32 @@ class EclairTextBox extends EclairCustomTagComponent {
         
         return this
     } 
-    
-    /// ### .required
-    /// Set whether the textbox is required in a form.
-    /// <br/>**args**:
-    /// - _required: Set whether the element is required in a form.
+        
+    /// METHOD .required
+    /// DESC Set whether the textbox is required in a form.
+    /// ARG value: Set whether the element is required in a form
     /// ```javascript
-    /// eclair.TextBox("This textbox is required")
+    /// Eclair.TextBox("This textbox is required")
     ///     .required(true)
     /// ```
-    required(_required) {
-        this.bindState(_required, "required", value => {
-            this.setAttr("required", value ? "true" : "null")
+    required(value) {
+        this.bindState(value, "required", v => {
+            this.setAttr("required", v ? "true" : "null")
         }, state => {return state.bool()})
         
         return this
     } 
-    
-    /// ### .autofocus
-    /// Set whether the textbox is autofocused.
-    /// <br/>**args**:
-    /// - _autofocus: Set whether the element is automatically focused to.
+        
+    /// METHOD .autofocus
+    /// DESC Set whether the textbox is autofocused.
+    /// ARG value: Set whether the element is automatically focused to.
     /// ```javascript
-    /// eclair.TextBox("This textbox is autofocused")
+    /// Eclair.TextBox("This textbox is autofocused")
     ///     .autofocus(true)
     /// ```
-    autofocus(_autofocus) {
-        this.bindState(_autofocus, "autofocus", value => {
-            this.setAttr("autofocus", value ? "true" : "null")
+    autofocus(value) {
+        this.bindState(value, "autofocus", v => {
+            this.setAttr("autofocus", v ? "true" : "null")
         }, state => {return state.bool()})
         
         return this

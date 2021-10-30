@@ -1,49 +1,63 @@
-/// ## Eclair VStack
-/// Create a vertically stacked view in eclair.
-/// <br/>**args**:
-/// - elements: Elements within the view.
+/// TITLE Eclair VStack
+/// EXTENDS elements.layout.view:EclairView
+/// DESC Create a horizontally stacked view in Eclair.
+
+Eclair.VStack = function(_elements, _func) {
+    return new EclairVStack(_elements, _func);
+}
+
+/// SHARED-STYLE Eclair.styles.VStack: VStack style.
+Eclair.styles.VStack = Eclair.Style("eclair-style-vstack")
+    .boxSizing("border-box")
+    .display("flex")
+    .flexDirection("column")
+    .alignItems("center")
+    .justifyContent("space-around")
+
 /// ```javascript
-/// eclair.VStack([
-///    eclair.Text("This is a view"),
-///    eclair.Button("Views can have multiple elements")
+/// Eclair.VStack([
+///    Eclair.Text("This is a view"),
+///    Eclair.Button("Views can have multiple elements")
 /// ])
 ///     .gap("8px")
 /// ```
-///
-/// <br/>**args**:
-/// - elements: Elements within the view.
-/// - objectFunction: A function which returns the constructed object.
 /// ```javascript
-/// eclair.VStack([
+/// Eclair.VStack([
 ///     {'name': 'Joe Briggs', 'age': 28},
 ///     {'name': 'Amy Wong', 'age': 24},
 ///     {'name': 'Dustin James', 'age': 15}
 /// ], item => {
-///    return eclair.HStack([
-///        eclair.Text(item.name),
-///        eclair.Text(item.age)
-///    ])
+///    return Eclair.Text(item.name + " " + item.age)
 /// })
 /// ```
-class EclairVStack extends EclairView {
+class EclairVStack extends EclairView { 
+    
+    /// METHOD constructor
+    /// DESC Construct an eclair VStack object. 
+    /// ARG elements: List child items.
+    /// ARG itemFunction: A callback function called for each child object. For more details see elements.layout.view.
+    /// ```javascript
+    /// Eclair.VStack([
+    ///     Eclair.Text('...'),
+    ///     Eclair.Button('...')
+    ///         .onClick(...)
+    /// ])
+    /// ```
     constructor(elems, creatorFunc) {
         super(elems, creatorFunc)
         
         // Need to remove view as given by parent
-        this.removeStyle(eclair.styles.View)
-        this.addStyle(eclair.styles.VStack)
+        this.removeStyle(Eclair.styles.View)
+        this.addStyle(Eclair.styles.VStack)
     }
-    
-    /// SHARED alignment eclair.VStack()
-    /// ### .alignment
-    /// Set the alignment of child items.
-    /// <br/>**args**:
-    /// - alignment: Takes in an eclair elignment state object.
+                
+    /// METHOD .alignment
+    /// DESC Set the alignment of child items.
+    /// ARG alignment: Takes in an eclair elignment state object and calls the 'this.alignItems' style.
     /// ```javascript
-    /// WILDCARD
-    ///     .alignment(eclair.Alignment().center())
+    /// Eclair.VStack([...])
+    ///     .alignment(Eclair.Alignment().center())
     /// ```
-    /// END-SHARED
     alignment(_alignment) {
         this.bindState(_alignment, "alignment", value => {
             if (value == "start") {

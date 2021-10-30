@@ -1,11 +1,60 @@
-/// ## Eclair Toggle
-/// An eclair toggle element.
+/// TITLE Eclair Toggle component
+/// EXTENDS elements.component:EclairComponent
+/// DESC An eclair toggle component.
+
+Eclair.Toggle = function(_value) {
+    return new EclairToggle(_value);
+}
+
+/// SHARED-STYLE Eclair.styles.Toggle: Toggle style.
+/// SHARED-STYLE Eclair.styles.ToggleTick: Tick style style.
+/// SHARED-STYLE Eclair.styles.ToggleKnob: Knob style.
+Eclair.styles.Toggle = Eclair.Style("eclair-style-toggle")    
+    .display("flex")
+    .flexDirection("row")
+    .alignItems("center")
+    .position("relative")
+    .width("50px")
+    .background("#dddddd")
+    .padding("3px")
+    .cursor("pointer")
+    .userSelect("none")
+    .borderRadius("20px")
+    .transition("0.2s all")
+    .boxSizing("border-box")
+Eclair.styles.ToggleKnob = Eclair.Style("eclair-style-toggle-knob")
+    .height("14px")
+    .width("14px")
+    .background("#ffffff")
+    .transform("translateX(0%)")
+    .transition("0.2s all")
+    .userSelect("none")
+    .borderRadius("20px")
+Eclair.styles.ToggleTick = Eclair.Style("eclair-style-toggle-tick")
+    .position("absolute")
+    .fontColor("#ffffff")
+    .left("35%")
+    .transition("0.2s all")
+    .transform("translateX(-50%)")
+    .fontWeight(700)
+    .userSelect("none")
+    .opacity(0)
+
 /// ```javascript
 /// let on = Ø(true)
-/// eclair.Toggle(on)
+///
+/// Eclair.Text(on)
+/// Eclair.Toggle(on)
 /// ```
 class EclairToggle extends EclairComponent {
-    constructor(_value) {
+            
+    /// METHOD constructor
+    /// DESC Construct an Toggle object.
+    /// ARG value: Boolean denoting whether the toggle is on or off.
+    /// ```javascript
+    /// Eclair.Toggle(true)
+    /// ```
+    constructor(value) {
         super()
         
         // If the user want's onclicks then they need to be stored here as 
@@ -14,14 +63,15 @@ class EclairToggle extends EclairComponent {
         let overrideOnClick = null;
         
         // Create internal elements
-        this._tickMark = this._addChild(eclair.Text("✓"))
-        this._knob = this._addChild(eclair.View())
+        this._tickMark = this._addChild(Eclair.Text("✓"))
+        this._knob = this._addChild(Eclair.View())
         
-        this._value = (_value instanceof EclairState)? _value : Ø(_value)
-        this._hiddenComponent = eclair.HiddenInput(this._value)
+        this._value = (value instanceof EclairState)? value : Ø(value)
+        this._hiddenComponent = Eclair.HiddenInput(this._value)
     
         // Bind this object with the given eclair states
-        this.bindState(_value, "toggle", value => {
+        this.bindState(value, "toggle", value => {
+            // TODO If value changes reflec in this.bind state
             this._updateStyle() 
         }, state => {return state.bool()})
         
@@ -43,9 +93,9 @@ class EclairToggle extends EclairComponent {
         this._enabled = true
         
         // Add styles
-        this.addStyle(eclair.styles.Toggle)
-        this._tickMark.addStyle(eclair.styles.ToggleTick)
-        this._knob.addStyle(eclair.styles.ToggleKnob)
+        this.addStyle(Eclair.styles.Toggle)
+        this._tickMark.addStyle(Eclair.styles.ToggleTick)
+        this._knob.addStyle(Eclair.styles.ToggleKnob)
         
         this.width("100%", " .wrapper")
             .transition("0.2s all", " .wrapper")
@@ -57,10 +107,11 @@ class EclairToggle extends EclairComponent {
         return this;
     }
     
-    /// ### .knob
-    /// This function allows you to access the toggle's knob as a means modify it.
+    /// METHOD .knob
+    /// DESC This function allows you to access the toggle's knob as a means modify it.
+    /// ARG callback: Function called with the knob element passed as an arg.
     /// ```javascript
-    /// eclair.Toggle(true)
+    /// Eclair.Toggle(true)
     ///     .knob((element) => {
     ///         element.background("red")
     ///     })
@@ -69,19 +120,26 @@ class EclairToggle extends EclairComponent {
         callback(this._knob)
         return this
     }
-    
-    /// ### .name
-    /// Set the name attribute for a textbox (used in forms).
+        
+    /// METHOD .name
+    /// DESC Set the name attribute for a textbox (used in forms).
+    /// ARG value: New name of the element.
     /// ```javascript
-    /// eclair.Toggle(true)
+    /// Eclair.Toggle(true)
     ///     .name("fname")
     /// ```
-    name(_name) {
-        this._hiddenComponent.name(_name)
+    name(value) {
+        this._hiddenComponent.name(value)
         return this;
     }
     
-    /// INCLUDE elements.form.checkbox.enabled eclair.Toggle(false)
+    /// METHOD .enabled
+    /// DESC Enable / Disable the element.
+    /// ARG enabled: If true, the user can modify this element.
+    /// ```javascript
+    /// Eclair.Toggle(true)
+    ///     .enabled(true)
+    /// ```
     enabled(_enabled) {
         this.bindState(_enabled, "enabled", value => {
             this._enabled = value
@@ -91,26 +149,29 @@ class EclairToggle extends EclairComponent {
         return this
     }
     
-    /// ### .showTick
-    /// Set whether the tick is showing.    
+    
+    /// METHOD .showTick
+    /// DESC Set whether the tick is showing.    
+    /// ARG enabled: If true, a tick marker will be shown.
     /// ```javascript
-    /// eclair.Toggle(false)
+    /// Eclair.Toggle(true)
     ///     .showTick(true)
     /// ```
-    showTick(_bool) {
-        this.bindState(_bool, "showTick", value => {
-            this._showCheckMark = value
-            this._tickMark.opacity((value && (this._value.bool()))? 1:0)
+    showTick(value) {
+        this.bindState(value, "showTick", v => {
+            this._showCheckMark = v
+            this._tickMark.opacity((v && (this._value.bool()))? 1:0)
         }, state => {return state.bool()})
         
         return this
     }
     
     // Doesn't need to be accessed externally as is managed internally.
+    // TODO Use shared style in future
     _updateStyle() {
         if (this._value.bool()) {
             this._tickMark.opacity(this._showCheckMark ? 1 : 0)
-            this.background(eclair.theme.accent)
+            this.background(Eclair.theme.accent)
                 .transform("translateX(100%)", " .wrapper")
             this._knob
                 .transform("translateX(-100%)")

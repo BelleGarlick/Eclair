@@ -20,7 +20,7 @@ _HTML + CSS + JS_
 
 _Eclair_
 ``` javascript
-eclair.Button("Hello There!")
+Eclair.Button("Hello There!")
     .fontSize("10px")
     .onClick(() => {
         alert("General Kenobi")
@@ -47,7 +47,7 @@ _HTML + CSS + JS_
 
 _Eclair_
 ``` javascript
-eclair.Select()
+Eclair.Select()
     .addOptions(["Welcome to the Jungle", "It's so Easy", "Nightrain",
                  "Out Ta Get Me", "Mr. Brownstone", "Sweet Child O' Mine"])
     .selectedIndex(5)
@@ -77,14 +77,14 @@ _HTML + CSS + JS_
 
 _Eclair_
 ``` javascript
-let labelFont = eclair.Style()
+let labelFont = Eclair.Style()
     .fontColor("#0000ff")
     .fontWeight(700)
     .fontWeight(300, "hover")
 
-eclair.View([
-    eclair.Text("Label 1").addStyle(labelFont)
-    eclair.Text("Label 2").addStyle(labelFont)
+Eclair.View([
+    Eclair.Text("Label 1").addStyle(labelFont)
+    Eclair.Text("Label 2").addStyle(labelFont)
 ])
 ```
 
@@ -92,16 +92,16 @@ eclair.View([
 All UI components inherit from the base 'EclairComponent' object. This object provides functionality such as altering attributes, styling and other helper functions such as getting the HTML element and writing the object to HTML. 
 
 ### EclairComponent
-The base object determines an ID that is used to reference both the eclair object and the HTML object. Each object is stored in a map which can be accessed via `eclair._elements` which stores an element ID as the key and the object reference as the value. Additionally, the EclairComponent determines stores the reference to which the HTML object can be accessed. This allows for both HTML and EclairComponent to reference one another which acts as the basis for the Eclair library. This self-reference is how event methods are handled. When an event is added to a component, the component adds a method to the object which references the eclair ID. When the method is called the element can lookup which eclair component to call and access that objects event callbacks.
+The base object determines an ID that is used to reference both the eclair object and the HTML object. Each object is stored in a map which can be accessed via `Eclair._elements` which stores an element ID as the key and the object reference as the value. Additionally, the EclairComponent determines stores the reference to which the HTML object can be accessed. This allows for both HTML and EclairComponent to reference one another which acts as the basis for the Eclair library. This self-reference is how event methods are handled. When an event is added to a component, the component adds a method to the object which references the eclair ID. When the method is called the element can lookup which eclair component to call and access that objects event callbacks.
 
 ### Writing to HTML
 There are three main methods used within Eclair to write the HTML for the UI components. `write` and `to` are implemented in the 'EclairComponent' and shouldn't be overwritten, however, `build` should always be implemented by a subclass.
 
-`build`: Unique to each subclass, this funciton builds the HTML as a string. Often this function will only be called by parent UI components when building the child component. `document.getElementById(...).innerHTML = eclair.Text('Ola').build()`
+`build`: Unique to each subclass, this funciton builds the HTML as a string. Often this function will only be called by parent UI components when building the child component. `document.getElementById(...).innerHTML = Eclair.Text('Ola').build()`
 
-`to`: This function will build the HTML of the item (and an subitems) and write them to an element with the given ID. `eclair.Text('Ola').to(...)`
+`to`: This function will build the HTML of the item (and an subitems) and write them to an element with the given ID. `Eclair.Text('Ola').to(...)`
 
-`write`: This function will build the HTML of an item and call the `document.write` function to write the HTML. `eclair.Text('Ola').write()`
+`write`: This function will build the HTML of an item and call the `document.write` function to write the HTML. `Eclair.Text('Ola').write()`
 
 ### Styling
 There are three main ways to add a style to an element:
