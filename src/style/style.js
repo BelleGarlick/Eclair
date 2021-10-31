@@ -74,7 +74,7 @@ class EclairStylableObject {
         
         if (newCSSElement != null) {
             if (curCSSElements.length == 0) {
-                if (!(this instanceof EclairStyleComponent)) {
+                if (!(this instanceof EclairSharedStyle)) {
                     document.head.appendChild(newCSSElement)
                 }
             } else {
@@ -179,31 +179,3 @@ class EclairStylableObject {
 
 
 
-class EclairStyleComponent extends EclairStylableObject {
-    constructor(styleClassID) {
-        super()
-        this._id = styleClassID != null? styleClassID : Eclair._newID()
-        Eclair._styles[this._id] = this
-        
-        this._stylePrefix = "."  // Use class not default id 
-    }
-    
-    eID() {
-        return this._id;
-    }
-    
-    // Create is used to signal a difference between compile/build etc
-    create() {
-        let elems = document.getElementsByClassName(this.eID() + "-css")
-        if (elems.length == 0) {
-            let newStyleObject = this.buildStyleObject()
-            if (newStyleObject != null) {
-                document.head.appendChild(newStyleObject)
-            }
-        }
-    }
-}
-
-Eclair.Style = function(_styleID) {
-    return new EclairStyleComponent(_styleID);
-}

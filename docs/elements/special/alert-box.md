@@ -1,9 +1,10 @@
-# Eclair Alert Box
-__extends [EclairComponent](https://github.com/SamGarlick/Eclair/tree/main/src/elements/component.js)__<br/>
+# Eclair Alert Box__extends [EclairComponent](https://github.com/SamGarlick/Eclair/tree/main/docs/elements/component.md)__<br/>
+
+Source: [_elements.special.alert-box_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/special/alert-box.js)
 Create an alert box to display a message.
-Eclair.styles.AlertBox: Alert box style.
-Eclair.styles.AlertBoxTitle: Alert box title style.
-Eclair.styles.AlertBoxText: Alert box text style.
+**Eclair.styles.AlertBox**  Alert box style.
+**Eclair.styles.AlertBoxTitle**  Alert box title style.
+**Eclair.styles.AlertBoxText**  Alert box text style.
 ```javascript
 let message = Ø("")
 let alertBoxDisplay = Ø("none")
@@ -41,4 +42,3 @@ text: A string or State representing the value.
 Eclair.AlertBox("Invalid password")
     .title("Error")
 ```
-<br/>Source: [_elements.special.alert-box_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/special/alert-box.js)

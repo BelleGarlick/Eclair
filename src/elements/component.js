@@ -94,7 +94,7 @@ class EclairComponent extends EclairStylableObject {
     
     addStyle(sharedClass) {
         if (sharedClass != null) {
-            let className = sharedClass instanceof EclairStyleComponent? sharedClass.eID() : sharedClass;
+            let className = sharedClass instanceof EclairSharedStyle? sharedClass.eID() : sharedClass;
   
             let found = false;
             for (let n = 0; n < this.sharedStyles.length; n++) {
@@ -298,6 +298,17 @@ class EclairComponent extends EclairStylableObject {
         }
     }
     
+    _updateCallback(callbackKey, callback) {
+        this._callbacks[callbackKey] = callback;
+        
+        if (callback == null) {
+            this.setAttr(callbackKey.toLowerCase(), null)
+        } else {
+            this.setAttr(callbackKey.toLowerCase(), `Eclair.triggerEvent("${this.eID()}", "${callbackKey}", event)`)
+        }
+        return this;
+    }
+    
     _addChild(item) {
         this.children.push(item)
         item.parent = this
@@ -311,14 +322,23 @@ class EclairComponent extends EclairStylableObject {
         return this
     }
     
-    _updateCallback(callbackKey, callback) {
-        this._callbacks[callbackKey] = callback;
+    remove() {
+        delete Eclair._elements[this.eID()];
         
-        if (callback == null) {
-            this.setAttr(callbackKey.toLowerCase(), null)
-        } else {
-            this.setAttr(callbackKey.toLowerCase(), `Eclair.triggerEvent("${this.eID()}", "${callbackKey}", event)`)
+        // Get element and style element if available.
+        let elems = document.getElementsByClassName(this.eID())
+        let styleElems = document.getElementsByClassName(this.eID() + "-css")
+        for (let i = 0; i < elems.length; i++) {elems[i].parentNode.removeChild(elems[i]);}
+        for (let i = 0; i < styleElems.length; i++) {styleElems[i].parentNode.removeChild(styleElems[i]);}
+        
+        for (let c = 0; c < this.children.length; c++) {
+            this.children[c].remove()
         }
-        return this;
+        
+        // Remove state bindings
+        
+        this.cleanup()
     }
+    
+    cleanup() {}
 }

@@ -1,10 +1,11 @@
-# Eclair Check Box
-__extends [EclairComponent](https://github.com/SamGarlick/Eclair/tree/main/src/elements/component.js)__<br/>
+# Eclair Check Box__extends [EclairComponent](https://github.com/SamGarlick/Eclair/tree/main/docs/elements/component.md)__<br/>
+
+Source: [_elements.form.checkbox_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/form/checkbox.js)
 An eclair checkbox, similar to the toggle in the form of a traditional checkbox.
-Eclair.styles.CheckBox: Default Checkbox object style.
-Eclair.styles.CheckBoxLabel: Default Checkbox Label object style.
-Eclair.styles.CheckBoxIcon: Default Checkbox icon object style.
-Eclair.styles.CheckBoxActiveIcon: Default Active Checkbox style.
+**Eclair.styles.CheckBox**  Default Checkbox object style.
+**Eclair.styles.CheckBoxLabel**  Default Checkbox Label object style.
+**Eclair.styles.CheckBoxIcon**  Default Checkbox icon object style.
+**Eclair.styles.CheckBoxActiveIcon**  Default Active Checkbox style.
 ```javascript
 let checked = Ø(false)
 
@@ -59,4 +60,3 @@ enabled: If true, the user can modify this element.
 Eclair.CheckBox(false)
     .enabled(true)
 ```
-<br/>Source: [_elements.form.checkbox_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/form/checkbox.js)

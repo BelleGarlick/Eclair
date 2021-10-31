@@ -1,7 +1,8 @@
-# Eclair TextBox
-__extends [EclairCustomTagComponent](https://github.com/SamGarlick/Eclair/tree/main/src/elements/custom-tag.js)__<br/>
+# Eclair TextBox__extends [EclairCustomTagComponent](https://github.com/SamGarlick/Eclair/tree/main/docs/elements/custom-tag.md)__<br/>
+
+Source: [_elements.form.textbox_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/form/textbox.js)
 An eclair textbox element.
-Eclair.styles.TextBox: TextBox style.
+**Eclair.styles.TextBox**  TextBox style.
 ```javascript
 let username = Ø("")
 
@@ -67,4 +68,3 @@ Eclair.TextBox("This textbox is autofocused")
 
 ### Inherits from: elements.custom-tag
  - [.innerHTML()](https://github.com/SamGarlick/Eclair/tree/main/docs/elements/custom-tag.md#innerHTML)
-<br/>Source: [_elements.form.textbox_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/form/textbox.js)

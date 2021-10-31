@@ -1,5 +1,6 @@
-# Eclair Custom Tag Component
-__extends [EclairComponent](https://github.com/SamGarlick/Eclair/tree/main/src/elements/component.js)__<br/>
+# Eclair Custom Tag Component__extends [EclairComponent](https://github.com/SamGarlick/Eclair/tree/main/docs/elements/component.md)__<br/>
+
+Source: [_elements.custom-tag_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/custom-tag.js)
 This is an abstract class which should be subclassed to make it a little easier to make custom components. This class only deals with simple elements that don't have many complex internal elements. This class takes a tag (in the super call) and a bindable `innerHTML` function which can be used to set the innerHTML of the element. You can then, of course, implement other functions that you might want such as binding parameters etc.
 ```javascript
 Eclair.CustomTagComponent("svg")
@@ -29,4 +30,3 @@ html: The inner html to give the object.
 Eclair.CustomTagComponent("p")
     .innerHTML("Hello World")
 ```
-<br/>Source: [_elements.custom-tag_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/custom-tag.js)

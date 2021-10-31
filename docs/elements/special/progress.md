@@ -1,9 +1,10 @@
-# Eclair Progress Bar
-__extends [EclairComponent](https://github.com/SamGarlick/Eclair/tree/main/src/elements/component.js)__<br/>
+# Eclair Progress Bar__extends [EclairComponent](https://github.com/SamGarlick/Eclair/tree/main/docs/elements/component.md)__<br/>
+
+Source: [_elements.special.progress_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/special/progress.js)
 Create a eclair progress bar object.
-Eclair.styles.ProgressBar: Progress bar style.
-Eclair.styles.ProgressBarLabel: Progress label style.
-Eclair.styles.ProgressBarIndicator: Progress indicator style.
+**Eclair.styles.ProgressBar**  Progress bar style.
+**Eclair.styles.ProgressBarLabel**  Progress label style.
+**Eclair.styles.ProgressBarIndicator**  Progress indicator style.
 ```javascript
 let progress = Ø(0)
 
@@ -61,4 +62,3 @@ show: Can be either a bool or an eclair State.
 Eclair.ProgressBar(0.5)
     .showLabel(true)
 ```
-<br/>Source: [_elements.special.progress_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/special/progress.js)

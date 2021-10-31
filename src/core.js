@@ -1,19 +1,11 @@
-// TODO Implement these: https://getbootstrap.com/docs/4.0/components/progress/
 // PRINT Add margin, paddding, border: left, top, right bottom
-// PRINT Add deleting element
-// TODO Add enabled tag to all elements.
-// TODO Examples 
 // TODO Update readme.
 // Add getting value from objects and altering lists. This should enable objects to be easier to work with.
-// TODO NEed tutorials for everything. Geting to grips with eclair, making a custom object, specific object tutorials.documentation
-// Main documentation
-    // Inherits form 'element.dsads'
-    // .to
-    // .write
-    // Inherits from 'Eclair.component...'
-    //....
+// TODO NEed tutorials for everything and Examples. Geting to grips with eclair, making a custom object, specific object tutorials.documentation
+// Add test for each objct removing elements loads. Each test needs looping 1000s of times and checking if, when removed, there is no execsive files left over.
 
-// Future custom objects
+// Future work
+//  - Add enabled tag to all elements.
 //  - Cookies accept + ability to set
 //  - Colour picker
 //  - multi media - video, audio etc
@@ -22,6 +14,7 @@
 //  - dropdown
 //  - List
 //  - Built in icons
+//  - Implement these: https://getbootstrap.com/docs/4.0/components/progress/, https://mui.com
 
 // When creating a new element make sure
 //  - Links to children objects and parent association
@@ -29,12 +22,16 @@
 //  - Documentation: states the shared styles. Add functions doc and class doc, args
 //  - All binding values call onChange
 //  - Tests
+//  - Cleanup
+//  - Child/Parent assoc
+//  - Create blank template
+//  - Each test needs looping 1000s of times and checking if, when removed, there is no execsive files left over.
 
 
 /// # Eclair
 /// The `eclair` object allows you to easily construct an eclair object and interact in the Eclair development kit.
 let Eclair = {
-    version: "0.0.93",
+    version: "0.0.94",
     _ids: 0,
     _elements: {},
     _styles: {},
@@ -53,10 +50,13 @@ let Eclair = {
 
 
 try {
-    Ecalir.theme.accent = EclairThemeColor;
-    Ecalir.theme.font = EclairThemeFont;
+    Eclair.theme.accent = EclairThemeColor;
 } catch(err) {
     Eclair.theme.accent = "#ee8800"
+}
+try {
+    Eclair.theme.font = EclairThemeFont;
+} catch(err) {
     Eclair.theme.font = '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"'
 }
 

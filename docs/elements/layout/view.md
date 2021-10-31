@@ -1,7 +1,8 @@
-# Eclair View
-__extends [EclairComponent](https://github.com/SamGarlick/Eclair/tree/main/src/elements/component.js)__<br/>
+# Eclair View__extends [EclairComponent](https://github.com/SamGarlick/Eclair/tree/main/docs/elements/component.md)__<br/>
+
+Source: [_elements.layout.view_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/layout/view.js)
 Create a generic eclair View.
-Eclair.styles.View: Shared View style.
+**Eclair.styles.View**  Shared View style.
 ```javascript
 Eclair.View([
     Eclair.Text('...'),
@@ -37,4 +38,3 @@ Eclair.View([
         })
 ])
 ```
-<br/>Source: [_elements.layout.view_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/layout/view.js)

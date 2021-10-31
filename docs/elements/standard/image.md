@@ -1,7 +1,8 @@
-# Eclair Image
-__extends [EclairCustomTagComponent](https://github.com/SamGarlick/Eclair/tree/main/src/elements/custom-tag.js)__<br/>
+# Eclair Image__extends [EclairCustomTagComponent](https://github.com/SamGarlick/Eclair/tree/main/docs/elements/custom-tag.md)__<br/>
+
+Source: [_elements.standard.image_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/standard/image.js)
 An eclair image element.
-Eclair.styles.Image: Default Image style.
+**Eclair.styles.Image**  Default Image style.
 ```javascript
 Eclair.Image('image.png')
 ```
@@ -21,4 +22,3 @@ Eclair.Image('image.png')
 
 ### Inherits from: elements.custom-tag
  - [.innerHTML()](https://github.com/SamGarlick/Eclair/tree/main/docs/elements/custom-tag.md#innerHTML)
-<br/>Source: [_elements.standard.image_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/standard/image.js)

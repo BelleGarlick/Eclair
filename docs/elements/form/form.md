@@ -1,7 +1,8 @@
-# Eclair Form Box
-__extends [EclairView](https://github.com/SamGarlick/Eclair/tree/main/src/elements/layout/view.js)__<br/>
+# Eclair Form Box__extends [EclairView](https://github.com/SamGarlick/Eclair/tree/main/docs/elements/layout/view.md)__<br/>
+
+Source: [_elements.form.form_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/form/form.js)
 A form element for eclair objects. This object extends the EclairView object allowing dynamic creation of elements within the view.
-Eclair.styles.Form: Default form style.
+**Eclair.styles.Form**  Default form style.
 ```javascript
 Eclair.Form([
     Eclair.TextBox("")
@@ -54,4 +55,3 @@ Eclair.Form([
 ])
     .submit(submitted)
 ```
-<br/>Source: [_elements.form.form_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/form/form.js)

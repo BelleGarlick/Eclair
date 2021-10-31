@@ -1,5 +1,6 @@
-# Eclair Component
-__extends [EclairStylableObject](https://github.com/SamGarlick/Eclair/tree/main/src/style/style.js)__<br/>
+# Eclair Component__extends [EclairStylableObject](https://github.com/SamGarlick/Eclair/tree/main/docs/style/style.md)__<br/>
+
+Source: [_elements.component_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/component.js)
 Warn test .hide
 Warn test .show
 ### .build
@@ -48,4 +49,3 @@ Eclair.Button("Hello There")
         el.background("blue")
     })
 ```
-<br/>Source: [_elements.component_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/component.js)

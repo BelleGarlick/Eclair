@@ -1,7 +1,8 @@
-# Eclair Slider
-__extends [EclairCustomTagComponent](https://github.com/SamGarlick/Eclair/tree/main/src/elements/custom-tag.js)__<br/>
+# Eclair Slider__extends [EclairCustomTagComponent](https://github.com/SamGarlick/Eclair/tree/main/docs/elements/custom-tag.md)__<br/>
+
+Source: [_elements.form.slider_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/form/slider.js)
 An eclair slider allowing a user to scrub to a numeric value.
-Eclair.styles.Slider: Default slider style.
+**Eclair.styles.Slider**  Default slider style.
 ```javascript
 Eclair.Form([
     Eclair.Slider(0.5)
@@ -44,4 +45,3 @@ Eclair.Slider(0.5)
 
 ### Inherits from: elements.custom-tag
  - [.innerHTML()](https://github.com/SamGarlick/Eclair/tree/main/docs/elements/custom-tag.md#innerHTML)
-<br/>Source: [_elements.form.slider_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/form/slider.js)

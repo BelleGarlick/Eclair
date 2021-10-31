@@ -259,6 +259,13 @@ class EclairRadioButtons extends EclairComponent {
     build() {         
         return `<div>${this._hidden.compile()}${this._view.compile()}</div>`
     }
+    
+    cleanup() {
+        let keys = Object.keys(this.customStyles);
+        for (let k = 0; k < keys.length; k++) {
+            this.customStyles[keys[k]].remove()
+        }
+    }
 }
 
 

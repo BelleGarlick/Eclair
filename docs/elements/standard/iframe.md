@@ -1,7 +1,8 @@
-# Eclair IFrame
-__extends [EclairCustomTagComponent](https://github.com/SamGarlick/Eclair/tree/main/src/elements/custom-tag.js)__<br/>
+# Eclair IFrame__extends [EclairCustomTagComponent](https://github.com/SamGarlick/Eclair/tree/main/docs/elements/custom-tag.md)__<br/>
+
+Source: [_elements.standard.iframe_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/standard/iframe.js)
 An eclair IFrame object.
-Eclair.styles.IFrame: Default iFrame style.
+**Eclair.styles.IFrame**  Default iFrame style.
 ```javascript
 Eclair.IFrame()
     .url("https://www.w3schools.com")
@@ -65,4 +66,3 @@ Eclair.IFrame()
 
 ### Inherits from: elements.custom-tag
  - [.innerHTML()](https://github.com/SamGarlick/Eclair/tree/main/docs/elements/custom-tag.md#innerHTML)
-<br/>Source: [_elements.standard.iframe_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/standard/iframe.js)

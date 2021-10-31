@@ -1,4 +1,6 @@
 # Eclair HTTP Request
+
+Source: [_functional.requests.request_](https://github.com/SamGarlick/Eclair/tree/main/src/functional/requests/request.js)
 Create a HTTP request such as a POST or GET request.
 ```javascript
 Eclair.request("/get-user/", "GET")
@@ -139,4 +141,3 @@ Eclair.request("/submit/", "POST")
 Eclair.request("/submit/", "POST")
     .send(Eclair.Form([Eclair.TextBox("bar").name("foo")]))
 ```
-<br/>Source: [_functional.requests.request_](https://github.com/SamGarlick/Eclair/tree/main/src/functional/requests/request.js)

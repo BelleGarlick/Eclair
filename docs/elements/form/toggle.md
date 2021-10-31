@@ -1,9 +1,10 @@
-# Eclair Toggle component
-__extends [EclairComponent](https://github.com/SamGarlick/Eclair/tree/main/src/elements/component.js)__<br/>
+# Eclair Toggle component__extends [EclairComponent](https://github.com/SamGarlick/Eclair/tree/main/docs/elements/component.md)__<br/>
+
+Source: [_elements.form.toggle_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/form/toggle.js)
 An eclair toggle component.
-Eclair.styles.Toggle: Toggle style.
-Eclair.styles.ToggleTick: Tick style style.
-Eclair.styles.ToggleKnob: Knob style.
+**Eclair.styles.Toggle**  Toggle style.
+**Eclair.styles.ToggleTick**  Tick style style.
+**Eclair.styles.ToggleKnob**  Knob style.
 ```javascript
 let on = Ø(true)
 
@@ -46,4 +47,3 @@ enabled: If true, a tick marker will be shown.
 Eclair.Toggle(true)
     .showTick(true)
 ```
-<br/>Source: [_elements.form.toggle_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/form/toggle.js)

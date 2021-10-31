@@ -1,7 +1,8 @@
-# Eclair VStack
-__extends [EclairView](https://github.com/SamGarlick/Eclair/tree/main/src/elements/layout/view.js)__<br/>
+# Eclair VStack__extends [EclairView](https://github.com/SamGarlick/Eclair/tree/main/docs/elements/layout/view.md)__<br/>
+
+Source: [_elements.layout.vstack_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/layout/vstack.js)
 Create a horizontally stacked view in Eclair.
-Eclair.styles.VStack: VStack style.
+**Eclair.styles.VStack**  VStack style.
 ```javascript
 Eclair.VStack([
    Eclair.Text("This is a view"),
@@ -36,4 +37,3 @@ alignment: Takes in an eclair elignment state object and calls the 'this.alignIt
 Eclair.VStack([...])
     .alignment(Eclair.Alignment().center())
 ```
-<br/>Source: [_elements.layout.vstack_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/layout/vstack.js)

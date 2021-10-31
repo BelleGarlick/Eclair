@@ -1,7 +1,8 @@
-# Eclair Tab Page
-__extends [EclairView](https://github.com/SamGarlick/Eclair/tree/main/src/elements/layout/view.js)__<br/>
+# Eclair Tab Page__extends [EclairView](https://github.com/SamGarlick/Eclair/tree/main/docs/elements/layout/view.md)__<br/>
+
+Source: [_elements.layout.tabs.page_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/layout/tabs/page.js)
 A view stored within a tab view. 
-Eclair.styles.TabPage: Tab page style.
+**Eclair.styles.TabPage**  Tab page style.
 ```javascript
 Eclair.TabView(Ø(0), [
    Eclair.TabPage([...]),
@@ -26,4 +27,3 @@ Eclair.TabPage([
     {"name": "Amie", "gender": "NB"}
 ], e => {return Text(e.name + " " + e.gender)})
 ```
-<br/>Source: [_elements.layout.tabs.page_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/layout/tabs/page.js)

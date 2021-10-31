@@ -1,5 +1,6 @@
-# Eclair GET Request
-__extends [EclairHTTPRequest](https://github.com/SamGarlick/Eclair/tree/main/src/functional/requests/request.js)__<br/>
+# Eclair GET Request__extends [EclairHTTPRequest](https://github.com/SamGarlick/Eclair/tree/main/docs/functional/requests/request.md)__<br/>
+
+Source: [_functional.requests.get_](https://github.com/SamGarlick/Eclair/tree/main/src/functional/requests/get.js)
 Create a GET HTTP request.
 ```javascript
 Eclair.get("/get-user/")
@@ -33,4 +34,3 @@ Eclair.get("/get-user/")
  - [.timeout()](https://github.com/SamGarlick/Eclair/tree/main/docs/functional/requests/request.md#timeout)
  - [.withCredentials()](https://github.com/SamGarlick/Eclair/tree/main/docs/functional/requests/request.md#withCredentials)
  - [.send()](https://github.com/SamGarlick/Eclair/tree/main/docs/functional/requests/request.md#send)
-<br/>Source: [_functional.requests.get_](https://github.com/SamGarlick/Eclair/tree/main/src/functional/requests/get.js)

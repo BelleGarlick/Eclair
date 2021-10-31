@@ -5,7 +5,7 @@
 
 
 let Eclair = {
-    version: "0.0.92",
+    version: "0.0.94",
     _ids: 0,
     _elements: {},
     _styles: {},
@@ -24,10 +24,13 @@ let Eclair = {
 
 
 try {
-    Ecalir.theme.accent = EclairThemeColor;
-    Ecalir.theme.font = EclairThemeFont;
+    Eclair.theme.accent = EclairThemeColor;
 } catch(err) {
     Eclair.theme.accent = "#ee8800"
+}
+try {
+    Eclair.theme.font = EclairThemeFont;
+} catch(err) {
     Eclair.theme.font = '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"'
 }
 
@@ -257,22 +260,207 @@ Eclair.Color = function(_col) {
     return new EclairColor(_col);
 }
 
+
+let EclairColorMap = {
+    "aliceblue": [240, 248, 255],
+    "antiqueWhite": [250, 235, 215],
+    "aqua": [0, 255, 255],
+    "aquamarine": [127, 255, 212],
+    "azure": [240, 255, 255],
+    "beige": [245, 245, 220],
+    "bisque": [255, 228, 196],
+    "black": [0, 0, 0],
+    "blanchedalmond": [255, 235, 205],
+    "blue": [0, 0, 255],
+    "blueviolet": [138, 43, 226],
+    "brown": [165, 42, 42],
+    "burlywood": [222, 184, 135],
+    "cadetblue": [95, 158, 160],
+    "chartreuse": [127, 255, 0],
+    "chocolate": [210, 105, 30],
+    "coral": [255, 127, 80],
+    "cornflowerblue": [100, 149, 237],
+    "cornsilk": [255, 248, 220],
+    "crimson": [220, 20, 60],
+    "cyan": [0, 255, 255],
+    "darkblue": [0, 0, 139],
+    "darkcyan": [0, 139, 139],
+    "darkgoldenrod": [184, 134, 11],
+    "darkgray": [169, 169, 169],
+    "darkgrey": [169, 169, 169],
+    "darkgreen": [0, 100, 0],
+    "darkkhaki": [189, 183, 107],
+    "darkmagenta": [139, 0, 139],
+    "darkolivegreen": [85, 107, 47],
+    "darkorange": [255, 140, 0],
+    "darkorchid": [153, 50, 204],
+    "darkred": [139, 0, 0],
+    "darksalmon": [233, 150, 122],
+    "darkseagreen": [143, 188, 143],
+    "darkslateblue": [72, 61, 139],
+    "darkslategray": [47, 79, 79],
+    "darkslategrey": [47, 79, 79],
+    "darkturquoise": [0, 206, 209],
+    "darkviolet": [148, 0, 211],
+    "deeppink": [255, 20, 147],
+    "deepskyblue": [0, 191, 255],
+    "dimgray": [105, 105, 105],
+    "dimgrey": [105, 105, 105],
+    "dodgerblue": [30, 144, 255],
+    "firebrick": [178, 34, 34],
+    "floralwhite": [255, 250, 240],
+    "forestgreen": [34, 139, 34],
+    "fuchsia": [255, 0, 255],
+    "gainsboro": [220, 220, 220],
+    "ghostwhite": [248, 248, 255],
+    "gold": [255, 215, 0],
+    "goldenrod": [218, 165, 32],
+    "gray": [128, 128, 128],
+    "grey": [128, 128, 128],
+    "green": [0, 128, 0],
+    "greenyellow": [173, 255, 47],
+    "honeydew": [240, 255, 240],
+    "hotpink": [255, 105, 180],
+    "indianred ": [205, 92, 92],
+    "indigo ": [75, 0, 130],
+    "ivory": [255, 255, 240],
+    "khaki": [240, 230, 140],
+    "lavender": [230, 230, 250],
+    "lavenderblush": [255, 240, 245],
+    "lawngreen": [124, 252, 0],
+    "lemonchiffon": [255, 250, 205],
+    "lightblue": [173, 216, 230],
+    "lightcoral": [240, 128, 128],
+    "lightcyan": [224, 255, 255],
+    "lightgoldenrodyellow": [250, 250, 210],
+    "lightgray": [211, 211, 211],
+    "lightgrey": [211, 211, 211],
+    "lightgreen": [144, 238, 144],
+    "lightpink": [255, 182, 193],
+    "lightsalmon": [255, 160, 122],
+    "lightseagreen": [32, 178, 170],
+    "lightskyblue": [135, 206, 250],
+    "lightslategray": [119, 136, 153],
+    "lightslategrey": [119, 136, 153],
+    "lightsteelblue": [176, 196, 222],
+    "lightyellow": [255, 255, 224],
+    "lime": [0, 255, 0],
+    "limegreen": [50, 205, 50],
+    "linen": [250, 240, 230],
+    "magenta": [255, 0, 255],
+    "maroon": [128, 0, 0],
+    "mediumaquamarine": [102, 205, 170],
+    "mediumblue": [0, 0, 205],
+    "mediumorchid": [186, 85, 211],
+    "mediumpurple": [147, 112, 219],
+    "mediumseagreen": [60, 179, 113],
+    "mediumslateblue": [123, 104, 238],
+    "mediumspringgreen": [0, 250, 154],
+    "mediumturquoise": [72, 209, 204],
+    "mediumvioletred": [199, 21, 133],
+    "midnightblue": [25, 25, 112],
+    "mintcream": [245, 255, 250],
+    "mistyrose": [255, 228, 225],
+    "moccasin": [255, 228, 181],
+    "navajowhite": [255, 222, 173],
+    "navy": [0, 0, 128],
+    "oldlace": [253, 245, 230],
+    "olive": [128, 128, 0],
+    "olivedrab": [107, 142, 35],
+    "orange": [255, 165, 0],
+    "orangered": [255, 69, 0],
+    "orchid": [218, 112, 214],
+    "palegoldenrod": [238, 232, 170],
+    "palegreen": [152, 251, 152],
+    "paleturquoise": [175, 238, 238],
+    "palevioletred": [219, 112, 147],
+    "papayawhip": [255, 239, 213],
+    "peachpuff": [255, 218, 185],
+    "peru": [205, 133, 63],
+    "pink": [255, 192, 203],
+    "plum": [221, 160, 221],
+    "powderblue": [176, 224, 230],
+    "purple": [128, 0, 128],
+    "rebeccapurple": [102, 51, 153],
+    "red": [255, 0, 0],
+    "rosybrown": [188, 143, 143],
+    "royalblue": [65, 105, 225],
+    "saddlebrown": [139, 69, 19],
+    "salmon": [250, 128, 114],
+    "sandybrown": [244, 164, 96],
+    "seagreen": [46, 139, 87],
+    "seashell": [255, 245, 238],
+    "sienna": [160, 82, 45],
+    "silver": [192, 192, 192],
+    "skyblue": [135, 206, 235],
+    "slateblue": [106, 90, 205],
+    "slategray": [112, 128, 144],
+    "slategrey": [112, 128, 144],
+    "snow": [255, 250, 250],
+    "springgreen": [0, 255, 127],
+    "steelblue": [70, 130, 180],
+    "tan": [210, 180, 140],
+    "teal": [0, 128, 128],
+    "thistle": [216, 191, 216],
+    "tomato": [255, 99, 71],
+    "turquoise": [64, 224, 208],
+    "violet": [238, 130, 238],
+    "wheat": [245, 222, 179],
+    "white": [255, 255, 255],
+    "whitesmoke": [245, 245, 245],
+    "yellow": [255, 255, 0],
+    "yellowgreen": [154, 205, 50],
+}
+
+
+
 class EclairColor extends EclairState {
     
-    constructor() {
+    constructor(p1, p2, p3, p4) {
         super("#000000")
         
         this._r = 0
         this._g = 0
         this._b = 0
         this._a = 0
+        
+        this.parse(p1, p2, p3, p4)
+    }
+    
+    
+    parse(p1, p2, p3, p4) {
+        if (p1 == null) { 
+            return this.RGB(0, 0, 0)
+        }
+        
+        if (p1 instanceof String) {
+            if (EclairColorMap.hasOwnProperty(p1.toLowerCase())) {
+                return this.RGB(EclairColorMap[p1.toLowerCase()])
+            } else {
+                return this.hex(p1)
+            }
+        }
+        
+        return this.RGBA(p1, p2, p3, p4)
     }
     
     RGB(r, g, b) {
+        if (r instanceof Array) {
+            return this.RGBA(r[0], r[1], r[2], 1)
+        }
+        
         return this.RGBA(r, g, b, 1)
     }
     
     RGBA(r, g, b, a) {
+        if (r instanceof Array) {
+            return this.RGBA(r[0], r[1], r[2], r[3])
+        }
+        
+        if (a == null) {
+            a = 1;
+        }
+        
         this.value(`rgb(${r}, ${g}, ${b}, ${a})`)
         
         this._r = r
@@ -283,11 +471,18 @@ class EclairColor extends EclairState {
         return this;
     }  
     
-    HSLA(h, s, l){
+    HSL(h, s, l){
+        if (h instanceof Array) {
+            return this.HSLA(h[0], h[1], h[2], 1)
+        }
+        
         return this.HSLA(h, s, l, 1)
     }
     
     HSLA(h, s, l, a){
+        if (h instanceof Array) {
+            return this.HSLA(h[0], h[1], h[2], h[3])
+        }
         var r, g, b;
 
         if  (s == 0){
@@ -417,156 +612,6 @@ class EclairColor extends EclairState {
     info() {return this.hex("d1ecf1")}
     light() {return this.hex("efefef")}
     dark() {return this.hex("d5d8d9")}
-    
-    aliceBlue() {return this.rgb(240, 248, 255)}
-    antiqueWhite() {return this.rgb(250, 235, 215)}
-    aqua() {return this.rgb(0, 255, 255)}
-    aquamarine() {return this.rgb(127, 255, 212)}
-    azure() {return this.rgb(240, 255, 255)}
-    beige() {return this.rgb(245, 245, 220)}
-    bisque() {return this.rgb(255, 228, 196)}
-    black() {return this.rgb(0, 0, 0)}
-    blanchedAlmond() {return this.rgb(255, 235, 205)}
-    blue() {return this.rgb(0, 0, 255)}
-    blueViolet() {return this.rgb(138, 43, 226)}
-    brown() {return this.rgb(165, 42, 42)}
-    burlyWood() {return this.rgb(222, 184, 135)}
-    cadetBlue() {return this.rgb(95, 158, 160)}
-    chartreuse() {return this.rgb(127, 255, 0)}
-    chocolate() {return this.rgb(210, 105, 30)}
-    coral() {return this.rgb(255, 127, 80)}
-    cornflowerBlue() {return this.rgb(100, 149, 237)}
-    cornsilk() {return this.rgb(255, 248, 220)}
-    crimson() {return this.rgb(220, 20, 60)}
-    cyan() {return this.rgb(0, 255, 255)}
-    darkBlue() {return this.rgb(0, 0, 139)}
-    darkCyan() {return this.rgb(0, 139, 139)}
-    darkGoldenRod() {return this.rgb(184, 134, 11)}
-    darkGray() {return this.rgb(169, 169, 169)}
-    darkGrey() {return this.rgb(169, 169, 169)}
-    darkGreen() {return this.rgb(0, 100, 0)}
-    darkKhaki() {return this.rgb(189, 183, 107)}
-    darkMagenta() {return this.rgb(139, 0, 139)}
-    darkOliveGreen() {return this.rgb(85, 107, 47)}
-    darkOrange() {return this.rgb(255, 140, 0)}
-    darkOrchid() {return this.rgb(153, 50, 204)}
-    darkRed() {return this.rgb(139, 0, 0)}
-    darkSalmon() {return this.rgb(233, 150, 122)}
-    darkSeaGreen() {return this.rgb(143, 188, 143)}
-    darkSlateBlue() {return this.rgb(72, 61, 139)}
-    darkSlateGray() {return this.rgb(47, 79, 79)}
-    darkSlateGrey() {return this.rgb(47, 79, 79)}
-    darkTurquoise() {return this.rgb(0, 206, 209)}
-    darkViolet() {return this.rgb(148, 0, 211)}
-    deepPink() {return this.rgb(255, 20, 147)}
-    deepSkyBlue() {return this.rgb(0, 191, 255)}
-    dimGray() {return this.rgb(105, 105, 105)}
-    dimGrey() {return this.rgb(105, 105, 105)}
-    dodgerBlue() {return this.rgb(30, 144, 255)}
-    fireBrick() {return this.rgb(178, 34, 34)}
-    floralWhite() {return this.rgb(255, 250, 240)}
-    forestGreen() {return this.rgb(34, 139, 34)}
-    fuchsia() {return this.rgb(255, 0, 255)}
-    gainsboro() {return this.rgb(220, 220, 220)}
-    ghostWhite() {return this.rgb(248, 248, 255)}
-    gold() {return this.rgb(255, 215, 0)}
-    goldenRod() {return this.rgb(218, 165, 32)}
-    gray() {return this.rgb(128, 128, 128)}
-    grey() {return this.rgb(128, 128, 128)}
-    green() {return this.rgb(0, 128, 0)}
-    greenYellow() {return this.rgb(173, 255, 47)}
-    honeyDew() {return this.rgb(240, 255, 240)}
-    hotPink() {return this.rgb(255, 105, 180)}
-    indianRed () {return this.rgb(205, 92, 92)}
-    indigo () {return this.rgb(75, 0, 130)}
-    ivory() {return this.rgb(255, 255, 240)}
-    khaki() {return this.rgb(240, 230, 140)}
-    lavender() {return this.rgb(230, 230, 250)}
-    lavenderBlush() {return this.rgb(255, 240, 245)}
-    lawnGreen() {return this.rgb(124, 252, 0)}
-    lemonChiffon() {return this.rgb(255, 250, 205)}
-    lightBlue() {return this.rgb(173, 216, 230)}
-    lightCoral() {return this.rgb(240, 128, 128)}
-    lightCyan() {return this.rgb(224, 255, 255)}
-    lightGoldenRodYellow() {return this.rgb(250, 250, 210)}
-    lightGray() {return this.rgb(211, 211, 211)}
-    lightGrey() {return this.rgb(211, 211, 211)}
-    lightGreen() {return this.rgb(144, 238, 144)}
-    lightPink() {return this.rgb(255, 182, 193)}
-    lightSalmon() {return this.rgb(255, 160, 122)}
-    lightSeaGreen() {return this.rgb(32, 178, 170)}
-    lightSkyBlue() {return this.rgb(135, 206, 250)}
-    lightSlateGray() {return this.rgb(119, 136, 153)}
-    lightSlateGrey() {return this.rgb(119, 136, 153)}
-    lightSteelBlue() {return this.rgb(176, 196, 222)}
-    lightYellow() {return this.rgb(255, 255, 224)}
-    lime() {return this.rgb(0, 255, 0)}
-    limeGreen() {return this.rgb(50, 205, 50)}
-    linen() {return this.rgb(250, 240, 230)}
-    magenta() {return this.rgb(255, 0, 255)}
-    maroon() {return this.rgb(128, 0, 0)}
-    mediumAquaMarine() {return this.rgb(102, 205, 170)}
-    mediumBlue() {return this.rgb(0, 0, 205)}
-    mediumOrchid() {return this.rgb(186, 85, 211)}
-    mediumPurple() {return this.rgb(147, 112, 219)}
-    mediumSeaGreen() {return this.rgb(60, 179, 113)}
-    mediumSlateBlue() {return this.rgb(123, 104, 238)}
-    mediumSpringGreen() {return this.rgb(0, 250, 154)}
-    mediumTurquoise() {return this.rgb(72, 209, 204)}
-    mediumVioletRed() {return this.rgb(199, 21, 133)}
-    midnightBlue() {return this.rgb(25, 25, 112)}
-    mintCream() {return this.rgb(245, 255, 250)}
-    mistyRose() {return this.rgb(255, 228, 225)}
-    moccasin() {return this.rgb(255, 228, 181)}
-    navajoWhite() {return this.rgb(255, 222, 173)}
-    navy() {return this.rgb(0, 0, 128)}
-    oldLace() {return this.rgb(253, 245, 230)}
-    olive() {return this.rgb(128, 128, 0)}
-    oliveDrab() {return this.rgb(107, 142, 35)}
-    orange() {return this.rgb(255, 165, 0)}
-    orangeRed() {return this.rgb(255, 69, 0)}
-    orchid() {return this.rgb(218, 112, 214)}
-    paleGoldenRod() {return this.rgb(238, 232, 170)}
-    paleGreen() {return this.rgb(152, 251, 152)}
-    paleTurquoise() {return this.rgb(175, 238, 238)}
-    paleVioletRed() {return this.rgb(219, 112, 147)}
-    papayaWhip() {return this.rgb(255, 239, 213)}
-    peachPuff() {return this.rgb(255, 218, 185)}
-    peru() {return this.rgb(205, 133, 63)}
-    pink() {return this.rgb(255, 192, 203)}
-    plum() {return this.rgb(221, 160, 221)}
-    powderBlue() {return this.rgb(176, 224, 230)}
-    purple() {return this.rgb(128, 0, 128)}
-    rebeccaPurple() {return this.rgb(102, 51, 153)}
-    red() {return this.rgb(255, 0, 0)}
-    rosyBrown() {return this.rgb(188, 143, 143)}
-    royalBlue() {return this.rgb(65, 105, 225)}
-    saddleBrown() {return this.rgb(139, 69, 19)}
-    salmon() {return this.rgb(250, 128, 114)}
-    sandyBrown() {return this.rgb(244, 164, 96)}
-    seaGreen() {return this.rgb(46, 139, 87)}
-    seaShell() {return this.rgb(255, 245, 238)}
-    sienna() {return this.rgb(160, 82, 45)}
-    silver() {return this.rgb(192, 192, 192)}
-    skyBlue() {return this.rgb(135, 206, 235)}
-    slateBlue() {return this.rgb(106, 90, 205)}
-    slateGray() {return this.rgb(112, 128, 144)}
-    slateGrey() {return this.rgb(112, 128, 144)}
-    snow() {return this.rgb(255, 250, 250)}
-    springGreen() {return this.rgb(0, 255, 127)}
-    steelBlue() {return this.rgb(70, 130, 180)}
-    tan() {return this.rgb(210, 180, 140)}
-    teal() {return this.rgb(0, 128, 128)}
-    thistle() {return this.rgb(216, 191, 216)}
-    tomato() {return this.rgb(255, 99, 71)}
-    turquoise() {return this.rgb(64, 224, 208)}
-    violet() {return this.rgb(238, 130, 238)}
-    wheat() {return this.rgb(245, 222, 179)}
-    white() {return this.rgb(255, 255, 255)}
-    whiteSmoke() {return this.rgb(245, 245, 245)}
-    yellow() {return this.rgb(255, 255, 0)}
-    yellowGreen() {return this.rgb(154, 205, 50)}
-
 }
 
 
@@ -842,7 +887,7 @@ class EclairStylableObject {
         
         if (newCSSElement != null) {
             if (curCSSElements.length == 0) {
-                if (!(this instanceof EclairStyleComponent)) {
+                if (!(this instanceof EclairSharedStyle)) {
                     document.head.appendChild(newCSSElement)
                 }
             } else {
@@ -945,13 +990,14 @@ class EclairStylableObject {
 
 
 
-class EclairStyleComponent extends EclairStylableObject {
+
+
+// style.shared
+class EclairSharedStyle extends EclairStylableObject {
     constructor(styleClassID) {
         super()
         this._id = styleClassID != null? styleClassID : Eclair._newID()
         Eclair._styles[this._id] = this
-        
-        this._stylePrefix = "."  // Use class not default id 
     }
     
     eID() {
@@ -966,11 +1012,20 @@ class EclairStyleComponent extends EclairStylableObject {
                 document.head.appendChild(newStyleObject)
             }
         }
+    }   
+    
+    remove() {
+        delete Eclair._elements[this.eID()];
+        
+        let styleElems = document.getElementsByClassName(this.eID() + "-css")
+        for (let i = 0; i < styleElems.length; i++) {
+            styleElems[i].parentNode.removeChild(styleElems[i]);
+        }
     }
 }
 
 Eclair.Style = function(_styleID) {
-    return new EclairStyleComponent(_styleID);
+    return new EclairSharedStyle(_styleID);
 }
 
 
@@ -1062,7 +1117,7 @@ class EclairComponent extends EclairStylableObject {
     
     addStyle(sharedClass) {
         if (sharedClass != null) {
-            let className = sharedClass instanceof EclairStyleComponent? sharedClass.eID() : sharedClass;
+            let className = sharedClass instanceof EclairSharedStyle? sharedClass.eID() : sharedClass;
   
             let found = false;
             for (let n = 0; n < this.sharedStyles.length; n++) {
@@ -1211,6 +1266,17 @@ class EclairComponent extends EclairStylableObject {
         }
     }
     
+    _updateCallback(callbackKey, callback) {
+        this._callbacks[callbackKey] = callback;
+        
+        if (callback == null) {
+            this.setAttr(callbackKey.toLowerCase(), null)
+        } else {
+            this.setAttr(callbackKey.toLowerCase(), `Eclair.triggerEvent("${this.eID()}", "${callbackKey}", event)`)
+        }
+        return this;
+    }
+    
     _addChild(item) {
         this.children.push(item)
         item.parent = this
@@ -1223,16 +1289,23 @@ class EclairComponent extends EclairStylableObject {
         return this
     }
     
-    _updateCallback(callbackKey, callback) {
-        this._callbacks[callbackKey] = callback;
+    remove() {
+        delete Eclair._elements[this.eID()];
         
-        if (callback == null) {
-            this.setAttr(callbackKey.toLowerCase(), null)
-        } else {
-            this.setAttr(callbackKey.toLowerCase(), `Eclair.triggerEvent("${this.eID()}", "${callbackKey}", event)`)
+        let elems = document.getElementsByClassName(this.eID())
+        let styleElems = document.getElementsByClassName(this.eID() + "-css")
+        for (let i = 0; i < elems.length; i++) {elems[i].parentNode.removeChild(elems[i]);}
+        for (let i = 0; i < styleElems.length; i++) {styleElems[i].parentNode.removeChild(styleElems[i]);}
+        
+        for (let c = 0; c < this.children.length; c++) {
+            this.children[c].remove()
         }
-        return this;
+        
+        
+        this.cleanup()
     }
+    
+    cleanup() {}
 }
 
 // elements.custom-tag
@@ -1933,6 +2006,13 @@ class EclairRadioButtons extends EclairComponent {
     
     build() {         
         return `<div>${this._hidden.compile()}${this._view.compile()}</div>`
+    }
+    
+    cleanup() {
+        let keys = Object.keys(this.customStyles);
+        for (let k = 0; k < keys.length; k++) {
+            this.customStyles[keys[k]].remove()
+        }
     }
 }
 

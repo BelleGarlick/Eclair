@@ -57,7 +57,7 @@ class EclairText extends EclairComponent {
     }
         
     /// METHOD .type
-    /// DESC Set the type of text this is to a predefined style from the list of following: `title, subtitle, heading1, heading2, heading3, heading 4`. 
+    /// DESC Set the type of text this is to a predefined style from the list of following: `title, subtitle, heading1, heading2, heading3, heading4`. 
     /// ARG value: Predefined style.
     /// ```javascript
     /// Eclair.Text('Welcome')

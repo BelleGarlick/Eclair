@@ -1,5 +1,6 @@
-# Eclair Alignment State
-__extends [EclairState](https://github.com/SamGarlick/Eclair/tree/main/src/functional/states/state.js)__<br/>
+# Eclair Alignment State__extends [EclairState](https://github.com/SamGarlick/Eclair/tree/main/docs/functional/states/state.md)__<br/>
+
+Source: [_functional.states.alignment_](https://github.com/SamGarlick/Eclair/tree/main/src/functional/states/alignment.js)
 This class inherits the functionality of a normal Eclair State, but is designed for alignment and has functions for doing so. 
 ```javascript
 Eclair.VStack([...])
@@ -28,4 +29,3 @@ Align items to the end of the flow direction (often the right or bottom).
 Eclair.VStack([...])
     .alignment(Eclair.Alignment().end())
 ```
-<br/>Source: [_functional.states.alignment_](https://github.com/SamGarlick/Eclair/tree/main/src/functional/states/alignment.js)

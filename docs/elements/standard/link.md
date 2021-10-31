@@ -1,7 +1,8 @@
-# Eclair Hyperlink
-__extends [EclairCustomTagComponent](https://github.com/SamGarlick/Eclair/tree/main/src/elements/custom-tag.js)__<br/>
+# Eclair Hyperlink__extends [EclairCustomTagComponent](https://github.com/SamGarlick/Eclair/tree/main/docs/elements/custom-tag.md)__<br/>
+
+Source: [_elements.standard.link_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/standard/link.js)
 Create a eclair hyperlink object.
-Eclair.styles.Link: Default link style.
+**Eclair.styles.Link**  Default link style.
 ```javascript
 Eclair.Link('DuckDuckGo')
     .url('https://duckduckgo.com/')
@@ -31,4 +32,3 @@ Eclair.Link('DuckDuckGo')
 
 ### Inherits from: elements.custom-tag
  - [.innerHTML()](https://github.com/SamGarlick/Eclair/tree/main/docs/elements/custom-tag.md#innerHTML)
-<br/>Source: [_elements.standard.link_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/standard/link.js)

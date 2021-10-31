@@ -1,7 +1,8 @@
-# Eclair Tab View
-__extends [EclairView](https://github.com/SamGarlick/Eclair/tree/main/src/elements/layout/view.js)__<br/>
+# Eclair Tab View__extends [EclairView](https://github.com/SamGarlick/Eclair/tree/main/docs/elements/layout/view.md)__<br/>
+
+Source: [_elements.layout.tabs.view_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/layout/tabs/view.js)
 Create a tab view capable of hiding and showing states.
-Eclair.styles.TabView: Tab View style.
+**Eclair.styles.TabView**  Tab View style.
 ```javascript
 let selectedTab = State(0)
 
@@ -42,4 +43,3 @@ Eclair.TabView([
     {"id": "1", ...},
 ], e => {return TabPage([...])})
 ```
-<br/>Source: [_elements.layout.tabs.view_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/layout/tabs/view.js)

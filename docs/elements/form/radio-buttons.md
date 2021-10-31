@@ -1,13 +1,14 @@
-# Eclair Progress Bar
-__extends [EclairComponent](https://github.com/SamGarlick/Eclair/tree/main/src/elements/component.js)__<br/>
+# Eclair Progress Bar__extends [EclairComponent](https://github.com/SamGarlick/Eclair/tree/main/docs/elements/component.md)__<br/>
+
+Source: [_elements.form.radio-buttons_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/form/radio-buttons.js)
 An eclair Radio Button object.
-Eclair.styles.RadioButtons: Shared Radio Button style.
-Eclair.styles.RadioButtonsRadio: Shared Radio Button Radio style.
-Eclair.styles.RadioButtonsLabel: Shared Radio Button Label style.
-Eclair.styles.RadioButtonsItem: Shared Radio Button Item style.
-Eclair.styles.RadioButtonsSelectedRadio: Shared Radio Button Selected Radio style.
-Eclair.styles.RadioButtonsSelectedLabel: Shared Radio Button Selected Label style.
-Eclair.styles.RadioButtonsSelectedItem: Shared Radio Button Selected Item style.
+**Eclair.styles.RadioButtons**  Shared Radio Button style.
+**Eclair.styles.RadioButtonsRadio**  Shared Radio Button Radio style.
+**Eclair.styles.RadioButtonsLabel**  Shared Radio Button Label style.
+**Eclair.styles.RadioButtonsItem**  Shared Radio Button Item style.
+**Eclair.styles.RadioButtonsSelectedRadio**  Shared Radio Button Selected Radio style.
+**Eclair.styles.RadioButtonsSelectedLabel**  Shared Radio Button Selected Label style.
+**Eclair.styles.RadioButtonsSelectedItem**  Shared Radio Button Selected Item style.
 ```javascript
 Eclair.RadioButtons(["Option A", "Option B", "Option C"])
     .value("Option A")
@@ -100,4 +101,3 @@ Eclair.RadioButtons(["Option A", "Option B", "Option C"])
              .background("green", "hover")
     })
 ```            
-<br/>Source: [_elements.form.radio-buttons_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/form/radio-buttons.js)

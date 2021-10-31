@@ -71,25 +71,27 @@ class DocumentationBuilder:
         
         return documentation_data
     
-    def parse(self, breadcrumbs, documentation):
-        documentation_data = self.__parse_source_doc(breadcrumbs, documentation)
+    def buildMDFile(self, breadcrumbs, documentation, documentation_data):
         current_methods = set()
 
         if documentation_data["title"] is None:
             print("\033[31mMissng src doc for: " + breadcrumbs)
 
         else:
-            documentation = ["# " + documentation_data["title"]]
-
             if documentation_data["extends"] is not None:
                 extends_breadcrumbs, class_name = documentation_data["extends"].split(":")
-                documentation += [f"__extends [{class_name}]({DOC_SRC_LINK}{extends_breadcrumbs.replace('.', '/')}.js)__<br/>"]
+                documentation = ["# " + documentation_data["title"] + f"__extends [{class_name}]({DOC_DOC_LINK}{extends_breadcrumbs.replace('.', '/')}.md)__<br/>"]
+            else:
+                documentation = ["# " + documentation_data["title"]]
+
+            documentation.append(f"\nSource: [_{breadcrumbs}_]({DOC_SRC_LINK}{breadcrumbs.replace('.', '/')}.js)")
 
             if documentation_data["description"] is not None:
                 documentation += [documentation_data["description"]]
 
             for style in documentation_data["shared_styles"]:
-                documentation += [style]
+                tokens = style.split(":")
+                documentation += ["**" + tokens[0] + "** " + tokens[1]]
 
             for line in documentation_data["lines"]:
                 documentation += [line]
@@ -120,12 +122,15 @@ class DocumentationBuilder:
                     if len(inherits) > 0:
                         documentation += ["\n### Inherits from: " + parent_id] + inherits
                     parent_id = self.tree[parent_id]["extends"]
-
-            documentation.append(f"<br/>Source: [_{breadcrumbs}_]({DOC_SRC_LINK}{breadcrumbs.replace('.', '/')}.js)")
             
             return "\n".join(documentation)
 
         return ""
+    
+    
+    def parse(self, breadcrumbs, documentation):
+        documentation_data = self.__parse_source_doc(breadcrumbs, documentation)
+        return self.buildMDFile(breadcrumbs, documentation, documentation_data)
 
 
 def parse_file(breadcrumbs_path, text):
@@ -310,6 +315,8 @@ if __name__ == "__main__":
         
     with open(OUTPUT_TEST, "w+") as file:
         file.write(compile_test_cases(eclair_test_cases))
+        
+    print("\033[31mBuild.py missing args in documentation.")
         
 #    print(uglipyjs.compile(eclair_source, {'mangle':False}))
     

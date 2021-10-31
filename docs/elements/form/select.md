@@ -1,7 +1,8 @@
-# Eclair Select
-__extends [EclairView](https://github.com/SamGarlick/Eclair/tree/main/src/elements/layout/view.js)__<br/>
+# Eclair Select__extends [EclairView](https://github.com/SamGarlick/Eclair/tree/main/docs/elements/layout/view.md)__<br/>
+
+Source: [_elements.form.select_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/form/select.js)
 An eclair select element.
-Eclair.styles.Select: Select style.
+**Eclair.styles.Select**  Select style.
 ```javascript
 Eclair.Select(["apple", "orange", "banana"])
     .selectedIndex(0)
@@ -26,4 +27,3 @@ index: The index to select.
 Eclair.Select(["apple", "orange", "banana"])
     .selectedIndex(1)
 ```
-<br/>Source: [_elements.form.select_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/form/select.js)
