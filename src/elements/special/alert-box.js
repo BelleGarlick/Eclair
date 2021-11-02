@@ -21,7 +21,6 @@ Eclair.styles.AlertBox = Eclair.Style("eclair-style-alert-box")
 Eclair.styles.AlertBoxTitle = Eclair.Style("eclair-style-alert-title")
     .fontWeight(500)
     .fontSize("1.5rem")
-    .display("none")
     .fontColor("rgba(0, 0, 0, 0.6)")
     .width("100%")
     .marginBottom(".5rem")
@@ -61,14 +60,18 @@ class EclairAlertBox extends EclairComponent {
         // the title
         this._titleText = Ø(null)
         
-        // Create child objects
-        this._text = this._addChild(Eclair.Text(text))
-        this._title = this._addChild(Eclair.Text(this._titleText))
-        
-        // Add styles to the objects
+        // Add style to this object
         this.addStyle(Eclair.styles.AlertBox)
-        this._title.addStyle(Eclair.styles.AlertBoxTitle)
-        this._text.addStyle(Eclair.styles.AlertBoxText)
+        
+        // Create child objects
+        this._text = null, this._title = null
+        this.declareChildrenWithContext(_ => {
+            this._text = Eclair.Text(text)
+                .addStyle(Eclair.styles.AlertBoxText)
+            
+            this._title = Eclair.Text(this._titleText)
+                .addStyle(Eclair.styles.AlertBoxTitle)
+        })
     }
     
     /// METHOD .theme
@@ -98,6 +101,7 @@ class EclairAlertBox extends EclairComponent {
             this._titleText.value(value)
             
             let hideTitle = value == null || value.trim().length == 0
+            console.log(hideTitle)
             this._title.display(hideTitle? "none": "block")
         })
         
@@ -105,7 +109,10 @@ class EclairAlertBox extends EclairComponent {
     }
     
     build() {
-        return `<div>${this._title.compile()}${this._text.compile()}</div>`
+        let elem = document.createElement("div")
+        elem.appendChild(this._title.compile())
+        elem.appendChild(this._text.compile())
+        return elem
     }
 }
     

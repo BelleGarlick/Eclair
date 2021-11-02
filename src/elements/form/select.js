@@ -160,17 +160,17 @@ class EclairSelect extends EclairView {
         if (this.overrideOnChangeCallback != null) {this.overrideOnChangeCallback(this)}
     }
     
-    build () {                
-        let code = ""
+    build () {   
+        let elem = document.createElement("select")
         for (let e = 0; e < this.children.length; e++) {
             let child = this.children[e]
             if (e == this._selectedIndex) {
                 child.setAttr("selected", "true")
             }
                 
-            code += child.compile()
+            elem.appendChild(child.compile())
         }
         
-        return `<select>` + code + `</select>`;
+        return elem;
     }
 }

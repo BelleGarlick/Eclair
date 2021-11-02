@@ -5,13 +5,17 @@
 
 
 let Eclair = {
-    version: "0.0.94",
-    _ids: 0,
+    version: "0.0.95",
+    _ids: -1,
     _elements: {},
     _styles: {},
     _newID: function() {
         this._ids += 1; 
-        return "eclair-element-" + (this._ids - 1);
+        return "eclair-element-" + this._ids;
+    },
+    context: {
+        active: false,
+        element: null
     },
 
     theme: {},
@@ -31,7 +35,7 @@ try {
 try {
     Eclair.theme.font = EclairThemeFont;
 } catch(err) {
-    Eclair.theme.font = '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"'
+    Eclair.theme.font = 'arial'
 }
 
 
@@ -483,6 +487,7 @@ class EclairColor extends EclairState {
         if (h instanceof Array) {
             return this.HSLA(h[0], h[1], h[2], h[3])
         }
+        
         var r, g, b;
 
         if  (s == 0){
@@ -888,7 +893,7 @@ class EclairStylableObject {
         if (newCSSElement != null) {
             if (curCSSElements.length == 0) {
                 if (!(this instanceof EclairSharedStyle)) {
-                    document.head.appendChild(newCSSElement)
+                    document.body.appendChild(newCSSElement)
                 }
             } else {
                 curCSSElements[0].innerHTML = newCSSElement.innerHTML;
@@ -932,60 +937,181 @@ class EclairStylableObject {
     }
     
     css(_style, rule) {return this._set("css", _style, rule)}
-    display(_display, rule) {return this._set("display", _display, rule)}
-    background(_background, rule) {return this._set("background", _background, rule)}
-    backgroundColor(_color, rule) {return this._set("background-color", _color, rule)}
-    backgroundSize(_color, rule) {return this._set("background-size", _color, rule)}
-    borderSize(_size, rule) {return this._set("border-width", _size, rule)}
+    
+    alignContent(_value, selector) {return this._set("align-content", _value, selector)}
+    alignItems(_value, selector) {return this._set("align-items", _value, selector)}
+    alignSelf(_value, selector) {return this._set("align-self", _value, selector)}
+    animation(_value, selector) {return this._set("animation", _value, selector)}
+    animationDelay(_value, selector) {return this._set("animation-delay", _value, selector)}
+    animationDirection(_value, selector) {return this._set("animation-direction", _value, selector)}
+    animationDuration(_value, selector) {return this._set("animation-duration", _value, selector)}
+    animationFillMode(_value, selector) {return this._set("animation-fill-mode", _value, selector)}
+    animationIterationCount(_value, selector) {return this._set("animation-iteration-count", _value, selector)}
+    animationName(_value, selector) {return this._set("animation-name", _value, selector)}
+    animationPlayState(_value, selector) {return this._set("animation-play-state", _value, selector)}
+    animationTimingFunction(_value, selector) {return this._set("animation-timing-function", _value, selector)}
+    appearance(_value, rule) {return this._set("-webkit-appearance", _value, rule)._set("appearance", _value, rule)}
+    backfaceVisibility(_background, rule) {return this._set("backface-visibility", _background, rule)}
+    background(_value, rule) {return this._set("background", _value, rule)}
+    backgroundAttachment(_value, rule) {return this._set("background-attachment", _value, rule)}
+    backgroundClip(_value, rule) {return this._set("background-clip", _value, rule)}
+    backgroundColor(_value, rule) {return this._set("background-color", _value, rule)}
+    backgroundImage(_value, rule) {return this._set("background-image", _value, rule)}
+    backgroundOrigin(_value, rule) {return this._set("background-origin", _value, rule)}
+    backgroundPosition(_value, rule) {return this._set("background-position", _value, rule)}
+    backgroundRepeat(_value, rule) {return this._set("background-repeat", _value, rule)}
+    backgroundSize(_value, rule) {return this._set("background-size", _value, rule)}
+    border(_value, rule) {return this._set("border", _value, rule)}
+    borderBottom(_value, rule) {return this._set("border-bottom", _value, rule)}
+    borderBottomColor(_value, rule) {return this._set("border-bottom-color", _value, rule)}
+    borderBottomLeftRadius(_value, rule) {return this._set("border-bottom-left-radius", _value, rule)}
+    borderBottomRightRadius(_value, rule) {return this._set("border-bottom-right-radius", _value, rule)}
+    borderBottomStyle(_value, rule) {return this._set("border-bottom-style", _value, rule)}
+    borderBottomWidth(_value, rule) {return this._set("border-bottom-width", _value, rule)}
+    borderCollapse(_value, rule) {return this._set("border-collapse", _value, rule)}
     borderColor(_color, rule) {return this._set("border-color", _color, rule)}
+    borderImage(_value, rule) {return this._set("border-image", _value, rule)}
+    borderImageOutset(_value, rule) {return this._set("border-image-outset", _value, rule)}
+    borderImageRepeat(_value, rule) {return this._set("border-image-repeat", _value, rule)}
+    borderImageSlice(_value, rule) {return this._set("border-image-slice", _value, rule)}
+    borderImageSource(_value, rule) {return this._set("border-image-source", _value, rule)}
+    borderLeft(_value, rule) {return this._set("border-left", _value, rule)}
+    borderLeftColor(_value, rule) {return this._set("border-left-color", _value, rule)}
+    borderLeftStyle(_value, rule) {return this._set("border-left-style", _value, rule)}
+    borderLeftWidth(_value, rule) {return this._set("border-left-width", _value, rule)}
+    borderRadius(_value, rule) {return this._set("border-radius", _value, rule)}
+    borderRight(_value, rule) {return this._set("border-right", _value, rule)}
+    borderRightColor(_value, rule) {return this._set("border-right-color", _value, rule)}
+    borderRightStyle(_value, rule) {return this._set("border-right-style", _value, rule)}
+    borderRightWidth(_value, rule) {return this._set("border-right-width", _value, rule)}
+    borderSpacing(_value, rule) {return this._set("border-spacing", _value, rule)}
     borderStyle(_style, rule) {return this._set("border-style", _style, rule)}
-    borderRadius(_radius, rule) {return this._set("border-radius", _radius, rule)}
-    boxShadow(_radius, rule) {return this._set("box-shadow", _radius, rule)}
-    padding(_size, rule) {return this._set("padding", _size, rule)}
-    margin(_size, rule) {return this._set("margin", _size, rule)}
-    marginTop(_size, rule) {return this._set("margin-top", _size, rule)}
-    marginLeft(_size, rule) {return this._set("margin-left", _size, rule)}
-    marginBottom(_size, rule) {return this._set("margin-bottom", _size, rule)}
-    marginright(_size, rule) {return this._set("margin-right", _size, rule)}
-    gap(_size, rule) {return this._set("gap", _size, rule)}
-    font(_family, rule) {return this._set("font-family", _family, rule)}
-    fontSize(_size, rule) {return this._set("font-size", _size, rule)}
-    fontColor(_color, rule) {return this._set("color", _color, rule)}
-    fontWeight(_weight, rule) {return this._set("font-weight", _weight, rule)}
-    width(_width, rule) {return this._set("width", _width, rule)}
-    maxWidth(_width, rule) {return this._set("max-width", _width, rule)}
-    minWidth(_width, rule) {return this._set("min-width", _width, rule)}
-    height(_height, rule) {return this._set("height", _height, rule)}
-    maxHeight(_height, rule) {return this._set("max-height", _height, rule)}
-    minHeight(_height, rule) {return this._set("min-height", _height, rule)}
-    opacity(_opacity, rule) {return this._set("opacity", _opacity, rule)}
-    textAlign(_align, rule) {return this._set("text-align", _align, rule)}
-    verticalAlign(_align, rule) {return this._set("vertical-align", _align, rule)}
-    position(_pos, rule) {return this._set("position", _pos, rule)}
-    top(_top, rule) {return this._set("top", _top, rule)}
+    borderSize(value, rule) {return this._set("border-width", value, rule)}
+    borderTop(_value, rule) {return this._set("border-top", _value, rule)}
+    borderTopColor(_value, rule) {return this._set("border-top-color", _value, rule)}
+    borderTopLeftRadius(_value, rule) {return this._set("border-top-left-radius", _value, rule)}
+    borderTopRightRadius(_value, rule) {return this._set("border-top-right-radius", _value, rule)}
+    borderTopStyle(_value, rule) {return this._set("border-top-style", _value, rule)}
+    borderTopWidth(_value, rule) {return this._set("border-top-width", _value, rule)}
+    borderWidth(_size, rule) {return this._set("border-width", _size, rule)}
     bottom(_bottom, rule) {return this._set("bottom", _bottom, rule)}
-    left(_left, rule) {return this._set("left", _left, rule)}
-    right(_right, rule) {return this._set("right", _right, rule)}
-    cursor(_value, rule) {return this._set("cursor", _value, rule)}
-    textDecoration(_value, rule) {return this._set("text-decoration", _value, rule)}
-    transition(_value, rule) {return this._set("transition", _value, rule)}
-    userSelect(_value, rule) {return this._set("user-select", _value, rule)}
+    boxShadow(_radius, rule) {return this._set("box-shadow", _radius, rule)}
     boxSizing(_value, rule) {return this._set("box-sizing", _value, rule)}
-    transform(_value, rule) {return this._set("transform", _value, rule)}
-    justifyContent(_value, rule) {return this._set("justify-content", _value, rule)}
-    outline(_value, rule) {return this._set("outline", _value, rule)}
+    captionSize(_value, rule) {return this._set("caption-side", _value, rule)}
     caretColor(_value, rule) {return this._set("caret-color", _value, rule)}
-    resize(_value, rule) {return this._set("resize", _value, rule)}
-    whiteSpace(_value, rule) {return this._set("white-space", _value, rule)}
-    overflowWrap(_value, rule) {return this._set("overflow-wrap", _value, rule)}
+    clear(_value, rule) {return this._set("clear", _value, rule)}
+    clip(_value, rule) {return this._set("clip", _value, rule)}
+    color(_value, rule) {return this._set("color", _value, rule)}
+    columnCount(_value, rule) {return this._set("column-count", _value, rule)}
+    columnFill(_value, rule) {return this._set("column-fill", _value, rule)}
+    columnGap(_value, rule) {return this._set("column-gap", _value, rule)}
+    columnRule(_value, rule) {return this._set("column-rule", _value, rule)}
+    columnRuleColor(_value, rule) {return this._set("column-rule-color", _value, rule)}
+    columnRuleStyle(_value, rule) {return this._set("column-rule-style", _value, rule)}
+    columnRuleWidth(_value, rule) {return this._set("column-rule-width", _value, rule)}
+    columnSpan(_value, rule) {return this._set("column-span", _value, rule)}
+    columnWidth(_value, rule) {return this._set("column-width", _value, rule)}
+    columns(_value, rule) {return this._set("columns", _value, rule)}
+    content(_value, rule) {return this._set("content", _value, rule)}
+    counterIncrement(_value, rule) {return this._set("counter-increment", _value, rule)}
+    counterReset(_value, rule) {return this._set("counter-reset", _value, rule)}
+    cursor(_value, rule) {return this._set("cursor", _value, rule)}
+    direction(_value, rule) {return this._set("direction", _value, rule)}
+    display(_display, rule) {return this._set("display", _display, rule)}
+    emptyCells(_value, rule) {return this._set("empty-cells", _value, rule)}
+    flex(_value, rule) {return this._set("flex", _value, rule)}
+    flexBasis(_value, rule) {return this._set("flex-basis", _value, rule)}
+    flexDirection(_value, rule) {return this._set("flex-direction", _value, rule)}
+    flexFlow(_value, rule) {return this._set("flex-flow", _value, rule)}
+    flexGrow(_value, rule) {return this._set("flex-grow", _value, rule)}
+    flexShrink(_value, rule) {return this._set("flex-shrink", _value, rule)}
+    flexWrap(_value, rule) {return this._set("flex-wrap", _value, rule)}
+    float(_value, rule) {return this._set("float", _value, rule)}
+    font(_family, rule) {return this._set("font", _family, rule)}
+    fontColor(_color, rule) {return this._set("color", _color, rule)}
+    fontFamily(_family, rule) {return this._set("font-family", _family, rule)}
+    fontSize(_size, rule) {return this._set("font-size", _size, rule)}
+    fontSizeAdjust(_weight, rule) {return this._set("font-size-adjust", _weight, rule)}
+    fontStretch(_weight, rule) {return this._set("font-stretch", _weight, rule)}
+    fontStyle(_weight, rule) {return this._set("font-style", _weight, rule)}
+    fontVariant(_weight, rule) {return this._set("font-variant", _weight, rule)}
+    fontWeight(_weight, rule) {return this._set("font-weight", _weight, rule)}
+    gap(_size, rule) {return this._set("gap", _size, rule)}
+    height(_height, rule) {return this._set("height", _height, rule)}
+    justifyContent(_value, rule) {return this._set("justify-content", _value, rule)}
+    left(_left, rule) {return this._set("left", _left, rule)}
+    letterSpacing(_value, rule) {return this._set("letter-spacing", _value, rule)}
+    lineHeight(_value, rule) {return this._set("line-height", _value, rule)}
+    listStyle(_value, rule) {return this._set("list-style", _value, rule)}
+    listStyleImage(_value, rule) {return this._set("list-style-image", _value, rule)}
+    listStylePosition(_value, rule) {return this._set("list-style-position", _value, rule)}
+    listStyleType(_value, rule) {return this._set("list-style-type", _value, rule)}
+    margin(_size, rule) {return this._set("margin", _size, rule)}
+    marginBottom(_size, rule) {return this._set("margin-bottom", _size, rule)}
+    marginLeft(_size, rule) {return this._set("margin-left", _size, rule)}
+    marginTop(_size, rule) {return this._set("margin-top", _size, rule)}
+    marginright(_size, rule) {return this._set("margin-right", _size, rule)}
+    maxHeight(_height, rule) {return this._set("max-height", _height, rule)}
+    maxWidth(_width, rule) {return this._set("max-width", _width, rule)}
+    minHeight(_height, rule) {return this._set("min-height", _height, rule)}
+    minWidth(_width, rule) {return this._set("min-width", _width, rule)}
+    opacity(_value, rule) {return this._set("opacity", _value, rule)}
+    order(_value, rule) {return this._set("order", _value, rule)}
+    outline(_value, rule) {return this._set("outline", _value, rule)}
+    outlineColor(_value, rule) {return this._set("outline-color", _value, rule)}
+    outlineOffset(_value, rule) {return this._set("outline-offset", _value, rule)}
+    outlineStyle(_value, rule) {return this._set("outline-style", _value, rule)}
+    outlineWidth(_value, rule) {return this._set("outline-width", _value, rule)}
     overflow(_value, rule) {return this._set("overflow", _value, rule)}
+    overflowWrap(_value, rule) {return this._set("overflow-wrap", _value, rule)}
     overflowX(_value, rule) {return this._set("overflow-x", _value, rule)}
     overflowY(_value, rule) {return this._set("overflow-y", _value, rule)}
-    lineHeight(_value, rule) {return this._set("line-height", _value, rule)}
-    appearance(_value, rule) {return this._set("-webkit-appearance", _value, rule)._set("appearance", _value, rule)}
-    
-    flexDirection(_value, selector) {return this._set("flex-direction", _value, selector)}
-    alignItems(_value, selector) {return this._set("align-items", _value, selector)}
+    padding(_size, rule) {return this._set("padding", _size, rule)}
+    paddingBottom(_size, rule) {return this._set("padding-bottom", _size, rule)}
+    paddingLeft(_size, rule) {return this._set("padding-left", _size, rule)}
+    paddingRight(_size, rule) {return this._set("padding-right", _size, rule)}
+    paddingTop(_size, rule) {return this._set("padding-top", _size, rule)}
+    pageBreak(value, rule) {return this._set("page-break", value, rule)}
+    pageBreakAfter(value, rule) {return this._set("page-break-after", value, rule)}
+    pageBreakBefore(value, rule) {return this._set("page-break-before", value, rule)}
+    pageBreakInside(value, rule) {return this._set("page-break-inside", value, rule)}
+    perspective(value, rule) {return this._set("perspective", value, rule)}
+    perspectiveOrigin(value, rule) {return this._set("perspective-origin", value, rule)}
+    position(_pos, rule) {return this._set("position", _pos, rule)}
+    quotes(value, rule) {return this._set("quotes", value, rule)}
+    resize(_value, rule) {return this._set("resize", _value, rule)}
+    right(_right, rule) {return this._set("right", _right, rule)}
+    tabSize(value, rule) {return this._set("tab-size", value, rule)}
+    tableLayout(_value, rule) {return this._set("table-layout", _value, rule)}
+    textAlign(_align, rule) {return this._set("text-align", _align, rule)}
+    textAlignLast(_align, rule) {return this._set("text-align-last", _align, rule)}
+    textDecoration(_value, rule) {return this._set("text-decoration", _value, rule)}
+    textDecorationColor(_value, rule) {return this._set("text-decoration-color", _value, rule)}
+    textDecorationLine(_value, rule) {return this._set("text-decoration-line", _value, rule)}
+    textDecorationStyle(_value, rule) {return this._set("text-decoration-style", _value, rule)}
+    textIndent(_value, rule) {return this._set("text-indent", _value, rule)}
+    textJustify(_value, rule) {return this._set("text-justify", _value, rule)}
+    textOverflow(_value, rule) {return this._set("text-overflow", _value, rule)}
+    textShadow(_value, rule) {return this._set("text-shadow", _value, rule)}
+    textTransform(_value, rule) {return this._set("text-transform", _value, rule)}
+    top(_top, rule) {return this._set("top", _top, rule)}
+    transform(_value, rule) {return this._set("transform", _value, rule)}
+    transformOrigin(_value, rule) {return this._set("transform-origin", _value, rule)}
+    transformStyle(_value, rule) {return this._set("transform-style", _value, rule)}
+    transition(_value, rule) {return this._set("transition", _value, rule)}
+    transitionDelay(_value, rule) {return this._set("transition-delay", _value, rule)}
+    transitionDuration(_value, rule) {return this._set("transition-duration", _value, rule)}
+    transitionProperty(_value, rule) {return this._set("transition-property", _value, rule)}
+    transitionTimingFunction(_value, rule) {return this._set("transition-timing-function", _value, rule)}
+    userSelect(_value, rule) {return this._set("user-select", _value, rule)}
+    verticalAlign(_align, rule) {return this._set("vertical-align", _align, rule)}
+    visibility(value, rule) {return this._set("visibility", value, rule)}
+    whiteSpace(_value, rule) {return this._set("white-space", _value, rule)}
+    width(_width, rule) {return this._set("width", _width, rule)}
+    wordBreak(_width, rule) {return this._set("word-break", _width, rule)}
+    wordSpacing(_width, rule) {return this._set("word-spacing", _width, rule)}
+    wordWrap(_width, rule) {return this._set("word-wrap", _width, rule)}
+    zIndex(value, rule) {return this._set("z-index", _width, rule)}
 }
 
 
@@ -1040,18 +1166,25 @@ class EclairComponent extends EclairStylableObject {
         this._id = Eclair._newID();
         Eclair._elements[this.eID()] = this;
         
-        this.parent = null
-        this.children = []
-        
         this._callbacks = {}
-        this.sharedStyles = [this.eID()]
-        this.attributes = {class: this.eID()}
+        this.sharedStyles = []
+        this.attributes = {}
         this.stateBindings = {}
         
         this._hidden = false
         this._hiddenStyle = "inline"
         
         this._buildStyle = true
+        
+        this.parent = null
+        this.children = []
+        
+        this.htmlNode = null
+        
+        if (Eclair.context.element != null && Eclair.context.active) {
+            this.parent = Eclair.context.element;
+            Eclair.context.element.children.push(this);
+        }
     }
     
     eID() {return this._id;}
@@ -1064,30 +1197,40 @@ class EclairComponent extends EclairStylableObject {
         }
     }
     
+    declareChildrenWithContext(elements) {
+        let currentContextElement = Eclair.context.element;
+        let currentContextActive = Eclair.context.active;
+            
+        Eclair.context.element = this
+        Eclair.context.active = true
+        
+        elements(this)
+        
+        Eclair.context.element = currentContextElement
+        Eclair.context.active = currentContextActive
+    }
+    
     write() {
-        document.write(this.compile())
+        document.body.appendChild(this.compile())
         return this
     }
     
-    to(elemID) {
-        document.getElementById(elemID).innerHTML = this.compile();
+    to(elem) {
+        if (typeof(elem) == "string") {
+            elem = document.getElementById(elem)
+        }
+        elem.appendChild(this.compile())
         return this
     }
     
     getElement(callback) {
-        let elems = document.getElementsByClassName(this.eID());
-        
         if (callback != null) {
-            if (elems.length > 0) {
-                callback(elems[0]);
+            if (this.htmlNode != null) {
+                callback(this.htmlNode);
             }
             return this
         } else {
-            if (elems.length > 0) {
-                return elems[0]
-            } else {
-                return null
-            }
+            return this.htmlNode;
         }
     }
     
@@ -1133,8 +1276,8 @@ class EclairComponent extends EclairStylableObject {
                 if (n > 0) {classesString += " ";}
                 classesString += this.sharedStyles[n];
             }
-            this.attributes["class"] = classesString;
-            this.getElement(elem => {elem.setAttribute("class", classesString)})
+            this.attributes["class"] = classesString + " " + this.eID();
+            this.getElement(elem => {elem.setAttribute("class", classesString + " " + this.eID())})
             
             let elem = this.getElement()
             if (elem != null) {
@@ -1165,8 +1308,8 @@ class EclairComponent extends EclairStylableObject {
                 if (n > 0) {classesString += " ";}
                 classesString += this.sharedStyles[n];
             }
-            this.attributes["class"] = classesString;
-            this.getElement(elem => {elem.setAttribute("class", classesString)})
+            this.attributes["class"] = classesString + " " + this.eID();
+            this.getElement(elem => {elem.setAttribute("class", classesString + " " + this.eID())})
         }
         return this;
     }
@@ -1206,10 +1349,25 @@ class EclairComponent extends EclairStylableObject {
         throw "Build function not implemented"
     }
     
-    compile() {       
-        let wrapperElement = document.createElement("div")
-        wrapperElement.innerHTML = this.build();
-        let element = wrapperElement.children[0]
+    compile() {   
+        if (this.htmlNode != null) {
+            return this.htmlNode;
+        }
+        
+        let element = null
+        let builtObject = this.build();
+        if (typeof(builtObject) == "string") {
+            let wrapperElement = document.createElement("div")
+            wrapperElement.innerHTML = this.build();
+            element = wrapperElement.children[0]
+        } 
+        else if (builtObject instanceof Node) {
+            element = builtObject;
+        } 
+        else {
+            console.log(this)
+            throw ".build() must return either a String or HTML Node element."
+        }
         
         
         let classes = this.getAttr("class")
@@ -1230,11 +1388,13 @@ class EclairComponent extends EclairStylableObject {
         if (this._buildStyle) {
             let builtStyle = this.buildStyleObject();
             if (builtStyle != null && document.getElementsByClassName(builtStyle.getAttribute("class")).length == 0) {
-                document.head.appendChild(builtStyle)
+                document.body.appendChild(builtStyle)
             }
         }
         
-        return wrapperElement.innerHTML
+        this.htmlNode = element;
+        
+        return element
     }
     
     onBlur(callback) {return this._updateCallback("onBlur", callback);}
@@ -1275,12 +1435,6 @@ class EclairComponent extends EclairStylableObject {
             this.setAttr(callbackKey.toLowerCase(), `Eclair.triggerEvent("${this.eID()}", "${callbackKey}", event)`)
         }
         return this;
-    }
-    
-    _addChild(item) {
-        this.children.push(item)
-        item.parent = this
-        return item
     }
     
     child(n, callback) {
@@ -1334,7 +1488,9 @@ class EclairCustomTagComponent extends EclairComponent {
     }
     
     build() {
-        return `<${this.tag}>${this._innerHTML}</${this.tag}>`
+        let elem = document.createElement(this.tag)
+        elem.innerHTML = this._innerHTML;
+        return elem;
     }
 }
 
@@ -1351,61 +1507,73 @@ Eclair.styles.View = Eclair.Style("eclair-style-view")
 class EclairView extends EclairComponent {    
     
     constructor(elements, creatorFunc) {
-        super("view")
-        
+        super()
         this._elementTag = "div"
         
-        this.creatorFunc = (creatorFunc != null)? creatorFunc : (e) => {return e}
         
-        let self = this;
-        this.items = elements instanceof Array? Ø(elements) : elements
-        
-        let knownItems = []
-        
-        if (this.items instanceof EclairState && this.items.isArray()) {
-            this.bindState(elements, "element", array => {
-                var itemChanges = self._itemChanges(knownItems, array)
-                
-                let dummyParent = document.createElement("div")
-                
-                for (let i = 0; i < itemChanges.length; i++) {
-                    if (itemChanges[i] == -1) {
-                        let newItem = self.creatorFunc(array[i])
-                        if (self._isValidChild(newItem)) {
-                            self._addChild(newItem)
+        if (typeof(elements) == "function") {
+            this.declareChildrenWithContext(elements)
+            
+        } else {
+            this.creatorFunc = (creatorFunc != null)? creatorFunc : (e) => {return e}
+            this.items = elements instanceof Array? Ø(elements) : elements
+            let knownItems = []
+            
+            if (this.items.isArray()) {
+            
+                this.bindState(elements, "element", array => {
+                    var itemChanges = this._itemChanges(knownItems, array)
+                    
+                    let tempParent = document.createElement("div")
 
-                            let dummychild = document.createElement("div")
-                            dummychild.innerHTML = newItem.compile()
-                            dummyParent.appendChild(dummychild.childNodes[0])
-                        }
-                    } else {
-                        let itemIndexValue = itemChanges[i]
-                        
-                        dummyParent.appendChild(
-                            self.getElement().childNodes[itemIndexValue]
-                        );
-                        itemChanges[i] = -1
-                        
-                        for (let j = 0; j < itemChanges.length; j++) {
-                            if (itemChanges[j] >= itemIndexValue) {
-                                itemChanges[j] -= 1
+                    for (let i = 0; i < itemChanges.length; i++) {
+                        if (itemChanges[i] == -1) {
+                            let activeContext = Eclair.context.active;
+                            Eclair.context.active = false;
+                            let newItem = this.creatorFunc(array[i])
+                            if (this._isValidChild(newItem)) {
+                                newItem.parent = this;
+                                this.children.push(newItem)
+
+                                tempParent.appendChild(newItem.compile())
+                            }
+
+                            Eclair.context.active = activeContext;
+                        } else {
+                            let itemIndexValue = itemChanges[i]
+                            
+                            console.log(this.getElement())
+                            console.log(this.getElement().childNodes)
+                            
+                            tempParent.appendChild(
+                                this.getElement().childNodes[itemIndexValue]
+                            );
+                            itemChanges[i] = -1
+
+                            for (let j = 0; j < itemChanges.length; j++) {
+                                if (itemChanges[j] >= itemIndexValue) {
+                                    itemChanges[j] -= 1
+                                }
                             }
                         }
                     }
-                }
-                
-                
-                self.getElement(e => {
-                    while (dummyParent.firstChild) {
-                        e.appendChild(dummyParent.childNodes[0])
-                    }
+
+
+                    console.log(this.getElement())
+                    console.log(this.children)
+                    console.log(tempParent.children)
+                    this.getElement(e => {
+                        while (tempParent.firstChild) {
+                            e.appendChild(tempParent.childNodes[0])
+                        }
+                    })
+
+                    knownItems = []
+                    for (let i = 0; i < array.length; i++) {knownItems.push(array[i])}
+
+                    this._onItemsChanged()
                 })
-                
-                knownItems = []
-                for (let i = 0; i < array.length; i++) {knownItems.push(array[i])}
-                
-                this._onItemsChanged()
-            })
+            }
         }
         
         this.addStyle(Eclair.styles.View)
@@ -1435,26 +1603,21 @@ class EclairView extends EclairComponent {
         return true
     }
     
-    
-    build () {                
-        let code = ""
+    build () {          
+        let elem = document.createElement(this._elementTag);
+        
         for (let e = 0; e < this.children.length; e++) {
-            let child = this.children[e];
-            
+            let child = this.children[e]
             if (child instanceof EclairComponent) {
-                code += child.compile();
+                elem.appendChild(child.compile());
             }
-
-            else if (typeof(child) == "string") { 
-                code += child
-            } 
             
             else {
                 throw `Unable to compile object type: ${typeof(child)}`
             }
         }
         
-        return `<${this._elementTag}>` + code + `</${this._elementTag}>`;
+        return elem;
     }
 }
 
@@ -1580,7 +1743,6 @@ Eclair.styles.TabView = Eclair.Style("eclair-style-tab-view")
 
 class EclairTabView extends EclairView {
     
-    
     constructor(_selectedView, elements, func) {
         super(elements, func)
         
@@ -1648,16 +1810,15 @@ class EclairButton extends EclairComponent {
     }
     
     build() {
-        let text = this.text;
-        if (text == null) {
-            text = "Button"
+        let element = document.createElement("button")
+        
+        if (this.text instanceof EclairComponent) {
+            element.appendChild(this.text.compile())
+        } else {
+            element.innerHTML = this.text;
         }
         
-        if (text instanceof EclairComponent) {
-            text = text.compile()
-        } 
-        
-        return `<button>${this.text}</button>`
+        return element
     }
 }
 
@@ -1667,10 +1828,14 @@ Eclair.CheckBox = function(text) {
     return new EclairCheckBox(text);
 }
 
-Eclair.styles.CheckBox = Eclair.Style("eclair-style-checkbox")    
+Eclair.styles.CheckBox = Eclair.Style("eclair-style-checkbox") 
+    .display("flex")
+    .flexDirection("row")
+    .justifyContent("flex-start")
+    .padding("10px")
+    .gap("10px")
     .cursor("pointer")
     .boxShadow("0px 0px 0px 100px rgba(0, 0, 0, 0.05) inset", "hover")
-    .padding("2px")
     .borderRadius("4px")
     .width("100%")
     .transition("0.2s all")
@@ -1702,9 +1867,12 @@ class EclairCheckBox extends EclairComponent {
         this._hiddenValue = Ø(false)  // Private one which is updated in the .checked callback
         this._textValue = Ø("")  // Text value which is the message displayed alongside
         
-        this._label = this._addChild(Eclair.Text(this._textValue))
-        this._checkbox = this._addChild(Eclair.CustomTagComponent("div"))
-        this._hidden = this._addChild(Eclair.HiddenInput(this._hiddenValue))
+        this._label = null, this._checkbox = null, this._hidden = null;
+        this.declareChildrenWithContext(_=>{
+            this._label = Eclair.Text(this._textValue)
+            this._checkbox = Eclair.CustomTagComponent("div")
+            this._hidden = Eclair.HiddenInput(this._hiddenValue)
+        })
         
         let self = this
         this.overrideOnClick = null
@@ -1772,7 +1940,13 @@ class EclairCheckBox extends EclairComponent {
     }
     
     build() {
-        return `<table><tr><td width=1>${this._checkbox.compile()}</td><td>${this._label.compile()}</td></tr></table>${this._hidden.compile()}`
+        let checkbox = document.createElement("div")
+        
+        checkbox.appendChild(this._hidden.compile())
+        checkbox.appendChild(this._checkbox.compile())
+        checkbox.appendChild(this._label.compile())
+        
+        return checkbox
     }
 }
 
@@ -1891,7 +2065,7 @@ class EclairRadioButtons extends EclairComponent {
         
         this._options = _options instanceof EclairState? _options : Ø(_options)
         this._selectedIndex = -1
-        this._selectedValue = State("")
+        this._selectedValue = Ø("")
         
         this.customStyles = {
             "itemStyle": Eclair.Style(),
@@ -1903,19 +2077,23 @@ class EclairRadioButtons extends EclairComponent {
         }
         
         let self = this
-        this._hidden = this._addChild(Eclair.HiddenInput(this._selectedValue))
-        this._view = this._addChild(Eclair.VStack(_options, item => {
-            return new EclairRatioItem(item, this.customStyles)
-                .onClick((e, ev) => {
-                    let newIndex = this._updateSelectedItemStyles(item)
-                    
-                    this._selectedValue.value(item, self)
-                    this._selectedIndex = newIndex;
-                
-                    if (self.stateBindings.hasOwnProperty("index")) {self.stateBindings["index"].value(newIndex, self)}
-                    if (self.stateBindings.hasOwnProperty("value")) {self.stateBindings["value"].value(item, self)}
-                })
-        }))
+        this._hidden = null, this._view = null
+        console.log("Declairng")
+        this.declareChildrenWithContext(_=>{
+            this._hidden = Eclair.HiddenInput(this._selectedValue)
+            this._view = Eclair.VStack(_options, item => {
+                return new EclairRatioItem(item, this.customStyles)
+                    .onClick((e, ev) => {
+                        let newIndex = this._updateSelectedItemStyles(item)
+
+                        this._selectedValue.value(item, self)
+                        this._selectedIndex = newIndex;
+
+                        if (self.stateBindings.hasOwnProperty("index")) {self.stateBindings["index"].value(newIndex, self)}
+                        if (self.stateBindings.hasOwnProperty("value")) {self.stateBindings["value"].value(item, self)}
+                    })
+            })
+        })
         
         this.addStyle(Eclair.styles.RadioButtons)
     }
@@ -2004,8 +2182,13 @@ class EclairRadioButtons extends EclairComponent {
         return this           
     }
     
-    build() {         
-        return `<div>${this._hidden.compile()}${this._view.compile()}</div>`
+    build() {  
+        let elem = document.createElement("div")
+        
+        elem.appendChild(this._hidden.compile())
+        elem.appendChild(this._view.compile())
+        
+        return elem
     }
     
     cleanup() {
@@ -2193,18 +2376,18 @@ class EclairSelect extends EclairView {
         if (this.overrideOnChangeCallback != null) {this.overrideOnChangeCallback(this)}
     }
     
-    build () {                
-        let code = ""
+    build () {   
+        let elem = document.createElement("select")
         for (let e = 0; e < this.children.length; e++) {
             let child = this.children[e]
             if (e == this._selectedIndex) {
                 child.setAttr("selected", "true")
             }
                 
-            code += child.compile()
+            elem.appendChild(child.compile())
         }
         
-        return `<select>` + code + `</select>`;
+        return elem;
     }
 }
 
@@ -2434,6 +2617,7 @@ class EclairTextBox extends EclairCustomTagComponent {
 
 // elements.form.toggle
 
+
 Eclair.Toggle = function(_value) {
     return new EclairToggle(_value);
 }
@@ -2476,8 +2660,14 @@ class EclairToggle extends EclairComponent {
         
         let overrideOnClick = null;
         
-        this._tickMark = this._addChild(Eclair.Text("✓"))
-        this._knob = this._addChild(Eclair.View())
+        this._tickMark = null, this._knob = null;
+        this.declareChildrenWithContext(_=>{
+            this._tickMark = Eclair.Text("✓")
+                .addStyle(Eclair.styles.ToggleTick)
+            
+            this._knob = Eclair.CustomTagComponent("div")
+                .addStyle(Eclair.styles.ToggleKnob)
+        })
         
         this._value = (value instanceof EclairState)? value : Ø(value)
         this._hiddenComponent = Eclair.HiddenInput(this._value)
@@ -2501,8 +2691,6 @@ class EclairToggle extends EclairComponent {
         this._enabled = true
         
         this.addStyle(Eclair.styles.Toggle)
-        this._tickMark.addStyle(Eclair.styles.ToggleTick)
-        this._knob.addStyle(Eclair.styles.ToggleKnob)
         
         this.width("100%", " .wrapper")
             .transition("0.2s all", " .wrapper")
@@ -2560,7 +2748,16 @@ class EclairToggle extends EclairComponent {
     }
     
     build() {
-        return `<toggle>${this._tickMark.compile()}<div class='wrapper'>${this._knob.compile()}</div>${this._hiddenComponent.compile()}</toggle>`
+        let toggle = document.createElement("div")
+        
+        let wrapper = document.createElement("div")
+        wrapper.setAttribute("class", "wrapper")
+        wrapper.appendChild(this._knob.compile())
+        
+        toggle.appendChild(this._hiddenComponent.compile())
+        toggle.appendChild(wrapper)
+        
+        return toggle
     }
 }
 
@@ -2585,7 +2782,6 @@ Eclair.styles.AlertBox = Eclair.Style("eclair-style-alert-box")
 Eclair.styles.AlertBoxTitle = Eclair.Style("eclair-style-alert-title")
     .fontWeight(500)
     .fontSize("1.5rem")
-    .display("none")
     .fontColor("rgba(0, 0, 0, 0.6)")
     .width("100%")
     .marginBottom(".5rem")
@@ -2599,12 +2795,16 @@ class EclairAlertBox extends EclairComponent {
         
         this._titleText = Ø(null)
         
-        this._text = this._addChild(Eclair.Text(text))
-        this._title = this._addChild(Eclair.Text(this._titleText))
-        
         this.addStyle(Eclair.styles.AlertBox)
-        this._title.addStyle(Eclair.styles.AlertBoxTitle)
-        this._text.addStyle(Eclair.styles.AlertBoxText)
+        
+        this._text = null, this._title = null
+        this.declareChildrenWithContext(_ => {
+            this._text = Eclair.Text(text)
+                .addStyle(Eclair.styles.AlertBoxText)
+            
+            this._title = Eclair.Text(this._titleText)
+                .addStyle(Eclair.styles.AlertBoxTitle)
+        })
     }
     
     theme(_color) {
@@ -2620,6 +2820,7 @@ class EclairAlertBox extends EclairComponent {
             this._titleText.value(value)
             
             let hideTitle = value == null || value.trim().length == 0
+            console.log(hideTitle)
             this._title.display(hideTitle? "none": "block")
         })
         
@@ -2627,7 +2828,10 @@ class EclairAlertBox extends EclairComponent {
     }
     
     build() {
-        return `<div>${this._title.compile()}${this._text.compile()}</div>`
+        let elem = document.createElement("div")
+        elem.appendChild(this._title.compile())
+        elem.appendChild(this._text.compile())
+        return elem
     }
 }
     
@@ -2644,7 +2848,7 @@ Eclair.styles.ProgressBar = Eclair.Style("eclair-style-progress-bar")
     .height("16px")
     .userSelect("none")
     .overflow("hidden")
-Eclair.styles.ProgressBarIndicator = Eclair.Style("eclair-style-progress-bar")
+Eclair.styles.ProgressBarIndicator = Eclair.Style("eclair-style-progress-bar-indicator")
     .display("flex")
     .flexDirection("row")
     .alignItems("center")
@@ -2665,8 +2869,15 @@ class EclairProgressBar extends EclairComponent {
         super()
         
         this._labelText = Ø("0%")
-        this._label = Eclair.Text(this._labelText)
-        this._indicator = this._addChild(Eclair.HStack([this._label]))
+        
+        this._label = null, this._indicator = null
+        this.declareChildrenWithContext(_=>{
+            this._indicator = Eclair.View(_=>{
+                this._label = Eclair.Text(this._labelText)
+                    .addStyle(Eclair.styles.ProgressBarLabel)
+            })
+                .addStyle(Eclair.styles.ProgressBarIndicator)
+        })
         
         this.bindState(progress, "progress", value => {
             progress = Math.max(Math.min(value, 1), 0)
@@ -2676,8 +2887,6 @@ class EclairProgressBar extends EclairComponent {
         }, state => {return state.number(0.5)})
         
         this.addStyle(Eclair.styles.ProgressBar)
-        this._label.addStyle(Eclair.styles.ProgressBarLabel)
-        this._indicator.addStyle(Eclair.styles.ProgressBarIndicator)
     }
     
     striped(_on) {
@@ -2721,7 +2930,9 @@ class EclairProgressBar extends EclairComponent {
     }
     
     build() {
-        return `<div>${this._indicator.compile()}</div>`
+        let elem = document.createElement("div")
+        elem.appendChild(this._indicator.compile())
+        return elem
     }
 }
 
@@ -2818,19 +3029,20 @@ class EclairSyntaxHighlighter extends EclairComponent {
         this._cachedLines = {}
         this._codeState = (_code instanceof EclairState)? _code : Ø(_code)
         
-        this.codeElement = this._addChild(Eclair.CustomTagComponent("code")
-            .addStyle(Eclair.styles.SyntaxHighlighterCodeElement)
-         )
-        
-        this.textArea = this._addChild(Eclair.TextArea(this._codeState)
-            .removeStyle(Eclair.styles.TextArea)
-            .addStyle(Eclair.styles.SyntaxHighlighterTextAreaElement)
-            .setAttr("spellcheck", "false")
-            .onScroll((e, ev) => {
-                let textarea = e.getElement()
-                this.codeElement.getElement().scroll(textarea.scrollLeft, textarea.scrollTop)
-            })
-        )
+        this.codeElement = null, this.textArea = null;
+        this.declareChildrenWithContext(_ => {
+            this.codeElement = Eclair.CustomTagComponent("code")
+                .addStyle(Eclair.styles.SyntaxHighlighterCodeElement)
+
+            this.textArea = Eclair.TextArea(this._codeState)
+                .removeStyle(Eclair.styles.TextArea)
+                .addStyle(Eclair.styles.SyntaxHighlighterTextAreaElement)
+                .setAttr("spellcheck", "false")
+                .onScroll((e, ev) => {
+                    let textarea = e.getElement()
+                    this.codeElement.getElement().scroll(textarea.scrollLeft, textarea.scrollTop)
+                })
+        })
         
         this.addStyle(Eclair.styles.SyntaxHighlighter)
         
@@ -2932,7 +3144,11 @@ class EclairSyntaxHighlighter extends EclairComponent {
         for (let i = 0; i < classes.length; i++) {
             this.theme[classes[i]].create()
         }
-        return `<div>${this.codeElement.compile()}${this.textArea.compile()}</div>`
+        
+        let elem = document.createElement("div")
+        elem.appendChild(this.codeElement.compile())
+        elem.appendChild(this.textArea.compile())
+        return elem
     }
 }
 

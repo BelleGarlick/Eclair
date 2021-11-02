@@ -48,70 +48,82 @@ class EclairView extends EclairComponent {
     /// ])
     /// ```
     constructor(elements, creatorFunc) {
-        super("view")
-        
+        super()
         this._elementTag = "div"
         
-        this.creatorFunc = (creatorFunc != null)? creatorFunc : (e) => {return e}
         
-        let self = this;
-        this.items = elements instanceof Array? Ø(elements) : elements
-        
-        let knownItems = []
-        
-        if (this.items instanceof EclairState && this.items.isArray()) {
-            this.bindState(elements, "element", array => {
-                // Find the positional changes of all elements
-                var itemChanges = self._itemChanges(knownItems, array)
-                
-                // create new list of elements
-                let dummyParent = document.createElement("div")
-                
-                for (let i = 0; i < itemChanges.length; i++) {
-                    if (itemChanges[i] == -1) {
-                        // add new item to the dummy parent
-                        let newItem = self.creatorFunc(array[i])
-                        if (self._isValidChild(newItem)) {
-                            self._addChild(newItem)
+        if (typeof(elements) == "function") {
+            this.declareChildrenWithContext(elements)
+            
+        } else {
+            this.creatorFunc = (creatorFunc != null)? creatorFunc : (e) => {return e}
+            this.items = elements instanceof Array? Ø(elements) : elements
+            let knownItems = []
+            
+            if (this.items.isArray()) {
+            
+                this.bindState(elements, "element", array => {
+                    // Find the positional changes of all elements
+                    var itemChanges = this._itemChanges(knownItems, array)
+                    
+                    // create new list of elements
+                    let tempParent = document.createElement("div")
 
-                            let dummychild = document.createElement("div")
-                            dummychild.innerHTML = newItem.compile()
-                            dummyParent.appendChild(dummychild.childNodes[0])
-                        }
-                    } else {
-                        let itemIndexValue = itemChanges[i]
-                        
-                        dummyParent.appendChild(
-                            self.getElement().childNodes[itemIndexValue]
-                        );
-                        itemChanges[i] = -1
-                        
-                        for (let j = 0; j < itemChanges.length; j++) {
-                            if (itemChanges[j] >= itemIndexValue) {
-                                itemChanges[j] -= 1
+                    for (let i = 0; i < itemChanges.length; i++) {
+                        if (itemChanges[i] == -1) {
+                            let activeContext = Eclair.context.active;
+                            Eclair.context.active = false;
+                            // add new item to the temp parent
+                            let newItem = this.creatorFunc(array[i])
+                            if (this._isValidChild(newItem)) {
+                                newItem.parent = this;
+                                this.children.push(newItem)
+
+                                tempParent.appendChild(newItem.compile())
+                            }
+
+                            Eclair.context.active = activeContext;
+                        } else {
+                            let itemIndexValue = itemChanges[i]
+                            
+                            console.log(this.getElement())
+                            console.log(this.getElement().childNodes)
+                            
+                            tempParent.appendChild(
+                                this.getElement().childNodes[itemIndexValue]
+                            );
+                            itemChanges[i] = -1
+
+                            for (let j = 0; j < itemChanges.length; j++) {
+                                if (itemChanges[j] >= itemIndexValue) {
+                                    itemChanges[j] -= 1
+                                }
                             }
                         }
                     }
-                }
-                
-                // Have function for properly removing elements and references and from children
-                // remove all items from old list, child and element
-                // remove all elements and add all from the new list
-                
-                // Remove items from current element and add all elements as shown above
-                self.getElement(e => {
-                    while (dummyParent.firstChild) {
-                        e.appendChild(dummyParent.childNodes[0])
-                    }
+
+                    // Have function for properly removing elements and references and from children
+                    // remove all items from old list, child and element
+                    // remove all elements and add all from the new list
+
+                    // Remove items from current element and add all elements as shown above
+                    console.log(this.getElement())
+                    console.log(this.children)
+                    console.log(tempParent.children)
+                    this.getElement(e => {
+                        while (tempParent.firstChild) {
+                            e.appendChild(tempParent.childNodes[0])
+                        }
+                    })
+
+                    // Add all elements to the known elements array so we known what changes when the array changes
+                    knownItems = []
+                    for (let i = 0; i < array.length; i++) {knownItems.push(array[i])}
+
+                    // Update and children elements calling this object.
+                    this._onItemsChanged()
                 })
-                
-                // Add all elements to the known elements array so we known what changes when the array changes
-                knownItems = []
-                for (let i = 0; i < array.length; i++) {knownItems.push(array[i])}
-                
-                // Update and children elements calling this object.
-                this._onItemsChanged()
-            })
+            }
         }
         
         this.addStyle(Eclair.styles.View)
@@ -147,25 +159,20 @@ class EclairView extends EclairComponent {
         return true
     }
     
-    
-    build () {                
-        let code = ""
+    build () {          
+        let elem = document.createElement(this._elementTag);
+        
         for (let e = 0; e < this.children.length; e++) {
-            let child = this.children[e];
-            
+            let child = this.children[e]
             if (child instanceof EclairComponent) {
-                code += child.compile();
+                elem.appendChild(child.compile());
             }
-
-            else if (typeof(child) == "string") { 
-                code += child
-            } 
             
             else {
                 throw `Unable to compile object type: ${typeof(child)}`
             }
         }
         
-        return `<${this._elementTag}>` + code + `</${this._elementTag}>`;
+        return elem;
     }
 }

@@ -1,8 +1,10 @@
-// PRINT Add margin, paddding, border: left, top, right bottom
 // TODO Update readme.
 // Add getting value from objects and altering lists. This should enable objects to be easier to work with.
 // TODO NEed tutorials for everything and Examples. Geting to grips with eclair, making a custom object, specific object tutorials.documentation
 // Add test for each objct removing elements loads. Each test needs looping 1000s of times and checking if, when removed, there is no execsive files left over.
+// Change to dynamic construction
+// If
+// ForEach
 
 // Future work
 //  - Add enabled tag to all elements.
@@ -32,12 +34,16 @@
 /// The `eclair` object allows you to easily construct an eclair object and interact in the Eclair development kit.
 let Eclair = {
     version: "0.0.94",
-    _ids: 0,
+    _ids: -1,
     _elements: {},
     _styles: {},
     _newID: function() {
         this._ids += 1; 
-        return "eclair-element-" + (this._ids - 1);
+        return "eclair-element-" + this._ids;
+    },
+    context: {
+        active: false,
+        element: null
     },
 
     theme: {},
@@ -57,7 +63,7 @@ try {
 try {
     Eclair.theme.font = EclairThemeFont;
 } catch(err) {
-    Eclair.theme.font = '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"'
+    Eclair.theme.font = 'arial'
 }
 
 

@@ -1,8 +1,8 @@
-# Eclair IFrame__extends [EclairCustomTagComponent](https://github.com/SamGarlick/Eclair/tree/main/docs/elements/custom-tag.md)__<br/>
-
-Source: [_elements.standard.iframe_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/standard/iframe.js)
+# Eclair IFrame [extends [EclairCustomTagComponent](https://github.com/SamGarlick/Eclair/tree/main/docs/elements/custom-tag.md)]
+Source: [_elements.standard.iframe_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/standard/iframe.js)<br/><br/>
 An eclair IFrame object.
-**Eclair.styles.IFrame**  Default iFrame style.
+**
+Eclair.styles.IFrame**  Default iFrame style.
 ```javascript
 Eclair.IFrame()
     .url("https://www.w3schools.com")
@@ -16,6 +16,7 @@ Eclair.IFrame()
 ```
 ### .url
 Set the URL for the webpage you want the IFrame to display.
+
 source: URL source for the IFrame to load.
 ```javascript
 Eclair.IFrame()
@@ -23,6 +24,7 @@ Eclair.IFrame()
 ```
 ### .source
 Set the webpage source code you want the IFrame to display.
+
 source: HTML source for the IFrame to load.
 ```javascript
 Eclair.IFrame()
@@ -30,6 +32,7 @@ Eclair.IFrame()
 ```
 ### .allowFullScren
 Set if the frame can activate fullscreen mode by calling the requestFullscreen() method.
+
 allow: If true it will be allowed.
 ```javascript
 Eclair.IFrame()
@@ -37,6 +40,7 @@ Eclair.IFrame()
 ```
 ### .allowPaymentRequest
 If true the iframe will be allowed to invoke the Payment Request API
+
 allow: If true the iframe can invoke the Payment Request API.
 ```javascript
 Eclair.IFrame()
@@ -44,6 +48,7 @@ Eclair.IFrame()
 ```
 ### .loading
 Specifies how the iframe should be loaded - immediately or deferred.
+
 loading: Can be either "eager" or "lazy".
 ```javascript
 Eclair.IFrame()
@@ -51,6 +56,7 @@ Eclair.IFrame()
 ```
 ### .referrerPolicy
 Specify the referrer policy of the iframe. See [w3schools](https://www.w3schools.com/tags/att_iframe_referrerpolicy.asp) for details.
+
 policy: The refferer policy to use.
 ```javascript
 Eclair.IFrame()
@@ -58,6 +64,7 @@ Eclair.IFrame()
 ```
 ### .sandbox
 Specify additional restrictions for the iframe. See [w3schools](https://www.w3schools.com/tags/att_iframe_sandbox.asp) for details.
+
 sandbox: The sandbox rule to use.
 ```javascript
 Eclair.IFrame()

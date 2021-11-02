@@ -1,6 +1,5 @@
-# Eclair Component__extends [EclairStylableObject](https://github.com/SamGarlick/Eclair/tree/main/docs/style/style.md)__<br/>
-
-Source: [_elements.component_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/component.js)
+# Eclair Component [extends [EclairStylableObject](https://github.com/SamGarlick/Eclair/tree/main/docs/style/style.md)]
+Source: [_elements.component_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/component.js)<br/><br/>
 Warn test .hide
 Warn test .show
 ### .build

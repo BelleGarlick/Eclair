@@ -54,7 +54,6 @@ class EclairTabView extends EclairView {
     ///     {"id": "1", ...},
     /// ], e => {return TabPage([...])})
     /// ```
-    
     constructor(_selectedView, elements, func) {
         super(elements, func)
         

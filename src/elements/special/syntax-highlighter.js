@@ -115,19 +115,20 @@ class EclairSyntaxHighlighter extends EclairComponent {
         this._cachedLines = {}
         this._codeState = (_code instanceof EclairState)? _code : Ø(_code)
         
-        this.codeElement = this._addChild(Eclair.CustomTagComponent("code")
-            .addStyle(Eclair.styles.SyntaxHighlighterCodeElement)
-         )
-        
-        this.textArea = this._addChild(Eclair.TextArea(this._codeState)
-            .removeStyle(Eclair.styles.TextArea)
-            .addStyle(Eclair.styles.SyntaxHighlighterTextAreaElement)
-            .setAttr("spellcheck", "false")
-            .onScroll((e, ev) => {
-                let textarea = e.getElement()
-                this.codeElement.getElement().scroll(textarea.scrollLeft, textarea.scrollTop)
-            })
-        )
+        this.codeElement = null, this.textArea = null;
+        this.declareChildrenWithContext(_ => {
+            this.codeElement = Eclair.CustomTagComponent("code")
+                .addStyle(Eclair.styles.SyntaxHighlighterCodeElement)
+
+            this.textArea = Eclair.TextArea(this._codeState)
+                .removeStyle(Eclair.styles.TextArea)
+                .addStyle(Eclair.styles.SyntaxHighlighterTextAreaElement)
+                .setAttr("spellcheck", "false")
+                .onScroll((e, ev) => {
+                    let textarea = e.getElement()
+                    this.codeElement.getElement().scroll(textarea.scrollLeft, textarea.scrollTop)
+                })
+        })
         
         this.addStyle(Eclair.styles.SyntaxHighlighter)
         
@@ -233,6 +234,10 @@ class EclairSyntaxHighlighter extends EclairComponent {
         for (let i = 0; i < classes.length; i++) {
             this.theme[classes[i]].create()
         }
-        return `<div>${this.codeElement.compile()}${this.textArea.compile()}</div>`
+        
+        let elem = document.createElement("div")
+        elem.appendChild(this.codeElement.compile())
+        elem.appendChild(this.textArea.compile())
+        return elem
     }
 }

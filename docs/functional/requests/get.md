@@ -1,6 +1,5 @@
-# Eclair GET Request__extends [EclairHTTPRequest](https://github.com/SamGarlick/Eclair/tree/main/docs/functional/requests/request.md)__<br/>
-
-Source: [_functional.requests.get_](https://github.com/SamGarlick/Eclair/tree/main/src/functional/requests/get.js)
+# Eclair GET Request [extends [EclairHTTPRequest](https://github.com/SamGarlick/Eclair/tree/main/docs/functional/requests/request.md)]
+Source: [_functional.requests.get_](https://github.com/SamGarlick/Eclair/tree/main/src/functional/requests/get.js)<br/><br/>
 Create a GET HTTP request.
 ```javascript
 Eclair.get("/get-user/")
@@ -16,6 +15,7 @@ Eclair.get("/get-user/")
 ```
 ### constructor
 Construct an GET object.
+
 url: Endpoint url to GET the request to.
 ```javascript
 Eclair.get("/get-user/")

@@ -15,7 +15,7 @@ Eclair.styles.ProgressBar = Eclair.Style("eclair-style-progress-bar")
     .height("16px")
     .userSelect("none")
     .overflow("hidden")
-Eclair.styles.ProgressBarIndicator = Eclair.Style("eclair-style-progress-bar")
+Eclair.styles.ProgressBarIndicator = Eclair.Style("eclair-style-progress-bar-indicator")
     .display("flex")
     .flexDirection("row")
     .alignItems("center")
@@ -52,8 +52,16 @@ class EclairProgressBar extends EclairComponent {
         super()
         
         this._labelText = Ø("0%")
-        this._label = Eclair.Text(this._labelText)
-        this._indicator = this._addChild(Eclair.HStack([this._label]))
+        
+        // Build the label inside the declarative view
+        this._label = null, this._indicator = null
+        this.declareChildrenWithContext(_=>{
+            this._indicator = Eclair.View(_=>{
+                this._label = Eclair.Text(this._labelText)
+                    .addStyle(Eclair.styles.ProgressBarLabel)
+            })
+                .addStyle(Eclair.styles.ProgressBarIndicator)
+        })
         
         // Add callback for progress changing state
         this.bindState(progress, "progress", value => {
@@ -65,8 +73,6 @@ class EclairProgressBar extends EclairComponent {
         
         // Set styles
         this.addStyle(Eclair.styles.ProgressBar)
-        this._label.addStyle(Eclair.styles.ProgressBarLabel)
-        this._indicator.addStyle(Eclair.styles.ProgressBarIndicator)
     }
     
     /// METHOD .striped
@@ -151,6 +157,8 @@ class EclairProgressBar extends EclairComponent {
     }
     
     build() {
-        return `<div>${this._indicator.compile()}</div>`
+        let elem = document.createElement("div")
+        elem.appendChild(this._indicator.compile())
+        return elem
     }
 }

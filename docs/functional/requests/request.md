@@ -1,6 +1,5 @@
 # Eclair HTTP Request
-
-Source: [_functional.requests.request_](https://github.com/SamGarlick/Eclair/tree/main/src/functional/requests/request.js)
+Source: [_functional.requests.request_](https://github.com/SamGarlick/Eclair/tree/main/src/functional/requests/request.js)<br/><br/>
 Create a HTTP request such as a POST or GET request.
 ```javascript
 Eclair.request("/get-user/", "GET")
@@ -16,13 +15,16 @@ Eclair.request("/get-user/", "GET")
 ```
 ### constructor
 Initialise the request.
+
 url: The request endpoint.
+
 method: The method to use. E.g. "POST", "GET".
 ```javascript
 Eclair.request("/login/", "GET")
 ```
 ### .onSuccess
 A callback when the request returned successfully.
+
 callback: The callback function called.
 ```javascript
 Eclair.request("/get-user/", "GET")
@@ -32,6 +34,7 @@ Eclair.request("/get-user/", "GET")
 ```
 ### .onUploadSuccess
 A callback when the requested data has been uploaded successfully.
+
 callback: The callback function called.
 ```javascript
 Eclair.request("/new-profile-pic/", "POST")
@@ -41,6 +44,7 @@ Eclair.request("/new-profile-pic/", "POST")
 ```
 ### .onError
 A callback when the request encountered an error.
+
 callback: The callback function called.
 ```javascript
 Eclair.request("/get-user/", "GET")
@@ -50,6 +54,7 @@ Eclair.request("/get-user/", "GET")
 ```
 ### .onUploadError
 A callback when the request encountered an error uploading.
+
 callback: The callback function called.
 ```javascript
 Eclair.request("/new-profile-picture/", "POST")
@@ -59,6 +64,7 @@ Eclair.request("/new-profile-picture/", "POST")
 ```
 ### .onProgress
 A callback when the progress for a request changes. The argument given to the callback is the percentage progress of the request.
+
 callback: The callback function called.
 ```javascript
 Eclair.request("/get-image/", "GET")
@@ -68,6 +74,7 @@ Eclair.request("/get-image/", "GET")
 ```
 ### .onUploadProgress
 A callback when the upload progress for a request changes. The argument given to the callback is the percentage progress of the request.
+
 callback: The callback function called.
 ```javascript
 Eclair.request("/new-profile-picture/", "POST")
@@ -77,6 +84,7 @@ Eclair.request("/new-profile-picture/", "POST")
 ```
 ### .onReadyStateChange
 A callback when the ready state of the request changed. The argument given is the XMLHTTP object.
+
 callback: The callback function called.
 ```javascript
 Eclair.request("/new-profile-picture/", "POST")
@@ -86,7 +94,9 @@ Eclair.request("/new-profile-picture/", "POST")
 ```
 ### .setHeader
 Set headers of the request.
+
 key: Header key.
+
 headers:Header value. The given parameter can be an eclair state object.
 ```javascript
 Eclair.request("/hello-world/", "GET")
@@ -95,6 +105,7 @@ Eclair.request("/hello-world/", "GET")
 ```
 ### .setAsync
 Set whether the the request is performed asynchronously. (Default true).
+
 value: boolean value - can be an eclair State.
 ```javascript
 Eclair.request("/hello-world/", "GET")
@@ -102,6 +113,7 @@ Eclair.request("/hello-world/", "GET")
 ```
 ### .setAsync
 Sets the response type for the content. (Default "" = string).
+
 value: Response type of the data - can be an eclair State.
 ```javascript
 Eclair.request("/hello-world/", "GET")
@@ -109,6 +121,7 @@ Eclair.request("/hello-world/", "GET")
 ```
 ### .timeout
 Sets the timeout for the request in milliseconds. Default: 10000 (10 seconds).
+
 value: New timeout time in milliseconds - can be an eclair State.
 ```javascript
 Eclair.request("/hello-world/", "GET")
@@ -116,6 +129,7 @@ Eclair.request("/hello-world/", "GET")
 ```
 ### .withCredentials
 Sets the request uses credentials. Detauls: false.
+
 value: Boolean representing whether credentials are used - can be an eclair State.
 ```javascript
 Eclair.request("/hello-world/", "GET")
@@ -123,6 +137,7 @@ Eclair.request("/hello-world/", "GET")
 ```
 ### .send
 Send the form element. This function can be passed several types of data which are sent to the given endpoint. You can pass in a HTML Form element, an eclair Element of a JSON object. If using the JSON object the keys must be strings, but the values can be either: primative types (string, bool, etc...), eclair State, HTML Input[type=File] element, Input element. Method and action attributes of a given form will be ignored. To set the method and action use .method and .action.
+
 data: Data sent to the target endpoint.
 ```javascript
 Eclair.request("/submit/", "POST")

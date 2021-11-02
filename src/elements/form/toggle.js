@@ -2,6 +2,8 @@
 /// EXTENDS elements.component:EclairComponent
 /// DESC An eclair toggle component.
 
+// WARN Toggle seems to create eronous additional hidden element
+
 Eclair.Toggle = function(_value) {
     return new EclairToggle(_value);
 }
@@ -63,8 +65,14 @@ class EclairToggle extends EclairComponent {
         let overrideOnClick = null;
         
         // Create internal elements
-        this._tickMark = this._addChild(Eclair.Text("✓"))
-        this._knob = this._addChild(Eclair.View())
+        this._tickMark = null, this._knob = null;
+        this.declareChildrenWithContext(_=>{
+            this._tickMark = Eclair.Text("✓")
+                .addStyle(Eclair.styles.ToggleTick)
+            
+            this._knob = Eclair.CustomTagComponent("div")
+                .addStyle(Eclair.styles.ToggleKnob)
+        })
         
         this._value = (value instanceof EclairState)? value : Ø(value)
         this._hiddenComponent = Eclair.HiddenInput(this._value)
@@ -94,8 +102,6 @@ class EclairToggle extends EclairComponent {
         
         // Add styles
         this.addStyle(Eclair.styles.Toggle)
-        this._tickMark.addStyle(Eclair.styles.ToggleTick)
-        this._knob.addStyle(Eclair.styles.ToggleKnob)
         
         this.width("100%", " .wrapper")
             .transition("0.2s all", " .wrapper")
@@ -187,6 +193,15 @@ class EclairToggle extends EclairComponent {
     
     // Implement the build function. No doc needed as this is a standard function.
     build() {
-        return `<toggle>${this._tickMark.compile()}<div class='wrapper'>${this._knob.compile()}</div>${this._hiddenComponent.compile()}</toggle>`
+        let toggle = document.createElement("div")
+        
+        let wrapper = document.createElement("div")
+        wrapper.setAttribute("class", "wrapper")
+        wrapper.appendChild(this._knob.compile())
+        
+        toggle.appendChild(this._hiddenComponent.compile())
+        toggle.appendChild(wrapper)
+        
+        return toggle
     }
 }

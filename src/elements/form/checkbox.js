@@ -10,10 +10,14 @@ Eclair.CheckBox = function(text) {
 /// SHARED-STYLE Eclair.styles.CheckBoxLabel: Default Checkbox Label object style.
 /// SHARED-STYLE Eclair.styles.CheckBoxIcon: Default Checkbox icon object style.
 /// SHARED-STYLE Eclair.styles.CheckBoxActiveIcon: Default Active Checkbox style.
-Eclair.styles.CheckBox = Eclair.Style("eclair-style-checkbox")    
+Eclair.styles.CheckBox = Eclair.Style("eclair-style-checkbox") 
+    .display("flex")
+    .flexDirection("row")
+    .justifyContent("flex-start")
+    .padding("10px")
+    .gap("10px")
     .cursor("pointer")
     .boxShadow("0px 0px 0px 100px rgba(0, 0, 0, 0.05) inset", "hover")
-    .padding("2px")
     .borderRadius("4px")
     .width("100%")
     .transition("0.2s all")
@@ -62,9 +66,12 @@ class EclairCheckBox extends EclairComponent {
         this._textValue = Ø("")  // Text value which is the message displayed alongside
         
         // Build the hidden components
-        this._label = this._addChild(Eclair.Text(this._textValue))
-        this._checkbox = this._addChild(Eclair.CustomTagComponent("div"))
-        this._hidden = this._addChild(Eclair.HiddenInput(this._hiddenValue))
+        this._label = null, this._checkbox = null, this._hidden = null;
+        this.declareChildrenWithContext(_=>{
+            this._label = Eclair.Text(this._textValue)
+            this._checkbox = Eclair.CustomTagComponent("div")
+            this._hidden = Eclair.HiddenInput(this._hiddenValue)
+        })
         
         // Override on click function
         let self = this
@@ -178,6 +185,12 @@ class EclairCheckBox extends EclairComponent {
     
     // Standard element. No need to write doc.
     build() {
-        return `<table><tr><td width=1>${this._checkbox.compile()}</td><td>${this._label.compile()}</td></tr></table>${this._hidden.compile()}`
+        let checkbox = document.createElement("div")
+        
+        checkbox.appendChild(this._hidden.compile())
+        checkbox.appendChild(this._checkbox.compile())
+        checkbox.appendChild(this._label.compile())
+        
+        return checkbox
     }
 }

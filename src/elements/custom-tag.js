@@ -55,6 +55,8 @@ class EclairCustomTagComponent extends EclairComponent {
     
     // Build the class
     build() {
-        return `<${this.tag}>${this._innerHTML}</${this.tag}>`
+        let elem = document.createElement(this.tag)
+        elem.innerHTML = this._innerHTML;
+        return elem;
     }
 }

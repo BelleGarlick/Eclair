@@ -43,16 +43,14 @@ class EclairButton extends EclairComponent {
     }
     
     build() {
-        // Build the element
-        let text = this.text;
-        if (text == null) {
-            text = "Button"
+        let element = document.createElement("button")
+        
+        if (this.text instanceof EclairComponent) {
+            element.appendChild(this.text.compile())
+        } else {
+            element.innerHTML = this.text;
         }
         
-        if (text instanceof EclairComponent) {
-            text = text.compile()
-        } 
-        
-        return `<button>${this.text}</button>`
+        return element
     }
 }

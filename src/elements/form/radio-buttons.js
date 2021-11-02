@@ -57,7 +57,7 @@ class EclairRadioButtons extends EclairComponent {
         // Internal states of values, options and selected index
         this._options = _options instanceof EclairState? _options : Ø(_options)
         this._selectedIndex = -1
-        this._selectedValue = State("")
+        this._selectedValue = Ø("")
         
         // Custom styles for child elements
         this.customStyles = {
@@ -71,19 +71,23 @@ class EclairRadioButtons extends EclairComponent {
         
         // Create elements
         let self = this
-        this._hidden = this._addChild(Eclair.HiddenInput(this._selectedValue))
-        this._view = this._addChild(Eclair.VStack(_options, item => {
-            return new EclairRatioItem(item, this.customStyles)
-                .onClick((e, ev) => {
-                    let newIndex = this._updateSelectedItemStyles(item)
-                    
-                    this._selectedValue.value(item, self)
-                    this._selectedIndex = newIndex;
-                
-                    if (self.stateBindings.hasOwnProperty("index")) {self.stateBindings["index"].value(newIndex, self)}
-                    if (self.stateBindings.hasOwnProperty("value")) {self.stateBindings["value"].value(item, self)}
-                })
-        }))
+        this._hidden = null, this._view = null
+        console.log("Declairng")
+        this.declareChildrenWithContext(_=>{
+            this._hidden = Eclair.HiddenInput(this._selectedValue)
+            this._view = Eclair.VStack(_options, item => {
+                return new EclairRatioItem(item, this.customStyles)
+                    .onClick((e, ev) => {
+                        let newIndex = this._updateSelectedItemStyles(item)
+
+                        this._selectedValue.value(item, self)
+                        this._selectedIndex = newIndex;
+
+                        if (self.stateBindings.hasOwnProperty("index")) {self.stateBindings["index"].value(newIndex, self)}
+                        if (self.stateBindings.hasOwnProperty("value")) {self.stateBindings["value"].value(item, self)}
+                    })
+            })
+        })
         
         // Add custom style to object
         this.addStyle(Eclair.styles.RadioButtons)
@@ -256,8 +260,13 @@ class EclairRadioButtons extends EclairComponent {
         return this           
     }
     
-    build() {         
-        return `<div>${this._hidden.compile()}${this._view.compile()}</div>`
+    build() {  
+        let elem = document.createElement("div")
+        
+        elem.appendChild(this._hidden.compile())
+        elem.appendChild(this._view.compile())
+        
+        return elem
     }
     
     cleanup() {

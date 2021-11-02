@@ -1,6 +1,5 @@
-# Eclair Alignment State__extends [EclairState](https://github.com/SamGarlick/Eclair/tree/main/docs/functional/states/state.md)__<br/>
-
-Source: [_functional.states.alignment_](https://github.com/SamGarlick/Eclair/tree/main/src/functional/states/alignment.js)
+# Eclair Alignment State [extends [EclairState](https://github.com/SamGarlick/Eclair/tree/main/docs/functional/states/state.md)]
+Source: [_functional.states.alignment_](https://github.com/SamGarlick/Eclair/tree/main/src/functional/states/alignment.js)<br/><br/>
 This class inherits the functionality of a normal Eclair State, but is designed for alignment and has functions for doing so. 
 ```javascript
 Eclair.VStack([...])

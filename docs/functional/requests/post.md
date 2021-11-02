@@ -1,6 +1,5 @@
-# Eclair POST Request__extends [EclairHTTPRequest](https://github.com/SamGarlick/Eclair/tree/main/docs/functional/requests/request.md)__<br/>
-
-Source: [_functional.requests.post_](https://github.com/SamGarlick/Eclair/tree/main/src/functional/requests/post.js)
+# Eclair POST Request [extends [EclairHTTPRequest](https://github.com/SamGarlick/Eclair/tree/main/docs/functional/requests/request.md)]
+Source: [_functional.requests.post_](https://github.com/SamGarlick/Eclair/tree/main/src/functional/requests/post.js)<br/><br/>
 Create a POST HTTP request.
 ```javascript
 Eclair.post("/new-username/")
@@ -17,6 +16,7 @@ Eclair.post("/new-username/")
 ```
 ### constructor
 Construct an POST object.
+
 url: Endpoint url to POST the request to.
 ```javascript
 Eclair.post("/new-username/")

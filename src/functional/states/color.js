@@ -174,8 +174,8 @@ class EclairColor extends EclairState {
     /// ARG p4: The Alpha (opacity) component.
     /// ```javascript
     /// Eclair.Color()
-    /// Eclair.Color("hotpink"
-    /// Eclair.Color("#0099ff"
+    /// Eclair.Color("hotpink")
+    /// Eclair.Color("#0099ff")
     /// Eclair.Color("ff9900")
     /// Eclair.Color(255, 0, 0)
     /// Eclair.Color(255, 0, 0, 4)
@@ -200,10 +200,13 @@ class EclairColor extends EclairState {
     /// ARG p3: The Blue component.
     /// ARG p4: The Alpha (opacity) component.
     /// ```javascript
-    /// Eclair.Color().RGBA(255, 150, 0)
-    /// ``` 
-    /// ```javascript
-    /// Eclair.Color().RGBA([255, 150, 0])
+    /// Eclair.Color()
+    /// Eclair.Color("hotpink")
+    /// Eclair.Color("#0099ff")
+    /// Eclair.Color("ff9900")
+    /// Eclair.Color(255, 0, 0)
+    /// Eclair.Color(255, 0, 0, 4)
+    /// Eclair.Color([125, 255, 150])
     /// ``` 
     parse(p1, p2, p3, p4) {
         if (p1 == null) { 
@@ -228,8 +231,6 @@ class EclairColor extends EclairState {
     /// ARG b: The Blue component.
     /// ```javascript
     /// Eclair.Color().RGBA(255, 150, 0)
-    /// ``` 
-    /// ```javascript
     /// Eclair.Color().RGBA([255, 150, 0])
     /// ``` 
     RGB(r, g, b) {
@@ -248,8 +249,6 @@ class EclairColor extends EclairState {
     /// ARG a: The Alpha (opacity) component.
     /// ```javascript
     /// Eclair.Color().RGBA(255, 150, 0, 0.5)
-    /// ``` 
-    /// ```javascript
     /// Eclair.Color().RGBA([255, 150, 0, 0.5])
     /// ``` 
     RGBA(r, g, b, a) {
@@ -278,8 +277,6 @@ class EclairColor extends EclairState {
     /// ARG l: The Light component.
     /// ```javascript
     /// Eclair.Color().HSLA(0, 1, 0.5)
-    /// ``` 
-    /// ```javascript
     /// Eclair.Color().HSLA([0, 1, 0.5])
     /// ``` 
     HSL(h, s, l){
@@ -298,15 +295,13 @@ class EclairColor extends EclairState {
     /// ARG a: The Alpha (opacity) component.
     /// ```javascript
     /// Eclair.Color().HSLA(0, 1, 0.5, 0.5)
-    /// ``` 
-    /// ```javascript
     /// Eclair.Color().HSLA([0, 1, 0.5, 0.5])
     /// ``` 
     HSLA(h, s, l, a){
         if (h instanceof Array) {
             return this.HSLA(h[0], h[1], h[2], h[3])
         }
-        // TODO Accept Arr
+        
         // Cheers Mohsen and Martin: https://stackoverflow.com/questions/2353211/hsl-to-rgb-color-conversion
         var r, g, b;
 
@@ -373,7 +368,10 @@ class EclairColor extends EclairState {
     /// DESC Set the color based on a given hexadecimal value.
     /// ARG _hex: A string based hexadecimal color.
     /// ```javascript
+    /// Eclair.Color().hex("ffffff")
     /// Eclair.Color().hex("#ffffff")
+    /// Eclair.Color().hex("fff")
+    /// Eclair.Color().hex("#fff")
     /// ```  
     hex(_hex) {
         let hex_map = {

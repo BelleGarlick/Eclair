@@ -1,8 +1,8 @@
-# Eclair Tab Page__extends [EclairView](https://github.com/SamGarlick/Eclair/tree/main/docs/elements/layout/view.md)__<br/>
-
-Source: [_elements.layout.tabs.page_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/layout/tabs/page.js)
+# Eclair Tab Page [extends [EclairView](https://github.com/SamGarlick/Eclair/tree/main/docs/elements/layout/view.md)]
+Source: [_elements.layout.tabs.page_](https://github.com/SamGarlick/Eclair/tree/main/src/elements/layout/tabs/page.js)<br/><br/>
 A view stored within a tab view. 
-**Eclair.styles.TabPage**  Tab page style.
+**
+Eclair.styles.TabPage**  Tab page style.
 ```javascript
 Eclair.TabView(Ø(0), [
    Eclair.TabPage([...]),
@@ -12,7 +12,9 @@ Eclair.TabView(Ø(0), [
 ```
 ### constructor
 Construct an eclair TabPage object. 
+
 elements: List child items.
+
 func: A callback function called for each child object. For more details see elements.layout.view.
 ```javascript
 Eclair.TabPage([
