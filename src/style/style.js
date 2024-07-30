@@ -295,7 +295,7 @@ class EclairStylableObject {
     wordBreak(_width, rule) {return this._set("word-break", _width, rule)}
     wordSpacing(_width, rule) {return this._set("word-spacing", _width, rule)}
     wordWrap(_width, rule) {return this._set("word-wrap", _width, rule)}
-    zIndex(value, rule) {return this._set("z-index", _width, rule)}
+    zIndex(value, rule) {return this._set("z-index", value, rule)}
 }
 
 

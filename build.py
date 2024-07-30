@@ -2,6 +2,7 @@ import os
 import shutil
 import uglipyjs
 from compiler.documentation import DocumentationBuilder
+from compiler.script import ScriptBuilder
 
 
 DOC_DOC_LINK = "https://github.com/SamGarlick/Eclair/tree/main/docs/"
@@ -82,7 +83,7 @@ def parse_tests(breadcrumbs_path, lines):
     
 
 
-def build_from_dir(doc_builder, directory, documentation_path, breadcrumbs=None):
+def build_from_dir(doc_builder, script_builder, directory, documentation_path, breadcrumbs=None):
     dir_source = ""
     breadcrumbs = [] if breadcrumbs is None else breadcrumbs
     
@@ -112,8 +113,7 @@ def build_from_dir(doc_builder, directory, documentation_path, breadcrumbs=None)
                     source_code, source_doc, source_test = parse_file(breadcrumbs_path, file.read())
                     test_cases += [source_test]
                     
-                    dir_source += f"\n// {breadcrumbs_path}\n"
-                    dir_source += source_code
+                    script_builder.parse(breadcrumbs, source_code)
                     
                     if len(source_doc) > 0:
                         os.makedirs(documentation_path, exist_ok=True)
@@ -124,11 +124,10 @@ def build_from_dir(doc_builder, directory, documentation_path, breadcrumbs=None)
 
             path = os.path.join(directory, path)
             if os.path.isdir(path):
-                sub_dir_source, sub_dir_test_cases = build_from_dir(doc_builder, path, doc_path, breadcrumbs + [sub])
-                dir_source += sub_dir_source + "\n"
+                sub_dir_test_cases = build_from_dir(doc_builder, script_builder, path, doc_path, breadcrumbs + [sub])
                 test_cases += sub_dir_test_cases
                 
-    return f"{dir_source}\n", test_cases
+    return test_cases
 
 
 
@@ -183,6 +182,7 @@ if __name__ == "__main__":
     shutil.rmtree(DOC_DIR)
     os.mkdir(DOC_DIR)
     
+    script_builder = ScriptBuilder(uglify=False)
     doc_builder = DocumentationBuilder(DOC_DOC_LINK, DOC_SRC_LINK)
     
     # Get path to sources dir
@@ -191,10 +191,9 @@ if __name__ == "__main__":
     doc_path = os.path.join(os.path.dirname(file_path), DOC_DIR)
     
     # Source code
-    eclair_source, eclair_test_cases = build_from_dir(doc_builder, sources_path, doc_path)
-    
-    with open(OUTPUT, "w+") as file:
-        file.write(eclair_source)
+    eclair_test_cases = build_from_dir(doc_builder, script_builder, sources_path, doc_path)
+
+    script_builder.save(OUTPUT)
         
     with open(OUTPUT_TEST, "w+") as file:
         file.write(compile_test_cases(eclair_test_cases))

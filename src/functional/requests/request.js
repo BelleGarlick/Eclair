@@ -205,6 +205,18 @@ class EclairHTTPRequest {
         this._widthCredentials = (value instanceof EclairState)? value.value() : value
         return this
     }
+             
+    /// METHOD .contentType
+    /// DESC Sets the content type of the request.
+    /// ARG value: Value representing the content type - can be an eclair state.
+    /// ```javascript
+    /// Eclair.request("/hello-world/", "GET")
+    ///     .contentType("...")
+    /// ```
+    contentType(value) {
+        this._contentType = (value instanceof EclairState)? value.value() : value
+        return this
+    }
     
     // Build the xhttp object with all parameters.
     _buildXTTPObject() {
@@ -234,6 +246,7 @@ class EclairHTTPRequest {
         xhttp.withCredentials = this._widthCredentials
         xhttp.timeout = this._timeout
         xhttp.responseType = this._responseType
+        xhttp.contentType = this._contentType
         
         let keys = Object.keys(this._headers);
         for (let k = 0; k < keys.length; k++) {
@@ -283,7 +296,7 @@ class EclairHTTPRequest {
         } else if (_form.constructor == Object) {
             Object.keys(_form).forEach(function(key) {
                 let value = _form[key]
-                console.log()
+                
                 if (value instanceof EclairState) {
                     value = value.value()
                     

@@ -40,3 +40,9 @@ Eclair.View([
         })
 ])
 ```
+
+### Inherits from: elements.component
+ - [.id()](https://github.com/SamGarlick/Eclair/tree/main/docs/elements/component.md#id)
+ - [.eID()](https://github.com/SamGarlick/Eclair/tree/main/docs/elements/component.md#eID)
+ - [.addStyle()](https://github.com/SamGarlick/Eclair/tree/main/docs/elements/component.md#addStyle)
+ - [.removeStyle()](https://github.com/SamGarlick/Eclair/tree/main/docs/elements/component.md#removeStyle)

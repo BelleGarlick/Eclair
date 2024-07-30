@@ -22,7 +22,7 @@ Eclair.styles.CheckBox = Eclair.Style("eclair-style-checkbox")
     .width("100%")
     .transition("0.2s all")
     .userSelect("none")
-    .font(Eclair.theme.font)
+    .fontFamily(Eclair.theme.font)
 Eclair.styles.CheckBoxIcon = Eclair.Style("eclair-style-checkbox-icon")
     .borderSize("2px")
     .borderRadius("4px")
@@ -100,10 +100,18 @@ class EclairCheckBox extends EclairComponent {
         }, state => {return state.bool()})
         
         // set styles
-        this.setAttr("cellpadding", 6)   
         this.addStyle(Eclair.styles.CheckBox)  
         this._label.addStyle(Eclair.styles.CheckBoxLabel)
         this._checkbox.addStyle(Eclair.styles.CheckBoxIcon)
+    }
+    
+    // TODO Check if this works properly
+    value(newValue) {
+        if (newValue == null) {
+            return this.checked.value()
+        } else {
+            // Bind new
+        }
     }
     
     /// METHOD .checkbox

@@ -31,18 +31,6 @@ class EclairComponent extends EclairStylableObject {
         }
     }
     
-    // Get the internal eclair ID
-    eID() {return this._id;}
-    
-    // Set a id of an element 
-    id(_value) {
-        if (_value == null) {
-            return this.getAttr("id")
-        } else {
-            return this.setAttr("id", _value)
-        }
-    }
-    
     declareChildrenWithContext(elements) {
         let currentContextElement = Eclair.context.element;
         let currentContextActive = Eclair.context.active;
@@ -56,18 +44,30 @@ class EclairComponent extends EclairStylableObject {
         Eclair.context.active = currentContextActive
     }
     
-    write() {
-        document.body.appendChild(this.compile())
-        return this
+    /// METHOD .id
+    /// DESC Get or set the id attribute of an element allowing the element to be obtainable via document.getElementById
+    /// ARG If present, the id of the object will be set to the given value. However, if no parameter is given, then the id of the object will be returned.
+    /// ```javascript
+    /// let a = Component1().id("id1")
+    /// document.write(a.id())
+    /// ```
+    id(_value) {
+        if (_value == null) {
+            return this.getAttr("id")
+        } else {
+            this.bindState(_value, "id", value => {
+                this.setAttr("id", _value)
+            })
+            return this;
+        }
     }
     
-    to(elem) {
-        if (typeof(elem) == "string") {
-            elem = document.getElementById(elem)
-        }
-        elem.appendChild(this.compile())
-        return this
-    }
+    /// METHOD .eID
+    /// DESC Get the Eclair ID of an object.
+    /// ```javascript
+    /// Component1().eID()
+    /// ```
+    eID() {return this._id;}
     
     getElement(callback) {
         if (callback != null) {
@@ -80,17 +80,9 @@ class EclairComponent extends EclairStylableObject {
         }
     }
     
-    getAttr(key) {
-        let elem = this.getElement();
-        if (elem != null) {
-            return elem.getAttribute(key);
-        }
-        return this.attributes[key];
-    }
-    
     setAttr(key, value) {
         if (key == "class") {
-            throw "Setting attribute 'class' is discouraged. Please use '.addStyle' and '.getStyle'."
+            throw "Setting attribute 'class' is discouraged. Use '.addStyle' and '.getStyle' to add a class to the object."
         }
         
         if (value == null) {
@@ -103,12 +95,33 @@ class EclairComponent extends EclairStylableObject {
         return this;
     }
     
-//    id(newID) {
-//        if (newID == null) {
-//            return this.getAttr("id", "")
-//        }
-//    }
+    getAttr(key) {
+        let elem = this.getElement();
+        if (elem != null) {
+            return elem.getAttribute(key);
+        }
+        return this.attributes[key];
+    }
     
+    /// METHOD .addStyle
+    /// DESC This function adds a class name or Style object to an Eclair object.
+    /// ARG sharedClass: The Eclair Style object, or string class name to add.
+    /// ```javascript
+    /// let sharedStyle = Eclair.Style()
+    ///     .width("100%")
+    ///     .background("blue")
+    ///
+    /// Component1().addStyle(sharedStyle)
+    /// Component2().addStyle(sharedStyle)
+    /// ```
+    /// ```javascript
+    /// <style>
+    /// .sharedStyle {background: blue}
+    /// </style>
+    /// ...
+    /// Component1().addStyle("sharedStyle")
+    /// Component2().addStyle("sharedStyle")
+    /// ```
     addStyle(sharedClass) {
         if (sharedClass != null) {
             let className = sharedClass instanceof EclairSharedStyle? sharedClass.eID() : sharedClass;
@@ -142,6 +155,23 @@ class EclairComponent extends EclairStylableObject {
         return this;
     }
     
+    /// METHOD .removeStyle
+    /// DESC This function removes a class name or Style object from an Eclair object.
+    /// ARG sharedClass: The Eclair Style object, or string class name to remove.
+    /// ```javascript
+    /// let sharedStyle = Eclair.Style()
+    ///     .width("100%")
+    ///     .background("blue")
+    ///
+    /// Component1().removeStyle(sharedStyle)
+    /// ```
+    /// ```javascript
+    /// <style>
+    /// .sharedStyle {background: blue}
+    /// </style>
+    /// ...
+    /// Component().removeStyle("sharedStyle")
+    /// ```
     removeStyle(sharedClass) {
         if (sharedClass != null) { 
             let className = typeof(sharedClass) == "string"? sharedClass:sharedClass.eID();
@@ -166,7 +196,7 @@ class EclairComponent extends EclairStylableObject {
         return this;
     }
     
-    /// Warn test .hide
+    // Warn test .hide
     hide() {
         if (!this._hidden) {
             this._hidden = true
@@ -177,7 +207,7 @@ class EclairComponent extends EclairStylableObject {
         }
     }
     
-    /// Warn test .show
+    // Warn test .show
     show() {
         this.display(this._hiddenStyle)
     }
@@ -202,65 +232,15 @@ class EclairComponent extends EclairStylableObject {
         }
     }
     
-    /// ### .build
-    /// This function should be implemented in a subclass but not called. Only the parent class should call this function otherwise the returned element will not be linked with all the eclair library.
-    build() {
-        throw "Build function not implemented"
-    }
-    
-    /// ### .compile
-    /// This function should be called to create the object. This calls the `.build` function as implemented in the subclass then applies all attributes to the object then return the compiled HTML code.
-    /// ```javascript
-    /// Eclair.Text("Hello World")
-    ///     .compile()
-    /// ```
-    compile() {   
-        if (this.htmlNode != null) {
-            return this.htmlNode;
+    _updateCallback(callbackKey, callback) {
+        this._callbacks[callbackKey] = callback;
+        
+        if (callback == null) {
+            this.setAttr(callbackKey.toLowerCase(), null)
+        } else {
+            this.setAttr(callbackKey.toLowerCase(), `Eclair.triggerEvent("${this.eID()}", "${callbackKey}", event)`)
         }
-        
-        // Adding element attributes
-        let element = null
-        let builtObject = this.build();
-        if (typeof(builtObject) == "string") {
-            let wrapperElement = document.createElement("div")
-            wrapperElement.innerHTML = this.build();
-            element = wrapperElement.children[0]
-        } 
-        else if (builtObject instanceof Node) {
-            element = builtObject;
-        } 
-        else {
-            console.log(this)
-            throw ".build() must return either a String or HTML Node element."
-        }
-        
-        
-        let classes = this.getAttr("class")
-        if (classes != null) {
-            classes = classes.split(" ")
-            for (let c = 0; c < classes.length; c++) {
-                if (Eclair._styles.hasOwnProperty(classes[c])) {
-                    Eclair._styles[classes[c]].create()
-                }
-            }
-        }
-        
-        let self = this;
-        Object.keys(this.attributes).forEach(function(key) {
-            element.setAttribute(key, self.attributes[key])
-        });
-                
-        if (this._buildStyle) {
-            let builtStyle = this.buildStyleObject();
-            if (builtStyle != null && document.getElementsByClassName(builtStyle.getAttribute("class")).length == 0) {
-                document.body.appendChild(builtStyle)
-            }
-        }
-        
-        this.htmlNode = element;
-        
-        return element
+        return this;
     }
     
     /// ### Event Handling
@@ -332,17 +312,6 @@ class EclairComponent extends EclairStylableObject {
         }
     }
     
-    _updateCallback(callbackKey, callback) {
-        this._callbacks[callbackKey] = callback;
-        
-        if (callback == null) {
-            this.setAttr(callbackKey.toLowerCase(), null)
-        } else {
-            this.setAttr(callbackKey.toLowerCase(), `Eclair.triggerEvent("${this.eID()}", "${callbackKey}", event)`)
-        }
-        return this;
-    }
-    
     child(n, callback) {
         let item = n < this.children.length && n >= 0? this.children[n] : null
         if (callback == null) {
@@ -351,6 +320,83 @@ class EclairComponent extends EclairStylableObject {
             callback(item)
         }
         
+        return this
+    }
+    
+    /// ### .build
+    /// This function should be implemented in a subclass but not called. Only the parent class should call this function otherwise the returned element will not be linked with all the eclair library.
+    build() {
+        throw "Build function not implemented"
+    }
+    
+    /// ### .compile
+    /// This function should be called to create the object. This calls the `.build` function as implemented in the subclass then applies all attributes to the object then return the compiled HTML code.
+    /// ```javascript
+    /// Eclair.Text("Hello World")
+    ///     .compile()
+    /// ```
+    compile() {   
+        if (this.htmlNode != null) {
+            return this.htmlNode;
+        }
+        
+        // Adding element attributes
+        let element = null
+        let builtObject = this.build();
+        if (typeof(builtObject) == "string") {
+            let wrapperElement = document.createElement("div")
+            wrapperElement.innerHTML = this.build();
+            element = wrapperElement.children[0]
+        } 
+        else if (builtObject instanceof Node) {
+            element = builtObject;
+        } 
+        else {
+            throw ".build() must return either a String or HTML Node element."
+        }
+        
+        
+        let classes = this.getAttr("class")
+        if (classes != null) {
+            classes = classes.split(" ")
+            for (let c = 0; c < classes.length; c++) {
+                if (Eclair._styles.hasOwnProperty(classes[c])) {
+                    Eclair._styles[classes[c]].create()
+                }
+            }
+        }
+        
+        let self = this;
+        Object.keys(this.attributes).forEach(function(key) {
+            element.setAttribute(key, self.attributes[key])
+        });
+        
+        // TODO Seperate class from attributes
+        let c = this.getAttr("class")
+        element.setAttribute("class", c != null? c + " " + this.eID():this.eID())        
+        
+        if (this._buildStyle) {
+            let builtStyle = this.buildStyleObject();
+            if (builtStyle != null && document.getElementsByClassName(builtStyle.getAttribute("class")).length == 0) {
+                document.body.appendChild(builtStyle)
+            }
+        }
+        
+        this.htmlNode = element;
+        
+        return element
+    }
+    
+    write() {
+        document.body.appendChild(this.compile())
+        return this
+    }
+    
+    to(elem) {
+        if (typeof(elem) == "string") {
+            elem = document.getElementById(elem)
+        }
+        elem.appendChild(this.compile())
         return this
     }
     

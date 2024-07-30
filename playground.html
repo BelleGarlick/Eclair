@@ -11,14 +11,13 @@ Eclair.VStack([
     ]),
     Eclair.Button("Test")
         .onClick((el, ev) => {  
-            
-        Eclair.post("http://127.0.0.1:5000/test/")
-            .onSuccess(e => {console.log(e)})
-            .send({
-                "name": name,
-                "surname": surname,
-                "thisisafile": document.getElementById("file").files[0]
-            })
+            Eclair.post("http://127.0.0.1:5000/test/")
+                .onSuccess(e => {console.log(e)})
+                .send({
+                    "name": name,
+                    "surname": surname,
+                    "thisisafile": document.getElementById("file").files[0]
+                })
         })
 ])
     .write()

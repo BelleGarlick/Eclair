@@ -11,10 +11,10 @@ Eclair.styles.Select = Eclair.Style("eclair-style-select")
     .borderSize("0px")
     .borderRadius("2px")
     .padding("8px 16px")
-    .background("#eeeeee")
-    .font(Eclair.theme.font)
-    .background("#dddddd", "hover")
-    .background("#cccccc", "active")
+    .backgroundColor("#eeeeee")
+    .fontFamily(Eclair.theme.font)
+    .backgroundColor("#dddddd", "hover")
+    .backgroundColor("#cccccc", "active")
 
 /// ```javascript
 /// Eclair.Select(["apple", "orange", "banana"])
@@ -39,8 +39,10 @@ class EclairSelect extends EclairView {
         // Add callback for when the user actively changes the selected value
         this.overrideOnChangeCallback = null
         this._updateCallback("onChange", (select, ev) => {
-            this._updateSelected(select.selectedIndex, select.value)
-            if (this.overrideOnChangeCallback != null) {this.overrideOnChangeCallback(this, ev)}
+            select.getElement(e => {
+                this._updateSelected(e.selectedIndex, e.value)
+                if (this.overrideOnChangeCallback != null) {this.overrideOnChangeCallback(this, ev)}
+            })
         })
         
         this.addStyle(Eclair.styles.Select)
@@ -72,8 +74,8 @@ class EclairSelect extends EclairView {
                         newIndex = i; break
                     }
                 }
-                if (newIndex != this.selectedIndex) {
-                    this.selectedIndex = newIndex
+                if (newIndex != this._selectedIndex) {
+                    this._selectedIndex = newIndex
                     if (this.stateBindings.hasOwnProperty("index")) {this.stateBindings["index"].value(i, this)}
                 }
                 
@@ -100,7 +102,7 @@ class EclairSelect extends EclairView {
                 
                 let newValue = ""
                 if (value < this.items.length() && value >= 0) {
-                    newValue = this.itens.get(value)
+                    newValue = this.items.get(value)
                 }
                 
                 if (newValue != this._selectedValue) {
@@ -123,14 +125,14 @@ class EclairSelect extends EclairView {
             
             // If an index binding exists, update it
             if (this.stateBindings.hasOwnProperty("index")) {
-                this.stateBindings["index"].value(select.selectedIndex, this)
+                this.stateBindings["index"].value(this._selectedIndex, this)
             }
         }
         if (_value != this._selectedValue) {
-            this._selectedValue= _value
+            this._selectedValue = _value
             
             if (this.stateBindings.hasOwnProperty("value")) {
-                this.stateBindings["value"].value(select.value, this)
+                this.stateBindings["value"].value(this._selectedValue, this)
             }
         }
     }
@@ -146,7 +148,7 @@ class EclairSelect extends EclairView {
             
             this.getElement(e => {
                 for (let i = 1; i < this.items.length(); i++) {
-                    if (i == e.selectedIndex) {
+                    if (i == e._selectedIndex) {
                         newIndex = i
                         newValue = this.items.get(i)
                     }

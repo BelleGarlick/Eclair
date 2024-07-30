@@ -45,6 +45,8 @@ class EclairSlider extends EclairCustomTagComponent {
     constructor(value) {
         super("input")
         
+        this.step(0.001)
+        
         // Bind callback
         this.bindState(value, "value", value => {
             this.setAttr("value", value)

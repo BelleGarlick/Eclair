@@ -135,6 +135,14 @@ value: Boolean representing whether credentials are used - can be an eclair Stat
 Eclair.request("/hello-world/", "GET")
     .widthCredentials(true)
 ```
+### .contentType
+Sets the content type of the request.
+
+value: Value representing the content type - can be an eclair state.
+```javascript
+Eclair.request("/hello-world/", "GET")
+    .contentType("...")
+```
 ### .send
 Send the form element. This function can be passed several types of data which are sent to the given endpoint. You can pass in a HTML Form element, an eclair Element of a JSON object. If using the JSON object the keys must be strings, but the values can be either: primative types (string, bool, etc...), eclair State, HTML Input[type=File] element, Input element. Method and action attributes of a given form will be ignored. To set the method and action use .method and .action.
 

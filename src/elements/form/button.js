@@ -12,7 +12,7 @@ Eclair.styles.Button = Eclair.Style("eclair-style-button")
     .borderRadius("2px")
     .padding("8px 16px")
     .background("#eeeeee")
-    .font(Eclair.theme.font)
+    .fontFamily(Eclair.theme.font)
     .background("#dddddd", "hover")
     .background("#cccccc", "active")
 

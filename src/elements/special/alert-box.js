@@ -101,7 +101,6 @@ class EclairAlertBox extends EclairComponent {
             this._titleText.value(value)
             
             let hideTitle = value == null || value.trim().length == 0
-            console.log(hideTitle)
             this._title.display(hideTitle? "none": "block")
         })
         

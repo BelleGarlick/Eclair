@@ -23,7 +23,7 @@ Eclair.styles.RadioButtonsItem = Eclair.Style("eclair-style-radio-buttons-item")
     .userSelect("none")
     .justifyContent("flex-start")
     .gap("12px")
-    .font(Eclair.theme.font)
+    .fontFamily(Eclair.theme.font)
 Eclair.styles.RadioButtonsSelectedItem = Eclair.Style("eclair-style-radio-buttons-selected-item")
 Eclair.styles.RadioButtonsRadio = Eclair.Style("eclair-style-radio-buttons-dot")
     .width("14px")
@@ -72,7 +72,6 @@ class EclairRadioButtons extends EclairComponent {
         // Create elements
         let self = this
         this._hidden = null, this._view = null
-        console.log("Declairng")
         this.declareChildrenWithContext(_=>{
             this._hidden = Eclair.HiddenInput(this._selectedValue)
             this._view = Eclair.VStack(_options, item => {

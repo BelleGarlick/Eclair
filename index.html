@@ -1,3 +1,4 @@
+<head>
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/tomorrow.min.css"/>
 <script>
     let EclairThemeColor = "pink"
@@ -5,6 +6,8 @@
 </script>
 <script src="eclair.js"></script>
 <script src="test_examples.js"></script>
+</head>
+<body>
 <script>    
 let Toggle = Eclair.Toggle, Text = Eclair.Text, CheckBox = Eclair.CheckBox, 
     RadioButtons = Eclair.RadioButtons, TextBox = Eclair.TextBox, State = Eclair.State, 
@@ -23,16 +26,16 @@ let htmlCode = Ø(examples["toggle_switch"])
 let iframeHTMLCode = State("")
 
 
-VStack([   
-    HStack([
+VStack(_ => {
+    HStack(_ => {
         Text("Eclair Playground")  
             .type("heading2")
             .fontColor("#ffffff")
             .fontColor("black", {"rule": "darkmode"})
-    ])
+    })
         .width("100%")
         .background(Eclair.theme.accent)
-        .padding(8),
+        .padding(8)
     
     
     HStack([
@@ -46,46 +49,45 @@ VStack([
                 codeExampleTitle.value(item.name)
                 htmlCode.value(examples[item.eID])
             })
-    }),
+    })
     
     Eclair.Select([
         "Toggle Switch",
         "Progress Bar",
         "Alert Box",
         "Check Box"
-    ]),
+    ])
     
-    HStack([
-        Text(codeExampleTitle)
-            .type("heading3"),
-        HStack([
+    HStack(_ => {
+        Text(codeExampleTitle).type("heading3")
+        HStack(_ => {
             Button("Source").onClick(_ => {viewSourcePage.value(0)}),
             Button("Result").onClick(_ => {
                 iframeHTMLCode.value('<script src="Eclair.js"></scrip'+'t><script>'+htmlCode.value()+'</sc'+'ript>')
                 viewSourcePage.value(1)
             })
-        ])
-    ]),
+        })
+    })
     
-    Eclair.TabView(viewSourcePage, [
-        Eclair.TabPage([
+    Eclair.TabView(viewSourcePage, _ => {
+        Eclair.TabPage(_ => {
             Eclair.SyntaxHighlighter(htmlCode)
-        ]),
-        Eclair.TabPage([
+        })
+        Eclair.TabPage(_ => {
             Eclair.IFrame()
                 .height("100%")
                 .width("100%")
                 .source(iframeHTMLCode)
-        ])
-    ]),
+        })
+    })
 
 
-    Eclair.VStack([
-        VStack([     
-            Eclair.TextBox(selectedRadio),
-            Eclair.TextBox(selectedRadioIndex),
+    VStack(_ => {
+        VStack(_ => {    
+            TextBox(selectedRadio)
+            TextBox(selectedRadioIndex)
             
-            Eclair.HorizontalLine(),
+            Eclair.HorizontalLine()
             RadioButtons(["tests", "test", "testing"])
                 .radioStyle(style => {
                     style.borderColor("green")
@@ -99,15 +101,14 @@ VStack([
                 })
                 .selectedIndex(selectedRadioIndex)
                 .value(selectedRadio)
-                .width("100%"),
-                //.spacing(30)
-        ])
+                .width("100%")
+        })
 //            .spacing(25)
             .padding(10)
-    ])
+    })
         .alignment("stretch")
         .width("600px")
-])
+})
     .position("absolute")
     .top("0px")
     .left("0px")
@@ -115,3 +116,4 @@ VStack([
     .alignment("center")
     .write()
 </script>
+</body>

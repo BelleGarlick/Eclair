@@ -8,7 +8,7 @@ Eclair.Link = function(text) {
 
 /// SHARED-STYLE Eclair.styles.Link: Default link style.
 Eclair.styles.Link = Eclair.Style("eclair-style-link")
-    .font(Eclair.theme.font)   
+    .fontFamily(Eclair.theme.font)   
     .fontColor(Eclair.theme.accent)
     .textDecoration("none")
     .textDecoration("underline", "hover")
@@ -18,22 +18,20 @@ Eclair.styles.Link = Eclair.Style("eclair-style-link")
 ///     .url('https://duckduckgo.com/')
 ///     .target('_blank')
 /// ```
-class EclairLink extends EclairCustomTagComponent {
-        
+class EclairLink extends EclairView {
+    // TODO Need to rewrite
     /// METHOD constructor
     /// DESC Construct an Eclair hyperlink object with a predefined text.
     /// ARG text: The text displayed.
     /// ```javascript
     /// Eclair.Link('DuckDuckGo')
     /// ```
-    constructor(text) {
-        super("a")
+    constructor(elements, objectFunc) {
+        super(elements, objectFunc)
         
-        // Set inner html to text or bind with state.
-        this.bindState(text, "html", value => {
-            this.innerHTML(value)
-        })  
+        this._elementTag = "a"
         
+        this.removeStyle(Eclair.stylesViewLink)
         this.addStyle(Eclair.styles.Link)
     }
     

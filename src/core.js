@@ -1,10 +1,9 @@
 // TODO Update readme.
-// Add getting value from objects and altering lists. This should enable objects to be easier to work with.
+// TODO Add getting value from objects and altering lists. This should enable objects to be easier to work with.
 // TODO NEed tutorials for everything and Examples. Geting to grips with eclair, making a custom object, specific object tutorials.documentation
 // Add test for each objct removing elements loads. Each test needs looping 1000s of times and checking if, when removed, there is no execsive files left over.
-// Change to dynamic construction
-// If
-// ForEach
+// Add callback in View to have the option to cleanup elements.
+// Add modularity
 
 // Future work
 //  - Add enabled tag to all elements.
@@ -33,7 +32,7 @@
 /// # Eclair
 /// The `eclair` object allows you to easily construct an eclair object and interact in the Eclair development kit.
 let Eclair = {
-    version: "0.0.94",
+    version: "0.0.95",
     _ids: -1,
     _elements: {},
     _styles: {},

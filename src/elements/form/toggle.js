@@ -2,8 +2,6 @@
 /// EXTENDS elements.component:EclairComponent
 /// DESC An eclair toggle component.
 
-// WARN Toggle seems to create eronous additional hidden element
-
 Eclair.Toggle = function(_value) {
     return new EclairToggle(_value);
 }

@@ -14,7 +14,7 @@ Eclair.Text = function(text) {
 /// SHARED-STYLE Eclair.styles.TextHeading3Style: Modifiable text style which can be given to a text object using .type('heading3').
 /// SHARED-STYLE Eclair.styles.TextHeading4Style: Modifiable text style which can be given to a text object using .type('heading4').
 Eclair.styles.Text = Eclair.Style("eclair-style-text")
-    .font(Eclair.theme.font)
+    .fontFamily(Eclair.theme.font)
 Eclair.styles.TextTitleStyle = Eclair.Style("eclair-style-text-title")
     .fontSize("40px")
     .fontWeight(700)

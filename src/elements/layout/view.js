@@ -61,10 +61,10 @@ class EclairView extends EclairComponent {
             let knownItems = []
             
             if (this.items.isArray()) {
-            
                 this.bindState(elements, "element", array => {
                     // Find the positional changes of all elements
                     var itemChanges = this._itemChanges(knownItems, array)
+                    let newChildren = []
                     
                     // create new list of elements
                     let tempParent = document.createElement("div")
@@ -77,8 +77,8 @@ class EclairView extends EclairComponent {
                             let newItem = this.creatorFunc(array[i])
                             if (this._isValidChild(newItem)) {
                                 newItem.parent = this;
-                                this.children.push(newItem)
-
+                                newChildren.push(newItem)
+                                
                                 tempParent.appendChild(newItem.compile())
                             }
 
@@ -86,19 +86,11 @@ class EclairView extends EclairComponent {
                         } else {
                             let itemIndexValue = itemChanges[i]
                             
-                            console.log(this.getElement())
-                            console.log(this.getElement().childNodes)
-                            
+                            newChildren.push(this.children[itemIndexValue])
                             tempParent.appendChild(
-                                this.getElement().childNodes[itemIndexValue]
+                                this.children[itemIndexValue].getElement()
                             );
                             itemChanges[i] = -1
-
-                            for (let j = 0; j < itemChanges.length; j++) {
-                                if (itemChanges[j] >= itemIndexValue) {
-                                    itemChanges[j] -= 1
-                                }
-                            }
                         }
                     }
 
@@ -107,15 +99,18 @@ class EclairView extends EclairComponent {
                     // remove all elements and add all from the new list
 
                     // Remove items from current element and add all elements as shown above
-                    console.log(this.getElement())
-                    console.log(this.children)
-                    console.log(tempParent.children)
                     this.getElement(e => {
+                        while (e.firstChild) {
+                            e.removeChild(e.childNodes[0])
+                        }
+                        
                         while (tempParent.firstChild) {
                             e.appendChild(tempParent.childNodes[0])
                         }
                     })
 
+                    this.children = newChildren
+                    
                     // Add all elements to the known elements array so we known what changes when the array changes
                     knownItems = []
                     for (let i = 0; i < array.length; i++) {knownItems.push(array[i])}
